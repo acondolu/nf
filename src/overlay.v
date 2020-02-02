@@ -14,13 +14,10 @@ Definition In: 𝓥 -> 𝓥 -> Prop := fun x y =>
   | exist _ x' _, exist _ y' _ => forall n, y' (S n) (x' n)
 end.
 
-(*
-Theorem u_ext: forall x y, self x -> self y -> 
-  x = y <-> forall z, z ∈ x <-> z ∈ y.
-*)
+Notation "A € B" := (In A B) (at level 85).
 
 Theorem v_extensionality: forall x y : 𝓥, 
-  x = y <-> forall z, In z x <-> In z y.
+  x = y <-> forall z, z € x <-> z € y.
 Proof.
   pose proof u_ext.
   induction x. induction y.
@@ -36,15 +33,15 @@ Proof.
 Qed.
 
 (* Universal set *)
-Definition Top : 𝓥 := exist _ Universe univ_self.
-Lemma Top_correct : forall x, In x Top.
+Definition Top : 𝓥 := exist _ univ univ_self.
+Lemma Top_correct : forall x, x € Top.
 Proof.
-  intro x. destruct x. unfold Top, In, Universe. auto.
+  intro x. destruct x. unfold Top, In, univ. auto.
 Qed.
 
 (* Empty set *)
-Definition Bot : 𝓥 := exist _ Empty empty_self.
-Lemma Bot_correct : forall x, In x Bot -> False.
+Definition Bot : 𝓥 := exist _ empty empty_self.
+Lemma Bot_correct : forall x, x € Bot -> False.
 Proof.
   intro x. destruct x. unfold Bot, In, Empty.
   exact (fun f => f O).

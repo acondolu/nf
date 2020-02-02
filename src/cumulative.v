@@ -16,7 +16,7 @@ Definition U : Type := forall n, u n.
 Fixpoint ll {n} : u n -> u (S n) -> Prop := 
   match n with
   | O   => fun _ _ => True
-  | S m => fun x y => forall z z', ll z z' -> x z <-> y z'
+  | S m => fun x y => forall z, x z <-> exists z', ll z z' /\ y z'
 end.
 
 Definition self : U -> Prop := fun x => 
@@ -24,8 +24,6 @@ Definition self : U -> Prop := fun x =>
 
 Definition iin: U -> U -> Prop := fun x y =>
   forall n, y (S n) (x n).
-
-Notation "A ∈ B" := (iin A B) (at level 85).
 
 Theorem raise {n x y}:
   self x -> x (S n) y -> exists y', self y' /\ y' n = y /\ iin y' x.
@@ -35,7 +33,7 @@ Proof.
 Admitted.
 
 Theorem u_ext: forall x y, self x -> self y -> 
-  x = y <-> forall z, self z -> z ∈ x <-> z ∈ y.
+  x = y <-> forall z, self z -> iin z x <-> iin z y.
 Proof.
   intros x y cx cy.
   split.
@@ -56,32 +54,27 @@ Proof.
           pose proof (H5 m). rewrite<- H1. assumption.
 Qed.
 
-Lemma inj: forall n x y z, @ll n x z -> ll y z -> x = y.
+Lemma inj: forall {n x y z}, @ll n x z -> ll y z -> x = y.
 Proof.
-  destruct n.
-  - intros. destruct x, y. auto.
-  - intros. extensionality z'. fold u in z'.
-    destruct n.
-    -- unfold ll in *. destruct (H z' x I). destruct (H0 z' x I).
-       apply propositional_extensionality; split; auto.
-    -- (* simpl ll in H, H0. 
-      cut (ll z' x).
-    intro XX. destruct (H z' x XX). destruct (H0 z' x XX).
-    apply propositional_extensionality; split; auto.
-    intros.
-*) Admitted.
+  destruct n; intros.
+  - destruct x, y. auto.
+  - extensionality z'. destruct (H z'). destruct (H0 z').
+    apply propositional_extensionality; split; intros.
+    -- apply H4. destruct (H1 H5). exists x0. auto.
+    -- apply H2. destruct (H3 H5). exists x0. auto.
+Qed.
 
 Lemma trivial_raise: forall n,
   forall x, exists y, @ll n x y.
 Proof.
-  destruct n.
+  induction n.
   - intro. unfold ll, u. exists (fun _ => True). auto.
   - intros. simpl u. 
-    exists (fun z' : u (S n) => forall z, ll z z' -> x z).
-    simpl ll. intros. split; intros.
-    destruct (inj _ _ _ _ H H1).
-    auto. auto.
-Qed.
+    exists (fun z' : u (S n) => exists z, ll z z' /\ x z).
+    simpl ll. intros. split; intros. fold u in z. (* exists x. split. 
+    destruct (inj H H1).
+    auto. auto.*)
+Admitted.
 
 Lemma trivial_lower: forall {n}, forall x, exists y, @ll n y x.
 Admitted.
