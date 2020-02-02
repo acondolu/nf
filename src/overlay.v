@@ -32,10 +32,23 @@ Proof.
   destruct H3. auto.
   apply (ext_prop_dep_proof_irrel_cic propositional_extensionality).
   apply H2. unfold iin. intro.
-  cut (self z). intro sz. apply (H0 (exist _ z sz)). 
-Admitted.
+   intro sz. apply (H0 (exist _ z sz)). 
+Qed.
 
-
+(* Universal set *)
 Definition Top : 𝓥 := exist _ Universe univ_self.
+Lemma Top_correct : forall x, In x Top.
+Proof.
+  intro x. destruct x. unfold Top, In, Universe. auto.
+Qed.
 
+(* Empty set *)
 Definition Bot : 𝓥 := exist _ Empty empty_self.
+Lemma Bot_correct : forall x, In x Bot -> False.
+Proof.
+  intro x. destruct x. unfold Bot, In, Empty.
+  exact (fun f => f O).
+Qed.
+
+(* Powerset 
+Definition Powerset := exist _ Pow pow_self. *)

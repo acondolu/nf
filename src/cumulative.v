@@ -28,14 +28,14 @@ Definition iin: U -> U -> Prop := fun x y =>
 Notation "A ∈ B" := (iin A B) (at level 85).
 
 Theorem raise {n x y}:
-  self x -> x (S n) y -> exists y', y' n = y /\ iin y' x.
+  self x -> x (S n) y -> exists y', self y' /\ y' n = y /\ iin y' x.
 Proof.
   fold u.
   intros. fold U.
 Admitted.
 
 Theorem u_ext: forall x y, self x -> self y -> 
-  x = y <-> forall z, z ∈ x <-> z ∈ y.
+  x = y <-> forall z, self z -> z ∈ x <-> z ∈ y.
 Proof.
   intros x y cx cy.
   split.
@@ -47,13 +47,13 @@ Proof.
     * intro m. extensionality z'. apply propositional_extensionality.
   split; intro.
       ** destruct (raise cx H). fold u in *. fold U in *.
-          destruct H0. destruct (ex x0).
-          pose proof (H2 H1). unfold iin in H4.
-          pose proof (H4 m). rewrite<- H0. assumption.
+          destruct H0. destruct H1. destruct (ex x0 H0).
+          pose proof (H3 H2). unfold iin in H5.
+          pose proof (H5 m). rewrite<- H1. assumption.
       ** destruct (raise cy H). fold u in *. fold U in *.
-          destruct H0. destruct (ex x0).
-          pose proof (H3 H1). unfold iin in H4.
-          pose proof (H4 m). rewrite<- H0. assumption.
+          destruct H0. destruct H1. destruct (ex x0 H0).
+          pose proof (H4 H2). unfold iin in H5.
+          pose proof (H5 m). rewrite<- H1. assumption.
 Qed.
 
 Lemma inj: forall n x y z, @ll n x z -> ll y z -> x = y.
@@ -83,6 +83,8 @@ Proof.
     auto. auto.
 Qed.
 
+Lemma trivial_lower: forall {n}, forall x, exists y, @ll n y x.
+Admitted.
 
 
 End Cumulative.
