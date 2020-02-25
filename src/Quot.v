@@ -7,17 +7,18 @@ Require Untitled2.
 
 Module Type QuotSig.
 Parameter 𝓥 : Type.
-Parameter Universe: 𝓥.
-Parameter Empty: 𝓥.
-Parameter Intersection: 𝓥 -> 𝓥 -> 𝓥.
+Parameter 𝓤 : 𝓥.
+Parameter Ø : 𝓥.
 Parameter Union: 𝓥 -> 𝓥 -> 𝓥.
+Parameter Intersection: 𝓥 -> 𝓥 -> 𝓥.
 Parameter Arrow: 𝓥 -> 𝓥 -> 𝓥.
 Parameter Singleton: 𝓥 -> 𝓥.
 Parameter CoSingleton: 𝓥 -> 𝓥.
 Parameter IN: 𝓥 -> 𝓥 -> Prop.
 Parameter EQ: 𝓥 -> 𝓥 -> Prop.
 
-Parameter Universe_ok: forall x: 𝓥, IN Universe x.
+Parameter universe_ok: forall x: 𝓥, IN 𝓤 x.
+Parameter empty_ok: forall x: 𝓥, ~ IN Ø x.
 End QuotSig.
 
 Module Quot <: QuotSig.
@@ -33,10 +34,10 @@ Private Inductive set : Type :=
 .
 
 Definition 𝓥 := set.
-Definition Universe := prop True.
-Definition Empty := prop False.
-Definition Intersection := binop and.
+Definition 𝓤 := prop True.
+Definition Ø := prop False.
 Definition Union := binop or.
+Definition Intersection := binop and.
 Definition Arrow := binop (fun x y => x -> y).
 Definition Singleton := sin.
 Definition CoSingleton := cos.
@@ -80,10 +81,16 @@ Proof.
    simpl undecorate. auto.
 Qed.
 
-Lemma Universe_ok: forall x: 𝓥, In Universe x.
+Lemma universe_ok: forall x: 𝓥, In 𝓤 x.
 Proof.
   intros. pose proof (mk_prop True).
   pose proof (H x). apply H0. auto.
+Qed.
+
+Lemma empty_ok: forall x: 𝓥, ~ In Ø x.
+Proof.
+  intros. pose proof (mk_prop False).
+  pose proof (H x). intro. apply H0. auto.
 Qed.
 
 Lemma mk_binop:
