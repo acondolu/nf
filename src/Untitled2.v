@@ -256,5 +256,75 @@ Fixpoint lift {k} (y: set k) : set (S k) :=
   | cos _ y' => cos _ (lift y')
 end.
 
-(* Theorem liftInS: forall i x y, Eeq i x y <-> EeqS i (lift x) y.
-Proof.  *)
+Check iin.
+
+Lemma iin_binop: forall i f g P x y1 y2, 
+iin i f g (binop (S i) P y1 y2) x = 
+P (iin i f g y1 x) (iin i f g y2 x).
+Admitted.
+  (* intro i. destruct i.
+  - intros. unfold iin at 1. simpl. unfold solution_left.
+  unfold eq_rect_r. unfold eq_rect. simpl.
+  apply f_equal2.
+  Search (_ = _ -> _ _ = _ _).
+  
+  apply eq_refl. *)
+
+Axiom iinS_binop: forall i f g P x y1 y2, 
+  iinS i f g (binop _ P y1 y2) x =
+  P (iinS i f g y1 x) (iinS i f g y2 x).
+
+Lemma Iin_binop: forall i P x y1 y2, 
+Iin i (binop i P y1 y2) x = 
+P (Iin i y1 x) (Iin i y2 x).
+Proof.
+ intros. destruct i. auto. simpl Iin.
+ rewrite iin_binop. auto.
+Qed.
+
+Lemma IinS_binop: forall i P x y1 y2, 
+IinS i (binop _ P y1 y2) x = 
+P (IinS _ y1 x) (IinS _ y2 x).
+Proof.
+ intros. destruct i. auto. unfold IinS.
+ rewrite iinS_binop. auto.
+ unfold IinS. rewrite iinS_binop. auto.
+Qed.
+
+Theorem ambiguityIinR:
+  forall i x y, Iin _ x (lift y) = IinS i x y.
+Proof.
+  intros.
+  dependent induction x.
+  - simpl. apply eq_refl.
+  - rewrite Iin_binop. rewrite IinS_binop.
+    apply f_equal2.
+    -- apply IHx1. auto. admit.
+    -- apply IHx2. auto. admit.
+  - admit.
+  - admit.
+Admitted.
+
+Theorem ambiguityEeqR:
+  forall i x y, Eeq _ x (lift y) = EeqS i x y.
+Proof.
+  intros.
+  induction i.
+  - dependent induction y.
+    -- apply eq_refl.
+    -- pose proof (IHy1 y1 eq_refl). simpl. unfold EeqS.
+        unfold eeq. unfold eeqS.
+        
+       simpl lift. simpl Eeq.
+       simpl in H.
+Admitted.
+
+Theorem ambiguityEeqL:
+  forall i x y, Eeq _ x y <-> EeqS i (lift x) y.
+Proof.
+  intros.
+  induction i.
+  - simpl. unfold EeqS. simpl. unfold eeqS. unfold IimS. unfold Eeq. dependent induction x.
+    -- cbv. tauto.
+    -- cbv.
+Admitted.
