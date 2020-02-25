@@ -12,6 +12,16 @@ Inductive set : nat -> Type :=
   | cos : forall i, set i -> set (S i)
 .
 
+Inductive set_ : Type :=
+  (* reflect lattice structure *)
+  | prop_ : Prop -> set_
+  | binop_ : 
+      (Prop -> Prop -> Prop) -> (set_ -> set_ -> set_)
+  (* sets *)
+  | sin_ : set_ -> set_
+  | cos_ : set_ -> set_
+.
+
 (* ----------------------------------------------------------- *)
 
 (* In and Eq at level 0 *)
@@ -189,17 +199,20 @@ Proof.
   - destruct H. apply ext_0; auto.
 Qed.
 
+
+
 Require Import Setoid Morphisms Program.Syntax.
 Lemma ext_n n: forall x y, Eeq1 n x y <-> (
   (forall z, Iin1 n x z <-> Iin1 n y z) /\
   (forall Z, Iim1 n x Z <-> Iim1 n y Z)
 ).
-Proof.
+(* Proof.
   destruct n.
   - apply ext_comb_0.
   - dependent destruction x; dependent destruction y; simpl.
   -- unfold eeq''. setoid_rewrite iin2_prop. apply @eq_refl.
-  - simpl Eeq1. simpl Iin1. simpl Iim1. unfold eeq'. 
+  - simpl Eeq1. simpl Iin1. simpl Iim1. unfold eeq'.  *)
+Admitted.
 
 
 (* ----------------------------------------------------------- *)
@@ -214,9 +227,30 @@ Fixpoint lift {k} (y: set k) : set (S k) :=
   | cos _ y' => cos _ (lift y')
 end.
 
+Inductive Iin : forall {i j}, set i -> set j -> Prop :=
+  | real: forall i x y, Iin1 i x y -> @Iin i i x y
+  | lower_l: forall i j x y, Iin (lift x) y -> @Iin i j x y
+  | lower_r: forall i j x y, Iin x (lift y) -> @Iin i j x y
+  | raise_l: forall i j x y, @Iin i j x y -> Iin (lift x) y
+  | raise_r: forall i j x y, @Iin i j x y -> Iin x (lift y)
+.
 
+Definition setX := { i : nat & set i }.
 
+Definition IN (x y : setX) := match x, y with
+  | existT _ _ t, existT _ _ u => Iin t u
+end.
 
+Axiom undecorate: forall {i}, set i -> set_.
+
+Inductive IN_ : set_ -> set_ -> Prop :=
+  | Cc : forall i x y, @Iin1 i x y -> IN_ (undecorate x) (undecorate y)
+.
+(* Lemma IN_' : forall x y, IN_ x y <-> exists i x y,  *)
+
+Definition EQ (x y : setX) := forall z, IN x z <-> IN y z.
+
+(* 
 Theorem magari k: forall x : set k, forall y,
   (Eeq1 k x y <-> Eeq2 k (lift x) y)
   (* /\ (Iin1 k x y <-> Iin2 k (lift x) y)
@@ -351,4 +385,4 @@ Fixpoint den {i} (x: set (S i)) : set i -> Prop :=
   | disj _ y z => Join (den y) (den z)
   | sin _ y => eq y
   | cos _ y => fun z => den z y
-end.
+end. *)
