@@ -9,6 +9,7 @@ src/%.vos: src/%.v
 	$(COQC) -R src "" $<
 
 all: src/Untitled2.vos src/Quot.vos
+
 ci: src/Untitled2.vos src/Quot.vos
 
 clean:

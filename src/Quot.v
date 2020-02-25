@@ -26,8 +26,7 @@ Module Quot <: QuotSig.
 Private Inductive set : Type :=
   (* reflect lattice structure *)
   | prop : Prop -> set
-  | binop : 
-      (Prop -> Prop -> Prop) -> (set -> set -> set)
+  | binop : (Prop -> Prop -> Prop) -> (set -> set -> set)
   (* sets *)
   | sin : set -> set
   | cos : set -> set
@@ -51,7 +50,7 @@ match x with
 end.
 
 Inductive In : set -> set -> Prop :=
-  | Cc : forall i x y, @Untitled2.Iin1 i x y -> In (undecorate x) (undecorate y)
+  | Cc : forall i x y, @Untitled2.Iin i x y -> In (undecorate x) (undecorate y)
 .
 Definition IN := In.
 (* Notation "A € B" := (In B A) (at level 85). *)
