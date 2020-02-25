@@ -14,8 +14,6 @@ Inductive set : nat -> Type :=
 
 (* ----------------------------------------------------------- *)
 
-(* In and Eq at level 0 *)
-
 Definition eval0 : set O -> Prop.
 Proof.
   intro x. dependent induction x; apply P.
@@ -70,7 +68,7 @@ Proof.
   - exact (exists z, _eq1 z y /\ x z).
 Defined. *)
 
-Definition iimS : forall k,
+Local Definition iimS : forall k,
 (set k -> set k -> Prop) ->
 set (S k) -> (set k -> Prop) -> Prop.
 Proof.
@@ -80,7 +78,7 @@ Proof.
   - exact False.
   - exact (exists z, eq z y /\ x z).
 Defined.
-Definition iim : forall k, 
+Local Definition iim : forall k, 
   (set (S k) -> set k -> Prop) ->
     set (S k) -> (set (S k) -> Prop) -> Prop.
 Proof.
@@ -91,7 +89,7 @@ Proof.
   - exact (exists z, eq z y /\ X z).
 Defined.
 
-Definition eeqS : forall k,
+Local Definition eeqS : forall k,
   (set (S k) -> (set k -> Prop) -> Prop) ->
   (set k -> (set k -> Prop) -> Prop) ->
   (set (S k) -> set k -> Prop) ->
@@ -105,7 +103,7 @@ Proof.
     ).
 Defined.
 
-Definition eeq : forall k,
+Local Definition eeq : forall k,
   (set (S k) -> (set k -> Prop) -> Prop) ->
   (set (S k) -> set k -> Prop) ->
   set (S k) -> set (S k) -> Prop.
@@ -117,7 +115,7 @@ Proof.
     ).
 Defined.
 
-Definition iinS : forall k,
+Local Definition iinS : forall k,
   (set k -> set k -> Prop) ->
   (set k -> set k -> Prop) ->
   set (S k) -> set k -> Prop.
@@ -125,12 +123,14 @@ Proof.
   intros k eeq iin y x.
   dependent induction y.
   - exact P.
-  - apply P. apply (IHy1 k); auto. apply (IHy2 k); auto.
-  - apply eeq. exact x. exact y.
-  - apply iin. exact x. exact y.
+  - apply P.
+    apply (IHy1 k eeq iin eq_refl x).
+    apply (IHy2 k eeq iin eq_refl x).
+  - apply (eeq x y).
+  - apply (iin x y).
 Defined.
 
-Definition iin : forall k,
+Local Definition iin : forall k,
   (set (S k) -> set k -> Prop) ->
   (set (S k) -> set k -> Prop) ->
   set (S k) -> set (S k) -> Prop.
@@ -138,18 +138,39 @@ Proof.
   intros k eeqS iinS y x.
   dependent induction y.
   - exact P.
-  - apply P. apply (IHy1 k); auto. apply (IHy2 k); auto.
-  - apply eeqS. exact x. exact y.
-  - apply iinS. exact x. exact y.
+  - apply P.
+    apply (IHy1 k eeqS iinS eq_refl x).
+    apply (IHy2 k eeqS iinS eq_refl x).
+  - apply (eeqS x y).
+  - apply (iinS x y).
 Defined.
 
-(* Auxiliary lemmas *)
+(* Auxiliary lemmas
+
+Lemma iin_binop: forall i f g P x y1 y2, 
+iin i f g (binop (S i) P y1 y2) x = 
+P (iin i f g y1 x) (iin i f g y2 x).
+Proof. intros. apply eq_refl. Qed.
+
+Lemma iin_sin: forall i f g x y, 
+iin i f g (sin _ y) x = f x y.
+Proof. intros. apply eq_refl. Qed.
+
+Lemma iin_cos: forall i f g x y, 
+iin i f g (cos _ y) x = g x y.
+Proof. intros. apply eq_refl. Qed.
 
 Lemma iinS_prop: forall k a b p z, iinS k a b (prop _ p) z = p.
 Proof. intros. cbv. auto. Qed.
 
+Lemma iinS_binop: forall i f g P x y1 y2, 
+  iinS i f g (binop _ P y1 y2) x =
+  P (iinS i f g y1 x) (iinS i f g y2 x).
+Proof. intros. apply eq_refl. Qed. *)
+
 (* ----------------------------------------------------------- *)
 (* The miracle fixpoint *)
+
 
 Fixpoint Iin k : set k -> set k -> Prop :=
   match k return set k -> set k -> Prop with 
@@ -212,119 +233,40 @@ Proof.
   - destruct H. apply ext_0; auto.
 Qed.
 
-(* Lemma Iin1_S : forall k y x, Iin1 k y x = (match y with
-  | prop _ p => fun _ => p
-  | binop _ P y1 y2 => fun x => P (Iin1 _ y1 x) (Iin1 _ y2 x)
-  | sin _ z => fun x => Eeq2 _ x z
-  | cos _ z => fun x => Iin2 _ x z
-end) x.
-Proof.
-  destruct k.
-  - simpl. dependent induction y; cbv; auto.
-  - induction y.
-    -- cbv. auto.
-    -- simpl. fold (Iin2 k). fold(Iim2 k). fold (Eeq2 k). fold (Iin1 k). simpl Iin1 in IHy2.
-      pose proof (IHy1 k y1).
-    admit.
-    -- auto.
-    -- auto.
-Qed.
+(* Auxiliary lemmas, again *)
 
-Require Import Setoid Morphisms Program.Syntax.
-Lemma ext_n n: forall x y, Eeq1 n x y <-> (
-  (forall z, Iin1 n x z <-> Iin1 n y z) /\
-  (forall Z, Iim1 n x Z <-> Iim1 n y Z)
-).
-(* Proof.
-  destruct n.
-  - apply ext_comb_0.
-  - dependent destruction x; dependent destruction y; simpl.
-  -- unfold eeq''. setoid_rewrite iin2_prop. apply @eq_refl.
-  - simpl Eeq1. simpl Iin1. simpl Iim1. unfold eeq'.  *)
-Admitted. *)
+Lemma Iin_prop: forall i x p, 
+Iin _ (prop i p) x = p.
+Proof. intros; induction i; auto. Qed.
 
-
-(* ----------------------------------------------------------- *)
-(* Lift *)
-
-
-Fixpoint lift {k} (y: set k) : set (S k) :=
-  match y with
-  | prop _ c => prop _ c
-  | binop _ P y' y'' => binop _ P (lift y') (lift y'')
-  | sin _ y' => sin _ (lift y')
-  | cos _ y' => cos _ (lift y')
-end.
-
-Check iin.
-
-Lemma iin_binop: forall i f g P x y1 y2, 
-iin i f g (binop (S i) P y1 y2) x = 
-P (iin i f g y1 x) (iin i f g y2 x).
-Admitted.
-  (* intro i. destruct i.
-  - intros. unfold iin at 1. simpl. unfold solution_left.
-  unfold eq_rect_r. unfold eq_rect. simpl.
-  apply f_equal2.
-  Search (_ = _ -> _ _ = _ _).
-  
-  apply eq_refl. *)
-
-Axiom iinS_binop: forall i f g P x y1 y2, 
-  iinS i f g (binop _ P y1 y2) x =
-  P (iinS i f g y1 x) (iinS i f g y2 x).
+Lemma IinS_prop: forall i x p, 
+IinS i (prop _ p) x = p.
+Proof. intros; induction i; auto. Qed.
 
 Lemma Iin_binop: forall i P x y1 y2, 
 Iin i (binop i P y1 y2) x = 
 P (Iin i y1 x) (Iin i y2 x).
-Proof.
- intros. destruct i. auto. simpl Iin.
- rewrite iin_binop. auto.
-Qed.
+Proof. intros; destruct i; auto. Qed.
 
 Lemma IinS_binop: forall i P x y1 y2, 
 IinS i (binop _ P y1 y2) x = 
 P (IinS _ y1 x) (IinS _ y2 x).
-Proof.
- intros. destruct i. auto. unfold IinS.
- rewrite iinS_binop. auto.
- unfold IinS. rewrite iinS_binop. auto.
-Qed.
+Proof. intros; destruct i; auto. Qed.
 
-Theorem ambiguityIinR:
-  forall i x y, Iin _ x (lift y) = IinS i x y.
-Proof.
-  intros.
-  dependent induction x.
-  - simpl. apply eq_refl.
-  - rewrite Iin_binop. rewrite IinS_binop.
-    apply f_equal2.
-    -- apply IHx1. auto. admit.
-    -- apply IHx2. auto. admit.
-  - admit.
-  - admit.
-Admitted.
+Lemma Iin_sin: forall i x y, 
+Iin _ (sin i y) x = EeqS _ x y.
+Proof. intros. apply eq_refl. Qed.
 
-Theorem ambiguityEeqR:
-  forall i x y, Eeq _ x (lift y) = EeqS i x y.
-Proof.
-  intros.
-  induction i.
-  - dependent induction y.
-    -- apply eq_refl.
-    -- pose proof (IHy1 y1 eq_refl). simpl. unfold EeqS.
-        unfold eeq. unfold eeqS.
-        
-       simpl lift. simpl Eeq.
-       simpl in H.
-Admitted.
+Lemma Iin_cos: forall i x y, 
+Iin _ (cos i y) x = IinS _ x y.
+Proof. intros. apply eq_refl. Qed.
 
-Theorem ambiguityEeqL:
-  forall i x y, Eeq _ x y <-> EeqS i (lift x) y.
-Proof.
-  intros.
-  induction i.
-  - simpl. unfold EeqS. simpl. unfold eeqS. unfold IimS. unfold Eeq. dependent induction x.
-    -- cbv. tauto.
-    -- cbv.
-Admitted.
+Lemma IinS_sin: forall i x y, 
+IinS i (sin _ y) x = Eeq _ x y.
+Proof. intros. apply eq_refl. Qed.
+
+Lemma IinS_cos: forall i x y, 
+IinS i (cos _ y) x = Iin _ x y.
+Proof. intros. apply eq_refl. Qed.
+
+Opaque Iin IinS Eeq EeqS Iim IimS.

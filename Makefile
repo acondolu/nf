@@ -8,9 +8,9 @@ endif
 src/%.vos: src/%.v
 	$(COQC) -R src "" $<
 
-all: src/Untitled2.vos src/Quot.vos
+all: src/Base.vos src/Lifting.vos src/Top.vos
 
-ci: src/Untitled2.vos src/Quot.vos
+ci: src/Base.vos src/Lifting.vos src/Top.vos
 
 clean:
 	rm -f src/*.glob src/*.vo src/*.vok src/*.vos src/.*.aux

@@ -3,7 +3,8 @@ Require Coq.Program.Wf.
 Require Import Coq.Program.Equality.
 
 Add LoadPath "src/".
-Require Untitled2.
+Require Base.
+Require Lifting.
 
 Module Type QuotSig.
 Parameter 𝓥 : Type.
@@ -41,16 +42,16 @@ Definition Arrow := binop (fun x y => x -> y).
 Definition Singleton := sin.
 Definition CoSingleton := cos.
 
-Fixpoint undecorate {i} (x:Untitled2.set i): set :=
+Fixpoint undecorate {i} (x:Base.set i): set :=
 match x with
-  | Untitled2.prop _ c => prop c
-  | Untitled2.binop _ P y z => binop P (undecorate y) (undecorate z)
-  | Untitled2.sin _ y => sin (undecorate y)
-  | Untitled2.cos _ y => cos (undecorate y)
+  | Base.prop _ c => prop c
+  | Base.binop _ P y z => binop P (undecorate y) (undecorate z)
+  | Base.sin _ y => sin (undecorate y)
+  | Base.cos _ y => cos (undecorate y)
 end.
 
 Inductive In : set -> set -> Prop :=
-  | Cc : forall i x y, @Untitled2.Iin i x y -> In (undecorate x) (undecorate y)
+  | Cc : forall i x y, @Base.Iin i x y -> In (undecorate x) (undecorate y)
 .
 Definition IN := In.
 (* Notation "A € B" := (In B A) (at level 85). *)
@@ -74,7 +75,7 @@ Proof.
  -- discriminate x.
  - destruct (ex x). destruct H0.
    rewrite<- H0.
-   cut (undecorate (Untitled2.prop x0 p) = prop p).
+   cut (undecorate (Base.prop x0 p) = prop p).
    intros. rewrite<- H1. apply Cc.
    destruct x0. cbv. auto. cbv. auto.
    simpl undecorate. auto.
