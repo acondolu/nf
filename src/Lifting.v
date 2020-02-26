@@ -49,7 +49,6 @@ Proof.
   intros.
   induction i.
   - dependent induction y.
-    -- apply eq_refl.
     --
     (* pose proof (IHy1 y1 eq_refl). simpl. unfold EeqS.
         unfold eeq. unfold eeqS.
