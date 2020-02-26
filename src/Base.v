@@ -68,13 +68,38 @@ Proof.
   - exact (exists z, _eq1 z y /\ x z).
 Defined. *)
 
+Definition iini {i} (y: set (S i)):
+  (set i -> Prop) -> (set i -> Prop) -> Prop.
+Proof.
+  intros f g.
+  dependent induction y.
+  - exact P.
+  - apply P.
+      apply (IHy1 i eq_refl f g).
+      apply (IHy2 i eq_refl f g).
+  - apply (f y).
+  - apply (g y).
+Defined.
+
+Local Definition respects {X} (f: X -> Prop) R :=
+  forall x y, R x y -> (f x <-> f y).
+
+Fixpoint Eeq k : set k -> set k -> Prop :=
+match k with
+  | O => eq0
+  | S m =>
+      fun x y => forall f g,
+        respects f eq -> respects g eq -> 
+          (@iini m x f g <-> iini y f g)
+end.
+
 Local Definition iimS : forall k,
 (set k -> set k -> Prop) ->
 set (S k) -> (set k -> Prop) -> Prop.
 Proof.
   intros k eq y x. dependent induction y.
   - exact P.
-  - apply P. apply (IHy1 k); auto. apply (IHy2 k); auto.
+  - apply P. apply (IHy1 k eq). auto. apply x. apply (IHy2 k eq). auto. apply x.
   - exact False.
   - exact (exists z, eq z y /\ x z).
 Defined.
@@ -103,17 +128,6 @@ Proof.
     ).
 Defined.
 
-Local Definition eeq : forall k,
-  (set (S k) -> (set k -> Prop) -> Prop) ->
-  (set (S k) -> set k -> Prop) ->
-  set (S k) -> set (S k) -> Prop.
-Proof.
-  intros k iimS iinS x y.
-  exact (
-    (forall z, iinS x z <-> iinS y z)
-    /\ (forall Z, iimS x Z <-> iimS y Z)
-    ).
-Defined.
 
 Local Definition iinS : forall k,
   (set k -> set k -> Prop) ->
@@ -180,14 +194,6 @@ Fixpoint Iin k : set k -> set k -> Prop :=
     let IimSm := iimS m (Eeq m) in
     let EeqSm := eeqS m IimSm (Iim m) IinSm (Iin m) in
     iin m EeqSm IinSm
-  end
-with Eeq k : set k -> set k -> Prop :=
-  match k with
-  | O => eq0
-  | S m =>
-    let IinSm := iinS m (Eeq m) (Iin m) in
-    let IimSm := iimS m (Eeq m) in
-    eeq m IimSm IinSm
   end
 with Iim k : set k -> (set k -> Prop) -> Prop :=
   match k with 
