@@ -14,6 +14,14 @@ Inductive set : nat -> Type :=
 
 (* ----------------------------------------------------------- *)
 
+Definition respects {X} (f: X -> Prop) R :=
+  forall x y, R x y -> (f x <-> f y).
+
+Definition respects2 {X Y} f g (R: X -> Y -> Prop) :=
+  forall x y, R x y -> (f x <-> g y).
+
+(* ----------------------------------------------------------- *)
+
 Definition eval0 : set O -> Prop.
 Proof.
   intro x. dependent induction x; apply P.
@@ -30,6 +38,13 @@ Hint Rewrite eval0_prop eval0_binop: nf.
 
 Definition in0 (y x: set O) := eval0 y.
 Definition eq0 (x y: set O) := eval0 x <-> eval0 y.
+
+Lemma respects_eval0_eq0: respects eval0 eq0.
+Proof.
+  unfold respects. unfold eq0. intros.
+  dependent induction x; dependent induction y;
+  repeat rewrite eval0_prop in *; auto. 
+Qed.
 
 (* ----------------------------------------------------------- *)
 
@@ -68,7 +83,7 @@ Proof.
   - exact (exists z, _eq1 z y /\ x z).
 Defined. *)
 
-Definition iini {i} (y: set (S i)):
+Local Definition iini {i} (y: set (S i)):
   (set i -> Prop) -> (set i -> Prop) -> Prop.
 Proof.
   intros f g.
@@ -80,18 +95,39 @@ Proof.
   - apply (f y).
   - apply (g y).
 Defined.
-
-Local Definition respects {X} (f: X -> Prop) R :=
-  forall x y, R x y -> (f x <-> f y).
+Lemma iini_prop: forall i p f g, iini (prop (S i) p) f g = p.
+Proof. intros. cbv. apply @eq_refl. Qed.
+Lemma iini_binop: forall i x y P f g,
+  iini (binop (S i) P x y) f g =
+  P (iini x f g) (iini y f g).
+Proof. intros. cbv. apply @eq_refl. Qed.
+Lemma iini_sin: forall i x f g,
+  iini (sin (S i) x) f g = f x.
+Proof. intros. cbv. apply @eq_refl. Qed.
+Lemma iini_cos: forall i x f g,
+  iini (cos (S i) x) f g = g x.
+Proof. intros. cbv. apply @eq_refl. Qed.
+Opaque iini.
 
 Fixpoint Eeq k : set k -> set k -> Prop :=
 match k with
   | O => eq0
   | S m =>
       fun x y => forall f g,
-        respects f eq -> respects g eq -> 
+        respects f (Eeq m) -> respects g (Eeq m) -> 
           (@iini m x f g <-> iini y f g)
 end.
+
+(* Axiom tmp: set 1 -> set 0 -> Prop.
+
+Fixpoint EeqS k : set (S k) -> set k -> Prop :=
+match k with
+  | O => tmp
+  | S m =>
+      fun x y => forall f f' g g',
+        respects2 f f' (EeqS m) -> respects2 g g' (EeqS m) -> 
+          (@iini _ x f g <-> iini y f' g')
+end. *)
 
 Local Definition iimS : forall k,
 (set k -> set k -> Prop) ->
