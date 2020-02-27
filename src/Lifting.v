@@ -13,7 +13,7 @@ Fixpoint lift {k} (y: set k) : set (S k) :=
   | cos _ y' => cos _ (lift y')
 end.
 
-Lemma smatch_lift_0: forall f g x, Base.smatch (lift x) f g = eval0 x.
+Lemma smatch_lift_0: forall f g x, Base.smatch f g (lift x) = eval0 x.
 Proof.
   intros. dependent induction x.
   -  auto.

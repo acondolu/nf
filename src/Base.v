@@ -83,27 +83,28 @@ Proof.
   - exact (exists z, _eq1 z y /\ x z).
 Defined. *)
 
-Local Definition smatch {i} (y: set (S i)) (f g: set i -> Prop) : Prop.
+
+Local Definition smatch {i} (f g: set i -> Prop) (y: set (S i)) : Prop.
 Proof.
   dependent induction y.
   - exact P.
   - apply P.
-      apply (IHy1 i eq_refl f g).
-      apply (IHy2 i eq_refl f g).
+      apply (IHy1 i f g eq_refl).
+      apply (IHy2 i f g eq_refl).
   - apply (f y).
   - apply (g y).
 Defined.
-Lemma smatch_prop: forall i p f g, smatch (prop (S i) p) f g = p.
+Lemma smatch_prop: forall i p f g, smatch f g (prop (S i) p) = p.
 Proof. intros. cbv. apply @eq_refl. Qed.
 Lemma smatch_binop: forall i x y P f g,
-  smatch (binop (S i) P x y) f g =
-  P (smatch x f g) (smatch y f g).
+  smatch f g (binop (S i) P x y) =
+  P (smatch f g x) (smatch f g y).
 Proof. intros. cbv. apply @eq_refl. Qed.
 Lemma smatch_sin: forall i x f g,
-  smatch (sin (S i) x) f g = f x.
+  smatch f g (sin (S i) x) = f x.
 Proof. intros. cbv. apply @eq_refl. Qed.
 Lemma smatch_cos: forall i x f g,
-  smatch (cos (S i) x) f g = g x.
+  smatch f g (cos (S i) x) = g x.
 Proof. intros. cbv. apply @eq_refl. Qed.
 Opaque smatch.
 
@@ -118,102 +119,36 @@ match k with
           (@smatch m x f g <-> smatch y f g)
 end. *)
 
-
-Local Definition iimS : forall k,
-(set k -> set k -> Prop) ->
-set (S k) -> (set k -> Prop) -> Prop.
-Proof.
-  intros k eq y x. dependent induction y.
-  - exact P.
-  - apply P. apply (IHy1 k eq). auto. apply x. apply (IHy2 k eq). auto. apply x.
-  - exact False.
-  - exact (exists z, eq z y /\ x z).
-Defined.
-Local Definition iim : forall k, 
-  (set (S k) -> set k -> Prop) ->
-    set (S k) -> (set (S k) -> Prop) -> Prop.
-Proof.
-  intros k eq y X. dependent induction y.
-  - exact P.
-  - apply P. apply (IHy1 k eq); auto. apply (IHy2 k eq); auto.
-  - exact False.
-  - exact (exists z, eq z y /\ X z).
-Defined.
-
-Local Definition eeqS : forall k,
-  (set (S k) -> (set k -> Prop) -> Prop) ->
-  (set k -> (set k -> Prop) -> Prop) ->
-  (set (S k) -> set k -> Prop) ->
-  (set k -> set k -> Prop) ->
-  set (S k) -> set k -> Prop.
-Proof.
-  intros k iimS iim iinS iin x y.
-  exact (
-    (forall z, iinS x z <-> iin y z)
-    /\ (forall Z, iimS x Z <-> iim y Z)
-    ).
-Defined.
-
-
-Local Definition iinS : forall k,
-  (set k -> set k -> Prop) ->
-  (set k -> set k -> Prop) ->
-  set (S k) -> set k -> Prop.
-Proof.
-  intros k eeq iin y x.
-  dependent induction y.
-  - exact P.
-  - apply P.
-    apply (IHy1 k eeq iin eq_refl x).
-    apply (IHy2 k eeq iin eq_refl x).
-  - apply (eeq x y).
-  - apply (iin x y).
-Defined.
-
-(* Auxiliary lemmas
-
-Lemma iin_binop: forall i f g P x y1 y2, 
-iin i f g (binop (S i) P y1 y2) x = 
-P (iin i f g y1 x) (iin i f g y2 x).
-Proof. intros. apply eq_refl. Qed.
-
-Lemma iin_sin: forall i f g x y, 
-iin i f g (sin _ y) x = f x y.
-Proof. intros. apply eq_refl. Qed.
-
-Lemma iin_cos: forall i f g x y, 
-iin i f g (cos _ y) x = g x y.
-Proof. intros. apply eq_refl. Qed.
-
-Lemma iinS_prop: forall k a b p z, iinS k a b (prop _ p) z = p.
-Proof. intros. cbv. auto. Qed.
-
-Lemma iinS_binop: forall i f g P x y1 y2, 
-  iinS i f g (binop _ P y1 y2) x =
-  P (iinS i f g y1 x) (iinS i f g y2 x).
-Proof. intros. apply eq_refl. Qed. *)
-
 (* ----------------------------------------------------------- *)
 (* The miracle fixpoint *)
+
+(* Definition
+smatchX i (P Q: set i -> set i -> Prop) F G: set (S i) -> set i -> Prop :=
+      fun x y => forall (f g: set i -> Prop),
+        (forall x y, f x -> f y -> Q x y) ->
+        (forall x y, Q x y -> g x -> g y) -> 
+        (forall x y, P x y -> f x -> g y) -> 
+          (F x f g <-> G y f g)
+. *)
+
+Definition
+EeqSaux {i} (P Q: set i -> set i -> Prop): set (S i) -> set i -> Prop :=
+  fun x y => forall (f g: set i -> Prop),
+    (forall x y, f x -> f y -> Q x y) ->
+    (forall x y, Q x y -> g x -> g y) -> 
+    (forall x y, P x y -> f x -> g y) -> 
+      (@smatch _ f g x <->
+        (exists z, P y z /\ (f z \/ forall z', g z' <-> Q z z')))
+.
 
 
 Fixpoint Iin k : set k -> set k -> Prop :=
   match k return set k -> set k -> Prop with 
   | O => in0
   | S m => 
-    let IinSm := iinS m (Eeq m) (Iin m) in
-    let IimSm := iimS m (Eeq m) in
-    let EeqSm := eeqS m IimSm (Iim m) IinSm (Iin m) in
-    fun x y => smatch x (EeqSm y) (IinSm y)
-  end
-with Iim k : set k -> (set k -> Prop) -> Prop :=
-  match k with 
-  | O => fun y _ => eval0 y
-  | S m =>
-      let IinSm := iinS m (Eeq m) (Iin m) in
-      let IimSm := iimS m (Eeq m) in
-      let EeqSm := eeqS m IimSm (Iim m) IinSm (Iin m) in
-      iim m EeqSm
+    let IinSm x y := smatch (Eeq m y) (Iin m y) x in
+    let EeqSm := EeqSaux (Iin m) (Eeq m) in 
+    fun x y => smatch (EeqSm y) (IinSm y) x
   end
 with Eeq k : set k -> set k -> Prop :=
 match k with
@@ -223,16 +158,20 @@ match k with
         (forall x y, f x -> f y -> Eeq m x y) ->
         (forall x y, Eeq m x y -> g x -> g y) -> 
         (forall x y, Iin m x y -> f x -> g y) -> 
-          (@smatch m x f g <-> smatch y f g)
+          (smatch f g x <-> smatch f g y)
 end
 .
 
-Definition IimS k : set (S k) -> (set k -> Prop) -> Prop :=
-iimS k (Eeq k).
 Definition IinS k : set (S k) -> set k -> Prop :=
-iinS k (Eeq k) (Iin k).
+  fun x y => smatch (Eeq k y) (Iin k y) x.
 Definition EeqS k : set (S k) -> set k -> Prop :=
-eeqS k (IimS k) (Iim k) (IinS k) (Iin k).
+EeqSaux (Iin k) (Eeq k).
+
+Theorem Iin_O : Iin 0 = in0.
+Proof. auto. Qed.
+Theorem Iin_S {i x y} : Iin (S i) x y = smatch (EeqS _ y) (IinS _ y) x.
+Proof. simpl Iin. intros. fold (EeqS i). unfold IinS. apply eq_refl. Qed.
+Opaque Iin.
 
 (* Eeq is equivalence relation *)
 
@@ -258,6 +197,23 @@ Proof.
   pose proof (H f g H1 H2). pose proof (H0 f g H1 H2). tauto. 
 Qed.
 
+
+Definition IinS0 : set 1 -> set 0 -> Prop :=
+  fun x y => smatch (eq0 y) (in0 y) x
+.
+
+Definition EeqS0 : set 1 -> set 0 -> Prop :=
+      fun x y => forall (f g: set 0 -> Prop),
+        (forall x y, f x -> f y -> Eeq 0 x y) ->
+        (forall x y, Eeq 0 x y -> g x -> g y) -> 
+        (forall x y, Iin 0 x y -> f x -> g y) -> 
+          (smatch f g x <-> eval0 y)
+.
+
+(* ONE LAST PROBLEM: DEFINE EeqS k ... *)
+
+
+
 (* Previous definition of Iin/S and Iim/S and EeqS, to simplify as well *)
 
 (* Axiom tmp: set 1 -> set 0 -> Prop.
@@ -277,24 +233,9 @@ Lemma Iin_0 : Iin 0 = in0.
 Proof. auto. Qed.
 Lemma Eeq_0 : Eeq 0 = eq0.
 Proof. auto. Qed.
-Lemma Iim_0 : forall x y, Iim 0 x y = eval0 x.
-Proof. auto. Qed.
 Lemma ext_0 : forall x y, Eeq 0 x y <-> forall z, Iin 0 x z <-> Iin 0 y z.
 Proof.
   intros. rewrite Eeq_0. rewrite Iin_0. unfold eq0, in0. tauto.
-Qed.
-Lemma ext_m_0 : forall x y, Eeq 0 x y <-> forall z, Iim 0 x z <-> Iim 0 y z.
-Proof.
-intros. rewrite Eeq_0. split; auto; intros. pose proof (H (fun _=> True)). rewrite Iim_0 in H0. rewrite Iim_0 in H0. unfold eq0. auto.
-Qed.
-Lemma ext_comb_0: forall x y, Eeq 0 x y <-> (
-  (forall z, Iin 0 x z <-> Iin 0 y z) /\
-  (forall Z, Iim 0 x Z <-> Iim 0 y Z)
-).
-Proof.
-  intros. split; intros.
-  - split. apply ext_0; auto. apply ext_m_0; auto.
-  - destruct H. apply ext_0; auto.
 Qed.
 
 (* Auxiliary lemmas, again *)
@@ -333,4 +274,4 @@ Lemma IinS_cos: forall i x y,
 IinS i (cos _ y) x = Iin _ x y.
 Proof. intros. apply eq_refl. Qed.
 
-Opaque Iin IinS Eeq EeqS Iim IimS.
+Opaque Iin IinS Eeq EeqS.
