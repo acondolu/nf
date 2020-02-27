@@ -20,7 +20,7 @@ Proof.
   - dependent induction x; dependent induction y.
     -- simpl. unfold eq0. repeat rewrite eval0_prop.
        split; intros. repeat rewrite iini_prop. auto.
-      pose proof (H eval0 eval0 respects_eval0_eq0 respects_eval0_eq0). repeat rewrite iini_prop in *. auto.
+      apply (H eval0 eval0); intros; auto. split; auto. apply H0; auto.
     -- unfold eq0. pose proof (IHy1 y1 eq_refl).
        pose proof (IHy2 y2 eq_refl).
        simpl in H, H0. simpl. unfold eq0 in *.

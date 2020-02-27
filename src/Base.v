@@ -83,10 +83,8 @@ Proof.
   - exact (exists z, _eq1 z y /\ x z).
 Defined. *)
 
-Local Definition iini {i} (y: set (S i)):
-  (set i -> Prop) -> (set i -> Prop) -> Prop.
+Local Definition iini {i} (y: set (S i)) (f g: set i -> Prop) : Prop.
 Proof.
-  intros f g.
   dependent induction y.
   - exact P.
   - apply P.
@@ -113,8 +111,9 @@ Fixpoint Eeq k : set k -> set k -> Prop :=
 match k with
   | O => eq0
   | S m =>
-      fun x y => forall f g,
-        respects f (Eeq m) -> respects g (Eeq m) -> 
+      fun x y => forall (f g: set m -> Prop),
+        (forall x y, f x -> f y -> Eeq m x y) ->
+        (forall x y, Eeq m x y -> f x -> f y) -> 
           (@iini m x f g <-> iini y f g)
 end.
 
