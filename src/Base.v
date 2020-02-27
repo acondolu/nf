@@ -107,26 +107,17 @@ Lemma iini_cos: forall i x f g,
 Proof. intros. cbv. apply @eq_refl. Qed.
 Opaque iini.
 
-Fixpoint Eeq k : set k -> set k -> Prop :=
+(* Fixpoint Eeq k : set k -> set k -> Prop :=
 match k with
   | O => eq0
   | S m =>
       fun x y => forall (f g: set m -> Prop),
         (forall x y, f x -> f y -> Eeq m x y) ->
         (forall x y, Eeq m x y -> f x -> f y) -> 
+        (* (forall x y, IIn m x y -> f x -> g y) ->  *)
           (@iini m x f g <-> iini y f g)
-end.
-
-(* Axiom tmp: set 1 -> set 0 -> Prop.
-
-Fixpoint EeqS k : set (S k) -> set k -> Prop :=
-match k with
-  | O => tmp
-  | S m =>
-      fun x y => forall f f' g g',
-        respects2 f f' (EeqS m) -> respects2 g g' (EeqS m) -> 
-          (@iini _ x f g <-> iini y f' g')
 end. *)
+
 
 Local Definition iimS : forall k,
 (set k -> set k -> Prop) ->
@@ -224,11 +215,11 @@ Proof. intros. apply eq_refl. Qed. *)
 Fixpoint Iin k : set k -> set k -> Prop :=
   match k return set k -> set k -> Prop with 
   | O => in0
-  | S m =>
+  | S m => 
     let IinSm := iinS m (Eeq m) (Iin m) in
     let IimSm := iimS m (Eeq m) in
     let EeqSm := eeqS m IimSm (Iim m) IinSm (Iin m) in
-    iin m EeqSm IinSm
+    fun x y => iini x (EeqSm y) (IinSm y)
   end
 with Iim k : set k -> (set k -> Prop) -> Prop :=
   match k with 
@@ -239,6 +230,16 @@ with Iim k : set k -> (set k -> Prop) -> Prop :=
       let EeqSm := eeqS m IimSm (Iim m) IinSm (Iin m) in
       iim m EeqSm
   end
+with Eeq k : set k -> set k -> Prop :=
+match k with
+  | O => eq0
+  | S m =>
+      fun x y => forall (f g: set m -> Prop),
+        (forall x y, f x -> f y -> Eeq m x y) ->
+        (forall x y, Eeq m x y -> g x -> g y) -> 
+        (forall x y, Iin m x y -> f x -> g y) -> 
+          (@iini m x f g <-> iini y f g)
+end
 .
 
 Definition IimS k : set (S k) -> (set k -> Prop) -> Prop :=
@@ -247,6 +248,43 @@ Definition IinS k : set (S k) -> set k -> Prop :=
 iinS k (Eeq k) (Iin k).
 Definition EeqS k : set (S k) -> set k -> Prop :=
 eeqS k (IimS k) (Iim k) (IinS k) (Iin k).
+
+(* Eeq is equivalence relation *)
+
+Lemma Eeq_refl: forall k x, Eeq k x x.
+Proof.
+  destruct k; intro x.
+  - simpl. unfold eq0. tauto. 
+  - simpl Eeq. tauto.
+Qed.
+
+Lemma Eeq_sym: forall k x y, Eeq k x y -> Eeq k y x.
+Proof.
+  destruct k; intros x y.
+  - simpl. unfold eq0. tauto. 
+  - simpl Eeq. intros. pose proof (H f g H0 H1). tauto. 
+Qed.
+
+Lemma Eeq_trans: forall k x y z, Eeq k x y -> Eeq k y z -> Eeq k x z.
+Proof.
+  destruct k; intros x y z.
+  - simpl. unfold eq0. tauto. 
+  - simpl Eeq. intros.
+  pose proof (H f g H1 H2). pose proof (H0 f g H1 H2). tauto. 
+Qed.
+
+(* Previous definition of Iin/S and Iim/S and EeqS, to simplify as well *)
+
+(* Axiom tmp: set 1 -> set 0 -> Prop.
+
+Fixpoint EeqS k : set (S k) -> set k -> Prop :=
+match k with
+  | O => tmp
+  | S m =>
+      fun x y => forall f f' g g',
+        respects2 f f' (EeqS m) -> respects2 g g' (EeqS m) -> 
+          (@iini _ x f g <-> iini y f' g')
+end. *)
 
 (* ----------------------------------------------------------- *)
 

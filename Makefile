@@ -1,4 +1,4 @@
-.PHONY: all clean ci
+.PHONY: all clean ci remake
 .DEFAULT_GOAL := all
 
 ifndef COQC
@@ -14,4 +14,5 @@ ci: src/Base.vos src/Lifting.vos src/Top.vos
 
 clean:
 	rm -f src/*.glob src/*.vo src/*.vok src/*.vos src/.*.aux
-	
+
+remake: clean all

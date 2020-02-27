@@ -13,21 +13,31 @@ Fixpoint lift {k} (y: set k) : set (S k) :=
   | cos _ y' => cos _ (lift y')
 end.
 
+Lemma iini_lift_0: forall f g x, Base.iini (lift x) f g = eval0 x.
+Proof.
+  intros. dependent induction x.
+  -  auto.
+  - simpl lift. rewrite Base.iini_binop. rewrite Base.eval0_binop.
+    rewrite (IHx1 x1). rewrite (IHx2 x2). auto. auto. auto. auto. auto.
+Qed.
+
 Theorem ambiguityEeq:
   forall i x y, Eeq i x y <-> Eeq _ (lift x) (lift y).
 Proof.
   simple induction i.
-  - dependent induction x; dependent induction y.
+  - dependent destruction x; dependent destruction y.
     -- simpl. unfold eq0. repeat rewrite eval0_prop.
        split; intros. repeat rewrite iini_prop. auto.
-      apply (H eval0 eval0); intros; auto. split; auto. apply H0; auto.
-    -- unfold eq0. pose proof (IHy1 y1 eq_refl).
-       pose proof (IHy2 y2 eq_refl).
-       simpl in H, H0. simpl. unfold eq0 in *.
-       repeat rewrite eval0_prop in *.
-       repeat rewrite eval0_binop. admit.
-       -- admit.
-       -- admit.
+      apply (H eval0 (fun _ => True)); intros; auto. split; auto.
+    -- split; intros.
+       --- simpl Eeq. intros. rewrite Base.iini_prop. rewrite Base.iini_binop.
+        repeat rewrite iini_lift_0. assumption.
+       --- pose proof (H eval0 (fun _ => True)).
+       repeat rewrite iini_lift_0 in H0.
+       unfold Eeq. unfold eq0. apply H0; intros; auto.
+       unfold eq0. tauto.
+    -- admit.
+    -- admit.
   - intros.
 Admitted. 
 
