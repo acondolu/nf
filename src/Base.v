@@ -83,7 +83,7 @@ Proof.
   - exact (exists z, _eq1 z y /\ x z).
 Defined. *)
 
-Local Definition iini {i} (y: set (S i)) (f g: set i -> Prop) : Prop.
+Local Definition smatch {i} (y: set (S i)) (f g: set i -> Prop) : Prop.
 Proof.
   dependent induction y.
   - exact P.
@@ -93,19 +93,19 @@ Proof.
   - apply (f y).
   - apply (g y).
 Defined.
-Lemma iini_prop: forall i p f g, iini (prop (S i) p) f g = p.
+Lemma smatch_prop: forall i p f g, smatch (prop (S i) p) f g = p.
 Proof. intros. cbv. apply @eq_refl. Qed.
-Lemma iini_binop: forall i x y P f g,
-  iini (binop (S i) P x y) f g =
-  P (iini x f g) (iini y f g).
+Lemma smatch_binop: forall i x y P f g,
+  smatch (binop (S i) P x y) f g =
+  P (smatch x f g) (smatch y f g).
 Proof. intros. cbv. apply @eq_refl. Qed.
-Lemma iini_sin: forall i x f g,
-  iini (sin (S i) x) f g = f x.
+Lemma smatch_sin: forall i x f g,
+  smatch (sin (S i) x) f g = f x.
 Proof. intros. cbv. apply @eq_refl. Qed.
-Lemma iini_cos: forall i x f g,
-  iini (cos (S i) x) f g = g x.
+Lemma smatch_cos: forall i x f g,
+  smatch (cos (S i) x) f g = g x.
 Proof. intros. cbv. apply @eq_refl. Qed.
-Opaque iini.
+Opaque smatch.
 
 (* Fixpoint Eeq k : set k -> set k -> Prop :=
 match k with
@@ -115,7 +115,7 @@ match k with
         (forall x y, f x -> f y -> Eeq m x y) ->
         (forall x y, Eeq m x y -> f x -> f y) -> 
         (* (forall x y, IIn m x y -> f x -> g y) ->  *)
-          (@iini m x f g <-> iini y f g)
+          (@smatch m x f g <-> smatch y f g)
 end. *)
 
 
@@ -170,21 +170,6 @@ Proof.
   - apply (iin x y).
 Defined.
 
-Local Definition iin : forall k,
-  (set (S k) -> set k -> Prop) ->
-  (set (S k) -> set k -> Prop) ->
-  set (S k) -> set (S k) -> Prop.
-Proof.
-  intros k eeqS iinS y x.
-  dependent induction y.
-  - exact P.
-  - apply P.
-    apply (IHy1 k eeqS iinS eq_refl x).
-    apply (IHy2 k eeqS iinS eq_refl x).
-  - apply (eeqS x y).
-  - apply (iinS x y).
-Defined.
-
 (* Auxiliary lemmas
 
 Lemma iin_binop: forall i f g P x y1 y2, 
@@ -219,7 +204,7 @@ Fixpoint Iin k : set k -> set k -> Prop :=
     let IinSm := iinS m (Eeq m) (Iin m) in
     let IimSm := iimS m (Eeq m) in
     let EeqSm := eeqS m IimSm (Iim m) IinSm (Iin m) in
-    fun x y => iini x (EeqSm y) (IinSm y)
+    fun x y => smatch x (EeqSm y) (IinSm y)
   end
 with Iim k : set k -> (set k -> Prop) -> Prop :=
   match k with 
@@ -238,7 +223,7 @@ match k with
         (forall x y, f x -> f y -> Eeq m x y) ->
         (forall x y, Eeq m x y -> g x -> g y) -> 
         (forall x y, Iin m x y -> f x -> g y) -> 
-          (@iini m x f g <-> iini y f g)
+          (@smatch m x f g <-> smatch y f g)
 end
 .
 
@@ -283,7 +268,7 @@ match k with
   | S m =>
       fun x y => forall f f' g g',
         respects2 f f' (EeqS m) -> respects2 g g' (EeqS m) -> 
-          (@iini _ x f g <-> iini y f' g')
+          (@smatch _ x f g <-> smatch y f' g')
 end. *)
 
 (* ----------------------------------------------------------- *)
