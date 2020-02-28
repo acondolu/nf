@@ -13,11 +13,11 @@ Fixpoint lift {k} (y: set k) : set (S k) :=
   | cos _ y' => cos _ (lift y')
 end.
 
-Lemma smatch_lift_0: forall f g x, Base.smatch f g (lift x) = eval0 x.
+Lemma smatch_lift_0: forall f g x, Base.smatch f g (lift x) = Eval0 x.
 Proof.
   intros. dependent induction x.
   -  auto.
-  - simpl lift. rewrite Base.smatch_binop. rewrite Base.eval0_binop.
+  - simpl lift. rewrite Base.smatch_binop. rewrite Base.Eval0_binop.
     rewrite (IHx1 x1). rewrite (IHx2 x2). auto. auto. auto. auto. auto.
 Qed.
 
@@ -26,16 +26,16 @@ Theorem ambiguityEeq:
 Proof.
   simple induction i.
   - dependent destruction x; dependent destruction y.
-    -- simpl. unfold eq0. repeat rewrite eval0_prop.
+    -- simpl. unfold Eeq0. repeat rewrite Eval0_prop.
        split; intros. repeat rewrite smatch_prop. auto.
-      apply (H eval0 (fun _ => True)); intros; auto. split; auto.
+      apply (H Eval0 (fun _ => True)); intros; auto. split; auto.
     -- split; intros.
        --- simpl Eeq. intros. rewrite Base.smatch_prop. rewrite Base.smatch_binop.
         repeat rewrite smatch_lift_0. assumption.
-       --- pose proof (H eval0 (fun _ => True)).
+       --- pose proof (H Eval0 (fun _ => True)).
        repeat rewrite smatch_lift_0 in H0.
-       unfold Eeq. unfold eq0. apply H0; intros; auto.
-       unfold eq0. tauto.
+       unfold Eeq. unfold Eeq0. apply H0; intros; auto.
+       unfold Eeq0. tauto.
     -- admit.
     -- admit.
   - intros.

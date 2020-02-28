@@ -22,29 +22,29 @@ Definition respects2 {X Y} f g (R: X -> Y -> Prop) :=
 
 (* ----------------------------------------------------------- *)
 
-Definition eval0 : set O -> Prop.
+Definition Eval0 : set O -> Prop.
 Proof.
   intro x. dependent induction x; apply P.
   apply IHx1; auto. apply IHx2; auto.
 Defined.
 
-Lemma eval0_prop: forall P, eval0 (prop 0 P) = P.
+Lemma Eval0_prop: forall P, Eval0 (prop 0 P) = P.
 Proof. cbv; apply @eq_refl. Qed.
-Lemma eval0_binop: forall P x y,
-  eval0 (binop 0 P x y) = P (eval0 x) (eval0 y).
+Lemma Eval0_binop: forall P x y,
+  Eval0 (binop 0 P x y) = P (Eval0 x) (Eval0 y).
 Proof. intros. cbv. apply @eq_refl. Qed.
-Opaque eval0.
-Hint Rewrite eval0_prop eval0_binop: nf.
+Opaque Eval0.
+Hint Rewrite Eval0_prop Eval0_binop: nf.
 
-Definition in0 (y x: set O) := eval0 y.
-Definition eq0 (x y: set O) := eval0 x <-> eval0 y.
+Definition Iin0 (y x: set O) := Eval0 y.
+Definition Eeq0 (x y: set O) := Eval0 x <-> Eval0 y.
 
-Lemma respects_eval0_eq0: respects eval0 eq0.
+(* Lemma respects_eval0_eq0: respects Eval0 eq0.
 Proof.
   unfold respects. unfold eq0. intros.
   dependent induction x; dependent induction y;
   repeat rewrite eval0_prop in *; auto. 
-Qed.
+Qed. *)
 
 (* ----------------------------------------------------------- *)
 
@@ -107,6 +107,15 @@ Lemma smatch_cos: forall i x f g,
   smatch f g (cos (S i) x) = g x.
 Proof. intros. cbv. apply @eq_refl. Qed.
 Opaque smatch.
+Hint Rewrite smatch_prop smatch_binop smatch_sin smatch_cos: nf.
+
+Definition EeqS0 : set 1 -> set 0 -> Prop :=
+      fun x y => forall (f g: set 0 -> Prop),
+        (forall x, f x -> (forall y, f y <-> Eeq0 x y)) ->
+        (forall x, g x -> (forall y, g y <-> Eeq0 x y)) -> 
+        (forall x, f x -> (forall y, g y <-> Iin0 x y)) -> 
+          (smatch f g x <-> Eval0 y)
+.
 
 (* Fixpoint Eeq k : set k -> set k -> Prop :=
 match k with
@@ -144,7 +153,7 @@ EeqSaux {i} (P Q: set i -> set i -> Prop): set (S i) -> set i -> Prop :=
 
 Fixpoint Iin k : set k -> set k -> Prop :=
   match k return set k -> set k -> Prop with 
-  | O => in0
+  | O => Iin0
   | S m => 
     let IinSm x y := smatch (Eeq m y) (Iin m y) x in
     let EeqSm := EeqSaux (Iin m) (Eeq m) in 
@@ -152,7 +161,7 @@ Fixpoint Iin k : set k -> set k -> Prop :=
   end
 with Eeq k : set k -> set k -> Prop :=
 match k with
-  | O => eq0
+  | O => Eeq0
   | S m =>
       fun x y => forall (f g: set m -> Prop),
         (forall x y, f x -> f y -> Eeq m x y) ->
@@ -167,7 +176,7 @@ Definition IinS k : set (S k) -> set k -> Prop :=
 Definition EeqS k : set (S k) -> set k -> Prop :=
 EeqSaux (Iin k) (Eeq k).
 
-Theorem Iin_O : Iin 0 = in0.
+Theorem Iin_O : Iin 0 = Iin0.
 Proof. auto. Qed.
 Theorem Iin_S {i x y} : Iin (S i) x y = smatch (EeqS _ y) (IinS _ y) x.
 Proof. simpl Iin. intros. fold (EeqS i). unfold IinS. apply eq_refl. Qed.
@@ -178,37 +187,38 @@ Opaque Iin.
 Lemma Eeq_refl: forall k x, Eeq k x x.
 Proof.
   destruct k; intro x.
-  - simpl. unfold eq0. tauto. 
+  - simpl. unfold Eeq0. tauto. 
   - simpl Eeq. tauto.
 Qed.
 
 Lemma Eeq_sym: forall k x y, Eeq k x y -> Eeq k y x.
 Proof.
   destruct k; intros x y.
-  - simpl. unfold eq0. tauto. 
+  - simpl. unfold Eeq0. tauto. 
   - simpl Eeq. intros. pose proof (H f g H0 H1). tauto. 
 Qed.
 
 Lemma Eeq_trans: forall k x y z, Eeq k x y -> Eeq k y z -> Eeq k x z.
 Proof.
   destruct k; intros x y z.
-  - simpl. unfold eq0. tauto. 
+  - simpl. unfold Eeq0. tauto. 
   - simpl Eeq. intros.
   pose proof (H f g H1 H2). pose proof (H0 f g H1 H2). tauto. 
 Qed.
 
 
 Definition IinS0 : set 1 -> set 0 -> Prop :=
-  fun x y => smatch (eq0 y) (in0 y) x
+  fun x y => smatch (Eeq0 y) (Iin0 y) x
 .
 
-Definition EeqS0 : set 1 -> set 0 -> Prop :=
-      fun x y => forall (f g: set 0 -> Prop),
-        (forall x y, f x -> f y -> Eeq 0 x y) ->
-        (forall x y, Eeq 0 x y -> g x -> g y) -> 
-        (forall x y, Iin 0 x y -> f x -> g y) -> 
-          (smatch f g x <-> eval0 y)
-.
+
+
+Definition IinO' x y := smatch (EeqS0 y) (IinS0 y) x.
+
+(* 
+  Idea e': forall f g, exists z, f = EqS z /\ g = InS z.
+
+ *)
 
 (* ONE LAST PROBLEM: DEFINE EeqS k ... *)
 
@@ -229,13 +239,13 @@ end. *)
 
 (* ----------------------------------------------------------- *)
 
-Lemma Iin_0 : Iin 0 = in0.
+Lemma Iin_0 : Iin 0 = Iin0.
 Proof. auto. Qed.
-Lemma Eeq_0 : Eeq 0 = eq0.
+Lemma Eeq_0 : Eeq 0 = Eeq0.
 Proof. auto. Qed.
 Lemma ext_0 : forall x y, Eeq 0 x y <-> forall z, Iin 0 x z <-> Iin 0 y z.
 Proof.
-  intros. rewrite Eeq_0. rewrite Iin_0. unfold eq0, in0. tauto.
+  intros. rewrite Eeq_0. rewrite Iin_0. unfold Eeq0, Iin0. tauto.
 Qed.
 
 (* Auxiliary lemmas, again *)
