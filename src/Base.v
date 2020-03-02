@@ -110,12 +110,16 @@ Opaque smatch.
 Hint Rewrite smatch_prop smatch_binop smatch_sin smatch_cos: nf.
 
 Definition EeqS0 : set 1 -> set 0 -> Prop :=
-      fun x y => forall (f g: set 0 -> Prop),
-        (forall x, f x -> (forall y, f y <-> Eeq0 x y)) ->
-        (forall x, g x -> (forall y, g y <-> Eeq0 x y)) -> 
-        (forall x, f x -> (forall y, g y <-> Iin0 x y)) -> 
-          (smatch f g x <-> Eval0 y)
+  fun x y => forall (f g: set 0 -> Prop),
+    (forall x, f x -> (forall y, f y <-> Eeq0 x y)) ->
+    (forall x, g x -> (forall y, g y <-> Eeq0 x y)) -> 
+    (forall x, f x -> (forall y, g y <-> Iin0 x y)) -> 
+      (smatch f g x <-> Eval0 y)
 .
+
+Definition compose {X Y Z} (f: X -> Y) (g: Y -> Z) x := g (f x).
+
+Axiom Lift : forall {i}, set i -> set (S i).
 
 (* Fixpoint Eeq k : set k -> set k -> Prop :=
 match k with
@@ -168,8 +172,7 @@ match k with
         (forall x y, Eeq m x y -> g x -> g y) -> 
         (forall x y, Iin m x y -> f x -> g y) -> 
           (smatch f g x <-> smatch f g y)
-end
-.
+end.
 
 Definition IinS k : set (S k) -> set k -> Prop :=
   fun x y => smatch (Eeq k y) (Iin k y) x.
@@ -213,7 +216,7 @@ Definition IinS0 : set 1 -> set 0 -> Prop :=
 
 
 
-Definition IinO' x y := smatch (EeqS0 y) (IinS0 y) x.
+Definition Iin1 x y := smatch (EeqS0 y) (IinS0 y) x.
 
 (* 
   Idea e': forall f g, exists z, f = EqS z /\ g = InS z.
