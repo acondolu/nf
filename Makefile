@@ -16,3 +16,5 @@ clean:
 	rm -f src/*.glob src/*.vo src/*.vok src/*.vos src/.*.aux
 
 remake: clean all
+
+remake2: clean src/Base2.vos
