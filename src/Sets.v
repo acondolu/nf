@@ -1,20 +1,28 @@
-
-Add LoadPath "src/".
+ Add LoadPath "src/".
 Require Import Tower.
 
-Definition orbF {X} (f g: X -> bool) x := andb (f x) (g x).
+(* Cumulative hierarchy *)
+Definition V := { n: nat & tower n }.
 
-Definition set X := prodT (X -> bool) ((X -> bool) -> bool).
+Definition E : V := existT _ O tt.
+Definition U : V := existT tower 1 (fun _ => True, fun _ => True).
 
-Definition lift n : set (tower n) -> set (tower (S n)) := fun x => match x with
-  (a, b) => (orbF (@ liftn (S n) a) b, @liftn' (S (S n)) b)
-end.
+Fixpoint complement n : tower (S n) -> tower (S n) := fun x =>
+  (fun z => fst x z -> False, fun z => snd x z -> False)
+.
 
+Fixpoint union n : tower n -> tower n -> tower n := 
+  match n with
+  | O => fun _ _ => tt
+  | S m => fun x y =>
+      (fun z => fst x z \/ fst y z, fun z => snd x z \/ snd y z)
+  end
+.
 
+Definition sin n : tower n -> tower (S n) := fun x =>
+  (fun z => x = z, fun _ => False)
+.
 
-
-
-Definition V := { n: nat & set (tower n)}.
-
-Definition U : V := existT _ O (fun _ => true, fun _ => true).
-Definition E : V := existT _ O (fun _ => false, fun _ => false).
+(* Definition cos n : tower n -> tower (S n) := fun x =>
+  (fun z: tower n => x z, fun z => z x)
+. *)
