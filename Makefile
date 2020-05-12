@@ -9,9 +9,9 @@ endif
 src/%.vos: src/%.v
 	$(COQC) -R src "" $<
 
-all: src/Tower.vos
+all: src/Tower.vos src/Sets.vos
 
-ci: src/Tower.vos
+ci: all
 
 clean:
 	rm -f src/*.glob src/*.vo src/*.vok src/*.vos src/.*.aux
