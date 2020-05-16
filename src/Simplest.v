@@ -17,6 +17,7 @@ Fixpoint eeq a b := match a,b with
     (forall x, exists y, eeq (f x) (g y))
     /\ (forall y, exists x, eeq (f x) (g y))
 end.
+Notation "A ≡ B" := (eeq A B) (at level 85).
 
 Definition iin a b := match b with
   | Pos X f => exists x: X, eeq (f x) a
@@ -24,12 +25,12 @@ Definition iin a b := match b with
 end.
 Notation "A ∈ B" := (iin A B) (at level 85).
 
-Lemma eeq_refl : forall x, eeq x x.
-Proof.
-  induction x; simpl eeq; split; intro x; exists x; apply H.
-Qed.
+(* Equality is an equivalence relation *)
 
-Lemma eq_trans : forall x y z, eeq x y -> eeq y z -> eeq x z.
+Lemma eeq_refl : forall {x}, x ≡ x.
+Proof. induction x; split; intro x; exists x; apply H. Qed.
+
+Lemma eeq_trans : forall {x y z}, x ≡ y -> y ≡ z -> x ≡ z.
 Proof.
   induction x; induction y; induction z; intros; simpl eeq.
   - simpl eeq in H2, H3. destruct H2, H3. split; intro.
@@ -46,9 +47,13 @@ Proof.
   destruct (H5 y). destruct (H4 x). exists x0. apply (H _ _ _ H7 H6).
 Qed.
 
-(* Lemma eq_sym : forall x y, eeq x y -> eeq y x.
+Lemma eeq_sym : forall {x y}, x ≡ y -> y ≡ x.
 Proof.
-  intros x y. induction x; destruct y; intro. destruct H0; simpl eeq.
-  - simpl eeq. split.
-    -- intro x. destruct (H1 x). pose proof (H x0). destruct (s x0). *)
-Conjecture eq_sym : forall x y, eeq x y -> eeq y x.
+  intro x. induction x; destruct y; simpl eeq; auto.
+  - intro A. destruct A. split; intro a.
+    -- destruct (H1 a). exists x. apply (H _ _ H2).
+    -- destruct (H0 a). exists x. apply (H _ _ H2).
+  - intro A. destruct A. split; intro a.
+  -- destruct (H1 a). exists x. apply (H _ _ H2).
+  -- destruct (H0 a). exists x. apply (H _ _ H2).
+Qed.

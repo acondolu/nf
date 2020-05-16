@@ -2,11 +2,12 @@ Add LoadPath "src/".
 Require Import Simplest.
 
 
-Lemma ext1: forall x y, eeq x y -> forall z, iin z x -> iin z y.
+Lemma in_sound_right:
+  forall x y, x ≡ y -> forall z, z ∈ x -> z ∈ y.
 Proof.
-destruct x; destruct y; simpl eeq; intros e z; simpl iin; simpl eeq; intros; destruct e.
-destruct H. destruct (H0 x). exists x0. pose proof (eq_sym _ _ H2). apply (eq_trans _ _ _ H3 H).
-  - destruct (H2 x). pose proof (eq_trans _ _ _ H3 H0). apply (H _ H4).
+  destruct x; destruct y; simpl eeq; intros e z; simpl iin; simpl eeq; intros; destruct e.
+  - destruct H. destruct (H0 x). exists x0. pose proof (eeq_sym H2). apply (eeq_trans H3 H).
+  - destruct (H2 x). pose proof (eeq_trans H3 H0). apply (H _ H4).
 Qed.
 
 Definition isPos x := match x with
@@ -83,7 +84,7 @@ Lemma ext2: forall X f Y g, (forall z, iin z (Pos X f) <-> iin z (Pos Y g)) -> e
 Proof.
   intros. simpl; split; intro.
   - destruct (H (f x)). simpl iin in H0.
-    cut (exists x0 : X, eeq (f x0) (f x)). intro. destruct (H0 H2). exists x0. apply eq_sym. assumption. exists x. apply eeq_refl.
+    cut (exists x0 : X, eeq (f x0) (f x)). intro. destruct (H0 H2). exists x0. apply eeq_sym. assumption. exists x. apply eeq_refl.
   - destruct (H (g y)). simpl iin in H1.
   cut (exists x : Y, eeq (g x) (g y)). intro. destruct (H1 H2). exists x. assumption. exists y. apply eeq_refl.
 Qed.
@@ -97,7 +98,7 @@ Proof.
     apply NNPP. intro.
     cut (forall x0 : Y, eeq (g x0) (f x) -> False). intro.
     pose proof (H1 H3). apply (H4 x). apply eeq_refl. intros.
-    pose proof (eq_sym _ _ H3). revert H4. clear H3. revert x0.
+    pose proof (eeq_sym H3). revert H4. clear H3. revert x0.
     apply not_ex_all_not. assumption.
   - destruct (H (g y)). simpl iin in H0.
   apply NNPP. intro.
@@ -106,9 +107,9 @@ Proof.
   apply not_ex_all_not. assumption.
 Qed.
 
-Lemma extensionality: forall x y, eeq x y <-> forall z, iin z x <-> iin z y.
+Lemma extensionality: forall x y, x ≡ y <-> forall z, z ∈ x <-> z ∈ y.
 Proof.
-  intros. split. intros. split; apply ext1; auto. apply eq_sym. assumption.
+  intros. split. intros. split; apply in_sound_right; auto. apply eeq_sym. assumption.
   destruct x; destruct y.
   - apply ext2.
   - intros. destruct (contra' _ _ _ _ H).
