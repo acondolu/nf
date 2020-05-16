@@ -9,7 +9,7 @@ endif
 src/%.vos: src/%.v
 	$(COQC) -R src "" $<
 
-all: src/Tower.vos src/Sets.vos
+all: src/Simplest.vos #src/Tower.vos src/Sets.vos
 
 ci: all
 
