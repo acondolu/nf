@@ -1,28 +1,26 @@
- Add LoadPath "src/".
-Require Import Tower.
+Add LoadPath "src/".
+Require Import Simplest.
 
-(* Cumulative hierarchy *)
-Definition V := { n: nat & tower n }.
+Definition 𝒰 : 𝓥 := Neg False (fun x => match x with end).
+Definition Ø : 𝓥 := Pos False (fun x => match x with end).
 
-Definition E : V := existT _ O tt.
-Definition U : V := existT tower 1 (fun _ => True, fun _ => True).
+Lemma univ_okay : forall x, x ∈ 𝒰.
+Proof. intros x H. destruct H. Qed.
 
-Fixpoint complement n : tower (S n) -> tower (S n) := fun x =>
-  (fun z => fst x z -> False, fun z => snd x z -> False)
-.
+Lemma empty_ok : forall x, x ∈ Ø -> False.
+Proof. intros x H. apply H. Qed.
 
-Fixpoint union n : tower n -> tower n -> tower n := 
-  match n with
-  | O => fun _ _ => tt
-  | S m => fun x y =>
-      (fun z => fst x z \/ fst y z, fun z => snd x z \/ snd y z)
+Definition neg : 𝓥 -> 𝓥 := fun x =>
+  match x with
+  | Pos X f => Neg X f
+  | Neg X f => Pos X f
   end
 .
 
-Definition sin n : tower n -> tower (S n) := fun x =>
-  (fun z => x = z, fun _ => False)
-.
-
-(* Definition cos n : tower n -> tower (S n) := fun x =>
-  (fun z: tower n => x z, fun z => z x)
-. *)
+Require Import Coq.Logic.Classical_Pred_Type.
+Lemma neg_ok : forall x y, x ∈ (neg y) <-> (x ∈ y -> False).
+Proof.
+  intros. destruct y.
+  - simpl neg. simpl iin. split. apply all_not_not_ex. apply not_ex_all_not.
+  - simpl neg. simpl iin. split. intros. revert H. apply all_not_not_ex. assumption. apply not_all_not_ex.
+Qed. 
