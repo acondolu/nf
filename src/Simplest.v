@@ -1,27 +1,26 @@
-Require Import Coq.Sets.Finite_sets.
 
 (* see also https://github.com/coq-contribs/zfc *)
 Inductive set :=
-  | Pos : forall X, (X -> set) -> set
-  | Neg : forall X, (X -> set) -> set
+  | Pos : forall {X}, (X -> set) -> set
+  | Neg : forall {X}, (X -> set) -> set
 .
 Notation 𝓥 := set.
 
 Fixpoint eeq a b := match a,b with
-  | Pos _ _, Neg _ _ => False
-  | Neg _ _, Pos _ _ => False
-  | Pos X f, Pos Y g =>
+  | Pos _, Neg _ => False
+  | Neg _, Pos _ => False
+  | Pos f, Pos g =>
       (forall x, exists y, eeq (f x) (g y))
       /\ (forall y, exists x, eeq (f x) (g y))
-  | Neg X f, Neg Y g =>
+  | Neg f, Neg g =>
     (forall x, exists y, eeq (f x) (g y))
     /\ (forall y, exists x, eeq (f x) (g y))
 end.
 Notation "A ≡ B" := (eeq A B) (at level 85).
 
 Definition iin a b := match b with
-  | Pos X f => exists x: X, eeq (f x) a
-  | Neg X f => forall x: X, eeq (f x) a -> False
+  | Pos f => exists x, eeq (f x) a
+  | Neg f => forall x, eeq (f x) a -> False
 end.
 Notation "A ∈ B" := (iin A B) (at level 85).
 

@@ -11,16 +11,16 @@ Proof.
 Qed.
 
 Definition isPos x := match x with
-  | Pos _ _ => True
-  | _ => False end.
+  | Pos _ => True
+  | Neg _ => False end.
 
   Definition getX x := match x with
-  | Pos X _ => X
-  | Neg X _ => X end.
+  | @Pos X _ => X
+  | @Neg X _ => X end.
 
   Definition getf x: getX x -> set := match x with
-  | Pos X f => f
-  | Neg X f => f end.
+  | Pos f => f
+  | Neg f => f end.
 
 Lemma boh': forall a, isPos a -> forall x : getX a, forall b, b = getf a x -> eeq (getf a x) a -> False.
 Proof.
@@ -39,10 +39,10 @@ Proof.
   - intros. destruct H0.
 Qed.
 
-Lemma boh'': forall X f x, eeq (f x) (Pos X f) -> False.
+Lemma boh'': forall X f x, eeq (f x) (@Pos X f) -> False.
 Proof.
   intros.
-  apply (boh' (Pos X f) I x (f x) (eq_refl _) H).
+  apply (boh' (@Pos X f) I x (f x) (eq_refl _) H).
 Qed.
 
  Lemma boh: forall x, isPos x -> iin x x -> False.
@@ -61,7 +61,7 @@ Definition f_sum {X Y} f g (z: X + Y): set :=
 
 Require Import Coq.Logic.Classical_Prop.
 
-Lemma contra: forall X f Y g, (forall z, iin z (Pos X f) <-> iin z (Neg Y g)) -> (forall z, iin z (Pos (X + Y) (f_sum f g))).
+Lemma contra: forall X f Y g, (forall z, iin z (@Pos X f) <-> iin z (@Neg Y g)) -> (forall z, iin z (@Pos (X + Y) (f_sum f g))).
 Proof.
   intros. simpl iin in *.
   pose proof (H z).
@@ -73,14 +73,14 @@ Proof.
   apply NNPP. intro. apply H3. intros. apply H4. exists x. auto.
 Qed.
 
-Lemma contra': forall X f Y g, (forall z, iin z (Pos X f) <-> iin z (Neg Y g)) -> False.
+Lemma contra': forall X f Y g, (forall z, iin z (@Pos X f) <-> iin z (@Neg Y g)) -> False.
 Proof.
   intros.
   pose proof (contra _ _ _ _ H).
-  apply (boh (Pos (X + Y) (f_sum f g)) I). apply H0.
+  apply (boh (@Pos (X + Y) (f_sum f g)) I). apply H0.
 Qed.
 
-Lemma ext2: forall X f Y g, (forall z, iin z (Pos X f) <-> iin z (Pos Y g)) -> eeq (Pos X f) (Pos Y g).
+Lemma ext2: forall X f Y g, (forall z, iin z (@Pos X f) <-> iin z (@Pos Y g)) -> eeq (@Pos X f) (@Pos Y g).
 Proof.
   intros. simpl; split; intro.
   - destruct (H (f x)). simpl iin in H0.
@@ -91,7 +91,7 @@ Qed.
 
 Require Import Coq.Logic.Classical_Pred_Type.
 
-Lemma ext3: forall X f Y g, (forall z, iin z (Neg X f) <-> iin z (Neg Y g)) -> eeq (Pos X f) (Pos Y g).
+Lemma ext3: forall X f Y g, (forall z, iin z (@Neg X f) <-> iin z (@Neg Y g)) -> eeq (@Pos X f) (@Pos Y g).
 Proof.
   intros. simpl; split; intro.
   - destruct (H (f x)). simpl iin in H1.
@@ -113,7 +113,7 @@ Proof.
   destruct x; destruct y.
   - apply ext2.
   - intros. destruct (contra' _ _ _ _ H).
-  - intros. cut (forall z : set, iin z (Pos X0 s0) <-> iin z (Neg X s)).
+  - intros. cut (forall z : set, iin z (@Pos X0 s0) <-> iin z (@Neg X s)).
     intro. destruct (contra' _ _ _ _ H0).
     intro z. apply iff_sym. apply (H z). 
   - apply ext3.
