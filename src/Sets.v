@@ -1,3 +1,4 @@
+Require Import Coq.Logic.Classical_Prop.
 Require Import Coq.Logic.Classical_Pred_Type.
 
 Add LoadPath "src/".
@@ -100,3 +101,14 @@ Qed.
 
 Lemma cap_ok : forall x y z, z ∈ (x ⋂ y) <-> (z ∈ x) /\ (z ∈ y).
 Proof. intros. split. apply cap1. apply cap2. Qed.
+
+Definition cup x y := neg (cap (neg x) (neg y)).
+Notation "A ∪ B" := (cup A B) (at level 85).
+Lemma cup_ok : forall x y z, z ∈ (x ∪ y) <-> (z ∈ x) \/ (z ∈ y).
+Proof.
+  intros. unfold cup. split; intros.
+  - rewrite neg_ok in H. rewrite cap_ok in H. rewrite neg_ok in H. rewrite neg_ok in H.
+    apply NNPP. intro. apply H. split; intro; apply H0. left. assumption. right. assumption.
+  - apply neg_ok. intro. rewrite cap_ok in H0. rewrite neg_ok in H0. rewrite neg_ok in H0. destruct H0.
+    destruct H. apply H0. assumption. apply H1. assumption.
+Qed. 

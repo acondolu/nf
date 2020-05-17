@@ -10,6 +10,14 @@ Proof.
   - destruct (H2 x). pose proof (eeq_trans H3 H0). apply (H _ H4).
 Qed.
 
+Lemma in_sound_left:
+  forall x y, x ≡ y -> forall z, x ∈ z -> y ∈ z.
+Proof.
+  destruct z; simpl iin; intros.
+  - destruct H0. exists x0. apply (eeq_trans H0 H).
+  - apply (H0 x0). apply (eeq_trans H1 (eeq_sym H)).
+Qed.
+
 Definition isPos x := match x with
   | Pos _ => True
   | Neg _ => False end.
