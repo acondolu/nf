@@ -4,15 +4,19 @@ Require Import Coq.Logic.Classical_Pred_Type.
 Add LoadPath "src/".
 Require Import Simplest.
 
+(* The universal set *)
 Definition 𝒰 : 𝓥 := @Neg False (fun x => match x with end).
-Definition Ø : 𝓥 := @Pos False (fun x => match x with end).
 
 Lemma univ_okay : forall x, x ∈ 𝒰.
 Proof. intros x H. destruct H. Qed.
 
+(* The empty set *)
+Definition Ø : 𝓥 := @Pos False (fun x => match x with end).
+
 Lemma empty_ok : forall x, ~ (x ∈ Ø).
 Proof. intros x H. apply H. Qed.
 
+(* Complement *)
 Definition neg : 𝓥 -> 𝓥 :=
   fun x => match x with
   | Pos f => Neg f
@@ -29,6 +33,7 @@ Proof.
   - apply not_all_not_ex.
 Qed.
 
+(* Singleton *)
 Definition sing : 𝓥 -> 𝓥 :=
   fun x => @Pos unit (fun _ => x).
 
@@ -38,11 +43,14 @@ Proof.
   assumption. exists tt. apply eeq_sym. assumption.
 Qed.
 
+(* Some auxiliary definitions: *)
+
+(* 
 Definition pow X (f: X -> set) :=
   @Pos (X -> Prop)
     (fun s => @Pos { x : X & s x }
       (fun ex => match ex with existT _ x _ => f x end) )
-.
+. *)
 
 Definition minus {X Y} f g : { x : X & forall y : Y, ~ (f x ≡ g y) } -> 𝓥 :=
     (fun ex => match ex with existT _ x _ => f x end)
@@ -102,8 +110,10 @@ Qed.
 Lemma cap_ok : forall x y z, z ∈ (x ⋂ y) <-> (z ∈ x) /\ (z ∈ y).
 Proof. intros. split. apply cap1. apply cap2. Qed.
 
+(* Union *)
 Definition cup x y := neg (cap (neg x) (neg y)).
 Notation "A ∪ B" := (cup A B) (at level 85).
+
 Lemma cup_ok : forall x y z, z ∈ (x ∪ y) <-> (z ∈ x) \/ (z ∈ y).
 Proof.
   intros. unfold cup. split; intros.
