@@ -45,13 +45,6 @@ Qed.
 
 (* Some auxiliary definitions: *)
 
-(* 
-Definition pow X (f: X -> set) :=
-  @Pos (X -> Prop)
-    (fun s => @Pos { x : X & s x }
-      (fun ex => match ex with existT _ x _ => f x end) )
-. *)
-
 Definition minus {X Y} f g : { x : X & forall y : Y, ~ (f x ≡ g y) } -> 𝓥 :=
     (fun ex => match ex with existT _ x _ => f x end)
 .
