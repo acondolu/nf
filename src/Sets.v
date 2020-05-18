@@ -27,9 +27,9 @@ Definition neg : 𝓥 -> 𝓥 :=
 Lemma neg_ok : forall x y, x ∈ neg y <-> (x ∈ y -> False).
 Proof.
   intros x y. destruct y; simpl neg; simpl iin; split.
-  - apply all_not_not_ex.
-  - apply not_ex_all_not.
-  - intros. revert H. apply all_not_not_ex. assumption. 
+  - intros. destruct H0. apply (H x0 H0).
+  - intros. apply H. exists x0. assumption.
+  - intros. destruct H. apply (H0 x0). assumption.
   - apply not_all_not_ex.
 Qed.
 

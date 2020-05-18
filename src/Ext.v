@@ -1,54 +1,24 @@
 Add LoadPath "src/".
 Require Import Simplest.
 
-Definition isPos x := match x with
-  | Pos _ => True
-  | Neg _ => False end.
-
-  Definition getX x := match x with
-  | @Pos X _ => X
-  | @Neg X _ => X end.
-
-  Definition getf x: getX x -> set := match x with
-  | Pos f => f
-  | Neg f => f end.
-
-Lemma boh': forall a, isPos a -> forall x : getX a, forall b, b = getf a x -> eeq (getf a x) a -> False.
+Lemma weak_regularity: forall {x}, zf x -> iin x x -> False.
 Proof.
-  intro a. induction a. unfold getX, getf. intros.
-  - destruct b. rewrite<- H1 in H2. destruct H2.
-    destruct (H3 x).
-    cut (isPos (s x)). intro.
-    pose proof (H x).
-    rewrite<- H1 in H6.
-    rewrite<- H1 in H5.
-    pose proof (H6 H5 x0 (s0 x0) (eq_refl _)).
-    rewrite<- H1 in H4.
-    apply (H7 H4).
-    rewrite<- H1. auto.
-    rewrite<- H1 in H2. destruct H2.
-  - intros. destruct H0.
-Qed.
-
-Lemma boh'': forall X f x, eeq (f x) (@Pos X f) -> False.
-Proof.
-  intros.
-  apply (boh' (@Pos X f) I x (f x) (eq_refl _) H).
-Qed.
-
- Lemma boh: forall x, isPos x -> iin x x -> False.
- Proof.
-  intros.
-  induction x.
-  - destruct H0. apply (boh'' _ _ _ H0).
-  - destruct H.
+  induction x; simpl zf; auto; intros.
+  destruct H1. apply (H x).
+  - destruct (s x); simpl; auto.
+  - assert (H1' := H1). destruct (s x) in H1; destruct H1.
+    destruct (H2 x).
+    apply (in_sound_left (eeq_sym H1')).
+    apply (in_sound_right (eeq_sym H1')).
+    exists x. assumption. 
 Qed.
 
 Definition f_sum {X Y} f g (z: X + Y): set :=
   match z with
   | inl x => f x
   | inr y => g y
-  end.
+  end
+.
 
 Require Import Coq.Logic.Classical_Prop.
 
@@ -68,7 +38,7 @@ Lemma contra': forall X f Y g, (forall z, iin z (@Pos X f) <-> iin z (@Neg Y g))
 Proof.
   intros.
   pose proof (contra _ _ _ _ H).
-  apply (boh (@Pos (X + Y) (f_sum f g)) I). apply H0.
+  apply (@weak_regularity (@Pos (X + Y) (f_sum f g)) I). apply H0.
 Qed.
 
 Lemma ext2: forall X f Y g, (forall z, iin z (@Pos X f) <-> iin z (@Pos Y g)) -> eeq (@Pos X f) (@Pos Y g).

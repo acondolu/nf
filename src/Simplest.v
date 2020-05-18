@@ -60,7 +60,7 @@ Qed.
 (* Equality is sound w.r.t. membership *)
 
 Lemma in_sound_right:
-  forall x y, x ≡ y -> forall z, z ∈ x -> z ∈ y.
+  forall {x y}, x ≡ y -> forall z, z ∈ x -> z ∈ y.
 Proof.
   destruct x; destruct y; simpl eeq; intros e z; simpl iin; simpl eeq; intros; destruct e.
   - destruct H. destruct (H0 x). exists x0. pose proof (eeq_sym H2). apply (eeq_trans H3 H).
@@ -68,9 +68,15 @@ Proof.
 Qed.
 
 Lemma in_sound_left:
-  forall x y, x ≡ y -> forall z, x ∈ z -> y ∈ z.
+  forall {x y}, x ≡ y -> forall z, x ∈ z -> y ∈ z.
 Proof.
   destruct z; simpl iin; intros.
   - destruct H0. exists x0. apply (eeq_trans H0 H).
   - apply (H0 x0). apply (eeq_trans H1 (eeq_sym H)).
 Qed.
+
+(* ZF set (with positive extension) *)
+Definition zf x := match x with
+  | Pos _ => True
+  | Neg _ => False
+end.
