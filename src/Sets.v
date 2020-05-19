@@ -2,16 +2,16 @@ Require Import Coq.Logic.Classical_Prop.
 Require Import Coq.Logic.Classical_Pred_Type.
 
 Add LoadPath "src/".
-Require Import Simplest.
+Require Import Model.
 
 (* The universal set *)
-Definition 𝒰 : 𝓥 := @Neg False (fun x => match x with end).
+Definition 𝒰 : 𝓥 := Neg (fun x: False => match x with end).
 
-Lemma univ_okay : forall x, x ∈ 𝒰.
+Lemma univ_ok : forall x, x ∈ 𝒰.
 Proof. intros x H. destruct H. Qed.
 
 (* The empty set *)
-Definition Ø : 𝓥 := @Pos False (fun x => match x with end).
+Definition Ø : 𝓥 := Pos (fun x: False => match x with end).
 
 Lemma empty_ok : forall x, ~ (x ∈ Ø).
 Proof. intros x H. apply H. Qed.

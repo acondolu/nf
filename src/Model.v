@@ -1,5 +1,15 @@
-
-(* see also https://github.com/coq-contribs/zfc *)
+(*
+  There are two kinds of sets:
+  - Sets with positive extension, which correspond to the
+    usual understanding of sets as collections of 
+    given sets.
+  - Sets with negative extension, which correspond to the
+    complement of positive sets, i.e. they include all but
+    the sets in a given collection.
+  
+  This model is inspired by the standard formalisation of
+  ZF set theory in Coq. Visit https://github.com/coq-contribs/zfc.
+*)
 Inductive set :=
   | Pos : forall {X}, (X -> set) -> set
   | Neg : forall {X}, (X -> set) -> set
@@ -75,8 +85,8 @@ Proof.
   - apply (H0 x0). apply (eeq_trans H1 (eeq_sym H)).
 Qed.
 
-(* ZF set (with positive extension) *)
-Definition zf x := match x with
+(* We call 'positive' the sets having a positive extension *)
+Definition pos x := match x with
   | Pos _ => True
   | Neg _ => False
 end.

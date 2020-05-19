@@ -1,9 +1,16 @@
+Require Import Coq.Logic.Classical_Prop.
+Require Import Coq.Logic.Classical_Pred_Type.
 Add LoadPath "src/".
-Require Import Simplest.
+Require Import Model.
 
-Lemma weak_regularity: forall {x}, zf x -> iin x x -> False.
+(*
+  The axiom of regularity does not hold in this set theory.
+  The weaker form of regularity holds, and its necessary to 
+  prove extensionality: a positive set does cannot belong to itself.
+*)
+Theorem weak_regularity: forall {x}, pos x -> iin x x -> False.
 Proof.
-  induction x; simpl zf; auto; intros.
+  induction x; simpl pos; auto; intros.
   destruct H1. apply (H x).
   - destruct (s x); simpl; auto.
   - assert (H1' := H1). destruct (s x) in H1; destruct H1.
@@ -13,16 +20,26 @@ Proof.
     exists x. assumption. 
 Qed.
 
-Definition f_sum {X Y} f g (z: X + Y): set :=
-  match z with
+(* 
+  The lemma [pos_neg_ext_neq] below is fundamental to
+  prove extensionality. It proves that a positive set cannot
+  be extensionally equal to a negative set.
+
+  In order to prove [pos_neg_ext_neq], we first prove the
+  auxiliary [pos_univ]. It says that if a positive set is
+  extensionally equal to a negative set, then one can
+  express the universal set (defined as negative) as a
+  positive set.
+  This, together with weak regularity, yields the required
+  contradiction.
+*)
+
+Definition f_sum {X Y} f g (z: X + Y): set := match z with
   | inl x => f x
   | inr y => g y
-  end
-.
+end.
 
-Require Import Coq.Logic.Classical_Prop.
-
-Lemma contra: forall X f Y g, (forall z, iin z (@Pos X f) <-> iin z (@Neg Y g)) -> (forall z, iin z (@Pos (X + Y) (f_sum f g))).
+Lemma pos_univ: forall X f Y g, (forall z, iin z (@Pos X f) <-> iin z (@Neg Y g)) -> (forall z, iin z (@Pos (X + Y) (f_sum f g))).
 Proof.
   intros. simpl iin in *.
   pose proof (H z).
@@ -34,14 +51,14 @@ Proof.
   apply NNPP. intro. apply H3. intros. apply H4. exists x. auto.
 Qed.
 
-Lemma contra': forall X f Y g, (forall z, iin z (@Pos X f) <-> iin z (@Neg Y g)) -> False.
+Lemma pos_neg_ext_neq: forall X f Y g, (forall z, iin z (@Pos X f) <-> iin z (@Neg Y g)) -> False.
 Proof.
   intros.
-  pose proof (contra _ _ _ _ H).
+  pose proof (pos_univ _ _ _ _ H).
   apply (@weak_regularity (@Pos (X + Y) (f_sum f g)) I). apply H0.
 Qed.
 
-Lemma ext2: forall X f Y g, (forall z, iin z (@Pos X f) <-> iin z (@Pos Y g)) -> eeq (@Pos X f) (@Pos Y g).
+Lemma ext_pos: forall X f Y g, (forall z, iin z (@Pos X f) <-> iin z (@Pos Y g)) -> eeq (@Pos X f) (@Pos Y g).
 Proof.
   intros. simpl; split; intro.
   - destruct (H (f x)). simpl iin in H0.
@@ -50,9 +67,7 @@ Proof.
   cut (exists x : Y, eeq (g x) (g y)). intro. destruct (H1 H2). exists x. assumption. exists y. apply eeq_refl.
 Qed.
 
-Require Import Coq.Logic.Classical_Pred_Type.
-
-Lemma ext3: forall X f Y g, (forall z, iin z (@Neg X f) <-> iin z (@Neg Y g)) -> eeq (@Pos X f) (@Pos Y g).
+Lemma ext_neg: forall X f Y g, (forall z, iin z (@Neg X f) <-> iin z (@Neg Y g)) -> eeq (@Pos X f) (@Pos Y g).
 Proof.
   intros. simpl; split; intro.
   - destruct (H (f x)). simpl iin in H1.
@@ -68,14 +83,14 @@ Proof.
   apply not_ex_all_not. assumption.
 Qed.
 
-Lemma extensionality: forall x y, x ≡ y <-> forall z, z ∈ x <-> z ∈ y.
+Theorem extensionality: forall x y, x ≡ y <-> forall z, z ∈ x <-> z ∈ y.
 Proof.
   intros. split. intros. split; apply in_sound_right; auto. apply eeq_sym. assumption.
   destruct x; destruct y.
-  - apply ext2.
-  - intros. destruct (contra' _ _ _ _ H).
+  - apply ext_pos.
+  - intros. destruct (pos_neg_ext_neq _ _ _ _ H).
   - intros. cut (forall z : set, iin z (@Pos X0 s0) <-> iin z (@Neg X s)).
-    intro. destruct (contra' _ _ _ _ H0).
+    intro. destruct (pos_neg_ext_neq _ _ _ _ H0).
     intro z. apply iff_sym. apply (H z). 
-  - apply ext3.
+  - apply ext_neg.
 Qed.
