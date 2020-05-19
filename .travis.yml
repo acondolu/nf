@@ -2,8 +2,6 @@ dist: bionic
 language: bash
 git:
   depth: false
-env:
-  - COQC=coqc
 install:
   - sudo add-apt-repository ppa:jgross-h/coq-8.11-daily -y
   - sudo apt-get update -y

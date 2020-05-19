@@ -9,8 +9,7 @@ This repository contains the formalisation in Coq of a basic set theory with uni
   Some are falsified altogether (like regularity), some hold (like pairing, union, infinity), some hold only for so-called _positive_ sets (comprehension, replacement, powerset).
 
 ### Compiling
-1. Store in the environment variable `COQC` the path to the `coqc` executable
-2. Just type `make`.
+Just type `make`. The `coqc` executable is required.
 
 ---
 

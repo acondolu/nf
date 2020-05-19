@@ -1,10 +1,8 @@
 .PHONY: all clean ci remake
 .DEFAULT_GOAL := all
 
-# My local coqc patch
-ifndef COQC
-COQC=/Applications/CoqIDE_8.11.0.app/Contents/Resources/bin/coqc
-endif
+# Workaround for acondolu's custom coqc path
+COQC=`[[ $(hash coqc 2>/dev/null ; echo $?) -eq 0 ]] && echo 'coqc' || echo '/Applications/CoqIDE_8.11.0.app/Contents/Resources/bin/coqc'`
 
 src/%.vos: src/%.v
 	$(COQC) -R src "" $<
