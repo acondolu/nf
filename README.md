@@ -1,4 +1,4 @@
-# nf ![Build Status](https://travis-ci.com/acondolu/nf.svg?token=KEjzsAkTQF4oSVN4fngW&branch=master)
+# nf [![Build Status](https://travis-ci.com/acondolu/nf.svg?branch=master)](https://travis-ci.com/acondolu/nf)
 
 This repository contains the formalisation in Coq of a basic set theory with universal set. It started as an investigation into the (possible) consistency of Quine's [New Foundations](https://plato.stanford.edu/entries/quine-nf/), but of course, settled on a much weaker theory 😉
 
