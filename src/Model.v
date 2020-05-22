@@ -1,9 +1,9 @@
 (*
   There are two kinds of sets:
-  - Sets with positive extension, which correspond to the
+  - Sets with positive extension ("low"), which correspond to the
     usual understanding of sets as collections of 
     given sets.
-  - Sets with negative extension, which correspond to the
+  - Sets with negative extension ("high"), which correspond to the
     complement of positive sets, i.e. they include all but
     the sets in a given collection.
   
@@ -85,8 +85,8 @@ Proof.
   - apply (H0 x0). apply (eeq_trans H1 (eeq_sym H)).
 Qed.
 
-(* We call 'positive' the sets having a positive extension *)
-Definition pos x := match x with
+(* We call 'low' the sets having a positive extension *)
+Definition low x := match x with
   | Pos _ => True
   | Neg _ => False
 end.
