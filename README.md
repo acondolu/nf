@@ -16,6 +16,9 @@ The basic operations of NF<sub>2</sub> are the empty set, singletons, unions, in
 ### Compiling
 Just type `make`. The `coqc` executable is required.
 
+### References
+- Thomas Forster, Church's Set Theory with a Universal Set. https://www.dpmms.cam.ac.uk/~tf/church2001.pdf
+
 ---
 
 © acondolu 2020
