@@ -14,7 +14,7 @@ remake: clean all
 coq: coq-nf2 coq-nfo
 
 coq-nf2: src/Model.vos src/Ext.vos src/Sets.vos src/ZF.vos src/Classp.vos
-coq-nfo : src/NFO/Model.vos
+coq-nfo : src/NFO/Bool.vos src/NFO/Model.vos
 
 src/NFO/%.vos: src/NFO/%.v
 	coqc -R src/NFO "" $<
