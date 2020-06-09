@@ -1,19 +1,34 @@
-.PHONY: all clean ci remake
+.PHONY: all clean remake coq coq-clean latex-clean coq-nf2 coq-nfo
 .DEFAULT_GOAL := all
 
 # SHELL=/bin/bash
 
-# Workaround for acondolu's custom coqc path
-COQC=`hash coqc 2>/dev/null && echo 'coqc' || echo '/Applications/CoqIDE_8.11.0.app/Contents/Resources/bin/coqc'`
+all: coq CCP21/main.pdf
 
-src/%.vos: src/%.v
-	$(COQC) -R src "" $<
-
-all: src/Model.vos src/Ext.vos src/Sets.vos src/ZF.vos
-
-ci: all
-
-clean:
-	rm -f src/*.glob src/*.vo src/*.vok src/*.vos src/.*.aux
+clean: coq-clean latex-clean
 
 remake: clean all
+
+# Coq
+
+coq: coq-nf2 coq-nfo
+
+coq-nf2: src/Model.vos src/Ext.vos src/Sets.vos src/ZF.vos src/Classp.vos
+coq-nfo : src/NFO/Model.vos
+
+src/NFO/%.vos: src/NFO/%.v
+	coqc -R src/NFO "" $<
+
+src/%.vos: src/%.v
+	coqc -R src "" $<
+
+coq-clean:
+	rm -f src/*.glob src/*.vo src/*.vok src/*.vos src/.*.aux
+
+# LaTeX
+
+CCP21/main.pdf:
+	cd CCP21 && latexmk main.tex -pdf
+
+latex-clean:
+	cd CCP21 && rm -f *.cut *.aux *.fdb-latexmk *.fls *.out *.pdf *.synctex.gz
