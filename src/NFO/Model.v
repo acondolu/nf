@@ -2,7 +2,7 @@ Add LoadPath "src/NFO/".
 Require Import Bool.
 
 Inductive set :=
-  | C : forall A (p : prop A) (h: A -> set) X (f: X -> set), set
+  | C : forall A (p : boolean A) (h: A -> set) X (f: X -> set), set
 .
 
 Definition emptyset := C False (Bot _) (fun x => match x with end) False (fun x => match x with end).
@@ -49,7 +49,7 @@ Program Fixpoint eeq' x { wf le_two x } := match x with
             | inr i', inl j' => eeq' (h' i', h j')
             | inr i', inr j' => eeq' (h' i', h' j')
             end in 
-            eeq_prop (prop_map inl p) (prop_map inr p') w
+            eeq_boolean (boolean_map inl p) (boolean_map inr p') w
 end.
 Next Obligation. apply Aa; apply Ff. Qed.
 Next Obligation. apply Aa; apply Ff. Qed.
@@ -66,7 +66,7 @@ Axiom eeq_def : forall x y, eeq x y = match x, y with
         (forall x, exists y, eeq (f x) (f' y))
         /\ (forall y, exists x, eeq (f x) (f' y))
         /\  
-          eeq_prop (prop_map inl p) (prop_map inr p') (sum_i eeq h h')
+          eeq_boolean (boolean_map inl p) (boolean_map inr p') (sum_i eeq h h')
 end.
 
 Lemma eeq_refl : forall x, eeq x x.
@@ -75,7 +75,7 @@ Proof.
   rewrite eeq_def. split.
   intro. exists x. apply H0.
   split. intro x. exists x. apply H0.
-  apply (eeq_prop_refl p eeq h H).
+  apply (eeq_boolean_refl p eeq h H).
 Qed.
 
 Lemma wf_two_ind: forall P : set -> set -> Prop,
@@ -99,7 +99,7 @@ Proof.
   split.
   - intro x. destruct (H1 x). exists x0. apply H. apply Aa ; apply Ff. assumption.
   - split. intro x0. destruct (H0 x0). exists x. apply H. apply Aa ; apply Ff. assumption.
-  revert H2. apply eeq_prop_sym.
+  revert H2. apply eeq_boolean_sym.
 Qed.
 
 Lemma eeq_trans : forall x y z, eeq x y -> eeq y z -> eeq x z.

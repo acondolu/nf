@@ -7,4 +7,4 @@ install:
   - sudo apt-get update -y
   - sudo apt-get install coq -y
 script:
-  - make coq
+  - make coq-nfo

@@ -23,7 +23,7 @@ src/%.vos: src/%.v
 	coqc -R src "" $<
 
 coq-clean:
-	rm -f src/*.glob src/*.vo src/*.vok src/*.vos src/.*.aux
+	rm -f src/**/*.glob src/**/*.vo src/**/*.vok src/**/*.vos src/**/.*.aux
 
 # LaTeX
 
