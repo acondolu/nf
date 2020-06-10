@@ -2,24 +2,23 @@ Add LoadPath "src/NFO/".
 Require Import Bool.
 
 Inductive set :=
-  | C : forall A (p : boolean A) (h: A -> set) X (f: X -> set), set
-.
+  S : forall A (p : boolean A) (h: A -> set) X (f: X -> set), set.
 
-Definition emptyset := C False (Bot _) (fun x => match x with end) False (fun x => match x with end).
+Definition emptyset :=
+  S False (Bot _) (False_rect _) False (False_rect _).
 
 Definition compl x := match x with
-  | C A p h X f => C A (Not _ p) h X f
-  end.
+  S A p h X f => S A (Not _ p) h X f
+end.
 
 Require Import Coq.Program.Tactics .
 Require Import Coq.Program.Wf.
 Require Import Coq.Program.Equality.
 
 
-(* Require Wff. *)
 Inductive le_set : set -> set -> Prop :=
-  | Ff : forall A p h X f i, le_set (f i) (C A p h X f)
-  | Hh : forall A p h X f i, le_set (h i) (C A p h X f)
+  | le_f : forall A p h X f i, le_set (f i) (S A p h X f)
+  | le_h : forall A p h X f i, le_set (h i) (S A p h X f)
 .
 Lemma wf_le_set : well_founded le_set.
 Proof.
@@ -31,16 +30,16 @@ Proof.
 Qed.
 
 Inductive le_two : (set * set) -> (set * set) -> Prop :=
-  | Aa : forall a1 a2 b1 b2, le_set a1 b1 -> le_set a2 b2 -> le_two (a1, a2) (b1, b2)
-  | Bb : forall a1 a2 b1 b2, le_set a1 b2 -> le_set a2 b1 -> le_two (a1, a2) (b1, b2)
-  | Bb' : forall a1 a2 b1 b2, le_set a1 b1 -> le_set a2 b1 -> le_two (a1, a2) (b1, b2)
-  | Bb'' : forall a1 a2 b1 b2, le_set a1 b2 -> le_set a2 b2 -> le_two (a1, a2) (b1, b2)
+  | AB : forall a1 a2 b1 b2, le_set a1 b1 -> le_set a2 b2 -> le_two (a1, a2) (b1, b2)
+  | BA : forall a1 a2 b1 b2, le_set a1 b2 -> le_set a2 b1 -> le_two (a1, a2) (b1, b2)
+  | AA : forall a1 a2 b1 b2, le_set a1 b1 -> le_set a2 b1 -> le_two (a1, a2) (b1, b2)
+  | BB : forall a1 a2 b1 b2, le_set a1 b2 -> le_set a2 b2 -> le_two (a1, a2) (b1, b2)
 .
 
 Axiom wf_two: well_founded le_two.
 
 Program Fixpoint eeq' x { wf le_two x } := match x with
-  | (C A p h X f, C A' p' h' X' f') =>
+  | (S A p h X f, S A' p' h' X' f') =>
           (forall x, exists y, eeq' (f x, f' y))
           /\ (forall y, exists x, eeq' (f x, f' y))
           /\ let w (i j: A + A') := match i, j with
@@ -51,18 +50,18 @@ Program Fixpoint eeq' x { wf le_two x } := match x with
             end in 
             eeq_boolean (boolean_map inl p) (boolean_map inr p') w
 end.
-Next Obligation. apply Aa; apply Ff. Qed.
-Next Obligation. apply Aa; apply Ff. Qed.
-Next Obligation. apply Bb'; apply Hh. Qed.
-Next Obligation. apply Aa; apply Hh. Qed.
-Next Obligation. apply Bb; apply Hh. Qed.
-Next Obligation. apply Bb''; apply Hh. Qed.
+Next Obligation. apply AB; apply le_f. Qed.
+Next Obligation. apply AB; apply le_f. Qed.
+Next Obligation. apply AA; apply le_h. Qed.
+Next Obligation. apply AB; apply le_h. Qed.
+Next Obligation. apply BA; apply le_h. Qed.
+Next Obligation. apply BB; apply le_h. Qed.
 Next Obligation. apply wf_two. Qed.
 
 Definition eeq x y := eeq' (x, y).
 
 Axiom eeq_def : forall x y, eeq x y = match x, y with
-| C A p h X f, C A' p' h' X' f' =>
+  | S A p h X f, S A' p' h' X' f' =>
         (forall x, exists y, eeq (f x) (f' y))
         /\ (forall y, exists x, eeq (f x) (f' y))
         /\  
@@ -97,8 +96,8 @@ Proof.
   destruct x1. destruct x2.
   rewrite eeq_def in *. destruct H0. destruct H1. 
   split.
-  - intro x. destruct (H1 x). exists x0. apply H. apply Aa ; apply Ff. assumption.
-  - split. intro x0. destruct (H0 x0). exists x. apply H. apply Aa ; apply Ff. assumption.
+  - intro x. destruct (H1 x). exists x0. apply H. apply AB ; apply le_f. assumption.
+  - split. intro x0. destruct (H0 x0). exists x. apply H. apply AB ; apply le_f. assumption.
   revert H2. apply eeq_boolean_sym.
 Qed.
 
@@ -106,5 +105,15 @@ Lemma eeq_trans : forall x y z, eeq x y -> eeq y z -> eeq x z.
 Proof.
   apply (wf_two_ind (fun x y => forall z, eeq x y -> eeq y z -> eeq x z)). intros.
   destruct x1. destruct x2.
-  rewrite eeq_def in *. destruct H0.
-Admitted.
+  rewrite eeq_def in *.
+  destruct H0. destruct H2.
+  destruct z. destruct H1. destruct H4. split.
+  - intro x. destruct (H0 x). destruct (H1 x0). exists x1.
+    apply (fun X => H _ _ X _ H6 H7).
+    apply AB; apply le_f.
+  - split.
+  -- intro y. destruct (H4 y). destruct (H2 x). exists x0.
+  apply (fun X => H _ _ X _ H7 H6).
+  apply AB; apply le_f.
+  -- apply (eeq_boolean_trans H3 H5).
+Qed.
