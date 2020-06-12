@@ -1,6 +1,7 @@
 Require Import Coq.Program.Basics.
 Require Import Coq.Program.Combinators.
 Add LoadPath "src/NFO/".
+Require Import Aux.
 Require Import FunExt.
 
 
@@ -166,7 +167,7 @@ Lemma eeq_boolean_trans {X Y Z W} {h h' h''}
   {p : boolean X} {p' : boolean Y} {p'' : boolean Z}
   {P : W -> W -> Prop}
   :  (forall a b, P a b -> P b a)
-  -> (forall a b c, P a b -> P b c -> P a c)
+  -> (forall a b c, inv3 h h' h'' a -> inv3 h h' h'' b -> inv3 h h' h'' c -> P a b -> P b c -> P a c)
   -> eeq_boolean (boolean_map inl p) (boolean_map inr p')
       (sum_i P h h')
   -> eeq_boolean (boolean_map inl p') (boolean_map inr p'')
@@ -194,47 +195,49 @@ Proof.
     -- left. exists x. auto.
     -- repeat destruct H3.
       specialize H1 with (inl x) (inl x0). simpl sum_i in H1.
-      apply (H1 (trans _ _ _ H2 (sym _ _ H4))). assumption.
+      apply (fun X Y Z => H1 (trans _ _ _ X Y Z H2 (sym _ _ H4))); auto.
       specialize H1 with (inl x) (inr x0). simpl sum_i in H1.
-      apply (H1 (trans _ _ _ H2 H4)). assumption.
+      apply (fun X Y Z => H1 (trans _ _ _ X Y Z H2 H4)); auto.
   - split; intro.
     -- repeat destruct H3.
       specialize H1 with (inl x) (inl x0). simpl sum_i in H1.
-      apply (H1 (trans _ _ _ (sym _ _ H2) (sym _ _ H4))). assumption.
+      apply (fun X Y Z => H1 (trans _ _ _ X Y Z (sym _ _ H2) (sym _ _ H4))); auto.
       specialize H1 with (inl x) (inr x0). simpl sum_i in H1.
-      apply (H1 (trans _ _ _ (sym _ _ H2) H4)). assumption.
+      apply (fun X Y Z => H1 (trans _ _ _ X Y Z (sym _ _ H2) H4)); auto.
     -- left. exists x. auto.
   - split; intro.
   -- repeat destruct H3. left. exists x. split; auto.
-     apply (trans _ _ _ H4 H2).
+     apply (fun X Y Z => trans _ _ _ X Y Z H4 H2); auto.
      right. exists x. split; auto.
-     apply (trans _ _ _ (sym _ _ H2) H4).
+     apply (fun X Y Z => trans _ _ _ X Y Z (sym _ _ H2) H4); auto.
   -- repeat destruct H3. left. exists x. split; auto.
-     apply (trans _ _ _ H4 (sym _ _ H2)).
+     apply (fun X Y Z => trans _ _ _ X Y Z H4 (sym _ _ H2)); auto.
      right. exists x. split; auto.
-     apply (trans _ _ _ H2 H4).
+     apply (fun X Y Z => trans _ _ _ X Y Z H2 H4); auto.
   - split; intro.
     -- repeat destruct H3. left. exists x. split; auto.
-      apply (trans _ _ _ H4 H2).
+      apply (fun X Y Z => trans _ _ _ X Y Z H4 H2); auto.
       right. exists x. split; auto.
-      apply (trans _ _ _ (sym _ _ H2) H4).
+      apply (fun X Y Z => trans _ _ _ X Y Z (sym _ _ H2) H4); auto.
     -- repeat destruct H3. left. exists x. split; auto.
-      apply (trans _ _ _ H4 (sym _ _ H2)).
+      apply (fun X Y Z => trans _ _ _ X Y Z H4 (sym _ _ H2)); auto.
       right. exists x. split; auto.
-      apply (trans _ _ _ H2 H4).
+      apply (fun X Y Z => trans _ _ _ X Y Z H2 H4); auto.
   - split; intro.
     -- repeat destruct H3.
       specialize H1 with (inl x) (inr z). simpl sum_i in H1.
-      apply H1. apply (trans _ _ _ H4 H2). auto.
-      specialize H1 with (inr x) (inr z). simpl sum_i in H1.
-      apply H1. apply (trans _ _ _ (sym _ _ H4) H2). auto.
+      apply H1. apply (fun X Y Z => trans _ _ _ X Y Z H4 H2); auto.
+      assumption. specialize H1 with (inr x) (inr z). simpl sum_i in H1.
+      apply H1. apply (fun X Y Z => trans _ _ _ X Y Z (sym _ _ H4) H2); auto.
+      assumption.
     -- right. exists z. split; auto. 
   - split; intro.
   -- right. exists z. split; auto. 
   -- repeat destruct H3.
     specialize H1 with (inl x) (inr z). simpl sum_i in H1.
-    apply H1. apply (trans _ _ _ H4 (sym _ _ H2)). auto.
-    specialize H1 with (inr x) (inr z). simpl sum_i in H1.
-    apply H1. apply (sym _ _ (trans _ _ _ H2 H4)). auto.
+    apply H1. apply (fun X Y Z => trans _ _ _ X Y Z H4 (sym _ _ H2)); auto.
+    auto.
+    specialize H1 with (inr x) (inr z); auto. simpl sum_i in H1.
+    apply H1. apply (fun X Y Z => sym _ _ (trans _ _ _ X Y Z H2 H4)); auto. auto.
   - apply H1. assumption.
 Qed.

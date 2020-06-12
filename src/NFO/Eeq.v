@@ -71,6 +71,10 @@ Proof.
     apply (fun X => H _ _ X _ H7 H6).
     apply AB; apply le_f.
   - apply (fun X => eeq_boolean_trans (@eeq_sym) X H2 H4).
+    intros. repeat destruct H6; destruct H7; repeat destruct H6; destruct H8; repeat destruct H6; apply (fun X => H _ _ X _ H9 H10).
+    apply AA; apply le_h. apply AA; apply le_h. apply AA; apply le_h.
+    apply AB; apply le_h. apply AB; apply le_h. apply AB; apply le_h.
+    admit.
     (* apply H. *)
 Admitted.
 
