@@ -1,5 +1,7 @@
 Require Import Coq.Program.Basics.
 Require Import Coq.Program.Combinators.
+Add LoadPath "src/NFO/".
+Require Import FunExt.
 
 
 (* A boolean expression with atoms of type X *)
@@ -26,6 +28,15 @@ match p with
   | Not _ p => Not _ (boolean_map f p)
   | Or _ p1 p2 => Or _ (boolean_map f p1) (boolean_map f p2)
 end.
+
+Lemma boolean_map_ext {X Y} {f: X -> Y} {g: X -> Y} p:
+  ext f g -> boolean_map f p = boolean_map g p.
+Proof.
+  intro E. induction p; simpl; auto.
+  - rewrite (E x). auto.
+  - rewrite IHp. auto.
+  - rewrite IHp1. rewrite IHp2. auto.
+Qed.
 
 Lemma boolean_map_compose {X Y Z f g p}:
   boolean_map f (boolean_map g p) = boolean_map (@compose X Y Z f g) p.
@@ -127,16 +138,21 @@ Proof.
   apply (H0 _ H2).
 Qed.
 
-(* Lemma eeq_boolean_trans : forall {X1 X2 X3} (p1 p2 p3: boolean X) eqX, eeq_boolean p1 p2 eqX -> eeq_boolean p2 p3 eqX' -> 
-Proof.
-  unfold eeq_boolean. intros. rewrite (H g H0). trivial.
-Qed. *)
+(* mk_sum *)
 
 Definition mk_sum {X Y Z} f g : X + Y -> Z := fun s =>
   match s with
   | inl x => f x
   | inr y => g y
   end.
+
+Lemma compose_sum_inl {X Y Z} {f: X -> Z} {g: Y -> Z} :
+  ext ((compose (mk_sum f g) inl)) f.
+Proof. unfold ext. intros. apply eq_refl. Qed.
+
+Lemma compose_sum_inr {X Y Z} {f: X -> Z} {g: Y -> Z} :
+  ext ((compose (mk_sum f g) inr)) g.
+Proof. intro x. apply eq_refl. Qed.
 
 Lemma boolean_map_compose_inl {X Y Z} {f: X -> Z} {g: Y -> Z} {a}:
   boolean_map (compose (mk_sum f g) inl) a = boolean_map f a.

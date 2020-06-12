@@ -32,7 +32,7 @@ Definition iin x y := iin' (x, y).
 (* apply prod_uncurry. *)
 
 Lemma uncurry: forall {X Y} {P : X -> Y -> Prop},
-  forall (H: forall a : X * Y, P (fst a) (snd a)), forall x y, P x y.
+  (forall a : X * Y, P (fst a) (snd a)) -> forall x y, P x y.
 Proof. intros. apply (H (x, y)). Qed.
 
 (* TODO: important *)
