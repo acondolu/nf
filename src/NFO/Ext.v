@@ -9,8 +9,6 @@ Require Import Coq.Wellfounded.Lexicographic_Product.
 Require Import Relation_Operators.
 
 Require Import Xor.
-Lemma Xor_eq {a a' b b'}: (a <-> a') -> (b <-> b') -> Xor a b <-> Xor a' b'.
-Proof. unfold Xor. tauto. Qed.
 
 Lemma eeq_iin_low_1: forall {x y X} {f: X -> _},
   x == y -> iin_low x f <-> iin_low y f.
@@ -25,6 +23,7 @@ Proof.
   - destruct (H x0). exists x1. apply (eeq_trans (eeq_sym H2) H1).
   - destruct (H0 x0). exists x1. apply (eeq_trans H2 H1).
 Qed.
+
 
 
 
@@ -99,4 +98,47 @@ Proof.
     pose proof (H (h0 a, S A p h X f)).  
   split; intro.
   unfold eeq_low in H0. *)
+Admitted.
+
+
+
+(* After trying the auxliary lemma for extensionality, 
+finally prove this and simplify the unfold of iin *)
+
+
+Lemma iin_high_aux {x A} {p: boolean A} {h} :
+  (let w a := iin (h a) x
+  in eval (boolean_map w p))
+  <-> (iin_high x h p).
+Proof. induction p; simpl; tauto. Qed.
+
+Lemma iin_unfold' {x A' p' h' X' f'} :
+  iin x (S A' p' h' X' f')
+    <->
+    Xor
+      (iin_low x f')
+      (iin_high x h' p').
+Proof.
+  rewrite iin_unfold.
+  apply Xor_eq. tauto.
+  apply iin_high_aux.
+Qed.
+
+Lemma aux {X p} {h: X -> _} {x}:
+  eval (boolean_map (fun x' => iin (h x') x) p)
+  <-> 
+  iin_high x h p.
+Proof. induction p; simpl; tauto. Qed.
+
+Lemma eeq_iin_high_1: forall {X Y} {p p'} {h: X -> _} {h': Y -> _},
+  eeq_boolean (boolean_map h p) (boolean_map h' p') eeq
+  -> forall x, iin_high x h p <-> iin_high x h' p'.
+Proof.
+  intros. unfold eeq_boolean in H.
+  pose proof (H (fun s => iin s x)).
+  repeat rewrite boolean_map_compose in H0.
+  unfold Basics.compose in H0.
+  repeat rewrite<- aux. apply H0.
+  unfold respects. intros.
+  - simpl.
 Admitted.

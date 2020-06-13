@@ -8,3 +8,6 @@ Proof.
   unfold Xor. intros. 
   destruct (classic a); destruct (classic b); tauto.
 Qed.
+
+Lemma Xor_eq {a a' b b'}: (a <-> a') -> (b <-> b') -> Xor a b <-> Xor a' b'.
+Proof. unfold Xor. tauto. Qed.

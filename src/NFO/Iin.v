@@ -48,3 +48,11 @@ Proof.
   apply (well_founded_ind ((wf_swapprod _ lt wf_lt))).
   intros.
 Admitted.
+
+
+Fixpoint iin_high {X} x (h: X -> set) (p : boolean X) := match p with
+  | Bot _ => False
+  | Atom _ a => iin (h a) x
+  | Not _ p' => ~ iin_high x h p'
+  | Or _ p1 p2 => iin_high x h p1 \/ iin_high x h p2
+end.
