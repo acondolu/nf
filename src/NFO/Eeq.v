@@ -30,10 +30,11 @@ refine ( Fix wf_two (fun _ => Prop) (
 Qed.
 
 Definition eeq x y := eeq' (x, y).
+Infix "==" := eeq (at level 50) : type_scope.
 
 Definition eeq_low {X Y} f g :=
-  (forall x: X, exists y, eeq (f x) (g y))
-  /\ forall y: Y, exists x, eeq (f x) (g y).
+  (forall x: X, exists y, f x == g y)
+  /\ forall y: Y, exists x, f x == g y.
 
 Axiom eeq_def : forall x y, eeq x y =
   match x, y with S A p h X f, S A' p' h' X' f'
@@ -66,24 +67,29 @@ Qed.
 
 Lemma eeq_trans : forall {x y z}, eeq x y -> eeq y z -> eeq x z.
 Proof.
-  apply (wf_two_ind (fun x y => forall z, eeq x y -> eeq y z -> eeq x z)). intros.
-  destruct x1. destruct x2.
+  apply (wf_three_ind (fun x y z => eeq x y -> eeq y z -> eeq x z)).
+  intros. destruct x1. destruct x2. destruct x3.
   rewrite eeq_def in *. unfold eeq_low in *.
-  repeat destruct H0.
-  destruct z. repeat destruct H1. split. split.
+  repeat destruct H0. repeat destruct H1.
+  split. split.
   - intro x. destruct (H0 x). destruct (H1 x0). exists x1.
-    apply (fun X => H _ _ X _ H6 H7).
-    apply AB; apply lt_f.
+    apply (fun X => H _ _ _ X H6 H7).
+    apply ABC; apply lt_f.
   - intro y. destruct (H5 y). destruct (H3 x). exists x0.
-    apply (fun X => H _ _ X _ H7 H6).
-    apply AB; apply lt_f.
+    apply (fun X => H _ _ _ X H7 H6).
+    apply ABC; apply lt_f.
   - apply (fun X => eeq_boolean_trans (@eeq_sym) X H2 H4).
-    intros. repeat destruct H6; destruct H7; repeat destruct H6; destruct H8; repeat destruct H6; apply (fun X => H _ _ X _ H9 H10).
-    apply AA; apply lt_h. apply AA; apply lt_h. apply AA; apply lt_h.
-    apply AB; apply lt_h. apply AB; apply lt_h. apply AB; apply lt_h.
-    admit.
-    (* apply H. *)
-Admitted.
+    intros. repeat destruct H6; destruct H7; repeat destruct H6; destruct H8; repeat destruct H6; apply (fun X => H _ _ _ X H9 H10).
+    apply AAA; apply lt_h. apply AAB; apply lt_h. apply AAC; apply lt_h.
+    apply ABA; apply lt_h. apply ABB; apply lt_h. apply ABC; apply lt_h.
+    apply ACA; apply lt_h. apply ACB; apply lt_h. apply ACC; apply lt_h.
+    apply BAA; apply lt_h. apply BAB; apply lt_h. apply BAC; apply lt_h.
+    apply BBA; apply lt_h. apply BBB; apply lt_h. apply BBC; apply lt_h.
+    apply BCA; apply lt_h. apply BCB; apply lt_h. apply BCC; apply lt_h.
+    apply CAA; apply lt_h. apply CAB; apply lt_h. apply CAC; apply lt_h.
+    apply CBA; apply lt_h. apply CBB; apply lt_h. apply CBC; apply lt_h.
+    apply CCA; apply lt_h. apply CCB; apply lt_h. apply CCC; apply lt_h.
+Qed.
 
 (* WOW *)
 Require Import Coq.Program.Basics.
@@ -111,29 +117,29 @@ Proof.
   specialize H with g.
   cut (respects g eeq).
   intro. pose proof (H H1).
-  admit.
-  unfold respects in *. unfold g. intros.
+  -- repeat rewrite boolean_map_compose.
+    rewrite (boolean_map_extP (compose f inl) (compose g h)).
+    rewrite (boolean_map_extP (compose f inr) (compose g h')).
+    repeat rewrite<- boolean_map_compose. assumption.
+    --- unfold FunExt.extP. unfold compose.
+      intros. unfold g. split; intro.
+      right. exists x. split; auto. apply eeq_refl.
+      repeat destruct H3.
+      apply (H0 (inl x0)); auto.
+      apply (H0 (inr x0)); auto.
+    --- unfold FunExt.extP. unfold compose.
+        intros. unfold g. split; intro.
+        left. exists x. split; auto. apply eeq_refl.
+        repeat destruct H3.
+        apply (H0 (inl x0)); auto.
+        apply (H0 (inr x0)); auto.
+  -- unfold respects in *. unfold g. intros.
   split; intros; repeat destruct H2.
-  left. exists x0. split; auto. admit.
-  right. exists x0. split; auto. admit.
-  left. exists x0. split; auto. admit.
-(* 
-
-
-  repeat rewrite boolean_map_compose in H.
-  repeat rewrite boolean_map_compose.
-  unfold respects, sum_i in H0.
-  repeat rewrite compose_assoc in H.
-  rewrite<- boolean_map_compose in H.
-  rewrite boolean_map_compose_inl in H.
-  rewrite<- boolean_map_compose in H.
-  rewrite boolean_map_compose_inr in H.
-  apply H.
-  unfold respects in *. intros.
-  destruct x, x'; unfold compose, mk_sum; apply H0; apply H1.
-  unfold respects in H, H0.
-  rewrite compose_sum_inr in H. *)
-Admitted.
+  left. exists x0. split; auto. apply (eeq_trans H2 H1).
+  right. exists x0. split; auto. apply (eeq_trans H2 H1).
+  left. exists x0. split; auto. apply (eeq_trans H2 (eeq_sym H1)).
+  right. exists x0. split; auto. apply (eeq_trans H2 (eeq_sym H1)).
+Qed.
 
 Require Import Setoid.
 Lemma eeq_unfold : forall x y, eeq x y <->

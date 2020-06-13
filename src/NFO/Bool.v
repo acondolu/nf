@@ -30,13 +30,23 @@ match p with
   | Or _ p1 p2 => Or _ (boolean_map f p1) (boolean_map f p2)
 end.
 
-Lemma boolean_map_ext {X Y} {f: X -> Y} {g: X -> Y} p:
+Lemma boolean_map_ext {X Y} {p} (f: X -> Y) (g: X -> Y):
   ext f g -> boolean_map f p = boolean_map g p.
 Proof.
   intro E. induction p; simpl; auto.
   - rewrite (E x). auto.
   - rewrite IHp. auto.
   - rewrite IHp1. rewrite IHp2. auto.
+Qed.
+
+Require Import Setoid.
+Lemma boolean_map_extP {X} {p: boolean X} f g:
+  extP f g -> eval (boolean_map f p) <-> eval (boolean_map g p).
+Proof.
+  intro E. induction p; simpl; auto.
+  - tauto.
+  - rewrite IHp. tauto.
+  - rewrite IHp1. rewrite IHp2. tauto.
 Qed.
 
 Lemma boolean_map_compose {X Y Z f g p}:
