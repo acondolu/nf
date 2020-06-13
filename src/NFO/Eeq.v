@@ -1,26 +1,33 @@
 Add LoadPath "src/NFO/".
 Require Import Bool.
 Require Import Model.
+Require Import Wff.
 
-Program Fixpoint eeq' x { wf le_two x } := match x with
-  | (S A p h X f, S A' p' h' X' f') =>
-          (forall x, exists y, eeq' (f x, f' y))
-          /\ (forall y, exists x, eeq' (f x, f' y))
+Definition eeq' : set * set -> Prop.
+refine ( Fix wf_two (fun _ => Prop) (
+  fun x rec => (
+    match x as x0 return (x = x0 -> Prop) with
+    | (S A p h X f, S A' p' h' X' f') => fun eqx =>
+          (forall x, exists y, rec (f x, f' y) _)
+          /\ (forall y, exists x, rec (f x, f' y) _)
           /\ let w (i j: A + A') := match i, j with
-            | inl i', inl j' => eeq' (h i', h j')
-            | inl i', inr j' => eeq' (h i', h' j')
-            | inr i', inl j' => eeq' (h' i', h j')
-            | inr i', inr j' => eeq' (h' i', h' j')
+            | inl i', inl j' => rec (h i', h j') _
+            | inl i', inr j' => rec (h i', h' j') _
+            | inr i', inl j' => rec (h' i', h j') _
+            | inr i', inr j' => rec (h' i', h' j') _
             end in 
-            eeq_boolean (boolean_map inl p) (boolean_map inr p') w
-end.
-Next Obligation. apply AB; apply le_f. Qed.
-Next Obligation. apply AB; apply le_f. Qed.
-Next Obligation. apply AA; apply le_h. Qed.
-Next Obligation. apply AB; apply le_h. Qed.
-Next Obligation. apply BA; apply le_h. Qed.
-Next Obligation. apply BB; apply le_h. Qed.
-Next Obligation. apply wf_two. Qed.
+            eeq_boolean
+              (boolean_map inl p) (boolean_map inr p') w
+    end) eq_refl
+ ))
+.
+  rewrite eqx; apply AB; apply lt_f.
+  rewrite eqx; apply AB; apply lt_f.
+  rewrite eqx; apply AA; apply lt_h.
+  rewrite eqx; apply AB; apply lt_h.
+  rewrite eqx; apply BA; apply lt_h.
+  rewrite eqx; apply BB; apply lt_h.
+Qed.
 
 Definition eeq x y := eeq' (x, y).
 
@@ -52,8 +59,8 @@ Proof.
   destruct x1. destruct x2.
   rewrite eeq_def in *. unfold eeq_low in *. repeat destruct H0.
   split. split.
-  - intro x0. destruct (H2 x0). exists x. apply H. apply AB ; apply le_f. assumption.
-  - intro x. destruct (H0 x). exists x0. apply H. apply AB ; apply le_f. assumption.
+  - intro x0. destruct (H2 x0). exists x. apply H. apply AB ; apply lt_f. assumption.
+  - intro x. destruct (H0 x). exists x0. apply H. apply AB ; apply lt_f. assumption.
   - revert H1. apply eeq_boolean_sym.
 Qed.
 
@@ -66,14 +73,14 @@ Proof.
   destruct z. repeat destruct H1. split. split.
   - intro x. destruct (H0 x). destruct (H1 x0). exists x1.
     apply (fun X => H _ _ X _ H6 H7).
-    apply AB; apply le_f.
+    apply AB; apply lt_f.
   - intro y. destruct (H5 y). destruct (H3 x). exists x0.
     apply (fun X => H _ _ X _ H7 H6).
-    apply AB; apply le_f.
+    apply AB; apply lt_f.
   - apply (fun X => eeq_boolean_trans (@eeq_sym) X H2 H4).
     intros. repeat destruct H6; destruct H7; repeat destruct H6; destruct H8; repeat destruct H6; apply (fun X => H _ _ X _ H9 H10).
-    apply AA; apply le_h. apply AA; apply le_h. apply AA; apply le_h.
-    apply AB; apply le_h. apply AB; apply le_h. apply AB; apply le_h.
+    apply AA; apply lt_h. apply AA; apply lt_h. apply AA; apply lt_h.
+    apply AB; apply lt_h. apply AB; apply lt_h. apply AB; apply lt_h.
     admit.
     (* apply H. *)
 Admitted.

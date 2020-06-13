@@ -1,69 +1,122 @@
+Add LoadPath "src/NFO/".
+Require Import Model.
 Require Import Coq.Init.Wf.
 
-(* Definition le3 le a b :=
-  match a, b with (a1, a2, a3)  *)
+(* 2 *)
 
+Definition le12 : set -> set * set -> Prop := fun a bs =>
+  match bs with (b1, b2) => a < b1 \/ a < b2 end.
 
-(* 
-Section Wff.
-Variables set : Type.
-Variables le_set : set -> set -> Prop.
+Definition le22 : set * set -> set * set -> Prop := fun a bs =>
+  match a with (a1, a2) => le12 a1 bs \/ le12 a2 bs end.
+Infix "<<" := le22 (at level 50) : type_scope.
 
-Require Import Coq.Program.Equality.
+Axiom wf_two: well_founded le22.
 
-Inductive le_two : (set * set) -> (set * set) -> Prop :=
-  | Aa : forall a1 a2 b1 b2, le_set a1 b1 -> le_set a2 b2 -> le_two (a1, a2) (b1, b2)
-  | Bb : forall a1 a2 b1 b2, le_set a1 b2 -> le_set a2 b1 -> le_two (a1, a2) (b1, b2)
-  | Bb' : forall a1 a2 b1 b2, le_set a1 b1 -> le_set a2 b1 -> le_two (a1, a2) (b1, b2)
-  | Bb'' : forall a1 a2 b1 b2, le_set a1 b2 -> le_set a2 b2 -> le_two (a1, a2) (b1, b2)
-.
-
-Inductive le_many : forall X, (X -> set) -> (X -> set) -> Prop :=
-  | Cmany : forall X f g, (forall x, exists y, le_set (f x) (g y)) -> le_many X f g 
-.
-
-Definition two2many {X} (x: X * X) : unit + unit -> X := match x with
-  (a, b) => fun y => match y with
-  | inl _ => a
-  | inr _ => b
-  end end.
-Definition le_two' x y := le_many _ (two2many x) (two2many y).
-Check le_two'.
-
-Lemma le_two_sym : forall {x a b}, le_two x (a, b) -> le_two x (b, a).
+Lemma wf_two_ind: forall P : set -> set -> Prop,
+  (forall x1 x2,
+    (forall y1 y2, (y1, y2) << (x1, x2) -> P y1 y2) -> P x1 x2)
+      -> forall x y, P x y.
 Proof.
-  intros.
-  dependent destruction H. apply Bb; assumption.
-  apply Aa; assumption. apply Bb''; assumption.
-  apply Bb'; assumption.
+  intros P H.
+  cut (forall z, match z with (z1, z2) => P z1 z2 end).
+  - intros. apply (H0 (x, y)).
+  - apply (well_founded_ind wf_two).
+    destruct x. intros. apply (H s s0). intros.
+    apply (H0 (y1, y2)). assumption.
 Qed.
 
-Lemma acc_le_two_sym : forall {a b}, Acc le_two (a, b) -> Acc le_two (b, a).
+Ltac auto2 := unfold le22; unfold le12; tauto.
+Lemma AA {a a' b b'}: a < a' -> b < a' -> (a, b) << (a', b').
+Proof. auto2. Qed.
+Lemma AB {a a' b b'}: a < a' -> b < b' -> (a, b) << (a', b').
+Proof. auto2. Qed.
+Lemma BA {a a' b b'}: a < b' -> b < a' -> (a, b) << (a', b').
+Proof. auto2. Qed.
+Lemma BB {a a' b b'}: a < b' -> b < b' -> (a, b) << (a', b').
+Proof. auto2. Qed.
+
+(* 3 *)
+
+Definition le13 : set -> set * set * set -> Prop := fun a bs =>
+  match bs with (b1, b2, b3) => a < b1 \/ a < b2 \/ a < b3 end.
+
+Definition le33 : set * set * set -> set * set * set -> Prop := fun a bs =>
+  match a with (a1, a2, a3) => le13 a1 bs \/ le13 a2 bs \/ le13 a3 bs end.
+Infix "<<<" := le33 (at level 50) : type_scope.
+
+Axiom wf_three: well_founded le33.
+
+Lemma wf_three_ind:
+  forall P : set -> set -> set -> Prop,
+  (forall x1 x2 x3,
+    (forall y1 y2 y3, (y1, y2, y3) <<< (x1, x2, x3) -> P y1 y2 y3) -> P x1 x2 x3)
+    -> forall x y z : set, P x y z.
 Proof.
-  intros. dependent induction H. apply Acc_intro. intros.
-  apply H0. apply le_two_sym. assumption.
+  intros P H.
+  cut (forall a, match a with (a1, a2, a3) => P a1 a2 a3 end).
+  - intros. apply (H0 (x, y, z)).
+  - apply (well_founded_ind wf_three).
+    intros. destruct x, p. apply (H s0 s1 s). intros.
+    apply (H0 (y1, y2, y3)). assumption.
 Qed.
 
-Axiom trans: forall a b c, le_set a b -> le_set b c -> le_set a c.
+Ltac auto3 := unfold le33; unfold le13; tauto.
 
-Lemma wf_le_two : well_founded le_set -> well_founded le_two.
-Proof.
-  intro wf_le_set.
-  unfold well_founded.
-  destruct a. revert s s0.
-  apply (well_founded_ind wf_le_set (fun s => forall s0 : set, Acc le_two (s, s0))).
-  intros.
-  revert s0 x H.
-  apply (well_founded_ind wf_le_set (fun s0 => forall x : set,
-  (forall y : set, le_set y x -> forall s1 : set, Acc le_two (y, s1)) ->
-  Acc le_two (x, s0))). intros.
-  apply Acc_intro. intros. destruct y.
-  dependent destruction H1.
-  - apply (H s0 H2 s). intros. apply H0. apply (trans _ s _); assumption.
-  - apply acc_le_two_sym. apply (H s H1 s0). intros. apply H0.
-    apply (trans _ s0 _); assumption.
-  - apply acc_le_two_sym. apply (H0 s0 H2). 
-  - admit.
-Admitted.
+Lemma AAA {a a' b b' c c'}: a < a' -> b < a' -> c < a' -> (a, b, c) <<< (a', b', c').
+Proof. auto3. Qed.
+Lemma AAB {a a' b b' c c'}: a < a' -> b < a' -> c < b' -> (a, b, c) <<< (a', b', c').
+Proof. auto3. Qed.
+Lemma AAC {a a' b b' c c'}: a < a' -> b < a' -> c < c' -> (a, b, c) <<< (a', b', c').
+Proof. auto3. Qed.
+Lemma ABA {a a' b b' c c'}: a < a' -> b < b' -> c < a' -> (a, b, c) <<< (a', b', c').
+Proof. auto3. Qed.
+Lemma ABB {a a' b b' c c'}: a < a' -> b < b' -> c < b' -> (a, b, c) <<< (a', b', c').
+Proof. auto3. Qed.
+Lemma ABC {a a' b b' c c'}: a < a' -> b < b' -> c < c' -> (a, b, c) <<< (a', b', c').
+Proof. auto3. Qed.
+Lemma ACA {a a' b b' c c'}: a < a' -> b < c' -> c < a' -> (a, b, c) <<< (a', b', c').
+Proof. auto3. Qed.
+Lemma ACB {a a' b b' c c'}: a < a' -> b < c' -> c < b' -> (a, b, c) <<< (a', b', c').
+Proof. auto3. Qed.
+Lemma ACC {a a' b b' c c'}: a < a' -> b < c' -> c < c' -> (a, b, c) <<< (a', b', c').
+Proof. auto3. Qed.
 
-End Wff. *)
+Lemma BAA {a a' b b' c c'}: a < b' -> b < a' -> c < a' -> (a, b, c) <<< (a', b', c').
+Proof. auto3. Qed.
+Lemma BAB {a a' b b' c c'}: a < b' -> b < a' -> c < b' -> (a, b, c) <<< (a', b', c').
+Proof. auto3. Qed.
+Lemma BAC {a a' b b' c c'}: a < b' -> b < a' -> c < c' -> (a, b, c) <<< (a', b', c').
+Proof. auto3. Qed.
+Lemma BBA {a a' b b' c c'}: a < b' -> b < b' -> c < a' -> (a, b, c) <<< (a', b', c').
+Proof. auto3. Qed.
+Lemma BBB {a a' b b' c c'}: a < b' -> b < b' -> c < b' -> (a, b, c) <<< (a', b', c').
+Proof. auto3. Qed.
+Lemma BBC {a a' b b' c c'}: a < b' -> b < b' -> c < c' -> (a, b, c) <<< (a', b', c').
+Proof. auto3. Qed.
+Lemma BCA {a a' b b' c c'}: a < b' -> b < c' -> c < a' -> (a, b, c) <<< (a', b', c').
+Proof. auto3. Qed.
+Lemma BCB {a a' b b' c c'}: a < b' -> b < c' -> c < b' -> (a, b, c) <<< (a', b', c').
+Proof. auto3. Qed.
+Lemma BCC {a a' b b' c c'}: a < b' -> b < c' -> c < c' -> (a, b, c) <<< (a', b', c').
+Proof. auto3. Qed.
+
+Lemma CAA {a a' b b' c c'}: a < c' -> b < a' -> c < a' -> (a, b, c) <<< (a', b', c').
+Proof. auto3. Qed.
+Lemma CAB {a a' b b' c c'}: a < c' -> b < a' -> c < b' -> (a, b, c) <<< (a', b', c').
+Proof. auto3. Qed.
+Lemma CAC {a a' b b' c c'}: a < c' -> b < a' -> c < c' -> (a, b, c) <<< (a', b', c').
+Proof. auto3. Qed.
+Lemma CBA {a a' b b' c c'}: a < c' -> b < b' -> c < a' -> (a, b, c) <<< (a', b', c').
+Proof. auto3. Qed.
+Lemma CBB {a a' b b' c c'}: a < c' -> b < b' -> c < b' -> (a, b, c) <<< (a', b', c').
+Proof. auto3. Qed.
+Lemma CBC {a a' b b' c c'}: a < c' -> b < b' -> c < c' -> (a, b, c) <<< (a', b', c').
+Proof. auto3. Qed.
+Lemma CCA {a a' b b' c c'}: a < c' -> b < c' -> c < a' -> (a, b, c) <<< (a', b', c').
+Proof. auto3. Qed.
+Lemma CCB {a a' b b' c c'}: a < c' -> b < c' -> c < b' -> (a, b, c) <<< (a', b', c').
+Proof. auto3. Qed.
+Lemma CCC {a a' b b' c c'}: a < c' -> b < c' -> c < c' -> (a, b, c) <<< (a', b', c').
+Proof. auto3. Qed.
+

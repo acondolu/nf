@@ -13,7 +13,7 @@ Require Import Coq.Wellfounded.Lexicographic_Product.
 Require Import Relation_Operators.
 
 Definition iin' : set * set -> Prop.
- refine ( Fix (wf_swapprod _ le_set wf_le_set) (fun _ => Prop) (
+ refine ( Fix (wf_swapprod _ lt wf_lt) (fun _ => Prop) (
   fun x rec => (
     match x as x0 return (x = x0 -> Prop) with (x', S A' p' h' X' f')
   => fun eqx
@@ -23,7 +23,7 @@ Definition iin' : set * set -> Prop.
       in eval (boolean_map w p'))
   end) eq_refl
  )).
-rewrite eqx. apply sp_swap. apply right_sym. apply le_h.
+rewrite eqx. apply sp_swap. apply right_sym. apply lt_h.
 Defined.
 
 (* Set membership *)
@@ -44,7 +44,7 @@ Lemma iin_unfold : forall x y,
        in eval (boolean_map w p')) end.
 Proof.
   apply uncurry.
-  apply (well_founded_ind ((wf_swapprod _ le_set wf_le_set))).
+  apply (well_founded_ind ((wf_swapprod _ lt wf_lt))).
   intros.
   destruct x.
   destruct s0.

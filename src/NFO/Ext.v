@@ -1,6 +1,7 @@
 Add LoadPath "src/NFO/".
 Require Import Bool.
 Require Import Model.
+Require Import Wff.
 Require Import Eeq.
 Require Import Iin.
 
@@ -33,9 +34,9 @@ Proof.
      end) (sum_i eeq h h0)).
      --- admit.
      --- unfold respects. destruct x, x'; unfold sum_i.
-          intro. apply H. apply AA; apply le_h. assumption.
-          intro. apply H. apply AB; apply le_h. assumption.
-          intro. apply H. apply BA; apply le_h. assumption.
-          intro. apply H. apply BB; apply le_h. assumption.
+          intro. apply H. apply AA; apply lt_h. assumption.
+          intro. apply H. apply AB; apply lt_h. assumption.
+          intro. apply H. apply BA; apply lt_h. assumption.
+          intro. apply H. apply BB; apply lt_h. assumption.
 Admitted.
 (* TODO *)

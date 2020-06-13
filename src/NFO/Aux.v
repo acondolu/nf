@@ -1,3 +1,5 @@
+
+
 Definition invF {X Y} (f: X -> Y) (x: Y) := exists y, f y = x.
 
 Definition inv2 {X Y W} (f: X -> W) (g : Y -> W) x :=
