@@ -36,20 +36,15 @@ Lemma uncurry: forall {X Y} {P : X -> Y -> Prop},
 Proof. intros. apply (H (x, y)). Qed.
 
 (* TODO: important *)
-Lemma iin_unfold : forall x y,
-  iin x y = match y with S A' p' h' X' f'
-    => Xor
+Lemma iin_unfold {x A' p' h' X' f'} :
+  iin x (S A' p' h' X' f')
+    <->
+    Xor
       (iin_low x f')
       (let w a := iin (h' a) x
-       in eval (boolean_map w p')) end.
+       in eval (boolean_map w p')).
 Proof.
   apply uncurry.
   apply (well_founded_ind ((wf_swapprod _ lt wf_lt))).
   intros.
-  destruct x.
-  destruct s0.
-  simpl.
-  unfold iin.
-  destruct s.
-  unfold iin' at 1.
 Admitted.

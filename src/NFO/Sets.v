@@ -22,9 +22,9 @@ end.
 Lemma compl_ok: forall x y,
   iin x y <-> (iin x (compl y) -> False).
 Proof.
-  intro x. destruct y. repeat rewrite iin_unfold. unfold compl. split.
-  - intros. unfold Xor in *. simpl boolean_map in *. simpl eval in *. tauto.
-  - simpl boolean_map. simpl eval. intros. apply negb_xor_r. auto.
+  intro x. destruct y. unfold compl. repeat rewrite iin_unfold. simpl boolean_map. simpl eval. split; intros.
+  - unfold Xor in *. tauto.
+  - apply negb_xor_r. auto.
 Qed.
 
 (* Co-singleton *)

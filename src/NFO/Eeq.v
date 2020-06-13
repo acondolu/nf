@@ -36,7 +36,7 @@ Definition eeq_low {X Y} f g :=
   (forall x: X, exists y, f x == g y)
   /\ forall y: Y, exists x, f x == g y.
 
-Axiom eeq_def : forall x y, eeq x y =
+Axiom eeq_def : forall x y, eeq x y <->
   match x, y with S A p h X f, S A' p' h' X' f'
     => eeq_low f f'
         /\  
@@ -113,7 +113,7 @@ Proof.
   unfold respects in *. intros.
   destruct x, x'; unfold compose, mk_sum; apply H0; apply H1.
   -
-  pose (fun z => (exists x, eeq (h x) z /\ f (inl x)) \/ (exists y, eeq (h' y) z /\ f (inr y))) as g.
+  pose (invert_sum f (compose eeq h) (compose eeq h')) as g.
   specialize H with g.
   cut (respects g eeq).
   intro. pose proof (H H1).
@@ -135,20 +135,21 @@ Proof.
         apply (H0 (inr x0)); auto.
   -- unfold respects in *. unfold g. intros.
   split; intros; repeat destruct H2.
-  left. exists x0. split; auto. apply (eeq_trans H2 H1).
-  right. exists x0. split; auto. apply (eeq_trans H2 H1).
-  left. exists x0. split; auto. apply (eeq_trans H2 (eeq_sym H1)).
-  right. exists x0. split; auto. apply (eeq_trans H2 (eeq_sym H1)).
+  left. exists x0. split; auto. apply (eeq_trans H3 H1).
+  right. exists x0. split; auto. apply (eeq_trans H3 H1).
+  left. exists x0. split; auto. apply (eeq_trans H3 (eeq_sym H1)).
+  right. exists x0. split; auto. apply (eeq_trans H3 (eeq_sym H1)).
 Qed.
 
 Require Import Setoid.
-Lemma eeq_unfold : forall x y, eeq x y <->
-  match x, y with S A p h X f, S A' p' h' X' f'
-    => eeq_low f f'
+Lemma eeq_unfold {A p h X f A' p' h' X' f'}:
+  eeq (S A p h X f) (S A' p' h' X' f') <->
+    eeq_boolean (boolean_map h p) (boolean_map h' p') eeq
       /\  
-      eeq_boolean (boolean_map h p) (boolean_map h' p') eeq
-end.
+    eeq_low f f'
+.
 Proof.
-  intros. destruct x, y. rewrite<- eeq_b_simplified.
-  rewrite eeq_def. tauto.
+  rewrite<- eeq_b_simplified.
+  rewrite eeq_def.
+  tauto.
 Qed.

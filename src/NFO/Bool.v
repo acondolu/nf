@@ -173,6 +173,10 @@ Lemma boolean_map_compose_inr {X Y Z} {f: X -> Z} {g: Y -> Z} {a}:
   boolean_map (compose (mk_sum f g) inr) a = boolean_map g a.
 Proof. induction a; simpl; auto. Qed.
 
+Definition invert_sum {X Y Z} f P Q (z : Z) := 
+    (exists x: X, f (inl x) /\ P x z)
+    \/ (exists x : Y, f (inr x) /\ Q x z).
+
 Lemma eeq_boolean_trans {X Y Z W} {h h' h''}
   {p : boolean X} {p' : boolean Y} {p'' : boolean Z}
   {P : W -> W -> Prop}
@@ -188,10 +192,7 @@ Proof.
   intros sym trans.
   unfold eeq_boolean.
   intros.
-  pose (fun y => 
-    (exists x, f (inl x) /\ P (h x) (h' y))
-    \/ (exists z, f (inr z) /\ P (h' y) (h'' z))
-    ) as g.
+  pose (invert_sum f (fun a b => P (h a) (h' b)) (fun a b => P (h' b) (h'' a))) as g.
   specialize H with (mk_sum (compose f inl) g).
   specialize H0 with (mk_sum g (compose f inr)).
   revert H H0.
