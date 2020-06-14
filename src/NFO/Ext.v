@@ -24,6 +24,7 @@ Proof.
   - destruct (H0 x0). exists x1. apply (eeq_trans H2 H1).
 Qed.
 
+(* TODO: prove low_ext here, needs a third lemma *)
 
 
 
@@ -33,78 +34,44 @@ Lemma iin_respects_eeq: forall z x y, eeq x y ->
   (iin z x <-> iin z y)
   /\ (iin x z <-> iin y z).
 Proof.
-  induction z. destruct x, y. repeat rewrite iin_unfold. split; apply Xor_eq; rewrite eeq_unfold in H1; destruct H1.
-  - apply eeq_iin_low_2. assumption.
-  - unfold eeq_boolean in H1.
+  induction z.
+  apply (wf_two_ind (fun x y => eeq x y -> _: Prop)).
+  destruct x1, x2. intros. repeat rewrite iin_unfold. split; apply Xor_eq.
+  - apply eeq_iin_low_2. rewrite eeq_unfold in H2; destruct H2. assumption.
+  - rewrite eeq_unfold in H2; destruct H2. unfold eeq_boolean in H1.
     pose (fun s : set =>
       (exists a0, s == h0 a0 /\ iin (h0 a0) (S A p h X f))
       \/ (exists a1, s == h1 a1 /\ iin (h1 a1) (S A p h X f))
     ) as g.
-    pose proof (H1 g).
     repeat rewrite boolean_map_compose in H3.
     cut (eval (boolean_map (Basics.compose g h0) p0) <-> (let w := fun a : A0 => iin (h0 a) (S A p h X f) in eval (boolean_map w p0))). intro.
     cut (eval (boolean_map (Basics.compose g h1) p1) <-> (let w := fun a : A1 => iin (h1 a) (S A p h X f) in eval (boolean_map w p1))). intro.
-    cut (respects g eeq). tauto.
-    -- unfold g. unfold respects. intros. admit.
+    rewrite<- H4. rewrite<- H5. 
+    cut (respects g eeq). 
+    -- repeat rewrite<- boolean_map_compose. apply H2.
+    -- unfold respects. intros. unfold g. split; intro; repeat destruct H7.
+      left. exists x0. split; eauto with Eeq.
+      right. exists x0. split; eauto with Eeq.
+      left. exists x0. split; eauto with Eeq.
+      right. exists x0. split; eauto with Eeq.
     -- apply boolean_map_extP. unfold FunExt.extP. intro a1.
        unfold Basics.compose. unfold g. split; intro. repeat destruct H5; auto.
-       (* GOSH! Serve il symprod a tre! Uffa! *)
-       (* right. exists a1. auto.
+       apply (fun K => proj2 (H1 (h0 x) (h1 a1) K (eeq_sym H5))).
+       auto with Wff. assumption.
+       apply (fun K => proj2 (H1 (h1 x) (h1 a1) K (eeq_sym H5))).
+       auto with Wff. assumption.
+       right. exists a1. split; eauto with Eeq.
     -- apply boolean_map_extP. unfold FunExt.extP. intro a1.
        unfold Basics.compose. unfold g. split; intro. repeat destruct H4; auto.
-       left. exists a1. auto. 
-  - apply eeq_iin_low_1. rewrite eeq_unfold. auto.
+       apply (fun K => proj2 (H1 (h0 a1) (h0 x) K H4)).
+       auto with Wff. assumption.
+       apply (fun K => proj2 (H1 (h0 a1) (h1 x) K H4)).
+       auto with Wff. assumption.
+       left. exists a1. split; eauto with Eeq.
+  - apply eeq_iin_low_1. rewrite eeq_unfold. rewrite eeq_unfold in H2; destruct H2. auto.
   - apply boolean_map_extP. unfold FunExt.extP. intro a.
-    apply (H a (S A0 p0 h0 X0 f0) (S A1 p1 h1 X1 f1)). rewrite eeq_unfold. auto.
+    apply (proj1 (H a (S A0 p0 h0 X0 f0) (S A1 p1 h1 X1 f1) H2)).
 Qed.
-
-
-  split; destruct z. rewrite iin_unfold.
-  * intro z. destruct x1, x2.
-  repeat rewrite iin_unfold in *.
-  rewrite eeq_unfold in H0.
-  repeat destruct H0.
-  unfold Xor.Xor. 
-  split; split; destruct H2; destruct H2.
-  - left. destruct H3. destruct (H0 x). exists x0.
-    apply (eeq_trans (eeq_sym H5) H3).
-  - right. unfold eeq_boolean in H1.
-    pose proof (H1 (fun x => match x with inl a => iin (h a) z | inr b => iin (h0 b) z end)).
-    repeat rewrite boolean_map_compose in H5.
-    cut (respects
-    (fun x : A + A0 =>
-     match x with
-     | inl a => iin (h a) z
-     | inr b => iin (h0 b) z
-     end) (sum_i eeq h h0)).
-     --- admit.
-     --- unfold respects. destruct x, x'; unfold sum_i.
-          intro. apply H. apply AA; apply lt_h. assumption.
-          intro. apply H. apply AB; apply lt_h. assumption.
-          intro. apply H. apply BA; apply lt_h. assumption.
-          intro. apply H. apply BB; apply lt_h. assumption.
-Admitted.
-(* TODO *)
-
-Lemma eeq_iin: forall x z y, eeq x y -> iin x z <-> iin y z.
-Proof.
-  apply (@uncurry _ _ (fun x z => forall y, eeq x y -> iin x z <-> iin y z)).
-  apply (@well_founded_ind _ _ (wf_swapprod _ lt wf_lt) (fun (a : set * set) => forall (y : set), fst a == y -> iin (fst a) (snd a) <-> iin y (snd a))).
-  destruct x. destruct s, s0. intro H. destruct y. simpl.
-  repeat rewrite iin_unfold.
-  intros. apply Xor_eq.
-  - apply eeq_iin_low_1. assumption.
-  - apply boolean_map_extP. unfold FunExt.extP. intro a.
-    pose proof (H (h0 a, S A p h X f)).  
-  split; intro.
-  unfold eeq_low in H0. *)
-Admitted.
-
-
-
-(* After trying the auxliary lemma for extensionality, 
-finally prove this and simplify the unfold of iin *)
-
 
 Lemma iin_high_aux {x A} {p: boolean A} {h} :
   (let w a := iin (h a) x
@@ -140,5 +107,49 @@ Proof.
   unfold Basics.compose in H0.
   repeat rewrite<- aux. apply H0.
   unfold respects. intros.
-  - simpl.
-Admitted.
+  apply iin_respects_eeq. assumption.
+Qed.
+
+Definition mk_low {X} f h :=
+S False (Bot _) (False_rect _) { x: X & f (h x) } (fun k => h (projT1 k)).
+
+Lemma xxx {X Y} {p} {h: X -> _} {f: set -> Prop} (g: Y -> _):
+respects f eeq ->
+iin_high (mk_low f (mk_sum h g)) h p <-> eval (boolean_map f (boolean_map h p)).
+Proof.
+  intro. induction p; simpl; simpl boolean_map; simpl iin_high; simpl eval.
+  - tauto.
+  - unfold mk_low. rewrite iin_unfold. unfold Xor. simpl. unfold iin_low. split; intros.
+  repeat destruct H0. destruct x0. apply (H _ _ H0). assumption.
+  split. left. exists (existT _ (inl x) H0). eauto with Eeq. tauto.
+  - rewrite IHp. tauto.
+  - rewrite IHp1. rewrite IHp2. tauto.
+Qed.
+
+Lemma xxx_r {X Y} {p} {h: X -> _} {f: set -> Prop} (g: Y -> _):
+respects f eeq ->
+iin_high (mk_low f (mk_sum g h)) h p <-> eval (boolean_map f (boolean_map h p)).
+Proof.
+  intro. induction p; simpl; simpl boolean_map; simpl iin_high; simpl eval.
+  - tauto.
+  - unfold mk_low. rewrite iin_unfold. unfold Xor. simpl. unfold iin_low. split; intros.
+  repeat destruct H0. destruct x0. apply (H _ _ H0). assumption.
+  split. left. exists (existT _ (inr x) H0). eauto with Eeq. tauto.
+  - rewrite IHp. tauto.
+  - rewrite IHp1. rewrite IHp2. tauto.
+Qed.
+
+Lemma eeq_iin_high_2: forall {X Y} {p p'} {h: X -> _} {h': Y -> _},
+  (forall x, iin_high x h p <-> iin_high x h' p')
+  -> eeq_boolean (boolean_map h p) (boolean_map h' p') eeq.
+Proof.
+  intros. unfold eeq_boolean. intros.
+  pose (mk_low f h) as g.
+  pose proof (H g).
+  rewrite<- (xxx h'). rewrite<- (xxx_r h). apply H. auto. auto.
+Qed.
+
+Theorem high_ext {X Y} {p p'} {h: X -> _} {h': Y -> _} :
+  eeq_boolean (boolean_map h p) (boolean_map h' p') eeq
+  <-> forall x, iin_high x h p <-> iin_high x h' p'.
+Proof. split. apply eeq_iin_high_1. apply eeq_iin_high_2. Qed.

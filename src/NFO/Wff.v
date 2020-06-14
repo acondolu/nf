@@ -62,6 +62,7 @@ Proof.
 Qed.
 
 Ltac auto3 := unfold le33; unfold le13; tauto.
+Hint Extern 1 (_ <<< _) => unfold le33; unfold le13; tauto : Wff.
 
 Lemma AAA {a a' b b' c c'}: a < a' -> b < a' -> c < a' -> (a, b, c) <<< (a', b', c').
 Proof. auto3. Qed.
