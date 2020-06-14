@@ -20,13 +20,7 @@ refine ( Fix wf_two (fun _ => Prop) (
               (boolean_map inl p) (boolean_map inr p') w
     end) eq_refl
  ))
-.
-  rewrite eqx; apply AB; apply lt_f.
-  rewrite eqx; apply AB; apply lt_f.
-  rewrite eqx; apply AA; apply lt_h.
-  rewrite eqx; apply AB; apply lt_h.
-  rewrite eqx; apply BA; apply lt_h.
-  rewrite eqx; apply BB; apply lt_h.
+ ; rewrite eqx; eauto with Wff.
 Qed.
 
 Definition eeq x y := eeq' (x, y).
@@ -46,52 +40,41 @@ end.
 
 Lemma eeq_refl {x} : eeq x x.
 Proof.
-  induction x.
-  rewrite eeq_def. unfold eeq_low. split.
-  split; intro.
-  - exists x. apply H0.
-  - exists y. apply H0.
-  - apply eeq_boolean_refl. apply H.
+  induction x. rewrite eeq_def. unfold eeq_low. split.
+  split; intro; eauto. eauto with Bool.
 Qed.
+Hint Immediate eeq_refl : Eeq.
 
 Lemma eeq_sym : forall {x y}, eeq x y -> eeq y x.
 Proof.
-  apply (wf_two_ind (fun x y => eeq x y -> eeq y x)). intros.
-  destruct x1. destruct x2.
-  rewrite eeq_def in *. unfold eeq_low in *. repeat destruct H0.
+  apply (wf_two_ind (fun x y => eeq x y -> eeq y x)).
+  destruct x1, x2.
+  repeat rewrite eeq_def. intros. repeat destruct H0.
   split. split.
-  - intro x0. destruct (H2 x0). exists x. apply H. apply AB ; apply lt_f. assumption.
-  - intro x. destruct (H0 x). exists x0. apply H. apply AB ; apply lt_f. assumption.
+  - intro x0. destruct (H2 x0). eauto with Wff.
+  - intro x. destruct (H0 x). eauto with Wff.
   - revert H1. apply eeq_boolean_sym.
 Qed.
+Hint Resolve eeq_sym : Eeq.
 
 Lemma eeq_trans : forall {x y z}, eeq x y -> eeq y z -> eeq x z.
 Proof.
   apply (wf_three_ind (fun x y z => eeq x y -> eeq y z -> eeq x z)).
-  intros. destruct x1. destruct x2. destruct x3.
+  destruct x1. destruct x2. destruct x3. intros. 
   rewrite eeq_def in *. unfold eeq_low in *.
   repeat destruct H0. repeat destruct H1.
   split. split.
-  - intro x. destruct (H0 x). destruct (H1 x0). exists x1.
-    apply (fun X => H _ _ _ X H6 H7).
-    apply ABC; apply lt_f.
-  - intro y. destruct (H5 y). destruct (H3 x). exists x0.
-    apply (fun X => H _ _ _ X H7 H6).
-    apply ABC; apply lt_f.
+  - intro x. destruct (H0 x). destruct (H1 x0).
+    eauto with Wff.
+  - intro y. destruct (H5 y). destruct (H3 x).
+    eauto with Wff.
   - apply (fun X => eeq_boolean_trans (@eeq_sym) X H2 H4).
-    intros. repeat destruct H6; destruct H7; repeat destruct H6; destruct H8; repeat destruct H6; apply (fun X => H _ _ _ X H9 H10).
-    apply AAA; apply lt_h. apply AAB; apply lt_h. apply AAC; apply lt_h.
-    apply ABA; apply lt_h. apply ABB; apply lt_h. apply ABC; apply lt_h.
-    apply ACA; apply lt_h. apply ACB; apply lt_h. apply ACC; apply lt_h.
-    apply BAA; apply lt_h. apply BAB; apply lt_h. apply BAC; apply lt_h.
-    apply BBA; apply lt_h. apply BBB; apply lt_h. apply BBC; apply lt_h.
-    apply BCA; apply lt_h. apply BCB; apply lt_h. apply BCC; apply lt_h.
-    apply CAA; apply lt_h. apply CAB; apply lt_h. apply CAC; apply lt_h.
-    apply CBA; apply lt_h. apply CBB; apply lt_h. apply CBC; apply lt_h.
-    apply CCA; apply lt_h. apply CCB; apply lt_h. apply CCC; apply lt_h.
+    intros. repeat destruct H6; destruct H7; repeat destruct H6; destruct H8; repeat destruct H6; apply (fun X => H _ _ _ X H9 H10); eauto with Wff.
 Qed.
+Hint Resolve eeq_trans : Eeq.
 
-(* WOW *)
+(* eeq high *)
+
 Require Import Coq.Program.Basics.
 Require Import Coq.Program.Combinators.
 Lemma eeq_b_simplified:
@@ -103,42 +86,39 @@ Lemma eeq_b_simplified:
 Proof.
   intros. unfold eeq_boolean. split; intros.
   - specialize H with (compose f (mk_sum h h')).
-  repeat rewrite boolean_map_compose in H.
-  repeat rewrite compose_assoc in H.
-  rewrite<- boolean_map_compose in H.
-  rewrite boolean_map_compose_inl in H.
-  rewrite<- boolean_map_compose in H.
-  rewrite boolean_map_compose_inr in H.
-  apply H.
-  unfold respects in *. intros.
-  destruct x, x'; unfold compose, mk_sum; apply H0; apply H1.
-  -
-  pose (invert_sum f (compose eeq h) (compose eeq h')) as g.
-  specialize H with g.
-  cut (respects g eeq).
-  intro. pose proof (H H1).
-  -- repeat rewrite boolean_map_compose.
+    repeat rewrite boolean_map_compose in H.
+    repeat rewrite compose_assoc in H.
+    rewrite<- boolean_map_compose in H.
+    rewrite boolean_map_compose_inl in H.
+    rewrite<- boolean_map_compose in H.
+    rewrite boolean_map_compose_inr in H.
+    apply H. unfold respects in *. intros.
+    destruct x, x'; unfold compose, mk_sum; apply H0; apply H1.
+  - pose (invert_sum f (compose eeq h) (compose eeq h')) as g.
+    specialize H with g.
+    cut (respects g eeq).
+  -- intro. repeat rewrite boolean_map_compose.
     rewrite (boolean_map_extP (compose f inl) (compose g h)).
     rewrite (boolean_map_extP (compose f inr) (compose g h')).
-    repeat rewrite<- boolean_map_compose. assumption.
+    repeat rewrite<- boolean_map_compose. apply (H H1).
     --- unfold FunExt.extP. unfold compose.
-      intros. unfold g. split; intro.
-      right. exists x. split; auto. apply eeq_refl.
-      repeat destruct H3.
-      apply (H0 (inl x0)); auto.
-      apply (H0 (inr x0)); auto.
+        intros. unfold g. split; intro.
+        right. exists x. split; auto. apply eeq_refl.
+        repeat destruct H2.
+        apply (H0 (inl x0)); auto.
+        apply (H0 (inr x0)); auto.
     --- unfold FunExt.extP. unfold compose.
         intros. unfold g. split; intro.
         left. exists x. split; auto. apply eeq_refl.
-        repeat destruct H3.
+        repeat destruct H2.
         apply (H0 (inl x0)); auto.
         apply (H0 (inr x0)); auto.
   -- unfold respects in *. unfold g. intros.
-  split; intros; repeat destruct H2.
-  left. exists x0. split; auto. apply (eeq_trans H3 H1).
-  right. exists x0. split; auto. apply (eeq_trans H3 H1).
-  left. exists x0. split; auto. apply (eeq_trans H3 (eeq_sym H1)).
-  right. exists x0. split; auto. apply (eeq_trans H3 (eeq_sym H1)).
+     split; intros; repeat destruct H2.
+     left. eauto with Eeq.
+     right. eauto with Eeq.
+     left. exists x0. eauto with Eeq.
+     right. exists x0. eauto with Eeq.
 Qed.
 
 Require Import Setoid.

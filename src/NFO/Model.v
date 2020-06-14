@@ -13,6 +13,7 @@ Inductive lt : set -> set -> Prop :=
   | lt_h : forall A p h X f i, lt (h i) (S A p h X f)
 .
 Infix "<" := lt.
+Hint Constructors lt : Wff.
 
 Lemma wf_lt : well_founded lt.
 Proof.

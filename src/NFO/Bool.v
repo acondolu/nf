@@ -56,6 +56,7 @@ Proof.
   - rewrite IHp. auto.
   - rewrite IHp1. rewrite IHp2. auto.
 Qed.
+Hint Resolve boolean_map_compose : Bool.
 
 (* EEQ PROP *)
 
@@ -81,12 +82,10 @@ end.
 Lemma eeq_boolean_refl : forall {X Y} (p: boolean X) (f: Y -> Y -> Prop) (h: X -> Y), (forall x, f (h x) (h x)) -> eeq_boolean (boolean_map inl p) (boolean_map inr p) (sum_i f h h).
 Proof.
   unfold eeq_boolean. intros.
-  induction p; simpl.
-  - tauto.
-  - apply H0. apply H.
-  - tauto.
-  - tauto.
+  induction p; simpl; try tauto; eauto.
+  apply H0. apply H.
 Qed.
+Hint Resolve eeq_boolean_refl : Bool.
 
 (* SYMMETRY *)
 
@@ -160,10 +159,12 @@ Definition mk_sum {X Y Z} f g : X + Y -> Z := fun s =>
 Lemma compose_sum_inl {X Y Z} {f: X -> Z} {g: Y -> Z} :
   ext ((compose (mk_sum f g) inl)) f.
 Proof. unfold ext. intros. apply eq_refl. Qed.
+Hint Resolve compose_sum_inl : Bool.
 
 Lemma compose_sum_inr {X Y Z} {f: X -> Z} {g: Y -> Z} :
   ext ((compose (mk_sum f g) inr)) g.
 Proof. intro x. apply eq_refl. Qed.
+Hint Resolve compose_sum_inr : Bool.
 
 Lemma boolean_map_compose_inl {X Y Z} {f: X -> Z} {g: Y -> Z} {a}:
   boolean_map (compose (mk_sum f g) inl) a = boolean_map f a.
@@ -189,6 +190,8 @@ Lemma eeq_boolean_trans {X Y Z W} {h h' h''}
   -> eeq_boolean (boolean_map inl p) (boolean_map inr p'')
       (sum_i P h h'').
 Proof.
+  Ltac lr H3 x :=
+    repeat destruct H3; [left | right]; exists x; split; eauto.
   intros sym trans.
   unfold eeq_boolean.
   intros.
@@ -200,11 +203,10 @@ Proof.
   repeat rewrite boolean_map_compose_inl.
   repeat rewrite boolean_map_compose_inr.
   intros.
-  apply (fun A B => iff_trans (H A) (H0 B)); unfold respects; intros; destruct x; destruct x'; simpl mk_sum; unfold respects in H1; simpl in H2; unfold g; unfold compose.
-  - apply (H1 (inl x) (inl x0) H2).
+  apply (fun A B => iff_trans (H A) (H0 B)); unfold respects; intros; destruct x; destruct x'; simpl mk_sum; unfold respects in H1; simpl in H2; unfold g; unfold compose; auto.
   - split; intro.
-    -- left. exists x. auto.
-    -- repeat destruct H3.
+  -- left. exists x. auto.
+  -- repeat destruct H3.
       specialize H1 with (inl x) (inl x0). simpl sum_i in H1.
       apply (fun X Y Z => H1 (trans _ _ _ X Y Z H2 (sym _ _ H4))); auto.
       specialize H1 with (inl x) (inr x0). simpl sum_i in H1.
@@ -216,39 +218,20 @@ Proof.
       specialize H1 with (inl x) (inr x0). simpl sum_i in H1.
       apply (fun X Y Z => H1 (trans _ _ _ X Y Z (sym _ _ H2) H4)); auto.
     -- left. exists x. auto.
-  - split; intro.
-  -- repeat destruct H3. left. exists x. split; auto.
-     apply (fun X Y Z => trans _ _ _ X Y Z H4 H2); auto.
-     right. exists x. split; auto.
-     apply (fun X Y Z => trans _ _ _ X Y Z (sym _ _ H2) H4); auto.
-  -- repeat destruct H3. left. exists x. split; auto.
-     apply (fun X Y Z => trans _ _ _ X Y Z H4 (sym _ _ H2)); auto.
-     right. exists x. split; auto.
-     apply (fun X Y Z => trans _ _ _ X Y Z H2 H4); auto.
-  - split; intro.
-    -- repeat destruct H3. left. exists x. split; auto.
-      apply (fun X Y Z => trans _ _ _ X Y Z H4 H2); auto.
-      right. exists x. split; auto.
-      apply (fun X Y Z => trans _ _ _ X Y Z (sym _ _ H2) H4); auto.
-    -- repeat destruct H3. left. exists x. split; auto.
-      apply (fun X Y Z => trans _ _ _ X Y Z H4 (sym _ _ H2)); auto.
-      right. exists x. split; auto.
-      apply (fun X Y Z => trans _ _ _ X Y Z H2 H4); auto.
+  - split; intro; lr H3 x.
+  - split; intro; lr H3 x.
   - split; intro.
     -- repeat destruct H3.
       specialize H1 with (inl x) (inr z). simpl sum_i in H1.
-      apply H1. apply (fun X Y Z => trans _ _ _ X Y Z H4 H2); auto.
-      assumption. specialize H1 with (inr x) (inr z). simpl sum_i in H1.
-      apply H1. apply (fun X Y Z => trans _ _ _ X Y Z (sym _ _ H4) H2); auto.
-      assumption.
+      apply H1; eauto.
+      specialize H1 with (inr x) (inr z). simpl sum_i in H1.
+      apply H1; eauto.
     -- right. exists z. split; auto. 
   - split; intro.
   -- right. exists z. split; auto. 
   -- repeat destruct H3.
-    specialize H1 with (inl x) (inr z). simpl sum_i in H1.
-    apply H1. apply (fun X Y Z => trans _ _ _ X Y Z H4 (sym _ _ H2)); auto.
-    auto.
-    specialize H1 with (inr x) (inr z); auto. simpl sum_i in H1.
-    apply H1. apply (fun X Y Z => sym _ _ (trans _ _ _ X Y Z H2 H4)); auto. auto.
-  - apply H1. assumption.
+     specialize H1 with (inl x) (inr z). simpl sum_i in H1.
+     apply H1; eauto.
+     specialize H1 with (inr x) (inr z). simpl sum_i in H1. 
+     apply H1; eauto.
 Qed.

@@ -28,13 +28,13 @@ Qed.
 
 Ltac auto2 := unfold le22; unfold le12; tauto.
 Lemma AA {a a' b b'}: a < a' -> b < a' -> (a, b) << (a', b').
-Proof. auto2. Qed.
+Proof. auto2. Qed. Hint Resolve AA : Wff.
 Lemma AB {a a' b b'}: a < a' -> b < b' -> (a, b) << (a', b').
-Proof. auto2. Qed.
+Proof. auto2. Qed. Hint Resolve AB : Wff.
 Lemma BA {a a' b b'}: a < b' -> b < a' -> (a, b) << (a', b').
-Proof. auto2. Qed.
+Proof. auto2. Qed. Hint Resolve BA : Wff.
 Lemma BB {a a' b b'}: a < b' -> b < b' -> (a, b) << (a', b').
-Proof. auto2. Qed.
+Proof. auto2. Qed. Hint Resolve BB : Wff.
 
 (* 3 *)
 
@@ -120,3 +120,4 @@ Proof. auto3. Qed.
 Lemma CCC {a a' b b' c c'}: a < c' -> b < c' -> c < c' -> (a, b, c) <<< (a', b', c').
 Proof. auto3. Qed.
 
+Hint Resolve AAA AAB AAC ABA ABB ABC ACA ACB ACC BAA BAB BAC BBA BBB BBC BCA BCB BCC CAA CAB CAC CBA CBB CBC CCA CCB CCC : Wff.
