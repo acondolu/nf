@@ -10,22 +10,34 @@ Require Import Relation_Operators.
 
 Require Import Xor.
 
+(* LOW *)
+
 Lemma eeq_iin_low_1: forall {x y X} {f: X -> _},
   x == y -> iin_low x f <-> iin_low y f.
 Proof.
   intros. unfold iin_low. split; intro; destruct H0; exists x0.
   apply (eeq_trans H0 H). apply (eeq_trans H0 (eeq_sym H)).
 Qed.
-Lemma eeq_iin_low_2: forall {x X Y} {f: X -> _} {g: Y -> _},
-  eeq_low f g -> iin_low x f <-> iin_low x g.
+Lemma eeq_iin_low_2: forall {X Y} {f: X -> _} {g: Y -> _},
+  eeq_low f g -> forall x, iin_low x f <-> iin_low x g.
 Proof.
   intros. unfold iin_low. destruct H. split; intro; destruct H1.
   - destruct (H x0). exists x1. apply (eeq_trans (eeq_sym H2) H1).
   - destruct (H0 x0). exists x1. apply (eeq_trans H2 H1).
 Qed.
+Lemma eeq_iin_low_3: forall {X Y} {f: X -> _} {g: Y -> _},
+  (forall x, iin_low x f <-> iin_low x g) -> eeq_low f g.
+Proof.
+  intros. unfold eeq_low. split; intro x.
+  - destruct (H (f x)). cut (iin_low (f x) f). intro. destruct (H0 H2).
+    exists x0. eauto with Eeq. unfold iin_low. eauto with Eeq.
+  - destruct (H (g x)). cut (iin_low (g x) g). intro. destruct (H1 H2).
+    exists x0. eauto with Eeq. unfold iin_low. eauto with Eeq.
+Qed.
 
-(* TODO: prove low_ext here, needs a third lemma *)
-
+Theorem low_ext {X Y} {f: X -> _} {g: Y -> _} :
+  eeq_low f g <-> (forall x, iin_low x f <-> iin_low x g).
+Proof. split. apply eeq_iin_low_2. apply eeq_iin_low_3. Qed.
 
 
 (* TODO: Prove extensionality *)
@@ -73,6 +85,8 @@ Proof.
     apply (proj1 (H a (S A0 p0 h0 X0 f0) (S A1 p1 h1 X1 f1) H2)).
 Qed.
 
+(* iin move there? *)
+
 Lemma iin_high_aux {x A} {p: boolean A} {h} :
   (let w a := iin (h a) x
   in eval (boolean_map w p))
@@ -96,6 +110,8 @@ Lemma aux {X p} {h: X -> _} {x}:
   <-> 
   iin_high x h p.
 Proof. induction p; simpl; tauto. Qed.
+
+(* HIGH *)
 
 Lemma eeq_iin_high_1: forall {X Y} {p p'} {h: X -> _} {h': Y -> _},
   eeq_boolean (boolean_map h p) (boolean_map h' p') eeq
