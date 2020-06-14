@@ -2,6 +2,27 @@ Add LoadPath "src/NFO/".
 Require Import Model.
 Require Import Coq.Init.Wf.
 
+
+Lemma Fix_F_inv {A} {R: A -> A -> Prop} {Rwf: well_founded R} {F : forall x:A, (forall y:A, R y x -> Prop) -> Prop} : forall (F_ext :
+forall (x:A) (f g:forall y:A, R y x -> Prop),
+  (forall (y:A) (p:R y x), f y p <-> g y p) -> F x f <-> F x g)
+  (x:A) (r s:Acc R x), Fix_F (fun _ => Prop) F r <-> Fix_F (fun _ => Prop) F s.
+Proof.
+intros. induction (Rwf x); intros.
+rewrite <- (Fix_F_eq _ F r); rewrite <- (Fix_F_eq _ F s); intros.
+  apply F_ext; auto.
+Qed.
+
+Lemma Fix_iff {A} {R: A -> A -> Prop} {Rwf: well_founded R} {F : forall x:A, (forall y:A, R y x -> Prop) -> Prop} : forall (F_ext :
+forall (x:A) (f g:forall y:A, R y x -> Prop),
+  (forall (y:A) (p:R y x), f y p <-> g y p) -> F x f <-> F x g) (x:A), Fix Rwf (fun _ => Prop) F x <-> F x (fun (y:A) (p: R y x) => Fix Rwf (fun _ => Prop) F y).
+Proof.
+  intros. unfold Fix.
+  rewrite <- Fix_F_eq.
+  apply F_ext; intros.
+  apply (@Fix_F_inv _ _ Rwf _ F_ext).
+Qed.
+
 (* 2 *)
 
 Definition le12 : set -> set * set -> Prop := fun a bs =>

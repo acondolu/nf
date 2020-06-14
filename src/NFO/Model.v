@@ -16,10 +16,9 @@ Infix "<" := lt.
 Hint Constructors lt : Wff.
 
 Lemma wf_lt : well_founded lt.
-Proof.
+Proof. 
   unfold well_founded.
   induction a.
   apply Acc_intro. intros.
-  dependent destruction H1.
-  apply H0. apply H.
-Qed.
+  dependent destruction H1; eauto.
+Defined.

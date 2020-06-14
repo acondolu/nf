@@ -63,10 +63,22 @@ Hint Resolve boolean_map_compose : Bool.
 Definition respects {X} (f: X -> Prop) (P: X -> X -> Prop) :=
   forall x x', P x x' -> (f x <-> f x').
 
+Lemma respects_ext {X} (f: X -> Prop) R1 R2 :
+  extP2 R1 R2 -> respects f R1 <-> respects f R2.
+Proof.
+  unfold respects, extP2. intro. split; intros; apply H0; apply H; assumption.
+Qed.
+
 Definition eeq_boolean {X} (p1 p2: boolean X) P : Prop :=
   forall f, respects f P ->
     eval (boolean_map f p1) <-> eval (boolean_map f p2).
 
+Lemma eeq_boolean_ext {X} (p1 p2: boolean X) R1 R2 :
+  extP2 R1 R2 -> eeq_boolean p1 p2 R1 <-> eeq_boolean p1 p2 R2.
+Proof.
+  unfold eeq_boolean. split; intros; apply H0;
+  apply (respects_ext _ _ _ H); assumption.
+Qed.
 (* SUM_I *)
 
 Definition sum_i {X Y Z} (R: Z -> Z -> Prop) h h' (i j: X + Y) := 

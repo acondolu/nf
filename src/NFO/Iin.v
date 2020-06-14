@@ -3,6 +3,7 @@ Require Import Bool.
 Require Import Model.
 Require Import Eeq.
 Require Import Xor.
+Require Import Wff.
 
 (* Membership on the `low` part of a NFO-set. *)
 Definition iin_low {X} (y: set) (f: X -> set) :=
@@ -33,21 +34,33 @@ Definition iin x y := iin' (x, y).
 
 Lemma uncurry: forall {X Y} {P : X -> Y -> Prop},
   (forall a : X * Y, P (fst a) (snd a)) -> forall x y, P x y.
-Proof. intros. apply (H (x, y)). Qed.
+Proof. intros. apply (H (x, y)). Defined.
 
 (* TODO: important *)
+Lemma iin_unfold' : forall {x},
+  iin' x
+    <->
+    match x with (x', S A' p' h' X' f') =>
+    Xor
+      (iin_low x' f')
+      (let w a := iin' (h' a, x')
+       in eval (boolean_map w p')) end.
+Proof.
+  apply (well_founded_ind ((wf_swapprod _ lt wf_lt))).
+  destruct x. intros.
+  unfold iin' at 1. rewrite Fix_iff. destruct s0. fold iin'. tauto.
+  destruct x. intros. destruct s2. apply Xor_eq. tauto. apply boolean_map_extP.
+  unfold FunExt.extP. split; intros; rewrite H0 in *; auto.
+Qed.
+
 Lemma iin_unfold {x A' p' h' X' f'} :
   iin x (S A' p' h' X' f')
     <->
     Xor
       (iin_low x f')
-      (let w a := iin (h' a) x
+      (let w a := iin' (h' a, x)
        in eval (boolean_map w p')).
-Proof.
-  apply uncurry.
-  apply (well_founded_ind ((wf_swapprod _ lt wf_lt))).
-  intros.
-Admitted.
+Proof. apply (@iin_unfold' (x, S A' p' h' X' f')). Qed.
 
 
 Fixpoint iin_high {X} x (h: X -> set) (p : boolean X) := match p with

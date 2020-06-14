@@ -21,7 +21,7 @@ refine ( Fix wf_two (fun _ => Prop) (
     end) eq_refl
  ))
  ; rewrite eqx; eauto with Wff.
-Qed.
+Defined.
 
 Definition eeq x y := eeq' (x, y).
 Infix "==" := eeq (at level 50) : type_scope.
@@ -30,13 +30,27 @@ Definition eeq_low {X Y} f g :=
   (forall x: X, exists y, f x == g y)
   /\ forall y: Y, exists x, f x == g y.
 
-Axiom eeq_def : forall x y, eeq x y <->
+Lemma eeq_def : forall x y, eeq x y <->
   match x, y with S A p h X f, S A' p' h' X' f'
     => eeq_low f f'
         /\  
           eeq_boolean (boolean_map inl p) (boolean_map inr p')
             (sum_i eeq h h')
 end.
+Proof.
+  apply wf_two_ind.
+  destruct x1, x2. intros.
+  unfold eeq at 1. unfold eeq' at 1. rewrite Fix_iff. fold eeq'.
+  - unfold eeq_low. unfold sum_i. tauto.
+  - intros. destruct x. destruct s. destruct s0.
+    Require Import Xor. apply And_eq3.
+    -- split; intros. destruct (H1 x). exists x0. rewrite<- H0. assumption.
+        destruct (H1 x). exists x0. rewrite H0. assumption.
+    -- split; intros. destruct (H1 y). exists x. rewrite<- H0. assumption.
+    destruct (H1 y). exists x. rewrite H0. assumption.
+    -- apply eeq_boolean_ext. unfold FunExt.extP2. intros.
+       destruct x, y; repeat rewrite H0; tauto.
+Qed.
 
 Lemma eeq_refl {x} : eeq x x.
 Proof.
