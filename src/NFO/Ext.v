@@ -29,7 +29,7 @@ Qed.
 
 (* TODO: Prove extensionality *)
 
-Lemma ext_easy: forall z x y, eeq x y ->
+Lemma iin_respects_eeq: forall z x y, eeq x y ->
   (iin z x <-> iin z y)
   /\ (iin x z <-> iin y z).
 Proof.
