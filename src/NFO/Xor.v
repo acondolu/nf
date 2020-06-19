@@ -1,3 +1,4 @@
+(* Warning! This module uses classical logic! *)
 Require Import Coq.Logic.Classical_Prop.
 
 Definition Xor a b := (a \/ b) /\ (a -> b -> False).
