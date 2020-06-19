@@ -13,7 +13,7 @@ Inductive boolean X :=
   | Or : boolean X -> boolean X -> boolean X
 .
 
-(* Evaluate a closed boolean formula to a Prop *)
+(* Evaluate a boolean expression of Props to a Prop *)
 Fixpoint eval (p: boolean Prop) := match p with
   | Atom _ a => a
   | Bot _ => False
@@ -30,23 +30,13 @@ match p with
   | Or _ p1 p2 => Or _ (boolean_map f p1) (boolean_map f p2)
 end.
 
-Lemma boolean_map_ext {X Y} {p} (f: X -> Y) (g: X -> Y):
-  ext f g -> boolean_map f p = boolean_map g p.
-Proof.
-  intro E. induction p; simpl; auto.
-  - rewrite (E x). auto.
-  - rewrite IHp. auto.
-  - rewrite IHp1. rewrite IHp2. auto.
-Qed.
-
 Require Import Setoid.
 Lemma boolean_map_extP {X} {p: boolean X} f g:
   extP f g -> eval (boolean_map f p) <-> eval (boolean_map g p).
 Proof.
-  intro E. induction p; simpl; auto.
-  - tauto.
-  - rewrite IHp. tauto.
-  - rewrite IHp1. rewrite IHp2. tauto.
+  unfold extP. intro E. induction p; simpl; eauto. tauto.
+  rewrite IHp. tauto.
+  rewrite IHp1. rewrite IHp2. tauto.
 Qed.
 
 Lemma boolean_map_compose {X Y Z f g p}:
@@ -56,12 +46,11 @@ Proof.
   - rewrite IHp. auto.
   - rewrite IHp1. rewrite IHp2. auto.
 Qed.
-Hint Resolve boolean_map_compose : Bool.
 
 (* EEQ PROP *)
 
-Definition respects {X} (f: X -> Prop) (P: X -> X -> Prop) :=
-  forall x x', P x x' -> (f x <-> f x').
+Definition respects {X} (f: X -> Prop) (R: X -> X -> Prop) :=
+  forall x x', R x x' -> (f x <-> f x').
 
 Lemma respects_ext {X} (f: X -> Prop) R1 R2 :
   extP2 R1 R2 -> respects f R1 <-> respects f R2.
@@ -69,12 +58,12 @@ Proof.
   unfold respects, extP2. intro. split; intros; apply H0; apply H; assumption.
 Qed.
 
-Definition eeq_boolean {X} (p1 p2: boolean X) P : Prop :=
+Definition eeq_boolean {X} P (p1 p2: boolean X) : Prop :=
   forall f, respects f P ->
     eval (boolean_map f p1) <-> eval (boolean_map f p2).
 
 Lemma eeq_boolean_ext {X} (p1 p2: boolean X) R1 R2 :
-  extP2 R1 R2 -> eeq_boolean p1 p2 R1 <-> eeq_boolean p1 p2 R2.
+  extP2 R1 R2 -> eeq_boolean R1 p1 p2 <-> eeq_boolean R2 p1 p2.
 Proof.
   unfold eeq_boolean. split; intros; apply H0;
   apply (respects_ext _ _ _ H); assumption.
@@ -91,7 +80,7 @@ end.
 
 (* REFLEXIVITY *)
 
-Lemma eeq_boolean_refl : forall {X Y} (p: boolean X) (f: Y -> Y -> Prop) (h: X -> Y), (forall x, f (h x) (h x)) -> eeq_boolean (boolean_map inl p) (boolean_map inr p) (sum_i f h h).
+Lemma eeq_boolean_refl : forall {X Y} (p: boolean X) (f: Y -> Y -> Prop) (h: X -> Y), (forall x, f (h x) (h x)) -> eeq_boolean (sum_i f h h) (boolean_map inl p) (boolean_map inr p).
 Proof.
   unfold eeq_boolean. intros.
   induction p; simpl; try tauto; eauto.
@@ -125,9 +114,9 @@ Proof.
 Qed.
 
 Lemma eeq_boolean_sym : forall {X Y Z p p0 h h0 P},
-eeq_boolean (boolean_map inl p) (boolean_map inr p0) (@sum_i X Y Z P h h0)
+eeq_boolean (@sum_i X Y Z P h h0) (boolean_map inl p) (boolean_map inr p0) 
 -> 
-eeq_boolean (boolean_map inl p0) (boolean_map inr p) (sum_i P h0 h).
+eeq_boolean (sum_i P h0 h) (boolean_map inl p0) (boolean_map inr p).
 Proof.
   intros. unfold eeq_boolean in *. intros.
   pose proof (H (compose f swap)).
@@ -153,7 +142,7 @@ Proof.
 Qed.
 
 Lemma eeq_boolean_extends {X} {p1 p2: boolean X} {h h'} :
-  extends h h' -> eeq_boolean p1 p2 h -> eeq_boolean p1 p2 h'.
+  extends h h' -> eeq_boolean h p1 p2 -> eeq_boolean h' p1 p2.
 Proof.
   unfold eeq_boolean. intros.
   pose proof (respects_extends H H1).
@@ -195,12 +184,9 @@ Lemma eeq_boolean_trans {X Y Z W} {h h' h''}
   {P : W -> W -> Prop}
   :  (forall a b, P a b -> P b a)
   -> (forall a b c, inv3 h h' h'' a -> inv3 h h' h'' b -> inv3 h h' h'' c -> P a b -> P b c -> P a c)
-  -> eeq_boolean (boolean_map inl p) (boolean_map inr p')
-      (sum_i P h h')
-  -> eeq_boolean (boolean_map inl p') (boolean_map inr p'')
-      (sum_i P h' h'')
-  -> eeq_boolean (boolean_map inl p) (boolean_map inr p'')
-      (sum_i P h h'').
+  -> eeq_boolean (sum_i P h h') (boolean_map inl p) (boolean_map inr p')
+  -> eeq_boolean (sum_i P h' h'') (boolean_map inl p') (boolean_map inr p'')
+  -> eeq_boolean (sum_i P h h'') (boolean_map inl p) (boolean_map inr p'').
 Proof.
   Ltac lr H3 x :=
     repeat destruct H3; [left | right]; exists x; split; eauto.

@@ -16,8 +16,8 @@ refine ( Fix wf_two (fun _ => Prop) (
             | inr i', inl j' => rec (h' i', h j') _
             | inr i', inr j' => rec (h' i', h' j') _
             end in 
-            eeq_boolean
-              (boolean_map inl p) (boolean_map inr p') w
+            eeq_boolean w
+              (boolean_map inl p) (boolean_map inr p')
     end) eq_refl
  ))
  ; rewrite eqx; eauto with Wff.
@@ -34,8 +34,7 @@ Lemma eeq_def : forall x y, eeq x y <->
   match x, y with S A p h X f, S A' p' h' X' f'
     => eeq_low f f'
         /\  
-          eeq_boolean (boolean_map inl p) (boolean_map inr p')
-            (sum_i eeq h h')
+          eeq_boolean (sum_i eeq h h') (boolean_map inl p) (boolean_map inr p')
 end.
 Proof.
   apply wf_two_ind.
@@ -93,10 +92,9 @@ Require Import Coq.Program.Basics.
 Require Import Coq.Program.Combinators.
 Lemma eeq_b_simplified:
   forall {X Y p p'} {h: X -> set} {h': Y -> set},
-    eeq_boolean (boolean_map inl p) (boolean_map inr p')
-      (sum_i eeq h h')
+    eeq_boolean (sum_i eeq h h') (boolean_map inl p) (boolean_map inr p')
     <->
-    eeq_boolean (boolean_map h p) (boolean_map h' p') eeq.
+    eeq_boolean eeq (boolean_map h p) (boolean_map h' p').
 Proof.
   intros. unfold eeq_boolean. split; intros.
   - specialize H with (compose f (mk_sum h h')).
@@ -138,7 +136,7 @@ Qed.
 Require Import Setoid.
 Lemma eeq_unfold {A p h X f A' p' h' X' f'}:
   eeq (S A p h X f) (S A' p' h' X' f') <->
-    eeq_boolean (boolean_map h p) (boolean_map h' p') eeq
+    eeq_boolean eeq (boolean_map h p) (boolean_map h' p')
       /\  
     eeq_low f f'
 .

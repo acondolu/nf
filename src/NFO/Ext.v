@@ -114,7 +114,7 @@ Proof. induction p; simpl; tauto. Qed.
 (* HIGH *)
 
 Lemma eeq_iin_high_1: forall {X Y} {p p'} {h: X -> _} {h': Y -> _},
-  eeq_boolean (boolean_map h p) (boolean_map h' p') eeq
+  eeq_boolean eeq (boolean_map h p) (boolean_map h' p')
   -> forall x, iin_high x h p <-> iin_high x h' p'.
 Proof.
   intros. unfold eeq_boolean in H.
@@ -157,7 +157,7 @@ Qed.
 
 Lemma eeq_iin_high_2: forall {X Y} {p p'} {h: X -> _} {h': Y -> _},
   (forall x, iin_high x h p <-> iin_high x h' p')
-  -> eeq_boolean (boolean_map h p) (boolean_map h' p') eeq.
+  -> eeq_boolean eeq (boolean_map h p) (boolean_map h' p').
 Proof.
   intros. unfold eeq_boolean. intros.
   pose (mk_low f h) as g.
@@ -166,6 +166,6 @@ Proof.
 Qed.
 
 Theorem high_ext {X Y} {p p'} {h: X -> _} {h': Y -> _} :
-  eeq_boolean (boolean_map h p) (boolean_map h' p') eeq
+  eeq_boolean eeq (boolean_map h p) (boolean_map h' p')
   <-> forall x, iin_high x h p <-> iin_high x h' p'.
 Proof. split. apply eeq_iin_high_1. apply eeq_iin_high_2. Qed.
