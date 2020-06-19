@@ -49,24 +49,15 @@ Qed.
 
 (* EEQ PROP *)
 
-Definition respects {X} (f: X -> Prop) (R: X -> X -> Prop) :=
-  forall x x', R x x' -> (f x <-> f x').
-
-Lemma respects_ext {X} (f: X -> Prop) R1 R2 :
-  extP2 R1 R2 -> respects f R1 <-> respects f R2.
-Proof.
-  unfold respects, extP2. intro. split; intros; apply H0; apply H; assumption.
-Qed.
-
 Definition eeq_boolean {X} P (p1 p2: boolean X) : Prop :=
-  forall f, respects f P ->
+  forall f, respects P f ->
     eval (boolean_map f p1) <-> eval (boolean_map f p2).
 
 Lemma eeq_boolean_ext {X} (p1 p2: boolean X) R1 R2 :
   extP2 R1 R2 -> eeq_boolean R1 p1 p2 <-> eeq_boolean R2 p1 p2.
 Proof.
   unfold eeq_boolean. split; intros; apply H0;
-  apply (respects_ext _ _ _ H); assumption.
+  apply (respects_ext f _ _ H); assumption.
 Qed.
 (* SUM_I *)
 
@@ -107,7 +98,7 @@ Proof.
   intros. destruct x; destruct x'; assumption.
 Qed.
 
-Lemma respects_swap: forall {X Y Z P} {h: X -> Z} {h0: Y -> Z} g, respects g (sum_i P h0 h) -> respects (compose g swap) (sum_i P h h0).
+Lemma respects_swap: forall {X Y Z P} {h: X -> Z} {h0: Y -> Z} g, respects (sum_i P h0 h) g -> respects (sum_i P h h0) (compose g swap).
 Proof.
   unfold respects.
   intros. destruct x; destruct x'; unfold compose; simpl; apply H; apply (sum_i_sym H0).
@@ -135,7 +126,7 @@ Qed.
 Definition extends {X} (f g: X -> X -> Prop) :=
   forall x y, f x y -> g x y.
 
-Lemma respects_extends : forall {X g h h'}, @extends X h h' -> respects g h' -> respects g h.
+Lemma respects_extends : forall {X g h h'}, @extends X h h' -> respects h' g -> respects h g.
 Proof.
   unfold respects. unfold extends.
   intros. apply H0. apply H. assumption.

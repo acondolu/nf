@@ -1,4 +1,5 @@
 Add LoadPath "src/NFO/".
+Require Import FunExt.
 Require Import Bool.
 Require Import Model.
 Require Import Wff.
@@ -108,7 +109,7 @@ Proof.
     destruct x, x'; unfold compose, mk_sum; apply H0; apply H1.
   - pose (invert_sum f (compose eeq h) (compose eeq h')) as g.
     specialize H with g.
-    cut (respects g eeq).
+    cut (respects eeq g).
   -- intro. repeat rewrite boolean_map_compose.
     rewrite (boolean_map_extP (compose f inl) (compose g h)).
     rewrite (boolean_map_extP (compose f inr) (compose g h')).

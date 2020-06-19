@@ -1,4 +1,5 @@
 Add LoadPath "src/NFO/".
+Require Import FunExt.
 Require Import Bool.
 Require Import Model.
 Require Import Wff.
@@ -59,7 +60,7 @@ Proof.
     cut (eval (boolean_map (Basics.compose g h0) p0) <-> (let w := fun a : A0 => iin (h0 a) (S A p h X f) in eval (boolean_map w p0))). intro.
     cut (eval (boolean_map (Basics.compose g h1) p1) <-> (let w := fun a : A1 => iin (h1 a) (S A p h X f) in eval (boolean_map w p1))). intro.
     rewrite<- H4. rewrite<- H5. 
-    cut (respects g eeq). 
+    cut (respects eeq g). 
     -- repeat rewrite<- boolean_map_compose. apply H2.
     -- unfold respects. intros. unfold g. split; intro; repeat destruct H7.
       left. exists x0. split; eauto with Eeq.
@@ -130,7 +131,7 @@ Definition mk_low {X} f h :=
 S False (Bot _) (False_rect _) { x: X & f (h x) } (fun k => h (projT1 k)).
 
 Lemma xxx {X Y} {p} {h: X -> _} {f: set -> Prop} (g: Y -> _):
-respects f eeq ->
+respects eeq f ->
 iin_high (mk_low f (mk_sum h g)) h p <-> eval (boolean_map f (boolean_map h p)).
 Proof.
   intro. induction p; simpl; simpl boolean_map; simpl iin_high; simpl eval.
@@ -143,7 +144,7 @@ Proof.
 Qed.
 
 Lemma xxx_r {X Y} {p} {h: X -> _} {f: set -> Prop} (g: Y -> _):
-respects f eeq ->
+respects eeq f ->
 iin_high (mk_low f (mk_sum g h)) h p <-> eval (boolean_map f (boolean_map h p)).
 Proof.
   intro. induction p; simpl; simpl boolean_map; simpl iin_high; simpl eval.
