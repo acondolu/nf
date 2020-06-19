@@ -10,11 +10,21 @@ Definition extP {X} P Q :=
 Definition extP2 {X Y} P Q :=
   forall x: X, forall y: Y, P x y <-> Q x y.
 
-Definition respects {X} (R: X -> X -> Prop) (f: X -> Prop)  :=
-  forall x x', R x x' -> (f x <-> f x').
+Definition respects {X} (R: X -> X -> Prop) (P: X -> Prop) :=
+  forall x x', R x x' -> (P x <-> P x').
 
-Lemma respects_ext {X} (f: X -> Prop) (R1 R2: X -> X -> Prop) :
-  extP2 R1 R2 -> extP (respects R1) (respects R2).
+Lemma respects_ext {X} (R R': X -> X -> Prop) :
+  extP2 R R' -> extP (respects R) (respects R').
 Proof.
-  unfold respects, extP2, extP. intro. split; intros; apply H0; apply H; assumption.
+  unfold respects, extP2, extP. intro.
+  split; intros; apply H0; apply H; assumption.
+Qed.
+
+Definition respects' {X} (R: X -> X -> Prop) (P P': X -> Prop) :=
+  forall x x', R x x' -> (P x <-> P' x').
+
+Lemma respects'_eq {X} : extP2 (@extP X) (respects' eq).
+Proof.
+  unfold extP2, respects', extP. intros; split; intros.
+  destruct H0. apply H. auto.
 Qed.

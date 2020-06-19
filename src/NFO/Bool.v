@@ -57,7 +57,7 @@ Lemma eeq_boolean_ext {X} (p1 p2: boolean X) R1 R2 :
   extP2 R1 R2 -> eeq_boolean R1 p1 p2 <-> eeq_boolean R2 p1 p2.
 Proof.
   unfold eeq_boolean. split; intros; apply H0;
-  apply (respects_ext f _ _ H); assumption.
+  apply (respects_ext _ _ H); assumption.
 Qed.
 (* SUM_I *)
 

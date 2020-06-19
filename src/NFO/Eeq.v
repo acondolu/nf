@@ -89,15 +89,18 @@ Hint Resolve eeq_trans : Eeq.
 
 (* eeq high *)
 
+Definition eeq_boolean_eeq := eeq_boolean eeq.
+Infix "===" := eeq_boolean_eeq (at level 50) : type_scope.
+
 Require Import Coq.Program.Basics.
 Require Import Coq.Program.Combinators.
 Lemma eeq_b_simplified:
   forall {X Y p p'} {h: X -> set} {h': Y -> set},
     eeq_boolean (sum_i eeq h h') (boolean_map inl p) (boolean_map inr p')
     <->
-    eeq_boolean eeq (boolean_map h p) (boolean_map h' p').
+    boolean_map h p === boolean_map h' p'.
 Proof.
-  intros. unfold eeq_boolean. split; intros.
+  intros. unfold eeq_boolean_eeq, eeq_boolean. split; intros.
   - specialize H with (compose f (mk_sum h h')).
     repeat rewrite boolean_map_compose in H.
     repeat rewrite compose_assoc in H.
@@ -137,7 +140,7 @@ Qed.
 Require Import Setoid.
 Lemma eeq_unfold {A p h X f A' p' h' X' f'}:
   eeq (S A p h X f) (S A' p' h' X' f') <->
-    eeq_boolean eeq (boolean_map h p) (boolean_map h' p')
+    (boolean_map h p === boolean_map h' p')
       /\  
     eeq_low f f'
 .
