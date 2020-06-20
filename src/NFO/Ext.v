@@ -383,3 +383,14 @@ Theorem ext: forall x y,
 Proof.
   intros. split. apply eeq_iin. apply iin_eeq.
 Qed.
+
+Lemma weak_regularity x :
+  match x with S _ _ _ _ f => Ain x f -> False end.
+Proof.
+  induction x. intros. unfold Ain in H1. destruct H1.
+  pose proof (H0 x). assert (H1' := H1). destruct (f x) in H1, H2.
+  apply H2. unfold Ain. assert (H1'' := H1).
+  rewrite eeq_unfold in H1. destruct H1, H1.
+  destruct (H4 x). exists x0.
+  apply (eeq_trans (eeq_trans H5 H1') (eeq_sym H1'')).
+Qed.
