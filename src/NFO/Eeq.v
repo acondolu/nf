@@ -1,3 +1,5 @@
+Require Import Coq.Program.Basics.
+Require Import Coq.Program.Combinators.
 Add LoadPath "src/NFO/".
 Require Import FunExt.
 Require Import Bool.
@@ -27,21 +29,24 @@ Defined.
 Definition eeq x y := eeq' (x, y).
 Infix "==" := eeq (at level 50) : type_scope.
 
-Definition eeq_low {X Y} f g :=
+(* "Aczel" equality *)
+Definition Aeq {X Y} f g :=
   (forall x: X, exists y, f x == g y)
   /\ forall y: Y, exists x, f x == g y.
 
-Lemma eeq_def : forall x y, eeq x y <->
+(* Temporary unfolding lemma for eeq. 
+   It will be improved in eeq_unfold. *)
+Local Lemma eeq_def : forall x y, eeq x y <->
   match x, y with S A p h X f, S A' p' h' X' f'
-    => eeq_low f f'
-        /\  
-          eeq_boolean (sum_i eeq h h') (boolean_map inl p) (boolean_map inr p')
+    => Aeq f f'
+    /\ eeq_boolean (sum_i eeq h h')
+        (boolean_map inl p) (boolean_map inr p')
 end.
 Proof.
   apply wf_two_ind.
   destruct x1, x2. intros.
   unfold eeq at 1. unfold eeq' at 1. rewrite Fix_iff. fold eeq'.
-  - unfold eeq_low. unfold sum_i. tauto.
+  - unfold Aeq. unfold sum_i. tauto.
   - intros. destruct x. destruct s. destruct s0.
     Require Import Xor. apply And_eq3.
     -- split; intros. destruct (H1 x). exists x0. rewrite<- H0. assumption.
@@ -54,7 +59,7 @@ Qed.
 
 Lemma eeq_refl {x} : eeq x x.
 Proof.
-  induction x. rewrite eeq_def. unfold eeq_low. split.
+  induction x. rewrite eeq_def. unfold Aeq. split.
   split; intro; eauto. eauto with Bool.
 Qed.
 Hint Immediate eeq_refl : Eeq.
@@ -75,7 +80,7 @@ Lemma eeq_trans : forall {x y z}, eeq x y -> eeq y z -> eeq x z.
 Proof.
   apply (wf_three_ind (fun x y z => eeq x y -> eeq y z -> eeq x z)).
   destruct x1. destruct x2. destruct x3. intros. 
-  rewrite eeq_def in *. unfold eeq_low in *.
+  rewrite eeq_def in *. unfold Aeq in *.
   repeat destruct H0. repeat destruct H1.
   split. split.
   - intro x. destruct (H0 x). destruct (H1 x0).
@@ -87,20 +92,18 @@ Proof.
 Qed.
 Hint Resolve eeq_trans : Eeq.
 
-(* eeq high *)
+(* "Quine" equality *)
+Definition Qeq := eeq_boolean eeq.
 
-Definition eeq_boolean_eeq := eeq_boolean eeq.
-Infix "===" := eeq_boolean_eeq (at level 50) : type_scope.
-
-Require Import Coq.Program.Basics.
-Require Import Coq.Program.Combinators.
-Lemma eeq_b_simplified:
+Lemma eeq_boolean_qeq:
   forall {X Y p p'} {h: X -> set} {h': Y -> set},
-    eeq_boolean (sum_i eeq h h') (boolean_map inl p) (boolean_map inr p')
+    eeq_boolean
+      (sum_i eeq h h')
+        (boolean_map inl p) (boolean_map inr p')
     <->
-    boolean_map h p === boolean_map h' p'.
+    Qeq (boolean_map h p) (boolean_map h' p').
 Proof.
-  intros. unfold eeq_boolean_eeq, eeq_boolean. split; intros.
+  intros. unfold Qeq, eeq_boolean. split; intros.
   - specialize H with (compose f (mk_sum h h')).
     repeat rewrite boolean_map_compose in H.
     repeat rewrite compose_assoc in H.
@@ -139,13 +142,14 @@ Qed.
 
 Require Import Setoid.
 Lemma eeq_unfold {A p h X f A' p' h' X' f'}:
-  eeq (S A p h X f) (S A' p' h' X' f') <->
-    (boolean_map h p === boolean_map h' p')
-      /\  
-    eeq_low f f'
+  eeq (S A p h X f) (S A' p' h' X' f')
+  <->
+  Aeq f f'
+    /\
+  Qeq (boolean_map h p) (boolean_map h' p')
 .
 Proof.
-  rewrite<- eeq_b_simplified.
+  rewrite<- eeq_boolean_qeq.
   rewrite eeq_def.
   tauto.
 Qed.

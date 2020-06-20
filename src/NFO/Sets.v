@@ -11,7 +11,7 @@ Definition emptyset :=
 
 Lemma emptyset_ok: forall x, ~ iin x emptyset.
 Proof.
-  red. unfold emptyset. intro x. rewrite iin_unfold. unfold iin_low. unfold Xor. simpl. destruct 1. repeat destruct H. destruct x0.
+  red. unfold emptyset. intro x. rewrite iin_unfold. unfold Ain. unfold Xor. simpl. destruct 1. repeat destruct H. destruct x0.
 Qed.
 
 (* Set complement *)
@@ -33,7 +33,7 @@ Definition cosin x := S unit (Atom _ tt) (fun _ => x) False (False_rect _).
 Lemma cosin_ok: forall x y, iin x (cosin y) <-> iin y x.
 Proof.
   intros x y. unfold cosin. rewrite iin_unfold.
-  unfold Xor, iin_low. simpl. split; intros.
+  unfold Xor, Ain. simpl. split; intros.
   - repeat destruct H. destruct x0. assumption.
   - split. right; auto. intros. destruct H0. destruct x0.
 Qed.
@@ -44,7 +44,7 @@ Definition sin x := S False (Bot _) (False_rect _) unit (fun _ => x).
 Lemma sin_ok: forall x y, iin x (sin y) <-> eeq x y.
 Proof.
   intros x y. unfold sin. rewrite iin_unfold.
-  unfold Xor, iin_low. simpl. split; intros.
+  unfold Xor, Ain. simpl. split; intros.
   - repeat destruct H. apply eeq_sym. auto.
   - split. left. exists tt. apply eeq_sym. auto.
     intros. destruct H1.
