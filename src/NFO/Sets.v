@@ -4,7 +4,6 @@ Require Import Bool.
 Require Import Model.
 Require Import Eeq.
 Require Import Iin.
-Require Import Ext.
 
 (* Empty set *)
 Definition emptyset :=
@@ -54,7 +53,7 @@ Qed.
 
 (* Exclusive or of sets *)
 
-Definition boolean_xor {A} (p p': boolean A) :=
+Local Definition boolean_xor {A} (p p': boolean A) :=
   Or _ (Not _ (Or _ p (Not _ p'))) (Not _ (Or _ (Not _ p) p')).
 
 Definition QXor B C := 

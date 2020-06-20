@@ -5,6 +5,7 @@ Require Import Model.
 Require Import Wff.
 Require Import Eeq.
 Require Import Iin.
+Require Import Sets.
 
 Require Import Coq.Wellfounded.Lexicographic_Product.
 Require Import Relation_Operators.
@@ -182,6 +183,19 @@ Proof.
   destruct H. apply Xor_eq. apply Aext; assumption.
   apply Qext; assumption.
 Qed.
+
+Definition is_empty x := forall z, ~ iin z x.
+
+Lemma xor_ext: forall {x y},
+  (forall z, iin z x <-> iin z y) -> is_empty (QXor x y).
+Proof.
+  unfold is_empty.
+  intros. rewrite xor_ok.
+  specialize H with z.
+  pose proof (@Xor_iff (iin z x) (iin z y)). tauto.
+Qed.
+
+
 (* 
 Lemma abc: forall A (p: boolean A) h X (f: X -> set),
   (exists x, Qin x h p) -> (exists x, ~Qin x h p)
@@ -353,13 +367,19 @@ Proof.
   cut (Qin z h' p' -> False). intro.
   destruct (H1 (conj (or_introl H0) (fun _ => H2))).
   destruct H3; auto.
+ *)
 
+
+Axiom todo: forall x y, is_empty (QXor x y) -> x == y.
 
 Lemma iin_eeq: forall x y, 
   (forall z, iin z x <-> iin z y) -> x == y.
 Proof.
-  destruct x, y. rewrite eeq_unfold.
-  setoid_rewrite iin_unfold'. intros.
-  split.
-  - apply Aext. intro z. specialize H with z.
-    repeat rewrite iin_unfold' in H. *)
+  intros. pose proof (xor_ext H). apply todo. auto.
+Qed.
+
+Theorem ext: forall x y, 
+  x == y <-> forall z, iin z x <-> iin z y.
+Proof.
+  intros. split. apply eeq_iin. apply iin_eeq.
+Qed.
