@@ -52,15 +52,16 @@ Proof.
   - left. split. exists tt. apply eeq_sym. auto. tauto.
 Qed.
 
+(* Exclusive or of sets *)
+
 Definition boolean_xor {A} (p p': boolean A) :=
   Or _ (Not _ (Or _ p (Not _ p'))) (Not _ (Or _ (Not _ p) p')).
 
-(* Exclusive or of sets *)
 Definition QXor B C := 
   match B, C with S A p h X f, S A' p' h' X' f' =>
   let A'' := sum A A' in
   let h'' := mk_sum h h' in
-  let X'' := sum {x: X & ~ exists x', eeq (f' x') (f x)} {x': X' & forall x, ~ eeq (f x) (f' x')} in 
+  let X'' := sum {x: X & ~ exists x', eeq (f' x') (f x)} {x': X' & ~ exists x, eeq (f x) (f' x')} in 
   let f'' := fun xx: X'' => match xx with inl xx' => f (projT1 xx') | inr xx'' => f' (projT1 xx'') end in
   let p'' := boolean_xor (boolean_map inl p) (boolean_map inr p') in
   S A'' p'' h'' X'' f''
@@ -78,9 +79,22 @@ Proof.
   -- pose proof (ex_intro (fun x => f0 x == z) x H).
       cut (~ exists x0, f x0 == z). intro.
       apply (Xor_2 H1 H0). intro. destruct H0, H1.
-      apply (n x1). apply (eeq_trans H1 (eeq_sym H)).
-  -- 
-Admitted.
+      apply n. exists x1. apply (eeq_trans H1 (eeq_sym H)).
+  -- destruct H, H.
+  --- destruct H.
+      cut (~ exists x0 : X0, f0 x0 == f x). intro.
+      exists (inl (existT _ x H1)). exact H.
+      intro O. destruct O. apply H0. exists x0.
+      apply (eeq_trans H1 H).
+  --- destruct H0.
+      cut (~ exists x0, f x0 == f0 x). intro.
+      exists (inr (existT _ x H1)). exact H0.
+      intro O. destruct O. apply H. exists x0.
+      apply (eeq_trans H1 H0).
+  - unfold boolean_xor. simpl Qin.
+    repeat rewrite<- Qin_aux. simpl. repeat rewrite boolean_map_compose. unfold Basics.compose. simpl mk_sum.
+    repeat rewrite Qin_aux. unfold Xor. tauto.
+Qed.
 
 
 (* TODO: Union *)
