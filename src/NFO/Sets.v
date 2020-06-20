@@ -1,9 +1,10 @@
 Add LoadPath "src/NFO/".
+Require Import Xor.
 Require Import Bool.
 Require Import Model.
 Require Import Eeq.
 Require Import Iin.
-Require Import Xor.
+Require Import Ext.
 
 (* Empty set *)
 Definition emptyset :=
@@ -49,5 +50,13 @@ Proof.
   - split. left. exists tt. apply eeq_sym. auto.
     intros. destruct H1.
 Qed.
+
+(* Exclusive or of sets *)
+(* Definition QXor {A p h X f A' p' h' X' f'} :=
+  let A'' := sum A A' in
+  let h'' := mk_sum h h' in
+  let X'' := sum {x: X & forall x', ~ eeq (f' x') (f x)} {x': X' & forall x, ~ eeq (f x) (f' x')} in 
+  (S A p h X f, S A' p' h' X' f'). *)
+
 
 (* TODO: Union *)

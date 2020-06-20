@@ -11,22 +11,22 @@ Require Import Relation_Operators.
 
 Require Import Xor.
 
-(* LOW *)
+(* Aext *)
 
-Lemma eeq_Ain_1: forall {x y X} {f: X -> _},
+Lemma eeq_Ain: forall {x y X} {f: X -> _},
   x == y -> Ain x f <-> Ain y f.
 Proof.
   intros. unfold Ain. split; intro; destruct H0; exists x0.
   apply (eeq_trans H0 H). apply (eeq_trans H0 (eeq_sym H)).
 Qed.
-Lemma eeq_Ain_2: forall {X Y} {f: X -> _} {g: Y -> _},
+Lemma Aeq_Ain: forall {X Y} {f: X -> _} {g: Y -> _},
   Aeq f g -> forall x, Ain x f <-> Ain x g.
 Proof.
   intros. unfold Ain. destruct H. split; intro; destruct H1.
   - destruct (H x0). exists x1. apply (eeq_trans (eeq_sym H2) H1).
   - destruct (H0 x0). exists x1. apply (eeq_trans H2 H1).
 Qed.
-Lemma eeq_Ain_3: forall {X Y} {f: X -> _} {g: Y -> _},
+Lemma Ain_Aeq: forall {X Y} {f: X -> _} {g: Y -> _},
   (forall x, Ain x f <-> Ain x g) -> Aeq f g.
 Proof.
   intros. unfold Aeq. split; intro x.
@@ -37,11 +37,9 @@ Proof.
 Qed.
 
 Theorem Aext {X Y} {f: X -> _} {g: Y -> _} :
-  Aeq f g <-> (forall x, Ain x f <-> Ain x g).
-Proof. split. apply eeq_Ain_2. apply eeq_Ain_3. Qed.
+  Aeq f g <-> forall x, Ain x f <-> Ain x g.
+Proof. split. apply Aeq_Ain. apply Ain_Aeq. Qed.
 
-
-(* TODO: Prove extensionality *)
 
 (* respects eeq (iin z)
 /\ respecs eeq (fun x => iin x z) *)
@@ -53,7 +51,7 @@ Proof.
   induction z.
   apply (wf_two_ind (fun x y => eeq x y -> _: Prop)).
   destruct x1, x2. intros. repeat rewrite iin_unfold. split; apply Xor_eq.
-  - apply eeq_Ain_2. rewrite eeq_unfold in H2; destruct H2. assumption.
+  - apply Aeq_Ain. rewrite eeq_unfold in H2; destruct H2. assumption.
   - rewrite eeq_unfold in H2; destruct H2. unfold eeq_boolean in H1.
     pose (fun s : set =>
       (exists a0, s == h0 a0 /\ iin (h0 a0) (S A p h X f))
@@ -84,12 +82,12 @@ Proof.
        apply (fun K => proj2 (H1 (h0 a1) (h1 x) K H4)).
        auto with Wff. assumption.
        left. exists a1. split; eauto with Eeq.
-  - apply eeq_Ain_1. rewrite eeq_unfold. rewrite eeq_unfold in H2; destruct H2. auto.
+  - apply eeq_Ain. rewrite eeq_unfold. rewrite eeq_unfold in H2; destruct H2. auto.
   - apply boolean_map_extP. unfold FunExt.extP. intro a.
     apply (proj1 (H a (S A0 p0 h0 X0 f0) (S A1 p1 h1 X1 f1) H2)).
 Qed.
 
-(* HIGH *)
+(* Qext *)
 
 Lemma aux {X p} {h: X -> _} {x}:
   eval (boolean_map (fun x' => iin (h x') x) p)
@@ -154,3 +152,95 @@ Theorem Qext {X Y} {p p'} {h: X -> _} {h': Y -> _} :
   Qeq (boolean_map h p) (boolean_map h' p')
   <-> forall x, Qin x h p <-> Qin x h' p'.
 Proof. split. apply Qeq_Qin. apply Qin_Qeq. Qed.
+
+(* Extensionality *)
+
+Lemma eeq_iin: forall x y, 
+  x == y -> forall z, iin z x <-> iin z y.
+Proof.
+  destruct x, y.
+  rewrite eeq_unfold. intros. repeat rewrite iin_unfold'.
+  destruct H. apply Xor_eq. apply Aext; assumption.
+  apply Qext; assumption.
+Qed.
+
+(* Definition Aof {X} f :=
+S False (Bot _) (False_rect _) X f.
+
+Lemma Qin_False: forall z, 
+  Qin z (False_rect set) (Bot False) = False.
+Proof. unfold Qin. auto. Qed.
+
+Lemma Xor_AF : forall X, Xor X False <-> X.
+Proof. intros. unfold Xor. tauto. Qed.
+
+Lemma wow_empty {A p h X f}:
+  (exists x: X, True) (* no! p must be non-empty *)
+  -> (forall z, ~ iin z (S A p h X f))
+  -> exists X' f', forall z, iin z (@Aof X' f').
+Proof. revert h X f. induction p; intros.
+  - admit.
+  - Axiom add: set -> set -> set.
+  exists (sum X X). pose (fun a => match a with inl a' => f a' | inr a'' => add (f a'') (h x) end) as g. exists g.
+  intro z. pose proof (H0 z).
+  unfold Aof.
+  rewrite iin_unfold' in H1.
+  rewrite iin_unfold'. rewrite Qin_False. apply Xor_AF.
+  unfold Ain. setoid_rewrite<- negb_xor in H1. destruct H1.
+  destruct H1. destruct H1. exists (inl x0). unfold g. assumption.
+  pose proof (fun X => H2 X H1).
+  unfold Qin in H1.
+  
+  specialize H0 with (add z (h x)).
+
+
+Lemma wow_full {A p h X f}:
+  (exists x: X, True)
+  -> (forall z, iin z (S A p h X f))
+  -> exists X' f', forall z, iin z (@Aof X' f').
+Proof. revert h X f.
+  induction p; intros; simpl iin in *.
+  - exists X. exists f. intro z. specialize H0 with z.
+  unfold Aof.
+    rewrite iin_unfold' in H0.
+    rewrite iin_unfold'.
+    revert H0. apply Xor_eq. tauto.
+    apply Qext. unfold Qeq, eeq_boolean. intros.
+    repeat rewrite boolean_map_compose. simpl eval. tauto.
+  - exists (sum X X). pose (fun a => match a with inl a' => f a' | inr a'' => f a'' end) as g. exists g.
+    intro z. specialize H0 with z.
+    unfold Aof.
+    rewrite iin_unfold' in H0.
+    rewrite iin_unfold'.
+    admit.
+  - 
+
+Lemma wow_empty {A p h X f}:
+  (forall z, ~ iin z (S A p h X f))
+  -> forall z, ~ Ain z f /\ ~ Qin z h p.
+Proof.
+  setoid_rewrite iin_unfold'.
+  intros. split; intro.
+  
+
+Lemma iin_eeq_aux1 {A p h X f A' p' h' X' f'}:
+  let _ := eeq (S A p h X f) (S A' p' h' X' f') in
+  (forall z : set,
+  Xor (Ain z f) (Qin z h p) <-> Xor (Ain z f') (Qin z h' p'))
+  -> forall z, Ain z f <-> Ain z f'.
+Proof.
+  intros. split; intro. admit.
+  specialize H with z. unfold Xor in H. destruct H.
+  cut (Qin z h' p' -> False). intro.
+  destruct (H1 (conj (or_introl H0) (fun _ => H2))).
+  destruct H3; auto.
+
+
+Lemma iin_eeq: forall x y, 
+  (forall z, iin z x <-> iin z y) -> x == y.
+Proof.
+  destruct x, y. rewrite eeq_unfold.
+  setoid_rewrite iin_unfold'. intros.
+  split.
+  - apply Aext. intro z. specialize H with z.
+    repeat rewrite iin_unfold' in H. *)
