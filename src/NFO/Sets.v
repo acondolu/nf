@@ -12,7 +12,8 @@ Definition emptyset :=
 
 Lemma emptyset_ok: forall x, ~ iin x emptyset.
 Proof.
-  red. unfold emptyset. intro x. rewrite iin_unfold. unfold Ain. unfold Xor. simpl. destruct 1. repeat destruct H. destruct x0.
+  red. unfold emptyset. intro x. rewrite iin_unfold. unfold Ain. unfold Xor. simpl. destruct 1; repeat destruct H. destruct x0.
+  destruct H0.
 Qed.
 
 (* Set complement *)
@@ -35,8 +36,9 @@ Lemma cosin_ok: forall x y, iin x (cosin y) <-> iin y x.
 Proof.
   intros x y. unfold cosin. rewrite iin_unfold.
   unfold Xor, Ain. simpl. split; intros.
-  - repeat destruct H. destruct x0. assumption.
-  - split. right; auto. intros. destruct H0. destruct x0.
+  - destruct H, H. destruct H, x0. unfold iin. assumption.
+  - right; auto. split. intro. destruct H0. destruct x0.
+    unfold iin' in H. assumption.
 Qed.
 
 (* Singleton *)
@@ -46,17 +48,39 @@ Lemma sin_ok: forall x y, iin x (sin y) <-> eeq x y.
 Proof.
   intros x y. unfold sin. rewrite iin_unfold.
   unfold Xor, Ain. simpl. split; intros.
-  - repeat destruct H. apply eeq_sym. auto.
-  - split. left. exists tt. apply eeq_sym. auto.
-    intros. destruct H1.
+  - destruct H, H. destruct H. apply eeq_sym. auto. destruct H0.
+  - left. split. exists tt. apply eeq_sym. auto. tauto.
 Qed.
 
+Definition boolean_xor {A} (p p': boolean A) :=
+  Or _ (Not _ (Or _ p (Not _ p'))) (Not _ (Or _ (Not _ p) p')).
+
 (* Exclusive or of sets *)
-(* Definition QXor {A p h X f A' p' h' X' f'} :=
+Definition QXor B C := 
+  match B, C with S A p h X f, S A' p' h' X' f' =>
   let A'' := sum A A' in
   let h'' := mk_sum h h' in
-  let X'' := sum {x: X & forall x', ~ eeq (f' x') (f x)} {x': X' & forall x, ~ eeq (f x) (f' x')} in 
-  (S A p h X f, S A' p' h' X' f'). *)
+  let X'' := sum {x: X & ~ exists x', eeq (f' x') (f x)} {x': X' & forall x, ~ eeq (f x) (f' x')} in 
+  let f'' := fun xx: X'' => match xx with inl xx' => f (projT1 xx') | inr xx'' => f' (projT1 xx'') end in
+  let p'' := boolean_xor (boolean_map inl p) (boolean_map inr p') in
+  S A'' p'' h'' X'' f''
+end.
+
+Lemma xor_ok: forall x y, forall z, iin z (QXor x y) <-> Xor (iin z x) (iin z y).
+Proof.
+  intros. destruct x, y. rewrite (Xor_eq iin_unfold' iin_unfold').
+  rewrite xor_pairs. unfold QXor. rewrite iin_unfold'. apply Xor_eq.
+  - unfold Ain. split; intros. destruct H, x, s; simpl in H.
+  -- pose proof (ex_intro (fun x0 => f x0 == z) x H).
+      cut (~ exists x0 : X0, f0 x0 == z). intro.
+      apply (Xor_1 H0 H1). intro. apply n. destruct H1.
+      exists x0. apply (eeq_trans H1 (eeq_sym H)).
+  -- pose proof (ex_intro (fun x => f0 x == z) x H).
+      cut (~ exists x0, f x0 == z). intro.
+      apply (Xor_2 H1 H0). intro. destruct H0, H1.
+      apply (n x1). apply (eeq_trans H1 (eeq_sym H)).
+  -- 
+Admitted.
 
 
 (* TODO: Union *)

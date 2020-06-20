@@ -13,12 +13,6 @@ Require Import Xor.
 
 (* Aext *)
 
-Lemma eeq_Ain: forall {x y X} {f: X -> _},
-  x == y -> Ain x f <-> Ain y f.
-Proof.
-  intros. unfold Ain. split; intro; destruct H0; exists x0.
-  apply (eeq_trans H0 H). apply (eeq_trans H0 (eeq_sym H)).
-Qed.
 Lemma Aeq_Ain: forall {X Y} {f: X -> _} {g: Y -> _},
   Aeq f g -> forall x, Ain x f <-> Ain x g.
 Proof.
@@ -40,6 +34,12 @@ Theorem Aext {X Y} {f: X -> _} {g: Y -> _} :
   Aeq f g <-> forall x, Ain x f <-> Ain x g.
 Proof. split. apply Aeq_Ain. apply Ain_Aeq. Qed.
 
+Lemma eeq_Ain: forall {x y X} {f: X -> _},
+  x == y -> Ain x f <-> Ain y f.
+Proof.
+  intros. unfold Ain. split; intro; destruct H0; exists x0.
+  apply (eeq_trans H0 H). apply (eeq_trans H0 (eeq_sym H)).
+Qed.
 
 (* respects eeq (iin z)
 /\ respecs eeq (fun x => iin x z) *)
@@ -112,15 +112,21 @@ Qed.
 Definition mk_low {X} f h :=
 S False (Bot _) (False_rect _) { x: X & f (h x) } (fun k => h (projT1 k)).
 
+Lemma Xor_AF : forall X, Xor X False <-> X.
+Proof. intros. unfold Xor. tauto. Qed.
+
 Lemma xxx {X Y} {p} {h: X -> _} {f: set -> Prop} (g: Y -> _):
   respects eeq f ->
   Qin (mk_low f (mk_sum h g)) h p <-> eval (boolean_map f (boolean_map h p)).
 Proof.
   intro. induction p; simpl; simpl boolean_map; simpl Qin; simpl eval.
   - tauto.
-  - unfold mk_low. rewrite iin_unfold. unfold Xor. simpl. unfold Ain. split; intros.
-  repeat destruct H0. destruct x0. apply (H _ _ H0). assumption.
-  split. left. exists (existT _ (inl x) H0). eauto with Eeq. tauto.
+  - unfold mk_low. rewrite iin_unfold. simpl. unfold Ain.
+    rewrite Xor_AF. split; intros.
+    destruct H0, x0, x0.
+    simpl mk_sum in *. apply (H (h x0) (h x) H0). assumption.
+    simpl mk_sum in *. apply (H (g y) (h x) H0). assumption.
+    exists (existT _ (inl x) H0). eauto with Eeq.
   - rewrite IHp. tauto.
   - rewrite IHp1. rewrite IHp2. tauto.
 Qed.
@@ -131,9 +137,12 @@ Lemma xxx_r {X Y} {p} {h: X -> _} {f: set -> Prop} (g: Y -> _):
 Proof.
   intro. induction p; simpl; simpl boolean_map; simpl Qin; simpl eval.
   - tauto.
-  - unfold mk_low. rewrite iin_unfold. unfold Xor. simpl. unfold Ain. split; intros.
-  repeat destruct H0. destruct x0. apply (H _ _ H0). assumption.
-  split. left. exists (existT _ (inr x) H0). eauto with Eeq. tauto.
+  - unfold mk_low. rewrite iin_unfold. simpl. unfold Ain.
+    rewrite Xor_AF. split; intros.
+    destruct H0, x0, x0.
+    simpl mk_sum in *. apply (H (g y) (h x) H0). assumption.
+    simpl mk_sum in *. apply (H (h x0) (h x) H0). assumption.
+    exists (existT _ (inr x) H0). eauto with Eeq.
   - rewrite IHp. tauto.
   - rewrite IHp1. rewrite IHp2. tauto.
 Qed.
@@ -153,6 +162,16 @@ Theorem Qext {X Y} {p p'} {h: X -> _} {h': Y -> _} :
   <-> forall x, Qin x h p <-> Qin x h' p'.
 Proof. split. apply Qeq_Qin. apply Qin_Qeq. Qed.
 
+Lemma eeq_Qin: forall {x y A p} {h: A -> _},
+  x == y -> Qin x h p <-> Qin y h p.
+Proof.
+  intros x y A p. induction p; simpl Qin. 
+  - tauto.
+  - intro. apply iin_respects_eeq.
+  - intro. specialize IHp with h. tauto.
+  - intro h. specialize IHp1 with h. specialize IHp2 with h. tauto.
+Qed.
+
 (* Extensionality *)
 
 Lemma eeq_iin: forall x y, 
@@ -163,6 +182,109 @@ Proof.
   destruct H. apply Xor_eq. apply Aext; assumption.
   apply Qext; assumption.
 Qed.
+(* 
+Lemma abc: forall A (p: boolean A) h X (f: X -> set),
+  (exists x, Qin x h p) -> (exists x, ~Qin x h p)
+  -> ((forall x, Ain x f <-> Qin x h p) \/ (forall x, Ain x f <-> ~ Qin x h p))
+  -> exists a X' (f': X' -> set), 
+    (forall z, Ain z f' <-> iin a z) \/ (forall z, Ain z f' <-> ~iin a z).
+Proof.
+  Require Import Coq.Logic.Classical_Prop.
+  induction p; intros; simpl in *.
+  - destruct H. tauto.
+  - exists (h x). exists X. exists f. destruct H1.
+    left; intro. rewrite<- H1. tauto. right; intro. rewrite<- H1. tauto.
+  - destruct H. destruct H0. apply (IHp h X f). exists x0. apply NNPP. assumption.
+    exists x. tauto. destruct H1. 
+    right; intro. apply H1. left; intro.
+    specialize H1 with x1. destruct (classic (Qin x h p)); tauto.
+  - 
+    (* specialize IHp1 with h { x: X & Qin (f x) h p1 } (fun k => f (projT1 k)).
+    specialize IHp2 with h { x: X & Qin (f x) h p2 } (fun k => f (projT1 k)). *)
+    destruct H, H0.
+    destruct (not_or_and _ _ H0).
+
+    destruct H1; destruct H.
+    -- apply (IHp1 h { x: X & Qin (f x) h p1 } (fun k => f (projT1 k))).
+        exists x. apply H. exists x0. apply H2.
+        left. unfold Ain. split; intros.
+        destruct H4. destruct x2. simpl in H4. apply (eeq_Qin H4). assumption.
+        destruct (H1 x1). destruct (H6 (or_introl H4)).
+        destruct (@eeq_Qin _ _ A p1 h (eeq_sym H7)).
+        exists (existT _ x2 (H8 H4)). assumption.
+    -- apply (IHp2 h { x: X & Qin (f x) h p2 } (fun k => f (projT1 k))).
+        exists x. apply H. exists x0. apply H3.
+        left. unfold Ain. split; intros.
+        destruct H4. destruct x2. simpl in H4. apply (eeq_Qin H4). assumption.
+        destruct (H1 x1). destruct (H6 (or_intror H4)).
+        destruct (@eeq_Qin _ _ A p2 h (eeq_sym H7)).
+        exists (existT _ x2 (H8 H4)). assumption.
+    -- apply (IHp1 h { x: X & Qin (f x) h p1 /\ ~Qin (f x) h p2 } (fun k => f (projT1 k))).
+        exists x. apply H. exists x0. apply H2.
+        left. unfold Ain. split; intros.
+        destruct H4, x2, a. simpl in H4.
+        apply (eeq_Qin H4). apply NNPP. intro O.
+        destruct (H1 (f x2)). cut (Ain (f x2) f).
+        intro. destruct (H5 H7). tauto. unfold Ain. exists x2. apply eeq_refl.
+        destruct (H1 x1). cut (Ain x1 f). intro.
+        destruct H7.
+        destruct (H6 (or_introl H4)).
+        destruct (@eeq_Qin _ _ A p1 h (eeq_sym H7)).
+        exists (existT _ x2 (H8 H4)). assumption.
+    -- apply (IHp2 h { x: X & Qin (f x) h p2 } (fun k => f (projT1 k))).
+        exists x. apply H. exists x0. apply H3.
+        left. unfold Ain. split; intros.
+        destruct H4. destruct x2. simpl in H4. apply (eeq_Qin H4). assumption.
+        destruct (H1 x1). destruct (H6 (or_intror H4)).
+        destruct (@eeq_Qin _ _ A p2 h (eeq_sym H7)).
+        exists (existT _ x2 (H8 H4)). assumption.
+
+
+    
+    -- 
+    apply (IHp1 h { x: X & Qin (f x) h p1 } (fun k => f (projT1 k))).
+    exists x. apply H. exists x0. apply H2.
+    left. unfold Ain. split; intros.
+      destruct H4. destruct x2. simpl in H4. apply (eeq_Qin H4). assumption.
+      
+
+    unfold Ain. left; intros; split; intro. destruct H4; destruct x1. simpl in H4.
+    apply (eeq_Qin H4). assumption.
+    destruct (H0 x0). destruct (H6 (or_introl H4)).
+    cut (Qin (f x1) h p1). intro.
+    exists (existT _ x1 H8). apply H7. apply (eeq_Qin (eeq_sym H7)). assumption.
+
+    apply (IHp2 (ex_intro (fun _: {x : X & Qin (f x) h p2} => True) (existT _ x H3) I)).
+    unfold Ain. left; intros; split; intro. destruct H4; destruct x1. simpl in H4.
+    apply (eeq_Qin H4). assumption.
+    destruct (H0 x0). destruct (H6 (or_intror H4)).
+    cut (Qin (f x1) h p2). intro.
+    exists (existT _ x1 H8). simpl. apply H7. apply (eeq_Qin (eeq_sym H7)). assumption.
+
+    pose proof (H1 (ex_intro _ x eeq_refl)).
+    apply (IHp1 (ex_intro (fun _: {x : X & Qin (f x) h p1} => True) (existT _ x H3) I)).
+    unfold Ain. left; intros; split; intro. destruct H4; destruct x1. simpl in H4.
+    apply (eeq_Qin H4). assumption.
+    destruct (H0 x0). destruct (H6 (or_introl H4)).
+    cut (Qin (f x1) h p1). intro.
+    exists (existT _ x1 H8). apply H7. apply (eeq_Qin (eeq_sym H7)). assumption.
+
+    apply (IHp2 (ex_intro (fun _: {x : X & Qin (f x) h p2} => True) (existT _ x H3) I)).
+    unfold Ain. left; intros; split; intro. destruct H4; destruct x1. simpl in H4.
+    apply (eeq_Qin H4). assumption.
+    destruct (H0 x0). destruct (H6 (or_intror H4)).
+    cut (Qin (f x1) h p2). intro.
+    exists (existT _ x1 H8). simpl. apply H7. apply (eeq_Qin (eeq_sym H7)). assumption.
+
+    specialize IHp2 with h { x: X & Qin (f x) h p2 } (fun k => f (projT1 k)) .
+
+
+    classical (Qin (f x) h).
+    apply (IHp2 h X f H). destruct H.
+    destruct H0.  left; intro. rewrite H0. admit. right; intro. rewrite H0. tauto.
+
+    Definition mk_low {X} f h :=
+    S False (Bot _) (False_rect _) { x: X & f (h x) } (fun k => h (projT1 k)). *)
 
 (* Definition Aof {X} f :=
 S False (Bot _) (False_rect _) X f.
@@ -170,9 +292,6 @@ S False (Bot _) (False_rect _) X f.
 Lemma Qin_False: forall z, 
   Qin z (False_rect set) (Bot False) = False.
 Proof. unfold Qin. auto. Qed.
-
-Lemma Xor_AF : forall X, Xor X False <-> X.
-Proof. intros. unfold Xor. tauto. Qed.
 
 Lemma wow_empty {A p h X f}:
   (exists x: X, True) (* no! p must be non-empty *)
