@@ -3,3 +3,7 @@
 **/*.vok
 **/*.vos
 **/.*.aux
+src/**/*.html
+src/**/*.css
+**/*.log
+**/*.fdb_latexmk

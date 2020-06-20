@@ -23,7 +23,10 @@ src/%.vos: src/%.v
 	coqc -R src "" $<
 
 coq-clean:
-	rm -f src/**/*.glob src/**/*.vo src/**/*.vok src/**/*.vos src/**/.*.aux
+	rm -f src/**/*.glob src/**/*.vo src/**/*.vok src/**/*.vos src/**/.*.aux src/**/*.html src/**/*.css
+
+coq-doc: # NFO-only!
+	cd src/NFO/ && coqdoc --parse-comments -l *.v
 
 # LaTeX
 

@@ -113,8 +113,8 @@ Definition mk_low {X} f h :=
 S False (Bot _) (False_rect _) { x: X & f (h x) } (fun k => h (projT1 k)).
 
 Lemma xxx {X Y} {p} {h: X -> _} {f: set -> Prop} (g: Y -> _):
-respects eeq f ->
-Qin (mk_low f (mk_sum h g)) h p <-> eval (boolean_map f (boolean_map h p)).
+  respects eeq f ->
+  Qin (mk_low f (mk_sum h g)) h p <-> eval (boolean_map f (boolean_map h p)).
 Proof.
   intro. induction p; simpl; simpl boolean_map; simpl Qin; simpl eval.
   - tauto.
@@ -126,8 +126,8 @@ Proof.
 Qed.
 
 Lemma xxx_r {X Y} {p} {h: X -> _} {f: set -> Prop} (g: Y -> _):
-respects eeq f ->
-Qin (mk_low f (mk_sum g h)) h p <-> eval (boolean_map f (boolean_map h p)).
+  respects eeq f ->
+  Qin (mk_low f (mk_sum g h)) h p <-> eval (boolean_map f (boolean_map h p)).
 Proof.
   intro. induction p; simpl; simpl boolean_map; simpl Qin; simpl eval.
   - tauto.
