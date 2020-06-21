@@ -31,19 +31,18 @@ Proof.
   intros H. repeat setoid_rewrite H. apply sloppy_Qext.
 Qed.
 
-Definition subsetOf {X} (f: X -> set) (P: X -> Prop)
-  : { x: X & P x} -> set
+Definition select {X Y} (f: X -> Y) (P: X -> Prop) : {x: X & P x} -> Y
   := fun x' => match x' with
       | existT _ x _ => f x
       end.
 
 Definition respects_sig {A} (h: A -> set) (sig: A -> Prop) :=
   respects (fun a b => h a == h b) sig.
-Definition Para A {B} (h: B -> set) := prod A { sig : B -> Prop & respects_sig h sig }.
+Definition completion A {B} (h: B -> set) := prod A { sig : B -> Prop & respects_sig h sig }.
 
-Definition All {X Y} (f: X -> set) (h: Y -> set) : Para X h -> set :=
+Definition All {X Y} (f: X -> set) (h: Y -> set) : completion X h -> set :=
   fun pr => match f (fst pr) with
-  | S A p h' X f =>  S A p h' _ (AXor f (subsetOf h (projT1 (snd pr))))
+  | S A p h' X f =>  S A p h' _ (AXor f (select h (projT1 (snd pr))))
   end.
 
 Lemma inv_sig_aux {X Y Z} {f: X -> set} {g: Y -> set} {h: Z -> set}:
@@ -60,8 +59,8 @@ Qed.
 Lemma ing_sig_aux_2 {X Z sig sig'} {f: X -> set} {h: Z -> set}:
   respects_sig h sig -> respects_sig h sig'
 -> Aeq
-  (AXor (AXor f (subsetOf h sig)) (subsetOf h sig'))
-  (AXor (subsetOf h (xorP sig' sig)) f).
+  (AXor (AXor f (select h sig)) (select h sig'))
+  (AXor (select h (xorP sig' sig)) f).
 Proof.
   intros A B.
   setoid_rewrite Aext. intro x.
@@ -81,7 +80,7 @@ Proof.
   apply Aext.
   (* NICE *)
   apply Aext. intro. rewrite AXor_ok.
-  unfold Aeq, AXor, subsetOf. unfold xorP. unfold Ain. split; intros.
+  unfold Aeq, AXor, select. unfold xorP. unfold Ain. split; intros.
   destruct H, H.
   - destruct H, x1. cut (Xor (sig' x1) (sig x1)). intro.
   unfold xorP. exists (existT _ x1 H1). assumption. apply Xor_2. intro H'.
@@ -101,8 +100,8 @@ Qed.
 
 Lemma inv_sig {X X' J} {f: X -> set} {f': X' -> set} h {sig sig': J -> Prop}:
   respects_sig h sig -> respects_sig h sig'
-  -> Aeq f (AXor (AXor f' (subsetOf h sig)) (subsetOf h sig'))
-  -> Aeq (AXor f (subsetOf h (xorP sig' sig))) f'.
+  -> Aeq f (AXor (AXor f' (select h sig)) (select h sig'))
+  -> Aeq (AXor f (select h (xorP sig' sig))) f'.
 Proof.
   repeat rewrite inv_sig_aux.
   intros A B. intro. apply (fun X => Aeq_trans _ _ _ H X).
@@ -144,7 +143,7 @@ Proof.
 
   pose x as was_x.
   destruct x.
-  pose (S A p0 h0 _ (AXor (AXor f0 (subsetOf h sig_x)) (subsetOf h (sig_x0)))) as x_signed.
+  pose (S A p0 h0 _ (AXor (AXor f0 (select h sig_x)) (select h (sig_x0)))) as x_signed.
   pose proof (fun X => @sloppy_Aext _ x_signed _ _ f h p H X H0).
   cut ((forall i : J, iin (h i) x_signed <-> iin (h i) x0)). intro.
   destruct (H1 H2). clear H1 H2.
@@ -159,7 +158,7 @@ Proof.
   - exact H2.
   - apply xorP_respects; assumption.
   - unfold x_signed. intros. destruct x0. repeat rewrite iin_unfold'.
-    unfold sig_x0, sig_x, subsetOf.
+    unfold sig_x0, sig_x, select.
     (* Deep rewrites *)
     refine (iff_trans _ _).
     refine (Xor_eq _ _).
