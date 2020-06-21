@@ -45,18 +45,60 @@ Definition All {X Y} (f: X -> set) (h: Y -> set) : Para X Y -> set :=
   end.
 
 Lemma inv_sig_aux {X Y Z} {f: X -> set} {g: Y -> set} {h: Z -> set}:
-Aeq (AXor f g) h
-<-> 
-Aeq f (AXor g h).
+  Aeq (AXor f g) h <-> Aeq f (AXor g h).
 Proof.
+  repeat setoid_rewrite Aext.
+  repeat setoid_rewrite AXor_ok.
+  setoid_rewrite<- (@Xor_neg _ (Ain _ h)).
+  setoid_rewrite<- (@Xor_neg (Ain _ f) _).
+  setoid_rewrite xor_assoc2.
+  apply iff_refl.
+Qed.
+
+Lemma ing_sig_aux_2' {X Z sig sig'} {f: X -> set} {h: Z -> set}:
+   (forall a b, (h a == h b) -> sig a <-> sig b )
+-> (forall a b, (h a == h b) -> sig' a <-> sig' b )
+-> Aeq
+  (AXor (AXor f (subsetOf h sig)) (subsetOf h sig'))
+  (AXor (subsetOf h (fun z => Xor (sig' z) (sig z))) f).
+Proof.
+  intros A B.
+  setoid_rewrite Aext. intro x.
+  repeat setoid_rewrite AXor_ok.
+  refine (iff_trans _ _).
+  setoid_rewrite Xor_eq.
+  apply iff_refl.
+  repeat setoid_rewrite AXor_ok.
+  apply iff_refl.
+  apply iff_refl.
+  refine (iff_trans _ _).
+  apply (iff_sym xor_assoc2).
+  refine (iff_trans _ _).
+  apply xor_comm2.
+  apply Xor_eq; try apply iff_refl.
+  setoid_rewrite<- AXor_ok.
+  apply Aext.
+  unfold Aeq, AXor, subsetOf. split; intros.
+  - destruct x0, s, x0; simpl. cut (Xor (sig' x0) (sig x0)). intro.
+    exists (existT _ x0 H). apply eeq_refl. apply Xor_2. intro H.
+    apply (n (ex_intro _ (existT _ x0 H) eeq_refl)).
+    assumption.
+    cut (Xor (sig' x0) (sig x0)). intro.
+    exists (existT _ x0 H). apply eeq_refl. apply Xor_1. assumption. intro H.
+    apply (n (ex_intro _ (existT _ x0 H) eeq_refl)).
+  - destruct y. destruct x1; destruct H.
+  -- cut (~ (exists y : {x2 : Z & sig x2}, (let (x2, _) := y in h x2) == (h x0))); intro.
+  admit.
+    destruct H1, x1. rewrite (A _ _ H1) in s. tauto.
+      (* exists (inl (existT _ (existT _ x0) ?)). *)
+  (* Continuare da qui. Va cambiata la definizione di All per aggiungere "respects",
+     e cambiare tutti i lemmi sotto... *)
 Admitted.
 
 Lemma ing_sig_aux_2 {X Z sig sig'} {f: X -> set} {h: Z -> set}:
 Aeq
   (AXor (AXor f (subsetOf h sig)) (subsetOf h sig'))
   (AXor (subsetOf h (fun z => Xor (sig' z) (sig z))) f).
-Proof.
-  repeat rewrite<- inv_sig_aux.
 Admitted.
 
 Lemma inv_sig {X X' J} {f: X -> set} {f': X' -> set} h {sig sig': J -> Prop}:
