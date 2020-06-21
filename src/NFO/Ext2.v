@@ -61,7 +61,7 @@ Lemma ing_sig_aux_2 {X Z sig sig'} {f: X -> set} {h: Z -> set}:
   respects_sig h sig -> respects_sig h sig'
 -> Aeq
   (AXor (AXor f (subsetOf h sig)) (subsetOf h sig'))
-  (AXor (subsetOf h (xorP sig sig')) f).
+  (AXor (subsetOf h (xorP sig' sig)) f).
 Proof.
   intros A B.
   setoid_rewrite Aext. intro x.
@@ -79,30 +79,35 @@ Proof.
   apply Xor_eq; try apply iff_refl.
   setoid_rewrite<- AXor_ok.
   apply Aext.
-  unfold Aeq, AXor, subsetOf. split; intros.
-  (* - destruct x0, s, x0; simpl. cut (Xor (sig' x0) (sig x0)). intro.
-    unfold xorP. exists (existT _ x0 H). apply eeq_refl. apply Xor_2. intro H.
-    apply (n (ex_intro _ (existT _ x0 H) eeq_refl)).
-    assumption.
-    cut (Xor (sig' x0) (sig x0)). intro.
-    exists (existT _ x0 H). apply eeq_refl. apply Xor_1. assumption. intro H.
-    apply (n (ex_intro _ (existT _ x0 H) eeq_refl)).
-  - destruct y. destruct x1; destruct H.
-  -- cut (~ (exists y : {x2 : Z & sig x2}, (let (x2, _) := y in h x2) == (h x0))); intro.
-  admit.
-    destruct H1, x1. rewrite (A _ _ H1) in s. tauto. *)
-      (* exists (inl (existT _ (existT _ x0) ?)). *)
-  (* Continuare da qui. Va cambiata la definizione di All per aggiungere "respects",
-     e cambiare tutti i lemmi sotto... *)
-Admitted.
+  (* NICE *)
+  apply Aext. intro. rewrite AXor_ok.
+  unfold Aeq, AXor, subsetOf. unfold xorP. unfold Ain. split; intros.
+  destruct H, H.
+  - destruct H, x1. cut (Xor (sig' x1) (sig x1)). intro.
+  unfold xorP. exists (existT _ x1 H1). assumption. apply Xor_2. intro H'.
+  apply (H0 (ex_intro _ (existT _ x1 H') H)).
+  assumption.
+  - destruct H0, x1. cut (Xor (sig' x1) (sig x1)). intro.
+  unfold xorP. exists (existT _ x1 H1). assumption. apply Xor_1. assumption.
+  intro H'. apply (H (ex_intro _ (existT _ x1 H') H0)).
+  - destruct H, x1. destruct x2, H0.
+  -- apply Xor_2.
+      intro H'. destruct H', x2. pose proof (A x1 x2 (eeq_trans H (eeq_sym H2))). tauto.
+      exists (existT _ x1 H0). assumption.
+  -- apply Xor_1.
+      exists (existT _ x1 H1). assumption.
+      intro H'. destruct H', x2. pose proof (B x1 x2 (eeq_trans H (eeq_sym H2))). tauto.
+Qed.
 
 Lemma inv_sig {X X' J} {f: X -> set} {f': X' -> set} h {sig sig': J -> Prop}:
-Aeq f (AXor (AXor f' (subsetOf h sig)) (subsetOf h sig'))
--> 
-Aeq (AXor f (subsetOf h (xorP sig' sig))) f'.
+  respects_sig h sig -> respects_sig h sig'
+  -> Aeq f (AXor (AXor f' (subsetOf h sig)) (subsetOf h sig'))
+  -> Aeq (AXor f (subsetOf h (xorP sig' sig))) f'.
 Proof.
   repeat rewrite inv_sig_aux.
-Admitted.
+  intros A B. intro. apply (fun X => Aeq_trans _ _ _ H X).
+  apply (ing_sig_aux_2 A B).
+Qed.
 
 Lemma ain_aux {J h z i}:
 Ain (h i) (fun y : {x : J & iin (h x) z} => let (x, _) := y in h x)
@@ -135,6 +140,7 @@ Proof.
   intros. destruct H0.
   pose (fun j => iin (h j) x0) as sig_x0 (* the good signature *) .
   pose (fun j => iin (h j) x) as sig_x (* the current signature *) .
+  cut (respects_sig h sig_x0). cut (respects_sig h sig_x). intros R1 R2.
 
   pose x as was_x.
   destruct x.
@@ -149,11 +155,9 @@ Proof.
   unfold All. unfold Ain. simpl.
   destruct (f x). unfold x_signed in H3. rewrite eeq_unfold in H3. destruct H3.
   rewrite eeq_unfold. split.
-  - revert H1. apply inv_sig.
+  - revert H1. apply (inv_sig h R1 R2).
   - exact H2.
-  - unfold respects_sig. unfold sig_xor. apply xorP_respects.
-    unfold sig_x0. unfold respects. intros. apply (iin_respects_eeq x0 (h x1) (h x')). auto.
-    unfold sig_x. unfold respects. intros. apply (iin_respects_eeq _ (h x1) (h x')). auto.
+  - apply xorP_respects; assumption.
   - unfold x_signed. intros. destruct x0. repeat rewrite iin_unfold'.
     unfold sig_x0, sig_x, subsetOf.
     (* Deep rewrites *)
@@ -175,6 +179,8 @@ Proof.
     apply iff_refl.
 
     apply stupid_xor_aux.
+  - unfold sig_x, respects_sig, respects. intros. apply (iin_respects_eeq _ (h x1) (h x')). auto.
+  - unfold sig_x, respects_sig, respects. intros. apply (iin_respects_eeq x0 (h x1) (h x')). auto.
 Qed.
 
 Lemma not_iin_not_Ain {A p h X f}:
