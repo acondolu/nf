@@ -56,6 +56,8 @@ Qed.
 Local Definition boolean_xor {A} (p p': boolean A) :=
   Or _ (Not _ (Or _ p (Not _ p'))) (Not _ (Or _ (Not _ p) p')).
 
+(* Lemma  *)
+
 Definition AXor {X Y} (f: X -> set) (g: Y -> set)
   : sum {x & ~ exists y, eeq (g y) (f x)} {y & ~ exists x, eeq (f x) (g y)} -> set
   := fun s => match s with
@@ -96,15 +98,25 @@ Proof.
       apply (eeq_trans H1 H0).
 Qed.
 
+Lemma QXor_ok {X Y} {h: X -> set} {h0: Y -> set} {z p p0}:
+Qin z (mk_sum h h0) (boolean_xor (boolean_map inl p) (boolean_map inr p0)) <-> Xor (Qin z h p) (Qin z h0 p0).
+Proof.
+  unfold boolean_xor. simpl Qin.
+  repeat rewrite<- Qin_aux. simpl. repeat rewrite boolean_map_compose. unfold Basics.compose. simpl mk_sum.
+  repeat rewrite Qin_aux. unfold Xor. tauto.
+Qed.
+
 Lemma xor_ok: forall x y, forall z, iin z (QXor x y) <-> Xor (iin z x) (iin z y).
 Proof.
   intros. destruct x, y. rewrite (Xor_eq iin_unfold' iin_unfold').
   rewrite xor_pairs. unfold QXor. rewrite iin_unfold'. apply Xor_eq.
   - apply AXor_ok.
-  - unfold boolean_xor. simpl Qin.
-    repeat rewrite<- Qin_aux. simpl. repeat rewrite boolean_map_compose. unfold Basics.compose. simpl mk_sum.
-    repeat rewrite Qin_aux. unfold Xor. tauto.
+  - apply QXor_ok.
 Qed.
 
 
 (* TODO: Union *)
+
+
+(* Axuliary *)
+Definition enum {X} f := S False (Bot _) (False_rect _) X f.

@@ -77,7 +77,7 @@ Proof.
   - exists (existT _ i H). apply eeq_refl.
 Qed.
 
-Lemma stupid_xor_aux {a b c d}:
+Local Lemma stupid_xor_aux {a b c d}:
   Xor (Xor (Xor a (Xor a b)) (Xor c d)) b <-> Xor c d.
 Proof.
   refine (iff_trans _ _).
@@ -134,4 +134,53 @@ Proof.
     apply iff_refl.
 
     apply stupid_xor_aux.
+Qed.
+
+Lemma not_iin_not_Ain {A p h X f}:
+  (forall z, ~ iin z (S A p h X f)) -> forall x, ~ Ain x f.
+Proof.
+  setoid_rewrite iin_unfold'.
+  setoid_rewrite Xor_neg.
+  intros H x H0. pose proof (wow _ _ H).
+  destruct (weak_regularity (enum (All f h)) (H1 (ex_intro _ x H0) _)).
+Qed.
+
+Lemma no_urelements: forall x y, is_empty (QXor x y) -> x == y.
+Proof.
+  intros x y. unfold is_empty.
+  setoid_rewrite xor_ok. destruct x, y.
+  intro. setoid_rewrite Xor_neg in H.
+  setoid_rewrite iin_unfold' in H.
+  setoid_rewrite<- Xor_neg in H.
+  setoid_rewrite xor_pairs in H.
+  setoid_rewrite Xor_neg in H.
+  pose H as H'.
+  setoid_rewrite<- AXor_ok in H'.
+  setoid_rewrite<- QXor_ok in H'.
+  setoid_rewrite<- Xor_neg in H'.
+  setoid_rewrite<- iin_unfold' in H'.
+  pose proof (not_iin_not_Ain H').
+  rewrite eeq_unfold.
+  setoid_rewrite AXor_ok in H0.
+  pose H0 as H0'.
+  setoid_rewrite Xor_neg in H0'.
+  rewrite<- Aext in H0'.
+  cut (forall z, ~Xor (Qin z h p) (Qin z h0 p0)). intro.
+  setoid_rewrite Xor_neg in H1.
+  setoid_rewrite<- Qext in H1.
+  split; auto.
+  intro z.
+  specialize H with z. setoid_rewrite<- H. apply H0.
+Qed.
+
+Lemma iin_eeq: forall x y, 
+  (forall z, iin z x <-> iin z y) -> x == y.
+Proof.
+  intros. pose proof (xor_ext H). apply no_urelements. auto.
+Qed.
+
+Theorem ext: forall x y, 
+  x == y <-> forall z, iin z x <-> iin z y.
+Proof.
+  intros. split. apply eeq_iin. apply iin_eeq.
 Qed.
