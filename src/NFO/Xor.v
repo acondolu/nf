@@ -1,5 +1,6 @@
 (* Warning! This module uses classical logic! *)
 Require Import Coq.Logic.Classical_Prop.
+Require Import FunExt.
 
 Definition Xor a b := (a /\ ~b) \/ (~a /\ b).
 
@@ -51,6 +52,16 @@ Lemma negb_xor : forall a b,
 Proof.
   unfold Xor. intros. 
   destruct (classic a); destruct (classic b); tauto.
+Qed.
+
+Definition xorP {X} (P Q: X -> Prop) := fun x => Xor (P x) (Q x).
+Lemma xorP_respects {X} (R: X -> X -> Prop) (P Q: X -> Prop) :
+  respects R P
+  -> respects R Q
+  -> respects R (xorP P Q).
+Proof.
+  unfold respects. intros. unfold xorP. apply Xor_eq.
+  apply H; auto. apply H0; auto.
 Qed.
 
 Lemma And_eq3 {a a' b b' c c'}: (a <-> a') -> (b <-> b') -> (c <-> c') -> (a /\ b /\ c) <-> (a' /\ b' /\ c').

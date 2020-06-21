@@ -37,11 +37,13 @@ Definition subsetOf {X} (f: X -> set) (P: X -> Prop)
       | existT _ x _ => f x
       end.
 
-Definition Para (A B: Type) := prod A (B -> Prop).
+Definition respects_sig {A} (h: A -> set) (sig: A -> Prop) :=
+  respects (fun a b => h a == h b) sig.
+Definition Para A {B} (h: B -> set) := prod A { sig : B -> Prop & respects_sig h sig }.
 
-Definition All {X Y} (f: X -> set) (h: Y -> set) : Para X Y -> set :=
+Definition All {X Y} (f: X -> set) (h: Y -> set) : Para X h -> set :=
   fun pr => match f (fst pr) with
-  | S A p h' X f =>  S A p h' _ (AXor f (subsetOf h (snd pr)))
+  | S A p h' X f =>  S A p h' _ (AXor f (subsetOf h (projT1 (snd pr))))
   end.
 
 Lemma inv_sig_aux {X Y Z} {f: X -> set} {g: Y -> set} {h: Z -> set}:
@@ -55,12 +57,11 @@ Proof.
   apply iff_refl.
 Qed.
 
-Lemma ing_sig_aux_2' {X Z sig sig'} {f: X -> set} {h: Z -> set}:
-   (forall a b, (h a == h b) -> sig a <-> sig b )
--> (forall a b, (h a == h b) -> sig' a <-> sig' b )
+Lemma ing_sig_aux_2 {X Z sig sig'} {f: X -> set} {h: Z -> set}:
+  respects_sig h sig -> respects_sig h sig'
 -> Aeq
   (AXor (AXor f (subsetOf h sig)) (subsetOf h sig'))
-  (AXor (subsetOf h (fun z => Xor (sig' z) (sig z))) f).
+  (AXor (subsetOf h (xorP sig sig')) f).
 Proof.
   intros A B.
   setoid_rewrite Aext. intro x.
@@ -79,8 +80,8 @@ Proof.
   setoid_rewrite<- AXor_ok.
   apply Aext.
   unfold Aeq, AXor, subsetOf. split; intros.
-  - destruct x0, s, x0; simpl. cut (Xor (sig' x0) (sig x0)). intro.
-    exists (existT _ x0 H). apply eeq_refl. apply Xor_2. intro H.
+  (* - destruct x0, s, x0; simpl. cut (Xor (sig' x0) (sig x0)). intro.
+    unfold xorP. exists (existT _ x0 H). apply eeq_refl. apply Xor_2. intro H.
     apply (n (ex_intro _ (existT _ x0 H) eeq_refl)).
     assumption.
     cut (Xor (sig' x0) (sig x0)). intro.
@@ -89,25 +90,18 @@ Proof.
   - destruct y. destruct x1; destruct H.
   -- cut (~ (exists y : {x2 : Z & sig x2}, (let (x2, _) := y in h x2) == (h x0))); intro.
   admit.
-    destruct H1, x1. rewrite (A _ _ H1) in s. tauto.
+    destruct H1, x1. rewrite (A _ _ H1) in s. tauto. *)
       (* exists (inl (existT _ (existT _ x0) ?)). *)
   (* Continuare da qui. Va cambiata la definizione di All per aggiungere "respects",
      e cambiare tutti i lemmi sotto... *)
 Admitted.
 
-Lemma ing_sig_aux_2 {X Z sig sig'} {f: X -> set} {h: Z -> set}:
-Aeq
-  (AXor (AXor f (subsetOf h sig)) (subsetOf h sig'))
-  (AXor (subsetOf h (fun z => Xor (sig' z) (sig z))) f).
-Admitted.
-
 Lemma inv_sig {X X' J} {f: X -> set} {f': X' -> set} h {sig sig': J -> Prop}:
 Aeq f (AXor (AXor f' (subsetOf h sig)) (subsetOf h sig'))
 -> 
-Aeq (AXor f (subsetOf h (fun j : J => Xor (sig' j) (sig j)))) f'.
+Aeq (AXor f (subsetOf h (xorP sig' sig))) f'.
 Proof.
   repeat rewrite inv_sig_aux.
-
 Admitted.
 
 Lemma ain_aux {J h z i}:
@@ -148,13 +142,18 @@ Proof.
   pose proof (fun X => @sloppy_Aext _ x_signed _ _ f h p H X H0).
   cut ((forall i : J, iin (h i) x_signed <-> iin (h i) x0)). intro.
   destruct (H1 H2). clear H1 H2.
-  exists (x, (fun j => Xor (sig_x0 j) (sig_x j))).
+  pose (xorP sig_x0 sig_x) as sig_xor.
+  cut (respects_sig h sig_xor). intro xr.
+  exists (x, existT _ sig_xor xr).
 
   unfold All. unfold Ain. simpl.
   destruct (f x). unfold x_signed in H3. rewrite eeq_unfold in H3. destruct H3.
   rewrite eeq_unfold. split.
   - revert H1. apply inv_sig.
   - exact H2.
+  - unfold respects_sig. unfold sig_xor. apply xorP_respects.
+    unfold sig_x0. unfold respects. intros. apply (iin_respects_eeq x0 (h x1) (h x')). auto.
+    unfold sig_x. unfold respects. intros. apply (iin_respects_eeq _ (h x1) (h x')). auto.
   - unfold x_signed. intros. destruct x0. repeat rewrite iin_unfold'.
     unfold sig_x0, sig_x, subsetOf.
     (* Deep rewrites *)
