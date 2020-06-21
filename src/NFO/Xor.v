@@ -1,10 +1,21 @@
 (* Warning! This module uses classical logic! *)
 Require Import Coq.Logic.Classical_Prop.
+Require Import Setoid Morphisms.
+
+Add LoadPath "src/NFO/".
 Require Import FunExt.
 
+(* Exclusive OR *)
 Definition Xor a b := (a /\ ~b) \/ (~a /\ b).
+Infix "<X>" := Xor (at level 80, right associativity).
 
-Lemma xor_assoc {a b c}: Xor a (Xor b c) -> Xor (Xor a b) c.
+(* Register Xor as a morphism *)
+Add Morphism Xor: eeqs.
+Proof. unfold Xor. tauto. Qed.
+
+(* A bunch of useful properties about Xor *)
+
+Lemma xor_assoc {a b c}: a <X> (b <X> c) -> (a <X> b) <X> c.
 Proof. unfold Xor. tauto. Qed.
 
 Lemma xor_assoc2 {a b c}: Xor a (Xor b c) <-> Xor (Xor a b) c.
@@ -12,6 +23,7 @@ Proof. unfold Xor. tauto. Qed.
 
 Lemma xor_absorb {a}: Xor a a <-> False.
 Proof. unfold Xor. tauto. Qed.
+Hint Resolve xor_absorb : Xor.
 
 Lemma xor_comm {a b}: Xor a b -> Xor b a.
 Proof. unfold Xor. tauto. Qed.
@@ -63,6 +75,3 @@ Proof.
   unfold respects. intros. unfold xorP. apply Xor_eq.
   apply H; auto. apply H0; auto.
 Qed.
-
-Lemma And_eq3 {a a' b b' c c'}: (a <-> a') -> (b <-> b') -> (c <-> c') -> (a /\ b /\ c) <-> (a' /\ b' /\ c').
-Proof. tauto. Qed.

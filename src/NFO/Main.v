@@ -4,7 +4,7 @@ Add LoadPath "src/NFO/".
 Require Eeq.
 Require Model.
 Require Iin.
-Require Ext2.
+Require Ext.
 
 (*  *)
 Definition set := Model.set.
@@ -19,7 +19,7 @@ Definition eeq_trans : forall x y z, eeq x y -> eeq y z -> eeq x z := @Eeq.eeq_t
 Definition iin : set -> set -> Prop := Iin.iin.
 
 (* Extensionality *)
-Definition ext : forall x y, eeq x y <-> forall z, iin z x <-> iin z y := @Ext2.ext.
+Definition ext : forall x y, eeq x y <-> forall z, iin z x <-> iin z y := @Ext.ext.
 
 (* TODO: put here set operators *)
 

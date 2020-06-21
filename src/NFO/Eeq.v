@@ -2,6 +2,7 @@ Require Import Coq.Program.Basics.
 Require Import Coq.Program.Combinators.
 Add LoadPath "src/NFO/".
 Require Import FunExt.
+Require Import Aux.
 Require Import Bool.
 Require Import Model.
 Require Import Wff.
@@ -92,6 +93,19 @@ Proof.
 Qed.
 Hint Resolve eeq_trans : Eeq.
 
+Require Import Setoid Morphisms.
+Instance eeqs : Equivalence eeq.
+Proof.
+  constructor. exact @eeq_refl. exact @eeq_sym. exact @eeq_trans.
+Qed.
+
+Lemma Aeq_trans: forall {X Y Z} f g h, @Aeq X Y f g -> Aeq g h -> @Aeq X Z f h.
+Proof.
+  unfold Aeq. intros. destruct H, H0. split.
+  - intro x. destruct (H x). destruct (H0 x0). exists x1. eauto with Eeq.
+  - intro x. destruct (H2 x). destruct (H1 x0). exists x1. eauto with Eeq.
+Qed.
+
 (* "Quine" equality *)
 Definition Qeq := eeq_boolean eeq.
 
@@ -152,11 +166,4 @@ Proof.
   rewrite<- eeq_boolean_qeq.
   rewrite eeq_def.
   tauto.
-Qed.
-
-Lemma Aeq_trans: forall {X Y Z} f g h, @Aeq X Y f g -> Aeq g h -> @Aeq X Z f h.
-Proof.
-  unfold Aeq. intros. destruct H, H0. split.
-  - intro x. destruct (H x). destruct (H0 x0). exists x1. eauto with Eeq.
-  - intro x. destruct (H2 x). destruct (H1 x0). exists x1. eauto with Eeq.
 Qed.
