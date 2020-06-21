@@ -370,7 +370,21 @@ Proof.
  *)
 
 
-Axiom todo: forall x y, is_empty (QXor x y) -> x == y.
+Lemma todo: forall x y, is_empty (QXor x y) -> x == y.
+Proof.
+  intros x y. unfold is_empty.
+  setoid_rewrite xor_ok. destruct x, y.
+  intro. setoid_rewrite Xor_neg in H.
+  setoid_rewrite iin_unfold' in H.
+  setoid_rewrite<- Xor_neg in H.
+  setoid_rewrite xor_pairs in H.
+  setoid_rewrite Xor_neg in H.
+
+  rewrite eeq_unfold.
+  split.
+  - apply Ain_Aeq. admit.
+  - apply Qin_Qeq. admit.
+Admitted.
 
 Lemma iin_eeq: forall x y, 
   (forall z, iin z x <-> iin z y) -> x == y.

@@ -21,11 +21,11 @@ Definition compl x := match x with
 end.
 
 Lemma compl_ok: forall x y,
-  iin x y <-> (iin x (compl y) -> False).
+  iin x (compl y) <-> (iin x y -> False).
 Proof.
   intro x. destruct y. unfold compl. repeat rewrite iin_unfold. simpl boolean_map. simpl eval. split; intros.
   - unfold Xor in *. tauto.
-  - apply negb_xor_r. auto.
+  - auto. apply negb_xor. tauto.
 Qed.
 
 (* Co-singleton *)
@@ -56,40 +56,51 @@ Qed.
 Local Definition boolean_xor {A} (p p': boolean A) :=
   Or _ (Not _ (Or _ p (Not _ p'))) (Not _ (Or _ (Not _ p) p')).
 
+Definition AXor {X Y} (f: X -> set) (g: Y -> set)
+  : sum {x & ~ exists y, eeq (g y) (f x)} {y & ~ exists x, eeq (f x) (g y)} -> set
+  := fun s => match s with
+      | inl x => f (projT1 x)
+      | inr y => g (projT1 y) 
+    end.
+
 Definition QXor B C := 
   match B, C with S A p h X f, S A' p' h' X' f' =>
   let A'' := sum A A' in
   let h'' := mk_sum h h' in
-  let X'' := sum {x: X & ~ exists x', eeq (f' x') (f x)} {x': X' & ~ exists x, eeq (f x) (f' x')} in 
-  let f'' := fun xx: X'' => match xx with inl xx' => f (projT1 xx') | inr xx'' => f' (projT1 xx'') end in
   let p'' := boolean_xor (boolean_map inl p) (boolean_map inr p') in
-  S A'' p'' h'' X'' f''
+  S A'' p'' h'' _ (AXor f f')
 end.
+
+Lemma AXor_ok {X X'} {f: X -> set} {f': X' -> set} {x}:
+  Ain x (AXor f f') <-> Xor (Ain x f) (Ain x f').
+Proof.
+  unfold Ain. split; intros. destruct H, x0, s; simpl in H.
+  - pose proof (ex_intro (fun x0 => f x0 == x) x0 H).
+      cut (~ exists x0, f' x0 == x). intro.
+      apply (Xor_1 H0 H1). intro. apply n. destruct H1.
+      exists x1. apply (eeq_trans H1 (eeq_sym H)).
+  - pose proof (ex_intro (fun x' => f' x' == x) x0 H).
+      cut (~ exists x0, f x0 == x). intro.
+      apply (Xor_2 H1 H0). intro. destruct H0, H1.
+      apply n. exists x2. apply (eeq_trans H1 (eeq_sym H)).
+  - destruct H, H.
+  -- destruct H.
+      cut (~ exists x', f' x' == f x0). intro.
+      exists (inl (existT _ x0 H1)). exact H.
+      intro O. destruct O. apply H0. exists x1.
+      apply (eeq_trans H1 H).
+  -- destruct H0.
+      cut (~ exists x', f x' == f' x0). intro.
+      exists (inr (existT _ x0 H1)). exact H0.
+      intro O. destruct O. apply H. exists x1.
+      apply (eeq_trans H1 H0).
+Qed.
 
 Lemma xor_ok: forall x y, forall z, iin z (QXor x y) <-> Xor (iin z x) (iin z y).
 Proof.
   intros. destruct x, y. rewrite (Xor_eq iin_unfold' iin_unfold').
   rewrite xor_pairs. unfold QXor. rewrite iin_unfold'. apply Xor_eq.
-  - unfold Ain. split; intros. destruct H, x, s; simpl in H.
-  -- pose proof (ex_intro (fun x0 => f x0 == z) x H).
-      cut (~ exists x0 : X0, f0 x0 == z). intro.
-      apply (Xor_1 H0 H1). intro. apply n. destruct H1.
-      exists x0. apply (eeq_trans H1 (eeq_sym H)).
-  -- pose proof (ex_intro (fun x => f0 x == z) x H).
-      cut (~ exists x0, f x0 == z). intro.
-      apply (Xor_2 H1 H0). intro. destruct H0, H1.
-      apply n. exists x1. apply (eeq_trans H1 (eeq_sym H)).
-  -- destruct H, H.
-  --- destruct H.
-      cut (~ exists x0 : X0, f0 x0 == f x). intro.
-      exists (inl (existT _ x H1)). exact H.
-      intro O. destruct O. apply H0. exists x0.
-      apply (eeq_trans H1 H).
-  --- destruct H0.
-      cut (~ exists x0, f x0 == f0 x). intro.
-      exists (inr (existT _ x H1)). exact H0.
-      intro O. destruct O. apply H. exists x0.
-      apply (eeq_trans H1 H0).
+  - apply AXor_ok.
   - unfold boolean_xor. simpl Qin.
     repeat rewrite<- Qin_aux. simpl. repeat rewrite boolean_map_compose. unfold Basics.compose. simpl mk_sum.
     repeat rewrite Qin_aux. unfold Xor. tauto.
