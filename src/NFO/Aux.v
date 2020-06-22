@@ -9,6 +9,11 @@ Lemma And_eq3 {a a' b b' c c'}:
   (a <-> a') -> (b <-> b') -> (c <-> c') -> (a /\ b /\ c) <-> (a' /\ b' /\ c').
 Proof. tauto. Qed.
 
+Lemma ex_false {P: False -> Prop}: (exists x, P x) <-> False.
+Proof. split; intros. destruct H, x. destruct H. Qed.
+
+Lemma ex_unit {P: unit -> Prop}: (exists x, P x) <-> P tt.
+Proof. split; intros. destruct H, x. auto. eauto. Qed.
 
 (* Inverts a  *)
 Definition invF {X Y} (f: X -> Y) (y: Y) := exists x, f x = y.

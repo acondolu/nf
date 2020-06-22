@@ -93,7 +93,7 @@ Proof.
   (* setoid_rewrite<- xor_assoc.
   setoid_rewrite xor_comm. *)
   refine (iff_trans _ _).
-  setoid_rewrite Xor_eq.
+  setoid_rewrite xor_iff.
   apply iff_refl.
   repeat setoid_rewrite AXor_ok.
   apply iff_refl.
@@ -102,7 +102,7 @@ Proof.
   apply (iff_sym xor_assoc).
   refine (iff_trans _ _).
   apply xor_comm.
-  apply Xor_eq; try apply iff_refl.
+  apply xor_iff; try apply iff_refl.
   setoid_rewrite<- AXor_ok.
   apply Aext.
   

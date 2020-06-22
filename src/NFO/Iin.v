@@ -42,7 +42,7 @@ Proof.
   apply (well_founded_ind ((wf_swapprod _ lt wf_lt))).
   destruct x. intros.
   unfold iin' at 1. rewrite Fix_iff. destruct s0. fold iin'. tauto.
-  destruct x. intros. destruct s2. apply Xor_eq. tauto. apply boolean_map_extP.
+  destruct x. intros. destruct s2. apply xor_iff. tauto. apply boolean_map_extP.
   unfold FunExt.extP. split; intros; rewrite H0 in *; auto.
 Qed.
 
@@ -78,6 +78,6 @@ Lemma iin_unfold' {x A p h X f} :
       (Qin x h p).
 Proof.
   rewrite iin_unfold.
-  apply Xor_eq. tauto.
+  apply xor_iff. tauto.
   apply Qin_aux.
 Qed.

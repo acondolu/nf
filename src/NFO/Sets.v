@@ -1,5 +1,5 @@
 Add LoadPath "src/NFO/".
-Require Import Xor.
+Require Import Xor Aux.
 Require Import Bool.
 Require Import Model.
 Require Import Eeq.
@@ -11,8 +11,8 @@ Definition emptyset :=
 
 Lemma emptyset_ok: forall x, ~ iin x emptyset.
 Proof.
-  red. unfold emptyset. intro x. rewrite iin_unfold. unfold Ain. unfold Xor. simpl. destruct 1; repeat destruct H. destruct x0.
-  destruct H0.
+  red. unfold emptyset. intro x. rewrite iin_unfold. unfold Ain, Xor.
+  simpl. destruct 1; repeat destruct H. destruct x0. destruct H0.
 Qed.
 
 (* Set complement *)
@@ -23,9 +23,8 @@ end.
 Lemma compl_ok: forall x y,
   iin x (compl y) <-> (iin x y -> False).
 Proof.
-  intro x. destruct y. unfold compl. repeat rewrite iin_unfold. simpl boolean_map. simpl eval. split; intros.
-  - unfold Xor in *. tauto.
-  - auto. apply negb_xor. tauto.
+  intros. destruct y. unfold compl. repeat rewrite iin_unfold.
+  simpl boolean_map. simpl eval. apply xor_neg_commute.
 Qed.
 
 (* Co-singleton *)
@@ -33,22 +32,17 @@ Definition cosin x := S unit (Atom _ tt) (fun _ => x) False (False_rect _).
 
 Lemma cosin_ok: forall x y, iin x (cosin y) <-> iin y x.
 Proof.
-  intros x y. unfold cosin. rewrite iin_unfold.
-  unfold Xor, Ain. simpl. split; intros.
-  - destruct H, H. destruct H, x0. unfold iin. assumption.
-  - right; auto. split. intro. destruct H0. destruct x0.
-    unfold iin' in H. assumption.
+  intros. unfold cosin. rewrite iin_unfold.
+  unfold Xor, Ain. simpl. setoid_rewrite ex_false. tauto.
 Qed.
 
 (* Singleton *)
 Definition sin x := S False (Bot _) (False_rect _) unit (fun _ => x).
 
-Lemma sin_ok: forall x y, iin x (sin y) <-> eeq x y.
+Lemma sin_ok: forall x y, iin x (sin y) <-> eeq y x.
 Proof.
   intros x y. unfold sin. rewrite iin_unfold.
-  unfold Xor, Ain. simpl. split; intros.
-  - destruct H, H. destruct H. apply eeq_sym. auto. destruct H0.
-  - left. split. exists tt. apply eeq_sym. auto. tauto.
+  unfold Xor, Ain. simpl. rewrite ex_unit. tauto.
 Qed.
 
 (* Exclusive or of sets *)
@@ -108,14 +102,23 @@ Qed.
 
 Lemma xor_ok: forall x y, forall z, iin z (QXor x y) <-> Xor (iin z x) (iin z y).
 Proof.
-  intros. destruct x, y. rewrite (Xor_eq iin_unfold' iin_unfold').
-  rewrite xor_pairs. unfold QXor. rewrite iin_unfold'. apply Xor_eq.
+  intros. destruct x, y. rewrite (xor_iff iin_unfold' iin_unfold').
+  rewrite xor_pairs. unfold QXor. rewrite iin_unfold'. apply xor_iff.
   - apply AXor_ok.
   - apply QXor_ok.
 Qed.
 
 
 (* TODO: Union *)
+
+
+Definition cup B C := 
+  match B, C with S A p h X f, S A' p' h' X' f' =>
+  let A'' := sum A A' in
+  let h'' := sum_funs h h' in
+  let p'' := Or _ (boolean_map inl p) (boolean_map inr p') in
+  S A'' p'' h'' _ (sum_funs f f') (* FIXME: incorrect! *)
+end.
 
 
 (* Axuliary *)

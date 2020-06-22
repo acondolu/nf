@@ -52,7 +52,7 @@ Lemma iin_respects_eeq: forall z x y, eeq x y ->
 Proof.
   induction z.
   apply (wf_two_ind (fun x y => eeq x y -> _: Prop)).
-  destruct x1, x2. intros. repeat rewrite iin_unfold. split; apply Xor_eq.
+  destruct x1, x2. intros. repeat rewrite iin_unfold. split; apply xor_iff.
   - apply Aeq_Ain. rewrite eeq_unfold in H2; destruct H2. assumption.
   - rewrite eeq_unfold in H2; destruct H2. unfold eeq_boolean in H1.
     pose (fun s : set =>

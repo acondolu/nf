@@ -36,14 +36,8 @@ Proof. unfold Xor. tauto. Qed.
 Lemma xor_pairs {a b c d}: Xor (Xor a b) (Xor c d) <-> Xor (Xor a c) (Xor b d).
 Proof. unfold Xor. split; intro; destruct H; tauto. Qed.
 
-Lemma Xor_eq {a a' b b'}: (a <-> a') -> (b <-> b') -> Xor a b <-> Xor a' b'.
+Lemma xor_iff {a a' b b'}: (a <-> a') -> (b <-> b') -> Xor a b <-> Xor a' b'.
 Proof. unfold Xor. tauto. Qed.
-
-Lemma Xor_ext {a a' b b'}: (a <-> a') -> (b <-> b') -> Xor a b -> Xor a' b'.
-Proof. unfold Xor. tauto. Qed.
-
-Lemma Xor_iff {a b}: (Xor a b <-> False) <-> (a <-> b).
-Proof. unfold Xor. split; tauto. Qed.
 
 Lemma Xor_neg {a b}: (~Xor a b) <-> (a <-> b).
 Proof. unfold Xor. split; tauto. Qed.
@@ -54,26 +48,17 @@ Proof. unfold Xor. tauto. Qed.
 Lemma Xor_2 {a b: Prop}: (~a) -> b -> Xor a b.
 Proof. unfold Xor. tauto. Qed.
 
-Lemma negb_xor_r : forall a b,
-  (~ Xor a (~ b)) -> Xor a b.
-Proof.
-  unfold Xor. intros. 
-  destruct (classic a); destruct (classic b); tauto.
-Qed.
+Lemma xor_neg_commute {a b}: a <X> (~ b) <-> ~ (a <X> b).
+Proof. unfold Xor. intros. tauto. Qed.
 
-Lemma negb_xor : forall a b,
-  (Xor a (~ b)) <-> ~Xor a b.
-Proof.
-  unfold Xor. intros. 
-  destruct (classic a); destruct (classic b); tauto.
-Qed.
-
+(* Exclusive disjunction of predicates *)
 Definition xorP {X} (P Q: X -> Prop) := fun x => Xor (P x) (Q x).
+
 Lemma xorP_respects {X} (R: X -> X -> Prop) (P Q: X -> Prop) :
   respects R P
   -> respects R Q
   -> respects R (xorP P Q).
 Proof.
-  unfold respects. intros. unfold xorP. apply Xor_eq.
+  unfold respects. intros. unfold xorP. apply xor_iff.
   apply H; auto. apply H0; auto.
 Qed.
