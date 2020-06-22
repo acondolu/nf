@@ -1,5 +1,5 @@
 Add LoadPath "src/NFO/".
-Require Import Xor Aux.
+Require Import Xor Aux FunExt.
 Require Import Bool.
 Require Import Model.
 Require Import Eeq.
@@ -107,19 +107,6 @@ Proof.
   - apply AXor_ok.
   - apply QXor_ok.
 Qed.
-
-
-(* TODO: Union *)
-
-
-Definition cup B C := 
-  match B, C with S A p h X f, S A' p' h' X' f' =>
-  let A'' := sum A A' in
-  let h'' := sum_funs h h' in
-  let p'' := Or _ (boolean_map inl p) (boolean_map inr p') in
-  S A'' p'' h'' _ (sum_funs f f') (* FIXME: incorrect! *)
-end.
-
 
 (* Axuliary *)
 Definition enum {X} f := S False (Bot _) (False_rect _) X f.

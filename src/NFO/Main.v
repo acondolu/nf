@@ -3,6 +3,7 @@ Require Eeq.
 Require Model.
 Require Iin.
 Require Ext.
+Require Union.
 
 
 Module NFO.
@@ -23,5 +24,9 @@ Definition iin : set -> set -> Prop := Iin.iin.
 Definition ext : forall x y, eeq x y <-> forall z, iin z x <-> iin z y := @Ext.ext.
 
 (* TODO: put here set operators *)
+Definition union := @Union.cup.
+Definition union_ok
+  : forall x y z, iin z (union x y) <-> iin z x \/ iin z y
+  := Union.cup_ok.
 
 End NFO.
