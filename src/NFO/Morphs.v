@@ -120,9 +120,6 @@ Qed.
 Definition mk_low {X} f h :=
 S False (Bot _) (False_rect _) { x: X & f (h x) } (fun k => h (projT1 k)).
 
-Lemma Xor_AF : forall X, Xor X False <-> X.
-Proof. intros. unfold Xor. tauto. Qed.
-
 Lemma xxx {X Y} {p} {h: X -> _} {f: set -> Prop} (g: Y -> _):
   respects eeq f ->
   Qin (mk_low f (sum_funs h g)) h p <-> eval (boolean_map f (boolean_map h p)).
@@ -130,7 +127,7 @@ Proof.
   intro. induction p; simpl; simpl boolean_map; simpl Qin; simpl eval.
   - tauto.
   - unfold mk_low. rewrite iin_unfold. simpl. unfold Ain.
-    rewrite Xor_AF. split; intros.
+    rewrite xor_false_r. split; intros.
     destruct H0, x0, x0.
     simpl sum_funs in *. apply (H (h x0) (h x) H0). assumption.
     simpl sum_funs in *. apply (H (g y) (h x) H0). assumption.
@@ -146,7 +143,7 @@ Proof.
   intro. induction p; simpl; simpl boolean_map; simpl Qin; simpl eval.
   - tauto.
   - unfold mk_low. rewrite iin_unfold. simpl. unfold Ain.
-    rewrite Xor_AF. split; intros.
+    rewrite xor_false_r. split; intros.
     destruct H0, x0, x0.
     simpl sum_funs in *. apply (H (g y) (h x) H0). assumption.
     simpl sum_funs in *. apply (H (h x0) (h x) H0). assumption.
@@ -182,24 +179,16 @@ Qed.
 
 (* Extensionality *)
 
-Lemma eeq_iin: forall x y, 
-  x == y -> forall z, iin z x <-> iin z y.
-Proof.
-  destruct x, y.
-  rewrite eeq_unfold. intros. repeat rewrite iin_unfold'.
-  destruct H. apply Xor_eq. apply Aext; assumption.
-  apply Qext; assumption.
-Qed.
-
-Definition is_empty x := forall z, ~ iin z x.
+Definition ext_empty x := forall z, ~ iin z x.
 
 Lemma xor_ext: forall {x y},
-  (forall z, iin z x <-> iin z y) -> is_empty (QXor x y).
+  (forall z, iin z x <-> iin z y) <-> ext_empty (QXor x y).
 Proof.
-  unfold is_empty.
-  intros. rewrite xor_ok.
-  specialize H with z.
-  pose proof (@Xor_iff (iin z x) (iin z y)). tauto.
+  intros.
+  unfold ext_empty.
+  setoid_rewrite xor_ok.
+  setoid_rewrite Xor_neg.
+  apply iff_refl.
 Qed.
 
 Lemma weak_regularity x :
@@ -212,5 +201,3 @@ Proof.
   destruct (H4 x). exists x0.
   apply (eeq_trans (eeq_trans H5 H1') (eeq_sym H1'')).
 Qed.
-
-(* Continues in Ext2.v ... *)

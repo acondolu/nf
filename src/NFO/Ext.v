@@ -32,17 +32,6 @@ Proof.
   intros H. repeat setoid_rewrite H. apply sloppy_Qext.
 Qed.
 
-Definition respects_sig {A} (h: A -> set) (sig: A -> Prop) :=
-  respects (fun a b => h a == h b) sig.
-Definition completion A {B} (h: B -> set) :=
-  prod A { sig : B -> Prop & respects_sig h sig }.
-
-(* Enumerates all sets, under the hypothesis that there exists a paradoxical set *)
-Definition All {X Y} (f: X -> set) (h: Y -> set) : completion X h -> set :=
-  fun pr => match f (fst pr) with
-  | S A p h' X f =>  S A p h' _ (AXor f (select h (projT1 (snd pr))))
-  end.
-
 Lemma Aeq_AXor_assoc {X Y Z} {f: X -> set} {g: Y -> set} {h: Z -> set}:
   Aeq (AXor f g) h <-> Aeq f (AXor g h).
 Proof.
@@ -50,9 +39,12 @@ Proof.
   repeat setoid_rewrite AXor_ok.
   setoid_rewrite<- (@Xor_neg _ (Ain _ h)).
   setoid_rewrite<- (@Xor_neg (Ain _ f) _).
-  setoid_rewrite xor_assoc2.
+  setoid_rewrite xor_assoc.
   apply iff_refl.
 Qed.
+
+Definition respects_sig {A} (h: A -> set) (sig: A -> Prop) :=
+  respects (fun a b => h a == h b) sig.
 
 Lemma Aeq_AXor_select {Y} (h: Y -> set) sig sig' :
   respects_sig h sig
@@ -78,6 +70,15 @@ Proof.
       intro H'. destruct H', x1. pose proof (H0 x0 x1 (eeq_trans H1 (eeq_sym H4))). tauto.
 Qed.
 
+Definition completion A {B} (h: B -> set) :=
+  prod A { sig : B -> Prop & respects_sig h sig }.
+
+(* Enumerates all sets, under the hypothesis that there exists a paradoxical set *)
+Definition All {X Y} (f: X -> set) (h: Y -> set) : completion X h -> set :=
+  fun pr => match f (fst pr) with
+  | S A p h' X f =>  S A p h' _ (AXor f (select h (projT1 (snd pr))))
+  end.
+
 Lemma inv_sig {X X' J} {f: X -> set} {f': X' -> set} h {sig sig': J -> Prop}:
   respects_sig h sig -> respects_sig h sig'
   -> Aeq f (AXor (AXor f' (select h sig)) (select h sig'))
@@ -89,8 +90,8 @@ Proof.
   (* intros A B. *)
   setoid_rewrite Aext. intro x.
   repeat setoid_rewrite AXor_ok.
-  (* setoid_rewrite<- xor_assoc2.
-  setoid_rewrite xor_comm2. *)
+  (* setoid_rewrite<- xor_assoc.
+  setoid_rewrite xor_comm. *)
   refine (iff_trans _ _).
   setoid_rewrite Xor_eq.
   apply iff_refl.
@@ -98,9 +99,9 @@ Proof.
   apply iff_refl.
   apply iff_refl.
   refine (iff_trans _ _).
-  apply (iff_sym xor_assoc2).
+  apply (iff_sym xor_assoc).
   refine (iff_trans _ _).
-  apply xor_comm2.
+  apply xor_comm.
   apply Xor_eq; try apply iff_refl.
   setoid_rewrite<- AXor_ok.
   apply Aext.
@@ -120,19 +121,19 @@ Qed.
 Local Lemma trivial_xor_lemma {a b c d}:
   Xor (Xor (Xor a (Xor a b)) (Xor c d)) b <-> Xor c d.
 Proof.
-  repeat setoid_rewrite xor_assoc2.
+  repeat setoid_rewrite xor_assoc.
   setoid_rewrite xor_absorb.
-  setoid_rewrite xor_comm2.
+  setoid_rewrite xor_comm.
   setoid_rewrite xor_false_l.
-  setoid_rewrite xor_assoc2.
-  setoid_rewrite xor_assoc2.
+  setoid_rewrite xor_assoc.
+  setoid_rewrite xor_assoc.
   setoid_rewrite xor_absorb.
   setoid_rewrite xor_false_l.
-  setoid_rewrite xor_comm2.
-  apply xor_comm2.
+  setoid_rewrite xor_comm.
+  apply xor_comm.
 Qed.
 
-Lemma wow {J X} {f: X -> set} (h: J -> set) (p : boolean J):
+Lemma universal_low {J X} {f: X -> set} (h: J -> set) (p : boolean J):
   (forall x, Ain x f <-> Qin x h p)
   -> (exists x, Ain x f)
   -> forall x, Ain x (All f h).
@@ -172,17 +173,18 @@ Proof.
 Qed.
 
 Lemma not_iin_not_Ain {A p h X f}:
-  (forall z, ~ iin z (S A p h X f)) -> forall x, ~ Ain x f.
+  ext_empty (S A p h X f) -> forall x, ~ Ain x f.
 Proof.
+  unfold ext_empty.
   setoid_rewrite iin_unfold'.
   setoid_rewrite Xor_neg.
-  intros H x H0. pose proof (wow _ _ H).
+  intros H x H0. pose proof (universal_low _ _ H).
   destruct (weak_regularity (enum (All f h)) (H1 (ex_intro _ x H0) _)).
 Qed.
 
-Lemma no_urelements: forall x y, is_empty (QXor x y) -> x == y.
+Lemma no_urelements: forall x y, ext_empty (QXor x y) -> x == y.
 Proof.
-  intros x y. unfold is_empty.
+  intros x y. unfold ext_empty.
   setoid_rewrite xor_ok. destruct x, y.
   intro. setoid_rewrite Xor_neg in H.
   setoid_rewrite iin_unfold' in H.
@@ -211,11 +213,11 @@ Qed.
 Lemma iin_eeq: forall x y, 
   (forall z, iin z x <-> iin z y) -> x == y.
 Proof.
-  intros. pose proof (xor_ext H). apply no_urelements. auto.
+  setoid_rewrite xor_ext. apply no_urelements.
 Qed.
 
 Theorem ext:
   forall x y, x == y <-> forall z, iin z x <-> iin z y.
-Proof.
-  intros. split. apply eeq_iin. apply iin_eeq.
+  Proof.
+  intros. split. intro H. setoid_rewrite H. tauto. apply iin_eeq.
 Qed.
