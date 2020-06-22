@@ -68,7 +68,7 @@ Definition AXor {X Y} (f: X -> set) (g: Y -> set)
 Definition QXor B C := 
   match B, C with S A p h X f, S A' p' h' X' f' =>
   let A'' := sum A A' in
-  let h'' := mk_sum h h' in
+  let h'' := sum_funs h h' in
   let p'' := boolean_xor (boolean_map inl p) (boolean_map inr p') in
   S A'' p'' h'' _ (AXor f f')
 end.
@@ -99,10 +99,10 @@ Proof.
 Qed.
 
 Lemma QXor_ok {X Y} {h: X -> set} {h0: Y -> set} {z p p0}:
-Qin z (mk_sum h h0) (boolean_xor (boolean_map inl p) (boolean_map inr p0)) <-> Xor (Qin z h p) (Qin z h0 p0).
+Qin z (sum_funs h h0) (boolean_xor (boolean_map inl p) (boolean_map inr p0)) <-> Xor (Qin z h p) (Qin z h0 p0).
 Proof.
   unfold boolean_xor. simpl Qin.
-  repeat rewrite<- Qin_aux. simpl. repeat rewrite boolean_map_compose. unfold Basics.compose. simpl mk_sum.
+  repeat rewrite<- Qin_aux. simpl. repeat rewrite boolean_map_compose. unfold Basics.compose. simpl sum_funs.
   repeat rewrite Qin_aux. unfold Xor. tauto.
 Qed.
 

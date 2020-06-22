@@ -1,8 +1,9 @@
+Require Import Setoid.
 Require Import Coq.Program.Basics.
 Require Import Coq.Program.Combinators.
+
 Add LoadPath "src/NFO/".
-Require Import Aux.
-Require Import FunExt.
+Require Import Aux FunExt.
 
 
 (* A boolean expression with atoms of type X *)
@@ -30,7 +31,6 @@ match p with
   | Or _ p1 p2 => Or _ (boolean_map f p1) (boolean_map f p2)
 end.
 
-Require Import Setoid.
 Lemma boolean_map_extP {X} {p: boolean X} f g:
   extP f g -> eval (boolean_map f p) <-> eval (boolean_map g p).
 Proof.
@@ -49,8 +49,8 @@ Qed.
 
 (* EEQ PROP *)
 
-Definition eeq_boolean {X} P (p1 p2: boolean X) : Prop :=
-  forall f, respects P f ->
+Definition eeq_boolean {X} R (p1 p2: boolean X) : Prop :=
+  forall f, respects R f ->
     eval (boolean_map f p1) <-> eval (boolean_map f p2).
 
 Lemma eeq_boolean_ext {X} (p1 p2: boolean X) R1 R2 :
@@ -59,8 +59,8 @@ Proof.
   unfold eeq_boolean. split; intros; apply H0;
   apply (respects_ext _ _ H); assumption.
 Qed.
-(* SUM_I *)
 
+(* SUM_I *)
 Definition sum_i {X Y Z} (R: Z -> Z -> Prop) h h' (i j: X + Y) := 
 match i, j with
   | inl i', inl j' => R (h i') (h j')
@@ -71,7 +71,11 @@ end.
 
 (* REFLEXIVITY *)
 
-Lemma eeq_boolean_refl : forall {X Y} (p: boolean X) (f: Y -> Y -> Prop) (h: X -> Y), (forall x, f (h x) (h x)) -> eeq_boolean (sum_i f h h) (boolean_map inl p) (boolean_map inr p).
+Lemma eeq_boolean_refl {X Y} :
+  forall (p: boolean X) (f: Y -> Y -> Prop) (h: X -> Y),
+    (forall x, f (h x) (h x))
+      -> eeq_boolean (sum_i f h h)
+          (boolean_map inl p) (boolean_map inr p).
 Proof.
   unfold eeq_boolean. intros.
   induction p; simpl; try tauto; eauto.
@@ -91,23 +95,26 @@ Proof. auto. Qed.
 Lemma comp_swap_inr {X Y}: compose (@swap X Y) inr = inl.
 Proof. auto. Qed.
 
-Lemma sum_i_sym: forall {X Y Z P h h' x x'},
-  sum_i P h h' x x' -> @sum_i X Y Z P h' h (swap x) (swap x').
+Lemma sum_i_sym: forall {X Y Z R f g a b},
+  sum_i R f g a b -> @sum_i X Y Z R g f (swap a) (swap b).
 Proof.
-  unfold sum_i.
-  intros. destruct x; destruct x'; assumption.
+  unfold sum_i. intros. destruct a, b; assumption.
 Qed.
 
-Lemma respects_swap: forall {X Y Z P} {h: X -> Z} {h0: Y -> Z} g, respects (sum_i P h0 h) g -> respects (sum_i P h h0) (compose g swap).
+Lemma respects_swap {X Y Z P} :
+  forall (f: X -> Z) (g: Y -> Z) h,
+    respects (sum_i P f g) h
+      -> respects (sum_i P g f) (compose h swap).
 Proof.
   unfold respects.
-  intros. destruct x; destruct x'; unfold compose; simpl; apply H; apply (sum_i_sym H0).
+  intros. destruct x, x'; unfold compose; simpl; apply H; apply (sum_i_sym H0).
 Qed.
 
-Lemma eeq_boolean_sym : forall {X Y Z p p0 h h0 P},
-eeq_boolean (@sum_i X Y Z P h h0) (boolean_map inl p) (boolean_map inr p0) 
--> 
-eeq_boolean (sum_i P h0 h) (boolean_map inl p0) (boolean_map inr p).
+Lemma eeq_boolean_sym {X Y Z R p1 p2 h1 h2} :
+  eeq_boolean (@sum_i X Y Z R h1 h2)
+    (boolean_map inl p1) (boolean_map inr p2) 
+  -> eeq_boolean (sum_i R h2 h1)
+      (boolean_map inl p2) (boolean_map inr p1).
 Proof.
   intros. unfold eeq_boolean in *. intros.
   pose proof (H (compose f swap)).
@@ -123,52 +130,35 @@ Qed.
 
 (* TRANSITIVITY *)
 
-Definition extends {X} (f g: X -> X -> Prop) :=
-  forall x y, f x y -> g x y.
+(* sum_funs *)
 
-Lemma respects_extends : forall {X g h h'}, @extends X h h' -> respects h' g -> respects h g.
-Proof.
-  unfold respects. unfold extends.
-  intros. apply H0. apply H. assumption.
-Qed.
-
-Lemma eeq_boolean_extends {X} {p1 p2: boolean X} {h h'} :
-  extends h h' -> eeq_boolean h p1 p2 -> eeq_boolean h' p1 p2.
-Proof.
-  unfold eeq_boolean. intros.
-  pose proof (respects_extends H H1).
-  apply (H0 _ H2).
-Qed.
-
-(* mk_sum *)
-
-Definition mk_sum {X Y Z} f g : X + Y -> Z := fun s =>
+Definition sum_funs {X Y Z} f g : X + Y -> Z := fun s =>
   match s with
   | inl x => f x
   | inr y => g y
   end.
 
 Lemma compose_sum_inl {X Y Z} {f: X -> Z} {g: Y -> Z} :
-  ext ((compose (mk_sum f g) inl)) f.
+  ext (compose (sum_funs f g) inl) f.
 Proof. unfold ext. intros. apply eq_refl. Qed.
 Hint Resolve compose_sum_inl : Bool.
 
 Lemma compose_sum_inr {X Y Z} {f: X -> Z} {g: Y -> Z} :
-  ext ((compose (mk_sum f g) inr)) g.
+  ext (compose (sum_funs f g) inr) g.
 Proof. intro x. apply eq_refl. Qed.
 Hint Resolve compose_sum_inr : Bool.
 
 Lemma boolean_map_compose_inl {X Y Z} {f: X -> Z} {g: Y -> Z} {a}:
-  boolean_map (compose (mk_sum f g) inl) a = boolean_map f a.
+  boolean_map (compose (sum_funs f g) inl) a = boolean_map f a.
 Proof. induction a; simpl; auto. Qed.
 
 Lemma boolean_map_compose_inr {X Y Z} {f: X -> Z} {g: Y -> Z} {a}:
-  boolean_map (compose (mk_sum f g) inr) a = boolean_map g a.
+  boolean_map (compose (sum_funs f g) inr) a = boolean_map g a.
 Proof. induction a; simpl; auto. Qed.
 
-Definition invert_sum {X Y Z} f P Q (z : Z) := 
-    (exists x: X, f (inl x) /\ P x z)
-    \/ (exists x : Y, f (inr x) /\ Q x z).
+Definition invert_sum {X Y Z} P R S (z : Z) := 
+    (exists x : X, P (inl x) /\ R x z)
+    \/ exists y : Y, P (inr y) /\ S y z.
 
 Lemma eeq_boolean_trans {X Y Z W} {h h' h''}
   {p : boolean X} {p' : boolean Y} {p'' : boolean Z}
@@ -185,14 +175,14 @@ Proof.
   unfold eeq_boolean.
   intros.
   pose (invert_sum f (fun a b => P (h a) (h' b)) (fun a b => P (h' b) (h'' a))) as g.
-  specialize H with (mk_sum (compose f inl) g).
-  specialize H0 with (mk_sum g (compose f inr)).
+  specialize H with (sum_funs (compose f inl) g).
+  specialize H0 with (sum_funs g (compose f inr)).
   revert H H0.
   repeat rewrite boolean_map_compose.
   repeat rewrite boolean_map_compose_inl.
   repeat rewrite boolean_map_compose_inr.
   intros.
-  apply (fun A B => iff_trans (H A) (H0 B)); unfold respects; intros; destruct x; destruct x'; simpl mk_sum; unfold respects in H1; simpl in H2; unfold g; unfold compose; auto.
+  apply (fun A B => iff_trans (H A) (H0 B)); unfold respects; intros; destruct x; destruct x'; simpl sum_funs; unfold respects in H1; simpl in H2; unfold g; unfold compose; auto.
   - split; intro.
   -- left. exists x. auto.
   -- repeat destruct H3.

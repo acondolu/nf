@@ -21,9 +21,13 @@ Proof. unfold Xor. tauto. Qed.
 Lemma xor_assoc2 {a b c}: Xor a (Xor b c) <-> Xor (Xor a b) c.
 Proof. unfold Xor. tauto. Qed.
 
-Lemma xor_absorb {a}: Xor a a <-> False.
+Lemma xor_absorb a: Xor a a <-> False.
 Proof. unfold Xor. tauto. Qed.
 Hint Resolve xor_absorb : Xor.
+
+Lemma xor_false_l {a}: Xor False a <-> a.
+Proof. unfold Xor. tauto. Qed.
+Hint Resolve xor_false_l : Xor.
 
 Lemma xor_comm {a b}: Xor a b -> Xor b a.
 Proof. unfold Xor. tauto. Qed.

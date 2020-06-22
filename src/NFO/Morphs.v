@@ -125,15 +125,15 @@ Proof. intros. unfold Xor. tauto. Qed.
 
 Lemma xxx {X Y} {p} {h: X -> _} {f: set -> Prop} (g: Y -> _):
   respects eeq f ->
-  Qin (mk_low f (mk_sum h g)) h p <-> eval (boolean_map f (boolean_map h p)).
+  Qin (mk_low f (sum_funs h g)) h p <-> eval (boolean_map f (boolean_map h p)).
 Proof.
   intro. induction p; simpl; simpl boolean_map; simpl Qin; simpl eval.
   - tauto.
   - unfold mk_low. rewrite iin_unfold. simpl. unfold Ain.
     rewrite Xor_AF. split; intros.
     destruct H0, x0, x0.
-    simpl mk_sum in *. apply (H (h x0) (h x) H0). assumption.
-    simpl mk_sum in *. apply (H (g y) (h x) H0). assumption.
+    simpl sum_funs in *. apply (H (h x0) (h x) H0). assumption.
+    simpl sum_funs in *. apply (H (g y) (h x) H0). assumption.
     exists (existT _ (inl x) H0). eauto with Eeq.
   - rewrite IHp. tauto.
   - rewrite IHp1. rewrite IHp2. tauto.
@@ -141,15 +141,15 @@ Qed.
 
 Lemma xxx_r {X Y} {p} {h: X -> _} {f: set -> Prop} (g: Y -> _):
   respects eeq f ->
-  Qin (mk_low f (mk_sum g h)) h p <-> eval (boolean_map f (boolean_map h p)).
+  Qin (mk_low f (sum_funs g h)) h p <-> eval (boolean_map f (boolean_map h p)).
 Proof.
   intro. induction p; simpl; simpl boolean_map; simpl Qin; simpl eval.
   - tauto.
   - unfold mk_low. rewrite iin_unfold. simpl. unfold Ain.
     rewrite Xor_AF. split; intros.
     destruct H0, x0, x0.
-    simpl mk_sum in *. apply (H (g y) (h x) H0). assumption.
-    simpl mk_sum in *. apply (H (h x0) (h x) H0). assumption.
+    simpl sum_funs in *. apply (H (g y) (h x) H0). assumption.
+    simpl sum_funs in *. apply (H (h x0) (h x) H0). assumption.
     exists (existT _ (inr x) H0). eauto with Eeq.
   - rewrite IHp. tauto.
   - rewrite IHp1. rewrite IHp2. tauto.

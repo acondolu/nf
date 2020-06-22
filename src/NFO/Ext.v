@@ -34,8 +34,10 @@ Qed.
 
 Definition respects_sig {A} (h: A -> set) (sig: A -> Prop) :=
   respects (fun a b => h a == h b) sig.
-Definition completion A {B} (h: B -> set) := prod A { sig : B -> Prop & respects_sig h sig }.
+Definition completion A {B} (h: B -> set) :=
+  prod A { sig : B -> Prop & respects_sig h sig }.
 
+(* Enumerates all sets, under the hypothesis that there exists a paradoxical set *)
 Definition All {X Y} (f: X -> set) (h: Y -> set) : completion X h -> set :=
   fun pr => match f (fst pr) with
   | S A p h' X f =>  S A p h' _ (AXor f (select h (projT1 (snd pr))))
@@ -52,15 +54,43 @@ Proof.
   apply iff_refl.
 Qed.
 
-Lemma ing_sig_aux_2 {X Z sig sig'} {f: X -> set} {h: Z -> set}:
-  respects_sig h sig -> respects_sig h sig'
--> Aeq
-  (AXor (AXor f (select h sig)) (select h sig'))
-  (AXor (select h (xorP sig' sig)) f).
+Lemma Aeq_AXor_select {Y} (h: Y -> set) sig sig' :
+  respects_sig h sig
+  -> respects_sig h sig'
+    -> Aeq (AXor (select h sig) (select h sig')) (select h (xorP sig' sig)).
 Proof.
-  intros A B.
+  intros. apply Aext. intro. rewrite AXor_ok.
+  unfold Aeq, AXor, select. unfold xorP. unfold Ain. split; intros.
+  destruct H1, H1.
+  - destruct H1, x0. cut (Xor (sig' x0) (sig x0)). intro.
+  unfold xorP. exists (existT _ x0 H3). assumption. apply Xor_2. intro H'.
+  apply (H2 (ex_intro _ (existT _ x0 H') H1)).
+  assumption.
+  - destruct H2, x0. cut (Xor (sig' x0) (sig x0)). intro.
+  unfold xorP. exists (existT _ x0 H3). assumption. apply Xor_1. assumption.
+  intro H'. apply (H1 (ex_intro _ (existT _ x0 H') H2)).
+  - destruct H1, x0. destruct x1, H2.
+  -- apply Xor_2.
+      intro H'. destruct H', x1. pose proof (H x0 x1 (eeq_trans H1 (eeq_sym H4))). tauto.
+      exists (existT _ x0 H2). assumption.
+  -- apply Xor_1.
+      exists (existT _ x0 H3). assumption.
+      intro H'. destruct H', x1. pose proof (H0 x0 x1 (eeq_trans H1 (eeq_sym H4))). tauto.
+Qed.
+
+Lemma inv_sig {X X' J} {f: X -> set} {f': X' -> set} h {sig sig': J -> Prop}:
+  respects_sig h sig -> respects_sig h sig'
+  -> Aeq f (AXor (AXor f' (select h sig)) (select h sig'))
+  -> Aeq (AXor f (select h (xorP sig' sig))) f'.
+Proof.
+  repeat rewrite Aeq_AXor_assoc.
+  intros A B. intro. apply (fun X => Aeq_trans _ _ _ H X).
+  (* apply (ing_sig_aux_2 A B). *)
+  (* intros A B. *)
   setoid_rewrite Aext. intro x.
   repeat setoid_rewrite AXor_ok.
+  (* setoid_rewrite<- xor_assoc2.
+  setoid_rewrite xor_comm2. *)
   refine (iff_trans _ _).
   setoid_rewrite Xor_eq.
   apply iff_refl.
@@ -74,34 +104,8 @@ Proof.
   apply Xor_eq; try apply iff_refl.
   setoid_rewrite<- AXor_ok.
   apply Aext.
-  (* NICE *)
-  apply Aext. intro. rewrite AXor_ok.
-  unfold Aeq, AXor, select. unfold xorP. unfold Ain. split; intros.
-  destruct H, H.
-  - destruct H, x1. cut (Xor (sig' x1) (sig x1)). intro.
-  unfold xorP. exists (existT _ x1 H1). assumption. apply Xor_2. intro H'.
-  apply (H0 (ex_intro _ (existT _ x1 H') H)).
-  assumption.
-  - destruct H0, x1. cut (Xor (sig' x1) (sig x1)). intro.
-  unfold xorP. exists (existT _ x1 H1). assumption. apply Xor_1. assumption.
-  intro H'. apply (H (ex_intro _ (existT _ x1 H') H0)).
-  - destruct H, x1. destruct x2, H0.
-  -- apply Xor_2.
-      intro H'. destruct H', x2. pose proof (A x1 x2 (eeq_trans H (eeq_sym H2))). tauto.
-      exists (existT _ x1 H0). assumption.
-  -- apply Xor_1.
-      exists (existT _ x1 H1). assumption.
-      intro H'. destruct H', x2. pose proof (B x1 x2 (eeq_trans H (eeq_sym H2))). tauto.
-Qed.
-
-Lemma inv_sig {X X' J} {f: X -> set} {f': X' -> set} h {sig sig': J -> Prop}:
-  respects_sig h sig -> respects_sig h sig'
-  -> Aeq f (AXor (AXor f' (select h sig)) (select h sig'))
-  -> Aeq (AXor f (select h (xorP sig' sig))) f'.
-Proof.
-  repeat rewrite Aeq_AXor_assoc.
-  intros A B. intro. apply (fun X => Aeq_trans _ _ _ H X).
-  apply (ing_sig_aux_2 A B).
+  
+  apply Aeq_AXor_select; assumption.
 Qed.
 
 Lemma ain_aux {J h z i}:
@@ -113,31 +117,31 @@ Proof.
   - exists (existT _ i H). apply eeq_refl.
 Qed.
 
-Local Lemma stupid_xor_aux {a b c d}:
+Local Lemma trivial_xor_lemma {a b c d}:
   Xor (Xor (Xor a (Xor a b)) (Xor c d)) b <-> Xor c d.
 Proof.
-  refine (iff_trans _ _).
-  refine (Xor_eq _ _).
-  refine (Xor_eq _ _).
-  refine (_ : _ <-> b).
-  rewrite xor_assoc2. unfold Xor. tauto.
-  apply iff_refl. apply iff_refl.
-  refine (iff_trans _ _).
-  refine xor_comm2.
-  unfold Xor. tauto.
+  repeat setoid_rewrite xor_assoc2.
+  setoid_rewrite xor_absorb.
+  setoid_rewrite xor_comm2.
+  setoid_rewrite xor_false_l.
+  setoid_rewrite xor_assoc2.
+  setoid_rewrite xor_assoc2.
+  setoid_rewrite xor_absorb.
+  setoid_rewrite xor_false_l.
+  setoid_rewrite xor_comm2.
+  apply xor_comm2.
 Qed.
 
 Lemma wow {J X} {f: X -> set} (h: J -> set) (p : boolean J):
-(forall x, Ain x f <-> Qin x h p)
--> (exists x, Ain x f)
--> forall x, Ain x (All f h).
+  (forall x, Ain x f <-> Qin x h p)
+  -> (exists x, Ain x f)
+  -> forall x, Ain x (All f h).
 Proof.
   intros. destruct H0.
   pose (fun j => iin (h j) x0) as sig_x0 (* the good signature *) .
   pose (fun j => iin (h j) x) as sig_x (* the current signature *) .
   cut (respects_sig h sig_x0). cut (respects_sig h sig_x). intros R1 R2.
 
-  pose x as was_x.
   destruct x.
   pose (S A p0 h0 _ (AXor (AXor f0 (select h sig_x)) (select h (sig_x0)))) as x_signed.
   pose proof (fun X => @sloppy_Aext _ x_signed _ _ f h p H X H0).
@@ -153,29 +157,18 @@ Proof.
   - revert H1. apply (inv_sig h R1 R2).
   - exact H2.
   - apply xorP_respects; assumption.
-  - unfold x_signed. intros. destruct x0. repeat rewrite iin_unfold'.
-    unfold sig_x0, sig_x, select.
+  - intros. destruct x0.
+    unfold x_signed, sig_x0, sig_x, select.
+    repeat rewrite iin_unfold'.
     (* Deep rewrites *)
-    refine (iff_trans _ _).
-    refine (Xor_eq _ _).
-    repeat rewrite AXor_ok.
-    refine (Xor_eq _ _).
-    repeat rewrite AXor_ok.
-    refine (Xor_eq _ _). apply iff_refl.
-    apply ain_aux. apply ain_aux.
-    apply iff_refl.
-
-    refine (iff_trans _ _).
-    refine (Xor_eq _ _).
-    refine (Xor_eq _ _).
-    refine (Xor_eq _ _).
-    apply iff_refl.
-    apply iin_unfold'. apply iin_unfold'.
-    apply iff_refl.
-
-    apply stupid_xor_aux.
-  - unfold sig_x, respects_sig, respects. intros. apply (iin_respects_eeq _ (h x1) (h x')). auto.
-  - unfold sig_x, respects_sig, respects. intros. apply (iin_respects_eeq x0 (h x1) (h x')). auto.
+    repeat setoid_rewrite AXor_ok.
+    setoid_rewrite ain_aux.
+    setoid_rewrite iin_unfold'.
+    apply trivial_xor_lemma.
+  - unfold sig_x, respects_sig, respects. intros.
+    apply (iin_respects_eeq _ _ _ H1).
+  - unfold sig_x, respects_sig, respects. intros.
+    apply (iin_respects_eeq _ _ _ H1).
 Qed.
 
 Lemma not_iin_not_Ain {A p h X f}:
@@ -221,8 +214,8 @@ Proof.
   intros. pose proof (xor_ext H). apply no_urelements. auto.
 Qed.
 
-Theorem ext: forall x y, 
-  x == y <-> forall z, iin z x <-> iin z y.
+Theorem ext:
+  forall x y, x == y <-> forall z, iin z x <-> iin z y.
 Proof.
   intros. split. apply eeq_iin. apply iin_eeq.
 Qed.

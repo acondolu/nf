@@ -1,12 +1,13 @@
-Module NFO.
-
 Add LoadPath "src/NFO/".
 Require Eeq.
 Require Model.
 Require Iin.
 Require Ext.
 
-(*  *)
+
+Module NFO.
+
+(* The type of NFO sets *)
 Definition set := Model.set.
 
 (* Equality *)

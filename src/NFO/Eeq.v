@@ -1,5 +1,7 @@
 Require Import Coq.Program.Basics.
 Require Import Coq.Program.Combinators.
+Require Import Setoid Morphisms.
+
 Add LoadPath "src/NFO/".
 Require Import FunExt.
 Require Import Aux.
@@ -73,15 +75,15 @@ Proof.
   split. split.
   - intro x0. destruct (H2 x0). eauto with Wff.
   - intro x. destruct (H0 x). eauto with Wff.
-  - revert H1. apply eeq_boolean_sym.
+  - revert H1. exact eeq_boolean_sym.
 Qed.
 Hint Resolve eeq_sym : Eeq.
 
 Lemma eeq_trans : forall {x y z}, eeq x y -> eeq y z -> eeq x z.
 Proof.
   apply (wf_three_ind (fun x y z => eeq x y -> eeq y z -> eeq x z)).
-  destruct x1. destruct x2. destruct x3. intros. 
-  rewrite eeq_def in *. unfold Aeq in *.
+  destruct x1, x2, x3. 
+  repeat rewrite eeq_def. unfold Aeq in *. intros.
   repeat destruct H0. repeat destruct H1.
   split. split.
   - intro x. destruct (H0 x). destruct (H1 x0).
@@ -93,22 +95,37 @@ Proof.
 Qed.
 Hint Resolve eeq_trans : Eeq.
 
-Require Import Setoid Morphisms.
+(* Register eeq as an equivalence *)
 Instance eeqs : Equivalence eeq.
 Proof.
   constructor. exact @eeq_refl. exact @eeq_sym. exact @eeq_trans.
 Qed.
 
+Lemma Aeq_refl: forall X f, @Aeq X X f f.
+Proof. intros. unfold Aeq. eauto with Eeq. Qed.
+
+Lemma Aeq_sym: forall X Y f g, @Aeq X Y f g -> Aeq g f.
+Proof.
+  unfold Aeq. intros. destruct H. split; intro z.
+  destruct (H0 z). eauto with Eeq.
+  destruct (H z). eauto with Eeq.
+Qed.
+
 Lemma Aeq_trans: forall {X Y Z} f g h, @Aeq X Y f g -> Aeq g h -> @Aeq X Z f h.
 Proof.
-  unfold Aeq. intros. destruct H, H0. split.
-  - intro x. destruct (H x). destruct (H0 x0). exists x1. eauto with Eeq.
-  - intro x. destruct (H2 x). destruct (H1 x0). exists x1. eauto with Eeq.
+  unfold Aeq. intros. destruct H, H0. split; intro z.
+  destruct (H z).  destruct (H0 x). eauto with Eeq.
+  destruct (H2 z). destruct (H1 x). eauto with Eeq.
 Qed.
+
+(* Register Aeq as an equivalence *)
+(* Instance eeqs X Y : Equivalence (@Aeq X Y). *)
+(* Impossible? Because of equivalences must be homogeneous *)
 
 (* "Quine" equality *)
 Definition Qeq := eeq_boolean eeq.
 
+(* TODO: move this to Bool.v: *)
 Lemma eeq_boolean_qeq:
   forall {X Y p p'} {h: X -> set} {h': Y -> set},
     eeq_boolean
@@ -118,7 +135,7 @@ Lemma eeq_boolean_qeq:
     Qeq (boolean_map h p) (boolean_map h' p').
 Proof.
   intros. unfold Qeq, eeq_boolean. split; intros.
-  - specialize H with (compose f (mk_sum h h')).
+  - specialize H with (compose f (sum_funs h h')).
     repeat rewrite boolean_map_compose in H.
     repeat rewrite compose_assoc in H.
     rewrite<- boolean_map_compose in H.
@@ -126,7 +143,7 @@ Proof.
     rewrite<- boolean_map_compose in H.
     rewrite boolean_map_compose_inr in H.
     apply H. unfold respects in *. intros.
-    destruct x, x'; unfold compose, mk_sum; apply H0; apply H1.
+    destruct x, x'; unfold compose, sum_funs; apply H0; apply H1.
   - pose (invert_sum f (compose eeq h) (compose eeq h')) as g.
     specialize H with g.
     cut (respects eeq g).
@@ -154,7 +171,7 @@ Proof.
      right. exists x0. eauto with Eeq.
 Qed.
 
-Require Import Setoid.
+
 Lemma eeq_unfold {A p h X f A' p' h' X' f'}:
   eeq (S A p h X f) (S A' p' h' X' f')
   <->
