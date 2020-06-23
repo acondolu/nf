@@ -189,10 +189,8 @@ Proof.
     setoid_rewrite iin_unfold'.
     cut (forall i, (exists x : J, h x == h i) <-> True). intro.
      setoid_rewrite H2.
-     cut (forall X, X /\ True <-> X). intro.
-     setoid_rewrite H3.
+     setoid_rewrite and_true.
      apply trivial_xor_lemma.
-     intro. tauto.
      intro. split; intros; auto. exists i0. reflexivity.
    unfold sig_x, respects_sig, respects. intros.
     apply (iin_respects_eeq _ _ _ H2).

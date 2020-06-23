@@ -13,6 +13,9 @@ Proof. split; intros. destruct H, x. destruct H. Qed.
 Lemma ex_unit {P: unit -> Prop}: (exists x, P x) <-> P tt.
 Proof. split; intros. destruct H, x. auto. eauto. Qed.
 
+Lemma and_true: forall X, X /\ True <-> X.
+Proof. intro. tauto. Qed.
+
 (* Inverts a  *)
 Definition invF {X Y} (f: X -> Y) (y: Y) := exists x, f x = y.
 
