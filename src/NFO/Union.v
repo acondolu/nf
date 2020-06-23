@@ -36,7 +36,7 @@ Qed.
 Lemma cup_ok x y z: iin z (cup x y) <-> iin z x \/ iin z y.
 Proof.
   destruct x, y. unfold cup. rewrite iin_unfold'.
-  rewrite Ain_sum. simpl Qin.
+  rewrite Ain_sums. simpl Qin.
   setoid_rewrite Qin_sum_inl. setoid_rewrite Qin_sum_inr.
   setoid_rewrite iin_unfold'.
   unfold Ain, select.
