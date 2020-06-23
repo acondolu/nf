@@ -1,9 +1,7 @@
 (* This module contains some auxiliary functions *)
 
 Definition select {X Y} (f: X -> Y) (P: X -> Prop) : {x: X & P x} -> Y
-  := fun x' => match x' with
-      | existT _ x _ => f x
-      end.
+  := fun x => f (projT1 x).
 
 Lemma And_eq3 {a a' b b' c c'}:
   (a <-> a') -> (b <-> b') -> (c <-> c') -> (a /\ b /\ c) <-> (a' /\ b' /\ c').
