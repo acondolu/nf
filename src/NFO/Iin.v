@@ -81,22 +81,3 @@ Proof.
   apply xor_iff. tauto.
   apply Qin_aux.
 Qed.
-
-Lemma aux1: forall X Y z (h: X -> set) (h0: Y -> set) p,
-  Qin z (sum_funs h h0) (boolean_map inl p) <-> Qin z h p.
-Proof.
-  induction p; simpl.
-  - tauto.
-  - tauto.
-  - setoid_rewrite IHp. tauto.
-  - setoid_rewrite IHp1. setoid_rewrite IHp2. tauto.
-Qed.
-
-Lemma aux2: forall X Y z (h: X -> set) (h0: Y -> set) p, Qin z (sum_funs h h0) (boolean_map inr p) <-> Qin z h0 p.
-Proof.
-  induction p; simpl.
-  - tauto.
-  - tauto.
-  - setoid_rewrite IHp. tauto.
-  - setoid_rewrite IHp1. setoid_rewrite IHp2. tauto.
-Qed.

@@ -5,13 +5,44 @@ Require Import Model.
 Require Import Eeq.
 Require Import Iin.
 
+(* Axuliary *)
+Definition enum {X} f := S False (Bot _) (False_rect _) X f.
+
+Lemma Qin_sum_inl: forall X Y z (f: X -> set) (g: Y -> set) p,
+  Qin z (sum_funs f g) (boolean_map inl p) <-> Qin z f p.
+Proof.
+  induction p; simpl.
+  - tauto.
+  - tauto.
+  - setoid_rewrite IHp. tauto.
+  - setoid_rewrite IHp1. setoid_rewrite IHp2. tauto.
+Qed.
+
+Lemma Qin_sum_inr: forall X Y z (f: X -> set) (g: Y -> set) p,
+  Qin z (sum_funs f g) (boolean_map inr p) <-> Qin z g p.
+Proof.
+  induction p; simpl.
+  - tauto.
+  - tauto.
+  - setoid_rewrite IHp. tauto.
+  - setoid_rewrite IHp1. setoid_rewrite IHp2. tauto.
+Qed.
+
+Lemma Ain_sum {X X'} {f: X -> set} {f': X' -> set} {x}:
+  Ain x (sum_funs f f') <-> (Ain x f) \/ (Ain x f').
+Proof.
+  unfold Ain, sum_funs. split; intro.
+  - destruct H, x0. left; eauto. right; eauto.
+  - destruct H, H. exists (inl x0). auto. exists (inr x0). auto.
+Qed.
+
+
 (* Empty set *)
-Definition emptyset :=
-  S False (Bot _) (False_rect _) False (False_rect _).
+Definition emptyset := enum (False_rect _).
 
 Lemma emptyset_ok: forall x, ~ iin x emptyset.
 Proof.
-  red. unfold emptyset. intro x. rewrite iin_unfold. unfold Ain, Xor.
+  red. unfold emptyset, enum. intro x. rewrite iin_unfold. unfold Ain, Xor.
   simpl. destruct 1; repeat destruct H. destruct x0. destruct H0.
 Qed.
 
@@ -37,11 +68,11 @@ Proof.
 Qed.
 
 (* Singleton *)
-Definition sin x := S False (Bot _) (False_rect _) unit (fun _ => x).
+Definition sin x := enum (fun _: unit => x).
 
 Lemma sin_ok: forall x y, iin x (sin y) <-> eeq y x.
 Proof.
-  intros x y. unfold sin. rewrite iin_unfold.
+  intros x y. unfold sin, enum. rewrite iin_unfold.
   unfold Xor, Ain. simpl. rewrite ex_unit. tauto.
 Qed.
 
@@ -49,8 +80,6 @@ Qed.
 
 Local Definition boolean_xor {A} (p p': boolean A) :=
   Or _ (Not _ (Or _ p (Not _ p'))) (Not _ (Or _ (Not _ p) p')).
-
-(* Lemma  *)
 
 Definition AXor {X Y} (f: X -> set) (g: Y -> set)
   : sum {x & ~ exists y, eeq (g y) (f x)} {y & ~ exists x, eeq (f x) (g y)} -> set
@@ -98,7 +127,7 @@ Lemma QXor_ok {X Y} {h: X -> set} {h0: Y -> set} {z p p0}:
   <-> Xor (Qin z h p) (Qin z h0 p0).
 Proof.
   unfold boolean_xor. simpl Qin.
-  setoid_rewrite aux1. setoid_rewrite aux2.
+  setoid_rewrite Qin_sum_inl. setoid_rewrite Qin_sum_inr.
   unfold Xor. tauto.
 Qed.
 
@@ -110,6 +139,3 @@ Proof.
   - apply AXor_ok.
   - apply QXor_ok.
 Qed.
-
-(* Axuliary *)
-Definition enum {X} f := S False (Bot _) (False_rect _) X f.

@@ -7,15 +7,6 @@ Require Import Iin Morphs Sets.
 
 (* TODO: Union *)
 
-
-Lemma cup_A_ok {X X'} {f: X -> set} {f': X' -> set} {x}:
-  Ain x (sum_funs f f') <-> (Ain x f) \/ (Ain x f').
-Proof.
-  unfold Ain, sum_funs. split; intro.
-  - destruct H, x0. left; eauto. right; eauto.
-  - destruct H, H. exists (inl x0). auto. exists (inr x0). auto.
-Qed.
-
 Definition aux {X Y Z: Type} (A2: X -> set) (Q1: Y -> set) (p1: boolean Y) (Q2: Z -> set) (p2: boolean Z) a := 
 (Qin a Q2 p2 -> Qin a Q1 p1)
 /\ (Qin a Q1 p1 -> (Ain a A2 <-> Qin a Q2 p2))
@@ -45,8 +36,8 @@ Qed.
 Lemma cup_ok x y z: iin z (cup x y) <-> iin z x \/ iin z y.
 Proof.
   destruct x, y. unfold cup. rewrite iin_unfold'.
-  rewrite cup_A_ok. simpl Qin.
-  setoid_rewrite aux1. setoid_rewrite aux2.
+  rewrite Ain_sum. simpl Qin.
+  setoid_rewrite Qin_sum_inl. setoid_rewrite Qin_sum_inr.
   setoid_rewrite iin_unfold'.
   unfold Ain, select.
   unfold compose.
