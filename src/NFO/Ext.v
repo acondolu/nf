@@ -191,10 +191,7 @@ Proof.
      setoid_rewrite H2.
      cut (forall X, X /\ True <-> X). intro.
      setoid_rewrite H3.
-     setoid_rewrite<- xor_assoc.
-     setoid_rewrite xor_comm.
-     setoid_rewrite<- xor_assoc.
-     admit.
+     apply trivial_xor_lemma.
      intro. tauto.
      intro. split; intros; auto. exists i0. reflexivity.
    unfold sig_x, respects_sig, respects. intros.
@@ -205,7 +202,7 @@ Proof.
   apply (iin_respects_eeq _ _ _ H1).
   -unfold sig_x, respects_sig, respects. intros.
   apply (iin_respects_eeq _ _ _ H1). 
-Admitted.
+Qed.
 
 Lemma not_iin_not_Ain {A p h X f}:
   ext_empty (S A p h X f) -> forall x, ~ Ain x f.
