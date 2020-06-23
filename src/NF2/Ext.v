@@ -1,7 +1,7 @@
 Require Import Coq.Logic.Classical_Prop.
 Require Import Coq.Logic.Classical_Pred_Type.
-Add LoadPath "src/".
-Require Import Model.
+Add LoadPath "src".
+Require Import NF2.Model.
 
 (*
   The axiom of regularity does not hold in this set theory.

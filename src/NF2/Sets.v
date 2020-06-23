@@ -1,8 +1,8 @@
 Require Import Coq.Logic.Classical_Prop.
 Require Import Coq.Logic.Classical_Pred_Type.
 
-Add LoadPath "src/".
-Require Import Model.
+Add LoadPath "src".
+Require Import NF2.Model.
 
 (* The universal set *)
 Definition 𝒰 : 𝓥 := Neg (fun x: False => match x with end).

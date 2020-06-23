@@ -1,6 +1,5 @@
-Add LoadPath "src/".
-Require Import Model.
-Require Import Sets.
+Add LoadPath "src".
+From NF2 Require Import Model Sets.
 
 (* When sets are low *)
 Lemma low_empty: low Ø.
