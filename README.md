@@ -2,7 +2,7 @@
 
 This repository contains the formalisation in Coq of a basic set theory with universal set. It started as an investigation into the (alleged) consistency of Quine's [New Foundations](https://plato.stanford.edu/entries/quine-nf/), but of course, settled on a much weaker theory 😉
 
-The set theory that we consider here is known as _NF<sub>2</sub>_, and the model that we provide is basically a Church-Oswald model, encoded similarly as one usually does for ZF (see https://github.com/coq-contribs/zfc).
+The set theory that we consider here is known as _NF<sub>2</sub>_, and the model that we provide is basically a Church-Oswald model, using an encoding inspired by the historic encoding of ZF in Coq by Aczel (see https://github.com/coq-contribs/zfc).
 
 The basic operations of NF<sub>2</sub> are the empty set, singletons, unions, intersections, and complement. The usual operations of ZF, like comprehension and powerset, are allowed only for so-called _low_ sets, which correspond to the usual understanding of sets as collections of given sets.
 
