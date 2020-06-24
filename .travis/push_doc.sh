@@ -19,7 +19,7 @@ commit_files() {
 }
 
 upload_files() {
-  git remote add origin-doc https://${GH_TOKEN}@github.com/acondoluc/nf.git > /dev/null 2>&1
+  git remote add origin-doc https://${GH_TOKEN}@github.com/acondolu/nf.git > /dev/null 2>&1
   git push --quiet --set-upstream origin-doc master
 }
 
