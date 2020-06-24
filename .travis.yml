@@ -8,3 +8,8 @@ install:
   - sudo apt-get install coq -y
 script:
   - make coq
+after_success:
+  - .travis/push_doc.sh
+env:
+  global:
+    secure: "yvJNkjsKuzrJxIh5lfbvQQp06yh3lFIvar/cJvxO3TcwHmTL4n/R34//EOAPdkCU6s0UfZLYJ3d7NEArGzmrZAVA9YDRaJ+wMz/hOwdzbLRxbh7U4DOw8gVTz1plfg7gnXXLYqHrqWfrww1EAAK3GKEfQLo8T/odWavszSYJ09dLXMSaEmDcaaxP+a1Faxq3R65/Du+XWyAkOw6+OmAbQMsvaxbXYroN/xiqtmLcZJpj9DSypiVmmuehH1BMVrcgda/mYUQNSYde8CqKCNJ+G3s2mQKNjnJ3nTN+ZgmY+HoaBCwvGqDEpb9CLjAlqo0xWlc7fCLS5qYh3q94Mr6KzYtCwiv+pW7eI/YrrXnB6RcSgFnp7iP/Rrro4LspsCWZf5Wwl+m26UuPUqx1kjdGuE2F06YW1/VFkSl7uSXMkQ6zy05UeD3aJ7Szw9b2P6KqVh/Tr0c5TfRKHfuAx3LYDs/0HmzXQgR/eWnY2Y34AnxTLjsBoDv+LaWuqWjk3nRt2GTVpFMoWvrOuvSkYMvxf5iEKaav/pp2y3RTRDnQQKGFgnt9M1U+t4i6PxcoDtzVz87pmFQiwyettvjM4e7MGdWK87YQ1RfFXKtMeLCUga+VG7kZzo7230hWBrIkmNua+8OZuZXwVhA1SABbTBVLZkTVjeiQYmtMgPIBJYJzllY="

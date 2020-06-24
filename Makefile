@@ -1,3 +1,4 @@
+SHELL := /bin/bash
 .PHONY: all clean remake coq coq-clean latex-clean coq-nf2 coq-nfo
 .DEFAULT_GOAL := all
 
@@ -25,8 +26,10 @@ src/%.vos: src/%.v
 coq-clean:
 	rm -f src/**/*.glob src/**/*.vo src/**/*.vok src/**/*.vos src/**/.*.aux src/**/*.html src/**/*.css
 
-coq-doc: # NFO-only!
-	cd src/NFO/ && coqdoc --parse-comments -l *.v
+coq-doc: coq # NFO-only!
+	rm -rf doc
+	mkdir doc
+	coqdoc --parse-comments -l -d doc -R "src" "" --verbose --utf8 src/**/*.v
 
 # LaTeX
 
