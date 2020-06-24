@@ -18,7 +18,7 @@ coq-nf2: src/NF2/Model.vos src/NF2/Ext.vos src/NF2/Sets.vos src/NF2/ZF.vos src/N
 coq-nfo : src/NFO/Aux.vos src/NFO/FunExt.vos src/NFO/Xor.vos src/NFO/Bool.vos src/NFO/Model.vos src/NFO/Wff.vos src/NFO/Eeq.vos src/NFO/Iin.vos src/NFO/Sets.vos src/NFO/Morphs.vos src/NFO/Ext.vos src/NFO/Union.vos src/NFO/Main.vos
 
 src/NFO/%.vos: src/NFO/%.v
-	coqc -R src/NFO "" $<
+	coqc -R src "" $<
 
 src/%.vos: src/%.v
 	coqc -R src "" $<

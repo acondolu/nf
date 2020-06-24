@@ -1,14 +1,5 @@
-Add LoadPath "src/NFO/".
-Require Import FunExt.
-Require Import Aux.
-Require Import Bool.
-Require Import Model.
-Require Import Wff.
-Require Import Eeq.
-Require Import Iin.
-Require Import Sets.
-Require Import Xor.
-Require Import Morphs.
+Add LoadPath "src".
+From NFO Require Import FunExt Aux Bool Model Wff Eeq Iin Sets Xor Morphs.
 
 (* This file needs cleaning!!! *)
 

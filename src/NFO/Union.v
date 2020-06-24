@@ -1,11 +1,7 @@
 From Coq.Program Require Import Basics Combinators.
 
-Add LoadPath "src/NFO/".
-Require Import Xor Aux FunExt.
-Require Import Bool.
-Require Import Model.
-Require Import Eeq.
-Require Import Iin Morphs Sets Ext.
+Add LoadPath "src".
+From NFO Require Import Xor Aux FunExt Bool Model Eeq Iin Morphs Sets Ext.
 
 (* TODO: Union *)
 

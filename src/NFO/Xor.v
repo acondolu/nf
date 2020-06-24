@@ -2,8 +2,8 @@
 Require Import Coq.Logic.Classical_Prop.
 Require Import Setoid Morphisms.
 
-Add LoadPath "src/NFO/".
-Require Import FunExt.
+Add LoadPath "src".
+From NFO Require Import FunExt.
 
 (* Exclusive OR *)
 Definition Xor a b := (a /\ ~b) \/ (~a /\ b).

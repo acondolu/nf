@@ -1,7 +1,5 @@
-Add LoadPath "src/NFO/".
-Require Eeq Model Iin Ext Union.
-
-Module NFO.
+Add LoadPath "src".
+From NFO Require Eeq Model Iin Ext Union.
 
 (* The type of NFO sets *)
 Definition set := Model.set.
@@ -48,5 +46,3 @@ Definition sin_ok: forall x y, iin x (sin y) <-> eeq y x
 Definition union := @Union.cup.
 Definition union_ok: forall x y z, iin z (union x y) <-> iin z x \/ iin z y
   := @Union.cup_ok.
-
-End NFO.

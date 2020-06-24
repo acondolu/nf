@@ -1,6 +1,6 @@
-Add LoadPath "src/NFO/".
-Require Import Model.
 Require Import Coq.Init.Wf.
+Add LoadPath "src".
+From NFO Require Import Model.
 
 (* Variant of Coq.Init.Wf.Fix_F_inv with iff instead of eq *)
 Lemma Fix_F_inv_iff {A} {R: A -> A -> Prop} {Rwf: well_founded R} {F : forall x:A, (forall y:A, R y x -> Prop) -> Prop} : forall (F_ext :

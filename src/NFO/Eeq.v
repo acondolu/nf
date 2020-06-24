@@ -2,12 +2,8 @@ Require Import Coq.Program.Basics.
 Require Import Coq.Program.Combinators.
 Require Import Setoid Morphisms.
 
-Add LoadPath "src/NFO/".
-Require Import FunExt.
-Require Import Aux.
-Require Import Bool.
-Require Import Model.
-Require Import Wff.
+Add LoadPath "src".
+From NFO Require Import FunExt Aux Bool Model Wff.
 
 Definition eeq' : set * set -> Prop.
 refine ( Fix wf_two (fun _ => Prop) (
@@ -51,7 +47,7 @@ Proof.
   unfold eeq at 1. unfold eeq' at 1. rewrite Fix_iff. fold eeq'.
   - unfold Aeq. unfold sum_i. tauto.
   - intros. destruct x. destruct s. destruct s0.
-    Require Import Xor. apply And_eq3.
+    apply And_eq3.
     -- split; intros. destruct (H1 x). exists x0. rewrite<- H0. assumption.
         destruct (H1 x). exists x0. rewrite H0. assumption.
     -- split; intros. destruct (H1 y). exists x. rewrite<- H0. assumption.

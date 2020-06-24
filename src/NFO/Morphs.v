@@ -3,15 +3,8 @@ Require Import Relation_Operators.
 Require Export Relation_Definitions.
 Require Export Setoid.
 
-Add LoadPath "src/NFO/".
-Require Import FunExt.
-Require Import Bool.
-Require Import Model.
-Require Import Wff.
-Require Import Eeq.
-Require Import Iin.
-Require Import Sets.
-Require Import Xor.
+Add LoadPath "src".
+From NFO Require Import FunExt Bool Model Wff Eeq Iin Sets Xor.
 
 (* Aext *)
 

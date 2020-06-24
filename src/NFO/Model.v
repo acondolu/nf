@@ -1,5 +1,5 @@
-Add LoadPath "src/NFO/".
-Require Import Bool.
+Add LoadPath "src".
+From NFO Require Import Bool.
 
 Inductive set :=
   S : forall A (p : boolean A) (h: A -> set) X (f: X -> set), set.

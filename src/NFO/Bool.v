@@ -2,8 +2,8 @@ Require Import Setoid.
 Require Import Coq.Program.Basics.
 Require Import Coq.Program.Combinators.
 
-Add LoadPath "src/NFO/".
-Require Import Aux FunExt.
+Add LoadPath "src".
+From NFO Require Import Aux FunExt.
 
 
 (* A boolean expression with atoms of type X *)

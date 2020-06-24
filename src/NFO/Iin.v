@@ -1,11 +1,8 @@
 Require Import Coq.Wellfounded.Lexicographic_Product.
 Require Import Relation_Operators.
-Add LoadPath "src/NFO/".
-Require Import Bool.
-Require Import Model.
-Require Import Eeq.
-Require Import Xor.
-Require Import Wff.
+
+Add LoadPath "NFO/".
+From NFO Require Import Bool Model Eeq Xor Wff.
 
 (* Membership on the `Aczel` part of a NFO-set. *)
 Definition Ain {X} (y: set) (f: X -> set) :=
