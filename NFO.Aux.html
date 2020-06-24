@@ -1,0 +1,76 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<link href="coqdoc.css" rel="stylesheet" type="text/css" />
+<title>NFO.Aux</title>
+</head>
+
+<body>
+
+<div id="page">
+
+<div id="header">
+</div>
+
+<div id="main">
+
+<h1 class="libtitle">Library NFO.Aux</h1>
+
+<div class="code">
+<span class="comment">(*&nbsp;This&nbsp;module&nbsp;contains&nbsp;some&nbsp;auxiliary&nbsp;functions&nbsp;*)</span><br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">select</span> {<span class="id" title="var">X</span> <span class="id" title="var">Y</span>} (<span class="id" title="var">f</span>: <span class="id" title="var">X</span> → <span class="id" title="var">Y</span>) (<span class="id" title="var">P</span>: <span class="id" title="var">X</span> → <span class="id" title="keyword">Prop</span>) : {<span class="id" title="var">x</span>: <span class="id" title="var">X</span> &amp; <span class="id" title="var">P</span> <span class="id" title="var">x</span>} → <span class="id" title="var">Y</span><br/>
+&nbsp;&nbsp;:= <span class="id" title="keyword">fun</span> <span class="id" title="var">x</span> ⇒ <span class="id" title="var">f</span> (<span class="id" title="var">projT1</span> <span class="id" title="var">x</span>).<br/>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">And_eq3</span> {<span class="id" title="var">a</span> <span class="id" title="var">a'</span> <span class="id" title="var">b</span> <span class="id" title="var">b'</span> <span class="id" title="var">c</span> <span class="id" title="var">c'</span>}:<br/>
+&nbsp;&nbsp;(<span class="id" title="var">a</span> ↔ <span class="id" title="var">a'</span>) → (<span class="id" title="var">b</span> ↔ <span class="id" title="var">b'</span>) → (<span class="id" title="var">c</span> ↔ <span class="id" title="var">c'</span>) → (<span class="id" title="var">a</span> ∧ <span class="id" title="var">b</span> ∧ <span class="id" title="var">c</span>) ↔ (<span class="id" title="var">a'</span> ∧ <span class="id" title="var">b'</span> ∧ <span class="id" title="var">c'</span>).<br/>
+ 
+<br/>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">ex_false</span> {<span class="id" title="var">P</span>: <span class="id" title="var">False</span> → <span class="id" title="keyword">Prop</span>}: (<span class="id" title="tactic">∃</span> <span class="id" title="var">x</span>, <span class="id" title="var">P</span> <span class="id" title="var">x</span>) ↔ <span class="id" title="var">False</span>.<br/>
+ 
+<br/>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">ex_unit</span> {<span class="id" title="var">P</span>: <span class="id" title="var">unit</span> → <span class="id" title="keyword">Prop</span>}: (<span class="id" title="tactic">∃</span> <span class="id" title="var">x</span>, <span class="id" title="var">P</span> <span class="id" title="var">x</span>) ↔ <span class="id" title="var">P</span> <span class="id" title="var">tt</span>.<br/>
+ 
+<br/>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">and_true</span>: <span class="id" title="keyword">∀</span> <span class="id" title="var">X</span>, <span class="id" title="var">X</span> ∧ <span class="id" title="var">True</span> ↔ <span class="id" title="var">X</span>.<br/>
+ 
+<br/>
+<span class="comment">(*&nbsp;Inverts&nbsp;a&nbsp;&nbsp;*)</span><br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">invF</span> {<span class="id" title="var">X</span> <span class="id" title="var">Y</span>} (<span class="id" title="var">f</span>: <span class="id" title="var">X</span> → <span class="id" title="var">Y</span>) (<span class="id" title="var">y</span>: <span class="id" title="var">Y</span>) := <span class="id" title="tactic">∃</span> <span class="id" title="var">x</span>, <span class="id" title="var">f</span> <span class="id" title="var">x</span> = <span class="id" title="var">y</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">inv2</span> {<span class="id" title="var">X</span> <span class="id" title="var">Y</span> <span class="id" title="var">W</span>} (<span class="id" title="var">f</span>: <span class="id" title="var">X</span> → <span class="id" title="var">W</span>) (<span class="id" title="var">g</span> : <span class="id" title="var">Y</span> → <span class="id" title="var">W</span>) <span class="id" title="var">w</span> :=<br/>
+&nbsp;&nbsp;<span class="id" title="var">invF</span> <span class="id" title="var">f</span> <span class="id" title="var">w</span> ∨ <span class="id" title="var">invF</span> <span class="id" title="var">g</span> <span class="id" title="var">w</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">inv3</span> {<span class="id" title="var">X</span> <span class="id" title="var">Y</span> <span class="id" title="var">Z</span> <span class="id" title="var">W</span>} (<span class="id" title="var">f</span>: <span class="id" title="var">X</span> → <span class="id" title="var">W</span>) (<span class="id" title="var">g</span> : <span class="id" title="var">Y</span> → <span class="id" title="var">W</span>) (<span class="id" title="var">h</span> : <span class="id" title="var">Z</span> → <span class="id" title="var">W</span>) <span class="id" title="var">w</span> :=<br/>
+&nbsp;&nbsp;<span class="id" title="var">invF</span> <span class="id" title="var">f</span> <span class="id" title="var">w</span> ∨ <span class="id" title="var">invF</span> <span class="id" title="var">g</span> <span class="id" title="var">w</span> ∨ <span class="id" title="var">invF</span> <span class="id" title="var">h</span> <span class="id" title="var">w</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">inv2_1</span> {<span class="id" title="var">X</span> <span class="id" title="var">Y</span> <span class="id" title="var">W</span>} (<span class="id" title="var">f</span>: <span class="id" title="var">X</span> → <span class="id" title="var">W</span>) (<span class="id" title="var">g</span> : <span class="id" title="var">Y</span> → <span class="id" title="var">W</span>) <span class="id" title="var">x</span>:<br/>
+&nbsp;&nbsp;<span class="id" title="var">inv2</span> <span class="id" title="var">f</span> <span class="id" title="var">g</span> (<span class="id" title="var">f</span> <span class="id" title="var">x</span>).<br/>
+ <span class="id" title="keyword">Lemma</span> <span class="id" title="var">inv2_2</span> {<span class="id" title="var">X</span> <span class="id" title="var">Y</span> <span class="id" title="var">W</span>} (<span class="id" title="var">f</span>: <span class="id" title="var">X</span> → <span class="id" title="var">W</span>) (<span class="id" title="var">g</span> : <span class="id" title="var">Y</span> → <span class="id" title="var">W</span>) <span class="id" title="var">y</span>:<br/>
+&nbsp;&nbsp;<span class="id" title="var">inv2</span> <span class="id" title="var">f</span> <span class="id" title="var">g</span> (<span class="id" title="var">g</span> <span class="id" title="var">y</span>).<br/>
+ 
+<br/>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">inv3_1</span> {<span class="id" title="var">X</span> <span class="id" title="var">Y</span> <span class="id" title="var">Z</span> <span class="id" title="var">W</span>} (<span class="id" title="var">f</span>: <span class="id" title="var">X</span> → <span class="id" title="var">W</span>) (<span class="id" title="var">g</span> : <span class="id" title="var">Y</span> → <span class="id" title="var">W</span>) (<span class="id" title="var">h</span> : <span class="id" title="var">Z</span> → <span class="id" title="var">W</span>) <span class="id" title="var">x</span>:<br/>
+&nbsp;&nbsp;<span class="id" title="var">inv3</span> <span class="id" title="var">f</span> <span class="id" title="var">g</span> <span class="id" title="var">h</span> (<span class="id" title="var">f</span> <span class="id" title="var">x</span>).<br/>
+ <span class="id" title="keyword">Lemma</span> <span class="id" title="var">inv3_2</span> {<span class="id" title="var">X</span> <span class="id" title="var">Y</span> <span class="id" title="var">Z</span> <span class="id" title="var">W</span>} (<span class="id" title="var">f</span>: <span class="id" title="var">X</span> → <span class="id" title="var">W</span>) (<span class="id" title="var">g</span> : <span class="id" title="var">Y</span> → <span class="id" title="var">W</span>) (<span class="id" title="var">h</span> : <span class="id" title="var">Z</span> → <span class="id" title="var">W</span>) <span class="id" title="var">y</span>:<br/>
+&nbsp;&nbsp;<span class="id" title="var">inv3</span> <span class="id" title="var">f</span> <span class="id" title="var">g</span> <span class="id" title="var">h</span> (<span class="id" title="var">g</span> <span class="id" title="var">y</span>).<br/>
+ <span class="id" title="keyword">Lemma</span> <span class="id" title="var">inv3_3</span> {<span class="id" title="var">X</span> <span class="id" title="var">Y</span> <span class="id" title="var">Z</span> <span class="id" title="var">W</span>} (<span class="id" title="var">f</span>: <span class="id" title="var">X</span> → <span class="id" title="var">W</span>) (<span class="id" title="var">g</span> : <span class="id" title="var">Y</span> → <span class="id" title="var">W</span>) (<span class="id" title="var">h</span> : <span class="id" title="var">Z</span> → <span class="id" title="var">W</span>) <span class="id" title="var">z</span>:<br/>
+&nbsp;&nbsp;<span class="id" title="var">inv3</span> <span class="id" title="var">f</span> <span class="id" title="var">g</span> <span class="id" title="var">h</span> (<span class="id" title="var">h</span> <span class="id" title="var">z</span>).<br/>
+ </div>
+</div>
+
+<div id="footer">
+<hr/><a href="index.html">Index</a><hr/>This page has been generated by <a href="http://coq.inria.fr/">coqdoc</a>
+</div>
+
+</div>
+
+</body>
+</html>

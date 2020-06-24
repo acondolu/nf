@@ -1,0 +1,95 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<link href="coqdoc.css" rel="stylesheet" type="text/css" />
+<title>NFO.Main</title>
+</head>
+
+<body>
+
+<div id="page">
+
+<div id="header">
+</div>
+
+<div id="main">
+
+<h1 class="libtitle">Library NFO.Main</h1>
+
+<div class="code">
+<span class="id" title="keyword">Add</span> <span class="id" title="var">LoadPath</span> "src/NFO/".<br/>
+
+<br/>
+<span class="id" title="keyword">Module</span> <span class="id" title="var">NFO</span>.<br/>
+
+<br/>
+<span class="comment">(*&nbsp;The&nbsp;type&nbsp;of&nbsp;NFO&nbsp;sets&nbsp;*)</span><br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="tactic">set</span> := <span class="id" title="var">Model.set</span>.<br/>
+
+<br/>
+<span class="comment">(*&nbsp;Equality&nbsp;*)</span><br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">eeq</span> := <span class="id" title="var">Eeq.eeq</span>.<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">eeq_refl</span> : <span class="id" title="keyword">∀</span> <span class="id" title="var">x</span>, <span class="id" title="var">eeq</span> <span class="id" title="var">x</span> <span class="id" title="var">x</span><br/>
+&nbsp;&nbsp;:= @<span class="id" title="var">Eeq.eeq_refl</span>.<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">eeq_sym</span> : <span class="id" title="keyword">∀</span> <span class="id" title="var">x</span> <span class="id" title="var">y</span>, <span class="id" title="var">eeq</span> <span class="id" title="var">x</span> <span class="id" title="var">y</span> → <span class="id" title="var">eeq</span> <span class="id" title="var">y</span> <span class="id" title="var">x</span><br/>
+&nbsp;&nbsp;:= @<span class="id" title="var">Eeq.eeq_sym</span>.<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">eeq_trans</span> : <span class="id" title="keyword">∀</span> <span class="id" title="var">x</span> <span class="id" title="var">y</span> <span class="id" title="var">z</span>, <span class="id" title="var">eeq</span> <span class="id" title="var">x</span> <span class="id" title="var">y</span> → <span class="id" title="var">eeq</span> <span class="id" title="var">y</span> <span class="id" title="var">z</span> → <span class="id" title="var">eeq</span> <span class="id" title="var">x</span> <span class="id" title="var">z</span><br/>
+&nbsp;&nbsp;:= @<span class="id" title="var">Eeq.eeq_trans</span>.<br/>
+
+<br/>
+<span class="comment">(*&nbsp;Set&nbsp;membership&nbsp;*)</span><br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">iin</span> : <span class="id" title="tactic">set</span> → <span class="id" title="tactic">set</span> → <span class="id" title="keyword">Prop</span> := <span class="id" title="var">Iin.iin</span>.<br/>
+
+<br/>
+<span class="comment">(*&nbsp;Extensionality&nbsp;*)</span><br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">ext</span> : <span class="id" title="keyword">∀</span> <span class="id" title="var">x</span> <span class="id" title="var">y</span>, <span class="id" title="var">eeq</span> <span class="id" title="var">x</span> <span class="id" title="var">y</span> ↔ <span class="id" title="keyword">∀</span> <span class="id" title="var">z</span>, <span class="id" title="var">iin</span> <span class="id" title="var">z</span> <span class="id" title="var">x</span> ↔ <span class="id" title="var">iin</span> <span class="id" title="var">z</span> <span class="id" title="var">y</span><br/>
+&nbsp;&nbsp;:= @<span class="id" title="var">Ext.ext</span>.<br/>
+
+<br/>
+<span class="comment">(*&nbsp;Set&nbsp;operators&nbsp;*)</span><br/>
+
+<br/>
+<span class="comment">(*&nbsp;Empty&nbsp;set&nbsp;*)</span><br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">emptyset</span> := <span class="id" title="var">Sets.emptyset</span>.<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">emptyset_ok</span>: <span class="id" title="keyword">∀</span> <span class="id" title="var">x</span>, ¬ <span class="id" title="var">iin</span> <span class="id" title="var">x</span> <span class="id" title="var">emptyset</span><br/>
+&nbsp;&nbsp;:= <span class="id" title="var">Sets.emptyset_ok</span>.<br/>
+
+<br/>
+<span class="comment">(*&nbsp;Complement&nbsp;*)</span><br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">compl</span> := <span class="id" title="var">Sets.compl</span>.<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">compl_ok</span>: <span class="id" title="keyword">∀</span> <span class="id" title="var">x</span> <span class="id" title="var">y</span>, <span class="id" title="var">iin</span> <span class="id" title="var">x</span> (<span class="id" title="var">compl</span> <span class="id" title="var">y</span>) ↔ (<span class="id" title="var">iin</span> <span class="id" title="var">x</span> <span class="id" title="var">y</span> → <span class="id" title="var">False</span>)<br/>
+&nbsp;&nbsp;:= @<span class="id" title="var">Sets.compl_ok</span>.<br/>
+
+<br/>
+<span class="comment">(*&nbsp;Co-singleton&nbsp;*)</span><br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">cosin</span> := <span class="id" title="var">Sets.cosin</span>.<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">cosin_ok</span>: <span class="id" title="keyword">∀</span> <span class="id" title="var">x</span> <span class="id" title="var">y</span>, <span class="id" title="var">iin</span> <span class="id" title="var">x</span> (<span class="id" title="var">cosin</span> <span class="id" title="var">y</span>) ↔ <span class="id" title="var">iin</span> <span class="id" title="var">y</span> <span class="id" title="var">x</span><br/>
+&nbsp;&nbsp;:= @<span class="id" title="var">Sets.cosin_ok</span>.<br/>
+
+<br/>
+<span class="comment">(*&nbsp;Singleton&nbsp;*)</span><br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">sin</span> := <span class="id" title="var">Sets.sin</span>.<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">sin_ok</span>: <span class="id" title="keyword">∀</span> <span class="id" title="var">x</span> <span class="id" title="var">y</span>, <span class="id" title="var">iin</span> <span class="id" title="var">x</span> (<span class="id" title="var">sin</span> <span class="id" title="var">y</span>) ↔ <span class="id" title="var">eeq</span> <span class="id" title="var">y</span> <span class="id" title="var">x</span><br/>
+&nbsp;&nbsp;:= @<span class="id" title="var">Sets.sin_ok</span>.<br/>
+
+<br/>
+<span class="comment">(*&nbsp;Union&nbsp;*)</span><br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">union</span> := @<span class="id" title="var">Union.cup</span>.<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">union_ok</span>: <span class="id" title="keyword">∀</span> <span class="id" title="var">x</span> <span class="id" title="var">y</span> <span class="id" title="var">z</span>, <span class="id" title="var">iin</span> <span class="id" title="var">z</span> (<span class="id" title="var">union</span> <span class="id" title="var">x</span> <span class="id" title="var">y</span>) ↔ <span class="id" title="var">iin</span> <span class="id" title="var">z</span> <span class="id" title="var">x</span> ∨ <span class="id" title="var">iin</span> <span class="id" title="var">z</span> <span class="id" title="var">y</span><br/>
+&nbsp;&nbsp;:= @<span class="id" title="var">Union.cup_ok</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">End</span> <span class="id" title="var">NFO</span>.<br/>
+</div>
+</div>
+
+<div id="footer">
+<hr/><a href="index.html">Index</a><hr/>This page has been generated by <a href="http://coq.inria.fr/">coqdoc</a>
+</div>
+
+</div>
+
+</body>
+</html>

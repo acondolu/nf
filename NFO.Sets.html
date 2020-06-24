@@ -1,0 +1,129 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<link href="coqdoc.css" rel="stylesheet" type="text/css" />
+<title>NFO.Sets</title>
+</head>
+
+<body>
+
+<div id="page">
+
+<div id="header">
+</div>
+
+<div id="main">
+
+<h1 class="libtitle">Library NFO.Sets</h1>
+
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">Add</span> <span class="id" title="var">LoadPath</span> "src/NFO/".<br/>
+
+<br/>
+<span class="comment">(*&nbsp;Axuliary&nbsp;*)</span><br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">enum</span> {<span class="id" title="var">X</span>} <span class="id" title="var">f</span> := <span class="id" title="var">S</span> <span class="id" title="var">False</span> (<span class="id" title="var">Bot</span> <span class="id" title="var">_</span>) (<span class="id" title="var">False_rect</span> <span class="id" title="var">_</span>) <span class="id" title="var">X</span> <span class="id" title="var">f</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">Ain_sum</span> {<span class="id" title="var">X</span> <span class="id" title="var">Y</span>} (<span class="id" title="var">f</span>: <span class="id" title="var">X</span> + <span class="id" title="var">Y</span> → <span class="id" title="tactic">set</span>) <span class="id" title="var">x</span>:<br/>
+&nbsp;&nbsp;<span class="id" title="var">Ain</span> <span class="id" title="var">x</span> <span class="id" title="var">f</span> ↔ <span class="id" title="var">Ain</span> <span class="id" title="var">x</span> (<span class="id" title="var">compose</span> <span class="id" title="var">f</span> <span class="id" title="var">inl</span>) ∨ <span class="id" title="var">Ain</span> <span class="id" title="var">x</span> (<span class="id" title="var">compose</span> <span class="id" title="var">f</span> <span class="id" title="var">inr</span>).<br/>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">Ain_sums</span> {<span class="id" title="var">X</span> <span class="id" title="var">X'</span>} {<span class="id" title="var">f</span>: <span class="id" title="var">X</span> → <span class="id" title="tactic">set</span>} {<span class="id" title="var">f'</span>: <span class="id" title="var">X'</span> → <span class="id" title="tactic">set</span>} {<span class="id" title="var">x</span>}:<br/>
+&nbsp;&nbsp;<span class="id" title="var">Ain</span> <span class="id" title="var">x</span> (<span class="id" title="var">sum_funs</span> <span class="id" title="var">f</span> <span class="id" title="var">f'</span>) ↔ (<span class="id" title="var">Ain</span> <span class="id" title="var">x</span> <span class="id" title="var">f</span>) ∨ (<span class="id" title="var">Ain</span> <span class="id" title="var">x</span> <span class="id" title="var">f'</span>).<br/>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">Ain_sigma</span> {<span class="id" title="var">X</span>} (<span class="id" title="var">f</span>: <span class="id" title="var">X</span> → <span class="id" title="tactic">set</span>) (<span class="id" title="var">P</span>: <span class="id" title="tactic">set</span> → <span class="id" title="keyword">Prop</span>) <span class="id" title="var">a</span>:<br/>
+&nbsp;&nbsp;<span class="id" title="var">respects</span> <span class="id" title="var">eeq</span> <span class="id" title="var">P</span> →<br/>
+&nbsp;&nbsp;<span class="id" title="var">Ain</span> <span class="id" title="var">a</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="keyword">fun</span> <span class="id" title="var">x</span> : {<span class="id" title="var">x</span> &amp; <span class="id" title="var">P</span> (<span class="id" title="var">f</span> <span class="id" title="var">x</span>)} ⇒ <span class="id" title="var">f</span> (<span class="id" title="var">projT1</span> <span class="id" title="var">x</span>))<br/>
+&nbsp;&nbsp;↔ <span class="id" title="var">P</span> <span class="id" title="var">a</span> ∧ <span class="id" title="tactic">∃</span> <span class="id" title="var">x</span>, <span class="id" title="var">f</span> <span class="id" title="var">x</span> == <span class="id" title="var">a</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">Qin_sum_inl</span>: <span class="id" title="keyword">∀</span> <span class="id" title="var">X</span> <span class="id" title="var">Y</span> <span class="id" title="var">z</span> (<span class="id" title="var">f</span>: <span class="id" title="var">X</span> → <span class="id" title="tactic">set</span>) (<span class="id" title="var">g</span>: <span class="id" title="var">Y</span> → <span class="id" title="tactic">set</span>) <span class="id" title="var">p</span>,<br/>
+&nbsp;&nbsp;<span class="id" title="var">Qin</span> <span class="id" title="var">z</span> (<span class="id" title="var">sum_funs</span> <span class="id" title="var">f</span> <span class="id" title="var">g</span>) (<span class="id" title="var">boolean_map</span> <span class="id" title="var">inl</span> <span class="id" title="var">p</span>) ↔ <span class="id" title="var">Qin</span> <span class="id" title="var">z</span> <span class="id" title="var">f</span> <span class="id" title="var">p</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">Qin_sum_inr</span>: <span class="id" title="keyword">∀</span> <span class="id" title="var">X</span> <span class="id" title="var">Y</span> <span class="id" title="var">z</span> (<span class="id" title="var">f</span>: <span class="id" title="var">X</span> → <span class="id" title="tactic">set</span>) (<span class="id" title="var">g</span>: <span class="id" title="var">Y</span> → <span class="id" title="tactic">set</span>) <span class="id" title="var">p</span>,<br/>
+&nbsp;&nbsp;<span class="id" title="var">Qin</span> <span class="id" title="var">z</span> (<span class="id" title="var">sum_funs</span> <span class="id" title="var">f</span> <span class="id" title="var">g</span>) (<span class="id" title="var">boolean_map</span> <span class="id" title="var">inr</span> <span class="id" title="var">p</span>) ↔ <span class="id" title="var">Qin</span> <span class="id" title="var">z</span> <span class="id" title="var">g</span> <span class="id" title="var">p</span>.<br/>
+
+<br/>
+<span class="comment">(*&nbsp;Empty&nbsp;set&nbsp;*)</span><br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">emptyset</span> := <span class="id" title="var">enum</span> (<span class="id" title="var">False_rect</span> <span class="id" title="var">_</span>).<br/>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">emptyset_ok</span>: <span class="id" title="keyword">∀</span> <span class="id" title="var">x</span>, ¬ <span class="id" title="var">iin</span> <span class="id" title="var">x</span> <span class="id" title="var">emptyset</span>.<br/>
+
+<br/>
+<span class="comment">(*&nbsp;Set&nbsp;complement&nbsp;*)</span><br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">compl</span> <span class="id" title="var">x</span> := <span class="id" title="keyword">match</span> <span class="id" title="var">x</span> <span class="id" title="keyword">with</span><br/>
+&nbsp;&nbsp;<span class="id" title="var">S</span> <span class="id" title="var">A</span> <span class="id" title="var">p</span> <span class="id" title="var">h</span> <span class="id" title="var">X</span> <span class="id" title="var">f</span> ⇒ <span class="id" title="var">S</span> <span class="id" title="var">A</span> (<span class="id" title="var">Not</span> <span class="id" title="var">_</span> <span class="id" title="var">p</span>) <span class="id" title="var">h</span> <span class="id" title="var">X</span> <span class="id" title="var">f</span><br/>
+<span class="id" title="keyword">end</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">compl_ok</span>: <span class="id" title="keyword">∀</span> <span class="id" title="var">x</span> <span class="id" title="var">y</span>,<br/>
+&nbsp;&nbsp;<span class="id" title="var">iin</span> <span class="id" title="var">x</span> (<span class="id" title="var">compl</span> <span class="id" title="var">y</span>) ↔ (<span class="id" title="var">iin</span> <span class="id" title="var">x</span> <span class="id" title="var">y</span> → <span class="id" title="var">False</span>).<br/>
+
+<br/>
+<span class="comment">(*&nbsp;Co-singleton&nbsp;*)</span><br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">cosin</span> <span class="id" title="var">x</span> := <span class="id" title="var">S</span> <span class="id" title="var">unit</span> (<span class="id" title="var">Atom</span> <span class="id" title="var">_</span> <span class="id" title="var">tt</span>) (<span class="id" title="keyword">fun</span> <span class="id" title="var">_</span> ⇒ <span class="id" title="var">x</span>) <span class="id" title="var">False</span> (<span class="id" title="var">False_rect</span> <span class="id" title="var">_</span>).<br/>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">cosin_ok</span>: <span class="id" title="keyword">∀</span> <span class="id" title="var">x</span> <span class="id" title="var">y</span>, <span class="id" title="var">iin</span> <span class="id" title="var">x</span> (<span class="id" title="var">cosin</span> <span class="id" title="var">y</span>) ↔ <span class="id" title="var">iin</span> <span class="id" title="var">y</span> <span class="id" title="var">x</span>.<br/>
+
+<br/>
+<span class="comment">(*&nbsp;Singleton&nbsp;*)</span><br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">sin</span> <span class="id" title="var">x</span> := <span class="id" title="var">enum</span> (<span class="id" title="keyword">fun</span> <span class="id" title="var">_</span>: <span class="id" title="var">unit</span> ⇒ <span class="id" title="var">x</span>).<br/>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">sin_ok</span>: <span class="id" title="keyword">∀</span> <span class="id" title="var">x</span> <span class="id" title="var">y</span>, <span class="id" title="var">iin</span> <span class="id" title="var">x</span> (<span class="id" title="var">sin</span> <span class="id" title="var">y</span>) ↔ <span class="id" title="var">eeq</span> <span class="id" title="var">y</span> <span class="id" title="var">x</span>.<br/>
+
+<br/>
+<span class="comment">(*&nbsp;Exclusive&nbsp;or&nbsp;of&nbsp;sets&nbsp;*)</span><br/>
+
+<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">AXor</span> {<span class="id" title="var">X</span> <span class="id" title="var">Y</span>} (<span class="id" title="var">f</span>: <span class="id" title="var">X</span> → <span class="id" title="tactic">set</span>) (<span class="id" title="var">g</span>: <span class="id" title="var">Y</span> → <span class="id" title="tactic">set</span>)<br/>
+&nbsp;&nbsp;: <span class="id" title="var">sum</span> {<span class="id" title="var">x</span> &amp; ¬ <span class="id" title="tactic">∃</span> <span class="id" title="var">y</span>, <span class="id" title="var">eeq</span> (<span class="id" title="var">g</span> <span class="id" title="var">y</span>) (<span class="id" title="var">f</span> <span class="id" title="var">x</span>)} {<span class="id" title="var">y</span> &amp; ¬ <span class="id" title="tactic">∃</span> <span class="id" title="var">x</span>, <span class="id" title="var">eeq</span> (<span class="id" title="var">f</span> <span class="id" title="var">x</span>) (<span class="id" title="var">g</span> <span class="id" title="var">y</span>)} → <span class="id" title="tactic">set</span><br/>
+&nbsp;&nbsp;:= <span class="id" title="keyword">fun</span> <span class="id" title="var">s</span> ⇒ <span class="id" title="keyword">match</span> <span class="id" title="var">s</span> <span class="id" title="keyword">with</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;| <span class="id" title="var">inl</span> <span class="id" title="var">x</span> ⇒ <span class="id" title="var">f</span> (<span class="id" title="var">projT1</span> <span class="id" title="var">x</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;| <span class="id" title="var">inr</span> <span class="id" title="var">y</span> ⇒ <span class="id" title="var">g</span> (<span class="id" title="var">projT1</span> <span class="id" title="var">y</span>) <br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">end</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">QXor</span> <span class="id" title="var">B</span> <span class="id" title="var">C</span> := <br/>
+&nbsp;&nbsp;<span class="id" title="keyword">match</span> <span class="id" title="var">B</span>, <span class="id" title="var">C</span> <span class="id" title="keyword">with</span> <span class="id" title="var">S</span> <span class="id" title="var">A</span> <span class="id" title="var">p</span> <span class="id" title="var">h</span> <span class="id" title="var">X</span> <span class="id" title="var">f</span>, <span class="id" title="var">S</span> <span class="id" title="var">A'</span> <span class="id" title="var">p'</span> <span class="id" title="var">h'</span> <span class="id" title="var">X'</span> <span class="id" title="var">f'</span> ⇒<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">let</span> <span class="id" title="var">A''</span> := <span class="id" title="var">sum</span> <span class="id" title="var">A</span> <span class="id" title="var">A'</span> <span class="id" title="tactic">in</span><br/>
+&nbsp;&nbsp;<span class="id" title="keyword">let</span> <span class="id" title="var">h''</span> := <span class="id" title="var">sum_funs</span> <span class="id" title="var">h</span> <span class="id" title="var">h'</span> <span class="id" title="tactic">in</span><br/>
+&nbsp;&nbsp;<span class="id" title="keyword">let</span> <span class="id" title="var">p''</span> := <span class="id" title="var">boolean_xor</span> (<span class="id" title="var">boolean_map</span> <span class="id" title="var">inl</span> <span class="id" title="var">p</span>) (<span class="id" title="var">boolean_map</span> <span class="id" title="var">inr</span> <span class="id" title="var">p'</span>) <span class="id" title="tactic">in</span><br/>
+&nbsp;&nbsp;<span class="id" title="var">S</span> <span class="id" title="var">A''</span> <span class="id" title="var">p''</span> <span class="id" title="var">h''</span> <span class="id" title="var">_</span> (<span class="id" title="var">AXor</span> <span class="id" title="var">f</span> <span class="id" title="var">f'</span>)<br/>
+<span class="id" title="keyword">end</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">AXor_ok</span> {<span class="id" title="var">X</span> <span class="id" title="var">X'</span>} {<span class="id" title="var">f</span>: <span class="id" title="var">X</span> → <span class="id" title="tactic">set</span>} {<span class="id" title="var">f'</span>: <span class="id" title="var">X'</span> → <span class="id" title="tactic">set</span>} {<span class="id" title="var">x</span>}:<br/>
+&nbsp;&nbsp;<span class="id" title="var">Ain</span> <span class="id" title="var">x</span> (<span class="id" title="var">AXor</span> <span class="id" title="var">f</span> <span class="id" title="var">f'</span>) ↔ <span class="id" title="var">Ain</span> <span class="id" title="var">x</span> <span class="id" title="var">f</span> &lt;<span class="id" title="var">X</span>&gt; <span class="id" title="var">Ain</span> <span class="id" title="var">x</span> <span class="id" title="var">f'</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">QXor_ok</span> {<span class="id" title="var">X</span> <span class="id" title="var">Y</span>} {<span class="id" title="var">f</span>: <span class="id" title="var">X</span> → <span class="id" title="tactic">set</span>} {<span class="id" title="var">g</span>: <span class="id" title="var">Y</span> → <span class="id" title="tactic">set</span>} {<span class="id" title="var">z</span> <span class="id" title="var">p</span> <span class="id" title="var">q</span>}:<br/>
+&nbsp;&nbsp;<span class="id" title="var">Qin</span> <span class="id" title="var">z</span> (<span class="id" title="var">sum_funs</span> <span class="id" title="var">f</span> <span class="id" title="var">g</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">boolean_xor</span> (<span class="id" title="var">boolean_map</span> <span class="id" title="var">inl</span> <span class="id" title="var">p</span>) (<span class="id" title="var">boolean_map</span> <span class="id" title="var">inr</span> <span class="id" title="var">q</span>))<br/>
+&nbsp;&nbsp;↔ <span class="id" title="var">Xor</span> (<span class="id" title="var">Qin</span> <span class="id" title="var">z</span> <span class="id" title="var">f</span> <span class="id" title="var">p</span>) (<span class="id" title="var">Qin</span> <span class="id" title="var">z</span> <span class="id" title="var">g</span> <span class="id" title="var">q</span>).<br/>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">xor_ok</span>: <span class="id" title="keyword">∀</span> <span class="id" title="var">x</span> <span class="id" title="var">y</span> <span class="id" title="var">z</span>,<br/>
+&nbsp;&nbsp;<span class="id" title="var">iin</span> <span class="id" title="var">z</span> (<span class="id" title="var">QXor</span> <span class="id" title="var">x</span> <span class="id" title="var">y</span>) ↔ <span class="id" title="var">Xor</span> (<span class="id" title="var">iin</span> <span class="id" title="var">z</span> <span class="id" title="var">x</span>) (<span class="id" title="var">iin</span> <span class="id" title="var">z</span> <span class="id" title="var">y</span>).<br/>
+</div>
+</div>
+
+<div id="footer">
+<hr/><a href="index.html">Index</a><hr/>This page has been generated by <a href="http://coq.inria.fr/">coqdoc</a>
+</div>
+
+</div>
+
+</body>
+</html>
