@@ -11,7 +11,8 @@ generate() {
 }
 
 commit_files() {
-  git checkout -b master
+  git checkout master
+  git pull
   git rm --ignore-unmatch *.html *.css
   cp doc/* .
   git add *.html *.css
