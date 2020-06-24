@@ -1,4 +1,5 @@
-#!/bin/sh
+#!/bin/bash
+set -euxo pipefail
 
 setup_git() {
   git config --global user.email "travis@travis-ci.org"
@@ -11,7 +12,7 @@ generate() {
 
 commit_files() {
   git checkout -b master
-  git rm *.html *.css
+  git rm --ignore-unmatch *.html *.css
   cp doc/* .
   git add *.html *.css
   git commit --message "Travis build: $TRAVIS_BUILD_NUMBER"
