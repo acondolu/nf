@@ -12,6 +12,10 @@ Lemma And_eq3 {a a' b b' c c'}:
   (a <-> a') -> (b <-> b') -> (c <-> c') -> (a /\ b /\ c) <-> (a' /\ b' /\ c').
 Proof. tauto. Qed.
 
+Lemma And_eq2 {a a' b b'}:
+  (a <-> a') -> (b <-> b') -> (a /\ b) <-> (a' /\ b').
+Proof. tauto. Qed.
+
 Lemma ex_false {P: False -> Prop}: (exists x, P x) <-> False.
 Proof. split; intros. destruct H, x. destruct H. Qed.
 
@@ -36,36 +40,24 @@ Definition swap {X Y} (x: X + Y) := match x with
   | inr b => inl b
 end.
 
-Lemma comp_swap_inl {X Y}: compose (@swap X Y) inl = inr.
+Lemma comp_swap_inl {X Y}: (@swap X Y) ∘ inl = inr.
 Proof. auto. Qed.
-Lemma comp_swap_inr {X Y}: compose (@swap X Y) inr = inl.
+Lemma comp_swap_inr {X Y}: (@swap X Y) ∘ inr = inl.
 Proof. auto. Qed.
 
-Definition sum_funs {X Y Z} f g : X + Y -> Z := fun s =>
+Definition sumF {X Y Z} f g : X + Y -> Z := fun s =>
   match s with
   | inl x => f x
   | inr y => g y
   end.
-Infix "<+>" := sum_funs (at level 80, right associativity).
+Infix "⨁" := sumF (at level 80, right associativity).
 
 Definition invert_sum {X Y Z} P R S (z : Z) := 
   (exists x : X, P (inl x) /\ R x z)
   \/ exists y : Y, P (inr y) /\ S y z.
 
-(* SUM_I *)
-Definition sum_i {X Y Z} (R: Z -> Z -> Prop) f g (i j: X + Y) := 
-match i, j with
-  | inl x, inl x' => R (f x) (f x')
-  | inl x, inr y => R (f x) (g y)
-  | inr y, inl x => R (g y) (f x)
-  | inr y, inr y' => R (g y) (g y')
-end.
-
-Lemma sum_i_sym: forall {X Y Z R f g b1 b2},
-  sum_i R f g b1 b2 -> @sum_i X Y Z R g f (swap b1) (swap b2).
-Proof.
-  unfold sum_i. intros. destruct b1, b2; assumption.
-Qed.
+Definition compR {X Y Z} (R: Y -> Y -> Z) (f: X -> Y) y y' := R (f y) (f y').
+Infix "⨀" := compR (at level 79).
 
 (* Inverts a  *)
 Definition invF {X Y} (f: X -> Y) (y: Y) := exists x, f x = y.

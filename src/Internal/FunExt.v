@@ -1,7 +1,9 @@
+(* begin hide *)
 From Coq.Program Require Import Basics Combinators.
-
+Require Import Setoid.
 Add LoadPath "src".
 From Internal Require Import Aux.
+(* end hide *)
 
 (** Extensionally equivalent predicates *)
 Definition extP {X} P Q := forall x: X, P x <-> Q x.
@@ -24,11 +26,11 @@ Qed.
 
 (* ...  *)
 
-Lemma respects_swap {X Y Z P} :
+Lemma respects_swap {X Y Z R} :
   forall (f: X -> Z) (g: Y -> Z) h,
-    respects (sum_i P f g) h
-      -> respects (sum_i P g f) (compose h swap).
+    respects (R ⨀ (f ⨁ g)) h
+      -> respects (R ⨀ (g ⨁ f)) (h ∘ swap).
 Proof.
-  unfold respects.
-  intros. destruct x, x'; unfold compose; simpl; apply H; apply (sum_i_sym H0).
+  unfold respects. unfold compR, sumF. 
+  intros. destruct x, x'; unfold compose; simpl; apply H; assumption.
 Qed.

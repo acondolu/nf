@@ -34,19 +34,24 @@ Definition Aeq {X Y} f g :=
   (forall x: X, exists y, f x == g y)
   /\ forall y: Y, exists x, f x == g y.
 
+Lemma And_eq2 {a a' b b'}:
+  (a <-> a') -> (b <-> b') -> (a /\ b) <-> (a' /\ b').
+Proof. tauto. Qed.
+
 (* Temporary unfolding lemma for eeq. 
    It will be improved in eeq_unfold. *)
 Local Lemma eeq_def : forall x y, eeq x y <->
   match x, y with S A p h X f, S A' p' h' X' f'
     => Aeq f f'
-    /\ eeq_boolean (sum_i eeq h h')
+    /\ eeq_boolean (eeq ⨀ (h ⨁ h'))
         (map inl p) (map inr p')
 end.
 Proof.
   apply wf_two_ind.
   destruct x1, x2. intros.
   unfold eeq at 1. unfold eeq' at 1. rewrite Fix_iff. fold eeq'.
-  - unfold Aeq. unfold sum_i. tauto.
+  - rewrite<- and_assoc. apply And_eq2. apply iff_refl. apply eeq_boolean_ext.
+    unfold compR, sumF, extR. destruct x, y; apply iff_refl.
   - intros. destruct x. destruct s. destruct s0.
     apply And_eq3.
     -- split; intros. destruct (H1 x). exists x0. rewrite<- H0. assumption.
@@ -126,13 +131,13 @@ Definition Qeq := eeq_boolean eeq.
 Lemma eeq_boolean_qeq:
   forall {X Y p p'} {h: X -> set} {h': Y -> set},
     eeq_boolean
-      (sum_i eeq h h')
+      (eeq ⨀ (h ⨁ h'))
         (map inl p) (map inr p')
     <->
     Qeq (map h p) (map h' p').
 Proof.
   intros. unfold Qeq, eeq_boolean. split; intros.
-  - specialize H with (compose P (h <+> h')).
+  - specialize H with (compose P (h ⨁ h')).
     repeat rewrite map_compose in H.
     repeat rewrite compose_assoc in H.
     rewrite<- map_compose in H.
@@ -140,7 +145,7 @@ Proof.
     rewrite<- map_compose in H.
     rewrite map_compose_inr in H.
     apply H. unfold respects in *. intros.
-    destruct x, x'; unfold compose, sum_funs; apply H0; apply H1.
+    destruct x, x'; unfold compose, sumF; apply H0; apply H1.
   - pose (invert_sum P (compose eeq h) (compose eeq h')) as g.
     specialize H with g.
     cut (respects eeq g).

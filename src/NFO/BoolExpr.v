@@ -1,6 +1,6 @@
 (* begin hide *)
-Require Import Setoid.
 From Coq.Program Require Import Basics Combinators.
+Require Import Setoid.
 Add LoadPath "src".
 From Internal Require Import Aux FunExt.
 (* end hide *)
@@ -20,7 +20,7 @@ Fixpoint eval (e: boolean) := match e with
   | Not e => ~ eval e
   | Or e e' => eval e \/ eval e'
 end.
-Notation "⟦ X ⟧" := (eval X).
+Notation "⟦ e ⟧" := (eval e).
 
 (** Maps the atoms in a boolean expression *)
 Fixpoint map {X Y} (f: X -> Y) (e: boolean) : boolean :=
@@ -80,7 +80,7 @@ Qed.
 (** ** Rexflexivity *)
 Lemma eeq_boolean_refl {X Y} {f: X -> Y} {R: Y -> Y -> Prop} {e}:
     (forall x, R (f x) (f x))
-      -> eeq_boolean (sum_i R f f) (map inl e) (map inr e).
+      -> eeq_boolean (R ⨀ (f ⨁ f)) (map inl e) (map inr e).
 Proof.
   unfold eeq_boolean. intros.
   induction e; simpl; try tauto; eauto.
@@ -89,9 +89,9 @@ Qed.
 Hint Resolve eeq_boolean_refl : Bool.
 
 (** ** Symmetry *)
-Lemma eeq_boolean_sym {X Y Z R f g e e'} :
-  eeq_boolean (@sum_i X Y Z R f g) (map inl e) (map inr e')
-    -> eeq_boolean (sum_i R g f) (map inl e') (map inr e).
+Lemma eeq_boolean_sym {X Y Z R} {f: X -> Z} {g: Y -> Z} {e e'} :
+  eeq_boolean (R ⨀ (f ⨁ g)) (map inl e) (map inr e')
+    -> eeq_boolean (R ⨀ (g ⨁ f)) (map inl e') (map inr e).
 Proof.
   intros. unfold eeq_boolean in *. intros.
   specialize H with (P ∘ swap).
@@ -107,11 +107,11 @@ Qed.
 
 (** Auxiliary lemmas on mapping and composing with projections. *)
 Lemma map_compose_inl {X Y Z} {f: X -> Z} {g: Y -> Z} {e}:
-  map ((f <+> g) ∘ inl) e = map f e.
+  map ((f ⨁ g) ∘ inl) e = map f e.
 Proof. induction e; simpl; auto. Qed.
 
 Lemma map_compose_inr {X Y Z} {f: X -> Z} {g: Y -> Z} {e}:
-  map ((f <+> g) ∘ inr) e = map g e.
+  map ((f ⨁ g) ∘ inr) e = map g e.
 Proof. induction e; simpl; auto. Qed.
 
 (** ** Transitivity
@@ -122,9 +122,9 @@ Lemma eeq_boolean_trans {X Y Z W} {h h' h''}
   {P : W -> W -> Prop}
   :  (forall a b, P a b -> P b a)
   -> (forall a b c, inv3 h h' h'' a -> inv3 h h' h'' b -> inv3 h h' h'' c -> P a b -> P b c -> P a c)
-  -> eeq_boolean (sum_i P h h') (map inl p) (map inr p')
-  -> eeq_boolean (sum_i P h' h'') (map inl p') (map inr p'')
-  -> eeq_boolean (sum_i P h h'') (map inl p) (map inr p'').
+  -> eeq_boolean (P ⨀ (h ⨁ h')) (map inl p) (map inr p')
+  -> eeq_boolean (P ⨀ (h' ⨁ h'')) (map inl p') (map inr p'')
+  -> eeq_boolean (P ⨀ (h ⨁ h'')) (map inl p) (map inr p'').
 Proof.
   Ltac lr H3 x :=
     repeat destruct H3; [left | right]; exists x; split; eauto.
@@ -132,42 +132,42 @@ Proof.
   unfold eeq_boolean.
   intros.
   pose (invert_sum P0 (fun a b => P (h a) (h' b)) (fun a b => P (h' b) (h'' a))) as g.
-  specialize H with (P0 ∘ inl <+> g).
-  specialize H0 with (g <+> P0 ∘ inr).
+  specialize H with (P0 ∘ inl ⨁ g).
+  specialize H0 with (g ⨁ P0 ∘ inr).
   revert H H0.
   repeat rewrite map_compose.
   repeat rewrite map_compose_inl.
   repeat rewrite map_compose_inr.
   intros.
-  apply (fun A B => iff_trans (H A) (H0 B)); unfold respects; intros; destruct x; destruct x'; simpl sum_funs; unfold respects in H1; simpl in H2; unfold g; unfold compose; auto.
+  apply (fun A B => iff_trans (H A) (H0 B)); unfold respects; intros; destruct x; destruct x'; simpl sumF; unfold respects in H1; simpl in H2; unfold g; unfold compose; auto. unfold compR, sumF in H2.
   - split; intro.
   -- left. exists x. auto.
-  -- repeat destruct H3.
-      specialize H1 with (inl x) (inl x0). simpl sum_i in H1.
+  -- repeat destruct H3; unfold compR, sumF in H1.
+      specialize H1 with (inl x) (inl x0). 
       apply (fun X Y Z => H1 (trans _ _ _ X Y Z H2 (sym _ _ H4))); auto.
-      specialize H1 with (inl x) (inr x0). simpl sum_i in H1.
+      specialize H1 with (inl x) (inr x0).
       apply (fun X Y Z => H1 (trans _ _ _ X Y Z H2 H4)); auto.
   - split; intro.
-    -- repeat destruct H3.
-      specialize H1 with (inl x) (inl x0). simpl sum_i in H1.
+    -- repeat destruct H3; unfold compR, sumF in H2.
+      specialize H1 with (inl x) (inl x0).
       apply (fun X Y Z => H1 (trans _ _ _ X Y Z (sym _ _ H2) (sym _ _ H4))); auto.
-      specialize H1 with (inl x) (inr x0). simpl sum_i in H1.
+      specialize H1 with (inl x) (inr x0).
       apply (fun X Y Z => H1 (trans _ _ _ X Y Z (sym _ _ H2) H4)); auto.
     -- left. exists x. auto.
   - split; intro; lr H3 x.
   - split; intro; lr H3 x.
   - split; intro.
     -- repeat destruct H3.
-      specialize H1 with (inl x) (inr z). simpl sum_i in H1.
+      specialize H1 with (inl x) (inr z). unfold compR, sumF in H1.
       apply H1; eauto.
-      specialize H1 with (inr x) (inr z). simpl sum_i in H1.
+      specialize H1 with (inr x) (inr z). unfold compR, sumF in H1.
       apply H1; eauto.
     -- right. exists z. split; auto. 
   - split; intro.
   -- right. exists z. split; auto. 
   -- repeat destruct H3.
-     specialize H1 with (inl x) (inr z). simpl sum_i in H1.
+     specialize H1 with (inl x) (inr z). unfold compR, sumF in H1.
      apply H1; eauto.
-     specialize H1 with (inr x) (inr z). simpl sum_i in H1. 
+     specialize H1 with (inr x) (inr z). unfold compR, sumF in H1. 
      apply H1; eauto.
 Qed.

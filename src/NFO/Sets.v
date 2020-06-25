@@ -16,9 +16,9 @@ Proof.
 Qed.
 
 Lemma Ain_sums {X X'} {f: X -> set} {f': X' -> set} {x}:
-  Ain x (f <+> f') <-> (Ain x f) \/ (Ain x f').
+  Ain x (f ⨁ f') <-> (Ain x f) \/ (Ain x f').
 Proof.
-  setoid_rewrite Ain_sum. unfold compose, sum_funs. tauto.
+  setoid_rewrite Ain_sum. unfold compose, sumF. tauto.
 Qed.
 
 Lemma Ain_sigma {X} (f: X -> set) (P: set -> Prop) a:
@@ -34,7 +34,7 @@ Proof.
 Qed.
 
 Lemma Qin_sum_inl: forall X Y z (f: X -> set) (g: Y -> set) p,
-  Qin z (f <+> g) (map inl p) <-> Qin z f p.
+  Qin z (f ⨁ g) (map inl p) <-> Qin z f p.
 Proof.
   induction p; simpl.
   - tauto.
@@ -44,7 +44,7 @@ Proof.
 Qed.
 
 Lemma Qin_sum_inr: forall X Y z (f: X -> set) (g: Y -> set) p,
-  Qin z (f <+> g) (map inr p) <-> Qin z g p.
+  Qin z (f ⨁ g) (map inr p) <-> Qin z g p.
 Proof.
   induction p; simpl.
   - tauto.
@@ -109,7 +109,7 @@ Definition QXor B C :=
   match B, C with S A p h X f, S A' p' h' X' f' =>
   let A'' := sum A A' in
   let p'' := boolean_xor (map inl p) (map inr p') in
-  S A'' p'' (h <+> h') _ (AXor f f')
+  S A'' p'' (h ⨁ h') _ (AXor f f')
 end.
 
 Lemma AXor_ok {X X'} {f: X -> set} {f': X' -> set} {x}:
@@ -124,7 +124,7 @@ Proof.
 Qed.
 
 Lemma QXor_ok {X Y} {f: X -> set} {g: Y -> set} {z p q}:
-  Qin z (f <+> g)
+  Qin z (f ⨁ g)
     (boolean_xor (map inl p) (map inr q))
   <-> Xor (Qin z f p) (Qin z g q).
 Proof.

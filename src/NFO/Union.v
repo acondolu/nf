@@ -16,8 +16,8 @@ Definition aux {X Y Z: Type} (A2: X -> set) (Q1: Y -> set) (p1: boolean) (Q2: Z 
 Definition cup B C := 
   match B, C with S A p h X f, S A' p' h' X' f' =>
   let p'' := Or (map inl p) (map inr p') in
-  S _ p'' (h <+> h') _
-    ((select f (compose (aux f' h p h' p') f)) <+> (select f' (compose (aux f h' p' h p) f')))
+  S _ p'' (h ⨁ h') _
+    ((select f (compose (aux f' h p h' p') f)) ⨁ (select f' (compose (aux f h' p' h p) f')))
 end.
 
 

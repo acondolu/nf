@@ -116,15 +116,15 @@ Definition mk_low {X} f h := enum (fun k: { x: X & f (h x) } => h (projT1 k)).
 
 Lemma xxx {X Y} {p} {h: X -> _} {f: set -> Prop} (g: Y -> _):
   respects eeq f ->
-  Qin (mk_low f (h <+> g)) h p <-> eval (map f (map h p)).
+  Qin (mk_low f (h ⨁ g)) h p <-> eval (map f (map h p)).
 Proof.
   intro. induction p; simpl; simpl map; simpl Qin; simpl eval.
   - tauto.
   - unfold mk_low, enum. rewrite iin_unfold. simpl. unfold Ain.
     rewrite xor_false_r. split; intros.
     destruct H0, x0, x0.
-    simpl sum_funs in *. apply (H (h x0) (h x) H0). assumption.
-    simpl sum_funs in *. apply (H (g y) (h x) H0). assumption.
+    simpl sumF in *. apply (H (h x0) (h x) H0). assumption.
+    simpl sumF in *. apply (H (g y) (h x) H0). assumption.
     exists (existT _ (inl x) H0). eauto with Eeq.
   - rewrite IHp. tauto.
   - rewrite IHp1. rewrite IHp2. tauto.
@@ -132,15 +132,15 @@ Qed.
 
 Lemma xxx_r {X Y} {p} {h: X -> _} {f: set -> Prop} (g: Y -> _):
   respects eeq f ->
-  Qin (mk_low f (g <+> h)) h p <-> eval (map f (map h p)).
+  Qin (mk_low f (g ⨁ h)) h p <-> eval (map f (map h p)).
 Proof.
   intro. induction p; simpl; simpl map; simpl Qin; simpl eval.
   - tauto.
   - unfold mk_low, enum. rewrite iin_unfold. simpl. unfold Ain.
     rewrite xor_false_r. split; intros.
     destruct H0, x0, x0.
-    simpl sum_funs in *. apply (H (g y) (h x) H0). assumption.
-    simpl sum_funs in *. apply (H (h x0) (h x) H0). assumption.
+    simpl sumF in *. apply (H (g y) (h x) H0). assumption.
+    simpl sumF in *. apply (H (h x0) (h x) H0). assumption.
     exists (existT _ (inr x) H0). eauto with Eeq.
   - rewrite IHp. tauto.
   - rewrite IHp1. rewrite IHp2. tauto.
