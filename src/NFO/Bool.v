@@ -6,7 +6,7 @@ Add LoadPath "src".
 From Internal Require Import Aux FunExt.
 
 
-(* A boolean expression with atoms of type X *)
+(** A boolean expression with atoms of type X *)
 Inductive boolean X :=
   | Bot : boolean X
   | Atom : X -> boolean X
@@ -14,7 +14,7 @@ Inductive boolean X :=
   | Or : boolean X -> boolean X -> boolean X
 .
 
-(* Evaluate a boolean expression of Props to a Prop *)
+(** Evaluate a boolean expression of Props to a Prop *)
 Fixpoint eval (p: boolean Prop) := match p with
   | Atom _ a => a
   | Bot _ => False
@@ -22,7 +22,7 @@ Fixpoint eval (p: boolean Prop) := match p with
   | Or _ p1 p2 => eval p1 \/ eval p2
 end.
 
-(* Maps the atoms in a boolean expression *)
+(** Maps the atoms in a boolean expression *)
 Fixpoint boolean_map {X Y} (f: X -> Y) (p: boolean X) : boolean Y :=
 match p with
   | Atom _ a => Atom _ (f a)
@@ -31,14 +31,15 @@ match p with
   | Or _ p1 p2 => Or _ (boolean_map f p1) (boolean_map f p2)
 end.
 
-Lemma boolean_map_extP {X} {p: boolean X} f g:
-  extP f g -> eval (boolean_map f p) <-> eval (boolean_map g p).
+Lemma boolean_map_extP {X} {p: boolean X} P Q:
+  extP P Q -> eval (boolean_map P p) <-> eval (boolean_map Q p).
 Proof.
   unfold extP. intro E. induction p; simpl; eauto. tauto.
   rewrite IHp. tauto.
   rewrite IHp1. rewrite IHp2. tauto.
 Qed.
 
+(** The composition of maps on boolean expressions *)
 Lemma boolean_map_compose {X Y Z f g p}:
   boolean_map f (boolean_map g p) = boolean_map (@compose X Y Z f g) p.
 Proof.
@@ -47,14 +48,14 @@ Proof.
   - rewrite IHp1. rewrite IHp2. auto.
 Qed.
 
-(* EEQ PROP *)
+(** Extensional equality of boolean expressions *)
 
 Definition eeq_boolean {X} R (p1 p2: boolean X) : Prop :=
-  forall f, respects R f ->
-    eval (boolean_map f p1) <-> eval (boolean_map f p2).
+  forall P, respects R P ->
+    eval (boolean_map P p1) <-> eval (boolean_map P p2).
 
-Lemma eeq_boolean_ext {X} (p1 p2: boolean X) R1 R2 :
-  extP2 R1 R2 -> eeq_boolean R1 p1 p2 <-> eeq_boolean R2 p1 p2.
+Lemma eeq_boolean_ext {X} {R1 R2: X -> X -> Prop} :
+  extP2 R1 R2 -> extP2 (eeq_boolean R1) (eeq_boolean R2).
 Proof.
   unfold eeq_boolean. split; intros; apply H0;
   apply (respects_ext _ _ H); assumption.
@@ -117,7 +118,7 @@ Lemma eeq_boolean_sym {X Y Z R p1 p2 h1 h2} :
       (boolean_map inl p2) (boolean_map inr p1).
 Proof.
   intros. unfold eeq_boolean in *. intros.
-  pose proof (H (compose f swap)).
+  pose proof (H (compose P swap)).
   repeat rewrite boolean_map_compose in H1.
   repeat rewrite compose_assoc in H1.
   rewrite comp_swap_inl in H1.
@@ -137,16 +138,6 @@ Definition sum_funs {X Y Z} f g : X + Y -> Z := fun s =>
   | inl x => f x
   | inr y => g y
   end.
-
-(* Lemma compose_sum_inl {X Y Z} {f: X -> Z} {g: Y -> Z} :
-  ext (compose (sum_funs f g) inl) f.
-Proof. unfold ext. intros. apply eq_refl. Qed.
-Hint Resolve compose_sum_inl : Bool.
-
-Lemma compose_sum_inr {X Y Z} {f: X -> Z} {g: Y -> Z} :
-  ext (compose (sum_funs f g) inr) g.
-Proof. intro x. apply eq_refl. Qed.
-Hint Resolve compose_sum_inr : Bool. *)
 
 Lemma boolean_map_compose_inl {X Y Z} {f: X -> Z} {g: Y -> Z} {a}:
   boolean_map (compose (sum_funs f g) inl) a = boolean_map f a.
@@ -174,9 +165,9 @@ Proof.
   intros sym trans.
   unfold eeq_boolean.
   intros.
-  pose (invert_sum f (fun a b => P (h a) (h' b)) (fun a b => P (h' b) (h'' a))) as g.
-  specialize H with (sum_funs (compose f inl) g).
-  specialize H0 with (sum_funs g (compose f inr)).
+  pose (invert_sum P0 (fun a b => P (h a) (h' b)) (fun a b => P (h' b) (h'' a))) as g.
+  specialize H with (sum_funs (compose P0 inl) g).
+  specialize H0 with (sum_funs g (compose P0 inr)).
   revert H H0.
   repeat rewrite boolean_map_compose.
   repeat rewrite boolean_map_compose_inl.

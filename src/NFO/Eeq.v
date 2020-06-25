@@ -132,7 +132,7 @@ Lemma eeq_boolean_qeq:
     Qeq (boolean_map h p) (boolean_map h' p').
 Proof.
   intros. unfold Qeq, eeq_boolean. split; intros.
-  - specialize H with (compose f (sum_funs h h')).
+  - specialize H with (compose P (sum_funs h h')).
     repeat rewrite boolean_map_compose in H.
     repeat rewrite compose_assoc in H.
     rewrite<- boolean_map_compose in H.
@@ -141,12 +141,12 @@ Proof.
     rewrite boolean_map_compose_inr in H.
     apply H. unfold respects in *. intros.
     destruct x, x'; unfold compose, sum_funs; apply H0; apply H1.
-  - pose (invert_sum f (compose eeq h) (compose eeq h')) as g.
+  - pose (invert_sum P (compose eeq h) (compose eeq h')) as g.
     specialize H with g.
     cut (respects eeq g).
   -- intro. repeat rewrite boolean_map_compose.
-    rewrite (boolean_map_extP (compose f inl) (compose g h)).
-    rewrite (boolean_map_extP (compose f inr) (compose g h')).
+    rewrite (boolean_map_extP (compose P inl) (compose g h)).
+    rewrite (boolean_map_extP (compose P inr) (compose g h')).
     repeat rewrite<- boolean_map_compose. apply (H H1).
     --- unfold FunExt.extP. unfold compose.
         intros. unfold g. split; intro.

@@ -151,7 +151,7 @@ Lemma Qin_Qeq: forall {X Y} {p p'} {h: X -> _} {h': Y -> _},
   -> Qeq (boolean_map h p) (boolean_map h' p').
 Proof.
   intros. unfold Qeq, eeq_boolean. intros.
-  pose (mk_low f h) as g.
+  pose (mk_low P h) as g.
   pose proof (H g).
   rewrite<- (xxx h'). rewrite<- (xxx_r h). apply H. auto. auto.
 Qed.
