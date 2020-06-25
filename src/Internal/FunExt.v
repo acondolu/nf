@@ -1,15 +1,16 @@
-(* Extensionally equal functions *)
+(** Extensionally equal functions *)
 Definition ext {X Y} f g :=
   forall x: X, f x = (g x : Y).
 
-(* Extensionally equivalent predicates *)
+(** Extensionally equivalent predicates *)
 Definition extP {X} P Q :=
   forall x: X, P x <-> Q x.
 
-(* Extensionally equivalent binary predicates *)
+(** Extensionally equivalent binary predicates *)
 Definition extP2 {X Y} P Q :=
   forall x: X, forall y: Y, P x y <-> Q x y.
 
+(* TODO: rename 'respects' to 'morphism'? P maps R to iff *)
 Definition respects {X} (R: X -> X -> Prop) (P: X -> Prop) :=
   forall x x', R x x' -> (P x <-> P x').
 
