@@ -8,11 +8,7 @@ From Coq.Program Require Import Basics Combinators.
 Definition select {X Y} (f: X -> Y) (P: X -> Prop) : {x: X & P x} -> Y
   := fun x => f (projT1 x).
 
-Lemma And_eq3 {a a' b b' c c'}:
-  (a <-> a') -> (b <-> b') -> (c <-> c') -> (a /\ b /\ c) <-> (a' /\ b' /\ c').
-Proof. tauto. Qed.
-
-Lemma And_eq2 {a a' b b'}:
+Lemma and_morph {a a' b b'}:
   (a <-> a') -> (b <-> b') -> (a /\ b) <-> (a' /\ b').
 Proof. tauto. Qed.
 

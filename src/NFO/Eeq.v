@@ -1,26 +1,28 @@
-Require Import Coq.Program.Basics.
-Require Import Coq.Program.Combinators.
+(* begin hide *)
+From Coq.Program Require Import Basics Combinators.
 Require Import Setoid Morphisms.
-
 Add LoadPath "src".
 From Internal Require Import Aux FunExt.
 From NFO Require Import BoolExpr Model Wff.
+(* end hide *)
 
+(** * Equality on NFO sets *)
+
+(** A  *)
 Definition eeq' : set * set -> Prop.
 refine ( Fix wf_two (fun _ => Prop) (
   fun x rec => (
     match x as x0 return (x = x0 -> Prop) with
     | (S A p h X f, S A' p' h' X' f') => fun eqx =>
-          (forall x, exists y, rec (f x, f' y) _)
-          /\ (forall y, exists x, rec (f x, f' y) _)
+          ((forall x, exists y, rec (f x, f' y) _)
+          /\ (forall y, exists x, rec (f x, f' y) _))
           /\ let w (i j: A + A') := match i, j with
             | inl i', inl j' => rec (h i', h j') _
             | inl i', inr j' => rec (h i', h' j') _
             | inr i', inl j' => rec (h' i', h j') _
             | inr i', inr j' => rec (h' i', h' j') _
             end in 
-            eeq_boolean w
-              (map inl p) (map inr p')
+            eeq_boolean w (map inl p) (map inr p')
     end) eq_refl
  ))
  ; rewrite eqx; eauto with Wff.
@@ -34,26 +36,21 @@ Definition Aeq {X Y} f g :=
   (forall x: X, exists y, f x == g y)
   /\ forall y: Y, exists x, f x == g y.
 
-Lemma And_eq2 {a a' b b'}:
-  (a <-> a') -> (b <-> b') -> (a /\ b) <-> (a' /\ b').
-Proof. tauto. Qed.
-
 (* Temporary unfolding lemma for eeq. 
    It will be improved in eeq_unfold. *)
-Local Lemma eeq_def : forall x y, eeq x y <->
-  match x, y with S A p h X f, S A' p' h' X' f'
-    => Aeq f f'
-    /\ eeq_boolean (eeq ⨀ (h ⨁ h'))
-        (map inl p) (map inr p')
+Local Lemma eeq_def : forall x y,
+  eeq x y <-> match x, y with S A p h X f, S A' p' h' X' f' =>
+    Aeq f f'
+      /\
+        eeq_boolean (eeq ⨀ (h ⨁ h')) (map inl p) (map inr p')
 end.
 Proof.
   apply wf_two_ind.
   destruct x1, x2. intros.
   unfold eeq at 1. unfold eeq' at 1. rewrite Fix_iff. fold eeq'.
-  - rewrite<- and_assoc. apply And_eq2. apply iff_refl. apply eeq_boolean_ext.
+  - apply and_morph. apply iff_refl. apply eeq_boolean_ext.
     unfold compR, sumF, extR. destruct x, y; apply iff_refl.
-  - intros. destruct x. destruct s. destruct s0.
-    apply And_eq3.
+  - intros. destruct x, s, s0. apply and_morph. apply and_morph.
     -- split; intros. destruct (H1 x). exists x0. rewrite<- H0. assumption.
         destruct (H1 x). exists x0. rewrite H0. assumption.
     -- split; intros. destruct (H1 y). exists x. rewrite<- H0. assumption.
