@@ -2,7 +2,7 @@ From Coq.Program Require Import Basics Combinators.
 
 Add LoadPath "src".
 From Internal Require Import Aux FunExt.
-From NFO Require Import Xor Bool Model Eeq Iin.
+From NFO Require Import Xor BoolExpr Model Eeq Iin.
 
 (* Axuliary *)
 Definition enum {X} f := S False Bot (False_rect _) X f.
@@ -16,7 +16,7 @@ Proof.
 Qed.
 
 Lemma Ain_sums {X X'} {f: X -> set} {f': X' -> set} {x}:
-  Ain x (sum_funs f f') <-> (Ain x f) \/ (Ain x f').
+  Ain x (f <+> f') <-> (Ain x f) \/ (Ain x f').
 Proof.
   setoid_rewrite Ain_sum. unfold compose, sum_funs. tauto.
 Qed.
@@ -34,7 +34,7 @@ Proof.
 Qed.
 
 Lemma Qin_sum_inl: forall X Y z (f: X -> set) (g: Y -> set) p,
-  Qin z (sum_funs f g) (boolean_map inl p) <-> Qin z f p.
+  Qin z (f <+> g) (map inl p) <-> Qin z f p.
 Proof.
   induction p; simpl.
   - tauto.
@@ -44,7 +44,7 @@ Proof.
 Qed.
 
 Lemma Qin_sum_inr: forall X Y z (f: X -> set) (g: Y -> set) p,
-  Qin z (sum_funs f g) (boolean_map inr p) <-> Qin z g p.
+  Qin z (f <+> g) (map inr p) <-> Qin z g p.
 Proof.
   induction p; simpl.
   - tauto.
@@ -108,9 +108,8 @@ Definition AXor {X Y} (f: X -> set) (g: Y -> set)
 Definition QXor B C := 
   match B, C with S A p h X f, S A' p' h' X' f' =>
   let A'' := sum A A' in
-  let h'' := sum_funs h h' in
-  let p'' := boolean_xor (boolean_map inl p) (boolean_map inr p') in
-  S A'' p'' h'' _ (AXor f f')
+  let p'' := boolean_xor (map inl p) (map inr p') in
+  S A'' p'' (h <+> h') _ (AXor f f')
 end.
 
 Lemma AXor_ok {X X'} {f: X -> set} {f': X' -> set} {x}:
@@ -125,8 +124,8 @@ Proof.
 Qed.
 
 Lemma QXor_ok {X Y} {f: X -> set} {g: Y -> set} {z p q}:
-  Qin z (sum_funs f g)
-    (boolean_xor (boolean_map inl p) (boolean_map inr q))
+  Qin z (f <+> g)
+    (boolean_xor (map inl p) (map inr q))
   <-> Xor (Qin z f p) (Qin z g q).
 Proof.
   unfold boolean_xor. simpl Qin.

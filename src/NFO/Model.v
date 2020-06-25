@@ -1,5 +1,5 @@
 Add LoadPath "src".
-From NFO Require Import Bool.
+From NFO Require Import BoolExpr.
 
 Inductive set :=
   S : forall A (p : @boolean A) (h: A -> set) X (f: X -> set), set.

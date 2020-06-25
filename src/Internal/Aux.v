@@ -1,7 +1,9 @@
-Require Import Coq.Program.Basics.
-Require Import Coq.Program.Combinators.
+From Coq.Program Require Import Basics Combinators.
 
-(* This module contains some auxiliary functions *)
+(** * Auxiliary Aux
+
+  This module contains some auxiliary functions
+*)
 
 Definition select {X Y} (f: X -> Y) (P: X -> Prop) : {x: X & P x} -> Y
   := fun x => f (projT1 x).
@@ -44,10 +46,26 @@ Definition sum_funs {X Y Z} f g : X + Y -> Z := fun s =>
   | inl x => f x
   | inr y => g y
   end.
+Infix "<+>" := sum_funs (at level 80, right associativity).
 
 Definition invert_sum {X Y Z} P R S (z : Z) := 
   (exists x : X, P (inl x) /\ R x z)
   \/ exists y : Y, P (inr y) /\ S y z.
+
+(* SUM_I *)
+Definition sum_i {X Y Z} (R: Z -> Z -> Prop) f g (i j: X + Y) := 
+match i, j with
+  | inl x, inl x' => R (f x) (f x')
+  | inl x, inr y => R (f x) (g y)
+  | inr y, inl x => R (g y) (f x)
+  | inr y, inr y' => R (g y) (g y')
+end.
+
+Lemma sum_i_sym: forall {X Y Z R f g b1 b2},
+  sum_i R f g b1 b2 -> @sum_i X Y Z R g f (swap b1) (swap b2).
+Proof.
+  unfold sum_i. intros. destruct b1, b2; assumption.
+Qed.
 
 (* Inverts a  *)
 Definition invF {X Y} (f: X -> Y) (y: Y) := exists x, f x = y.

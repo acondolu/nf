@@ -1,0 +1,173 @@
+(* begin hide *)
+Require Import Setoid.
+From Coq.Program Require Import Basics Combinators.
+Add LoadPath "src".
+From Internal Require Import Aux FunExt.
+(* end hide *)
+
+(** A boolean expression with atoms of type X *)
+Inductive boolean {X} :=
+  | Bot : boolean
+  | Atom : X -> boolean
+  | Not : boolean -> boolean
+  | Or : boolean -> boolean -> boolean
+.
+
+(** Evaluate a boolean expression of Props to a Prop *)
+Fixpoint eval (e: boolean) := match e with
+  | Atom p => p
+  | Bot => False
+  | Not e => ~ eval e
+  | Or e e' => eval e \/ eval e'
+end.
+Notation "⟦ X ⟧" := (eval X).
+
+(** Maps the atoms in a boolean expression *)
+Fixpoint map {X Y} (f: X -> Y) (e: boolean) : boolean :=
+match e with
+  | Atom a => Atom (f a)
+  | Bot => Bot
+  | Not e => Not (map f e)
+  | Or e e' => Or (map f e) (map f e')
+end.
+
+(** Evaluating a boolean expression with respect to equivalent predicates
+    yields equivalent results.
+*)
+Lemma map_extP {X} {e: @boolean X} P Q:
+  extP P Q -> ⟦map P e⟧ <-> ⟦map Q e⟧.
+Proof.
+  unfold extP. intro E. induction e; simpl; eauto. tauto.
+  rewrite IHe. tauto.
+  rewrite IHe1. rewrite IHe2. tauto.
+Qed.
+
+(** The composition of maps on boolean expressions *)
+Lemma map_compose {X Y Z} {f: Y -> Z} {g: X -> Y} {e}:
+  map f (map g e) = map (f ∘ g) e.
+Proof.
+  induction e; simpl; auto.
+  - rewrite IHe. auto.
+  - rewrite IHe1. rewrite IHe2. auto.
+Qed.
+
+(** Extensional equality of boolean expressions *)
+
+(** Two boolean expressions are extensionally equal iff 
+    they evaluate to equivalent values with respect to every
+    truth assignment P. However, not every assignment is allowed.
+    Here we consider only only P's that respect the binary relation
+    R in input. R is supposed to characterize equality of atoms of 
+    type X. *)
+Definition eeq_boolean {X} (R: X -> X -> Prop) e e' : Prop :=
+  forall P, respects R P -> ⟦map P e⟧ <-> ⟦map P e'⟧.
+
+Lemma eeq_boolean_ext {X} {R R': X -> X -> Prop} :
+  extR R R' -> extR (eeq_boolean R) (eeq_boolean R').
+Proof.
+  unfold eeq_boolean. split; intros; apply H0;
+  apply (respects_ext _ _ H); assumption.
+Qed.
+
+(** * Equivalence
+
+    In this section, we prove that eeq_boolean is an equivalence relation.
+    Actually, we prove variations of the usual reflexivity, symmetry and
+    trasitivity. These variants are exactly what is needed to prove
+    that equality of NFO sets is an equivalence relation (see NFO.Eeq).
+*)
+
+(** ** Rexflexivity *)
+Lemma eeq_boolean_refl {X Y} {f: X -> Y} {R: Y -> Y -> Prop} {e}:
+    (forall x, R (f x) (f x))
+      -> eeq_boolean (sum_i R f f) (map inl e) (map inr e).
+Proof.
+  unfold eeq_boolean. intros.
+  induction e; simpl; try tauto; eauto.
+  apply H0. apply H.
+Qed.
+Hint Resolve eeq_boolean_refl : Bool.
+
+(** ** Symmetry *)
+Lemma eeq_boolean_sym {X Y Z R f g e e'} :
+  eeq_boolean (@sum_i X Y Z R f g) (map inl e) (map inr e')
+    -> eeq_boolean (sum_i R g f) (map inl e') (map inr e).
+Proof.
+  intros. unfold eeq_boolean in *. intros.
+  specialize H with (P ∘ swap).
+  repeat rewrite map_compose in H.
+  repeat rewrite compose_assoc in H.
+  rewrite comp_swap_inl in H.
+  rewrite comp_swap_inr in H.
+  repeat rewrite<- compose_assoc in H.
+  repeat rewrite<- map_compose in H.
+  apply iff_sym. apply H.
+  apply respects_swap. assumption.
+Qed.
+
+(** Auxiliary lemmas on mapping and composing with projections. *)
+Lemma map_compose_inl {X Y Z} {f: X -> Z} {g: Y -> Z} {e}:
+  map ((f <+> g) ∘ inl) e = map f e.
+Proof. induction e; simpl; auto. Qed.
+
+Lemma map_compose_inr {X Y Z} {f: X -> Z} {g: Y -> Z} {e}:
+  map ((f <+> g) ∘ inr) e = map g e.
+Proof. induction e; simpl; auto. Qed.
+
+(** ** Transitivity
+
+TODO: This needs some love... *)
+Lemma eeq_boolean_trans {X Y Z W} {h h' h''}
+  {p : @boolean X} {p' : @boolean Y} {p'' : @boolean Z}
+  {P : W -> W -> Prop}
+  :  (forall a b, P a b -> P b a)
+  -> (forall a b c, inv3 h h' h'' a -> inv3 h h' h'' b -> inv3 h h' h'' c -> P a b -> P b c -> P a c)
+  -> eeq_boolean (sum_i P h h') (map inl p) (map inr p')
+  -> eeq_boolean (sum_i P h' h'') (map inl p') (map inr p'')
+  -> eeq_boolean (sum_i P h h'') (map inl p) (map inr p'').
+Proof.
+  Ltac lr H3 x :=
+    repeat destruct H3; [left | right]; exists x; split; eauto.
+  intros sym trans.
+  unfold eeq_boolean.
+  intros.
+  pose (invert_sum P0 (fun a b => P (h a) (h' b)) (fun a b => P (h' b) (h'' a))) as g.
+  specialize H with (P0 ∘ inl <+> g).
+  specialize H0 with (g <+> P0 ∘ inr).
+  revert H H0.
+  repeat rewrite map_compose.
+  repeat rewrite map_compose_inl.
+  repeat rewrite map_compose_inr.
+  intros.
+  apply (fun A B => iff_trans (H A) (H0 B)); unfold respects; intros; destruct x; destruct x'; simpl sum_funs; unfold respects in H1; simpl in H2; unfold g; unfold compose; auto.
+  - split; intro.
+  -- left. exists x. auto.
+  -- repeat destruct H3.
+      specialize H1 with (inl x) (inl x0). simpl sum_i in H1.
+      apply (fun X Y Z => H1 (trans _ _ _ X Y Z H2 (sym _ _ H4))); auto.
+      specialize H1 with (inl x) (inr x0). simpl sum_i in H1.
+      apply (fun X Y Z => H1 (trans _ _ _ X Y Z H2 H4)); auto.
+  - split; intro.
+    -- repeat destruct H3.
+      specialize H1 with (inl x) (inl x0). simpl sum_i in H1.
+      apply (fun X Y Z => H1 (trans _ _ _ X Y Z (sym _ _ H2) (sym _ _ H4))); auto.
+      specialize H1 with (inl x) (inr x0). simpl sum_i in H1.
+      apply (fun X Y Z => H1 (trans _ _ _ X Y Z (sym _ _ H2) H4)); auto.
+    -- left. exists x. auto.
+  - split; intro; lr H3 x.
+  - split; intro; lr H3 x.
+  - split; intro.
+    -- repeat destruct H3.
+      specialize H1 with (inl x) (inr z). simpl sum_i in H1.
+      apply H1; eauto.
+      specialize H1 with (inr x) (inr z). simpl sum_i in H1.
+      apply H1; eauto.
+    -- right. exists z. split; auto. 
+  - split; intro.
+  -- right. exists z. split; auto. 
+  -- repeat destruct H3.
+     specialize H1 with (inl x) (inr z). simpl sum_i in H1.
+     apply H1; eauto.
+     specialize H1 with (inr x) (inr z). simpl sum_i in H1. 
+     apply H1; eauto.
+Qed.

@@ -1,6 +1,6 @@
 Add LoadPath "src".
 From Internal Require Import Aux FunExt.
-From NFO Require Import Bool Model Wff Eeq Iin Sets Xor Morphs.
+From NFO Require Import BoolExpr Model Wff Eeq Iin Sets Xor Morphs.
 
 (* This file needs cleaning!!! *)
 

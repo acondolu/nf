@@ -4,7 +4,7 @@ Require Import Setoid Morphisms.
 
 Add LoadPath "src".
 From Internal Require Import Aux FunExt.
-From NFO Require Import Bool Model Wff.
+From NFO Require Import BoolExpr Model Wff.
 
 Definition eeq' : set * set -> Prop.
 refine ( Fix wf_two (fun _ => Prop) (
@@ -20,7 +20,7 @@ refine ( Fix wf_two (fun _ => Prop) (
             | inr i', inr j' => rec (h' i', h' j') _
             end in 
             eeq_boolean w
-              (boolean_map inl p) (boolean_map inr p')
+              (map inl p) (map inr p')
     end) eq_refl
  ))
  ; rewrite eqx; eauto with Wff.
@@ -40,7 +40,7 @@ Local Lemma eeq_def : forall x y, eeq x y <->
   match x, y with S A p h X f, S A' p' h' X' f'
     => Aeq f f'
     /\ eeq_boolean (sum_i eeq h h')
-        (boolean_map inl p) (boolean_map inr p')
+        (map inl p) (map inr p')
 end.
 Proof.
   apply wf_two_ind.
@@ -53,7 +53,7 @@ Proof.
         destruct (H1 x). exists x0. rewrite H0. assumption.
     -- split; intros. destruct (H1 y). exists x. rewrite<- H0. assumption.
     destruct (H1 y). exists x. rewrite H0. assumption.
-    -- apply eeq_boolean_ext. unfold FunExt.extP2. intros.
+    -- apply eeq_boolean_ext. unfold FunExt.extR. intros.
        destruct x, y; repeat rewrite H0; tauto.
 Qed.
 
@@ -127,27 +127,27 @@ Lemma eeq_boolean_qeq:
   forall {X Y p p'} {h: X -> set} {h': Y -> set},
     eeq_boolean
       (sum_i eeq h h')
-        (boolean_map inl p) (boolean_map inr p')
+        (map inl p) (map inr p')
     <->
-    Qeq (boolean_map h p) (boolean_map h' p').
+    Qeq (map h p) (map h' p').
 Proof.
   intros. unfold Qeq, eeq_boolean. split; intros.
-  - specialize H with (compose P (sum_funs h h')).
-    repeat rewrite boolean_map_compose in H.
+  - specialize H with (compose P (h <+> h')).
+    repeat rewrite map_compose in H.
     repeat rewrite compose_assoc in H.
-    rewrite<- boolean_map_compose in H.
-    rewrite boolean_map_compose_inl in H.
-    rewrite<- boolean_map_compose in H.
-    rewrite boolean_map_compose_inr in H.
+    rewrite<- map_compose in H.
+    rewrite map_compose_inl in H.
+    rewrite<- map_compose in H.
+    rewrite map_compose_inr in H.
     apply H. unfold respects in *. intros.
     destruct x, x'; unfold compose, sum_funs; apply H0; apply H1.
   - pose (invert_sum P (compose eeq h) (compose eeq h')) as g.
     specialize H with g.
     cut (respects eeq g).
-  -- intro. repeat rewrite boolean_map_compose.
-    rewrite (boolean_map_extP (compose P inl) (compose g h)).
-    rewrite (boolean_map_extP (compose P inr) (compose g h')).
-    repeat rewrite<- boolean_map_compose. apply (H H1).
+  -- intro. repeat rewrite map_compose.
+    rewrite (map_extP (compose P inl) (compose g h)).
+    rewrite (map_extP (compose P inr) (compose g h')).
+    repeat rewrite<- map_compose. apply (H H1).
     --- unfold FunExt.extP. unfold compose.
         intros. unfold g. split; intro.
         right. exists x. split; auto. apply eeq_refl.
@@ -174,7 +174,7 @@ Lemma eeq_unfold {A p h X f A' p' h' X' f'}:
   <->
   Aeq f f'
     /\
-  Qeq (boolean_map h p) (boolean_map h' p')
+  Qeq (map h p) (map h' p')
 .
 Proof.
   rewrite<- eeq_boolean_qeq.

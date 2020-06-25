@@ -5,7 +5,7 @@ Require Export Setoid.
 
 Add LoadPath "src".
 From Internal Require Import FunExt Aux.
-From NFO Require Import Bool Model Wff Eeq Iin Sets Xor.
+From NFO Require Import BoolExpr Model Wff Eeq Iin Sets Xor.
 
 (* Aext *)
 
@@ -53,25 +53,25 @@ Proof.
       (exists a0, s == h0 a0 /\ iin (h0 a0) (S A p h X f))
       \/ (exists a1, s == h1 a1 /\ iin (h1 a1) (S A p h X f))
     ) as g.
-    repeat rewrite boolean_map_compose in H3.
-    cut (eval (boolean_map (Basics.compose g h0) p0) <-> (let w := fun a : A0 => iin (h0 a) (S A p h X f) in eval (boolean_map w p0))). intro.
-    cut (eval (boolean_map (Basics.compose g h1) p1) <-> (let w := fun a : A1 => iin (h1 a) (S A p h X f) in eval (boolean_map w p1))). intro.
+    repeat rewrite map_compose in H3.
+    cut (eval (map (Basics.compose g h0) p0) <-> (let w := fun a : A0 => iin (h0 a) (S A p h X f) in eval (map w p0))). intro.
+    cut (eval (map (Basics.compose g h1) p1) <-> (let w := fun a : A1 => iin (h1 a) (S A p h X f) in eval (map w p1))). intro.
     rewrite<- H4. rewrite<- H5. 
     cut (respects eeq g). 
-    -- repeat rewrite<- boolean_map_compose. apply H3.
+    -- repeat rewrite<- map_compose. apply H3.
     -- unfold respects. intros. unfold g. split; intro; repeat destruct H7.
       left. exists x0. split; eauto with Eeq.
       right. exists x0. split; eauto with Eeq.
       left. exists x0. split; eauto with Eeq.
       right. exists x0. split; eauto with Eeq.
-    -- apply boolean_map_extP. unfold FunExt.extP. intro a1.
+    -- apply map_extP. unfold FunExt.extP. intro a1.
        unfold Basics.compose. unfold g. split; intro. repeat destruct H5; auto.
        apply (fun K => proj2 (H1 (h0 x) (h1 a1) K (eeq_sym H5))).
        auto with Wff. assumption.
        apply (fun K => proj2 (H1 (h1 x) (h1 a1) K (eeq_sym H5))).
        auto with Wff. assumption.
        right. exists a1. split; eauto with Eeq.
-    -- apply boolean_map_extP. unfold FunExt.extP. intro a1.
+    -- apply map_extP. unfold FunExt.extP. intro a1.
        unfold Basics.compose. unfold g. split; intro. repeat destruct H4; auto.
        apply (fun K => proj2 (H1 (h0 a1) (h0 x) K H4)).
        auto with Wff. assumption.
@@ -79,7 +79,7 @@ Proof.
        auto with Wff. assumption.
        left. exists a1. split; eauto with Eeq.
   - apply eeq_Ain. rewrite eeq_unfold. rewrite eeq_unfold in H2; destruct H2. auto.
-  - apply boolean_map_extP. unfold FunExt.extP. intro a.
+  - apply map_extP. unfold FunExt.extP. intro a.
     apply (proj1 (H a (S A0 p0 h0 X0 f0) (S A1 p1 h1 X1 f1) H2)).
 Qed.
 
@@ -92,19 +92,19 @@ Qed.
 (* Qext *)
 
 Lemma aux {X p} {h: X -> _} {x}:
-  eval (boolean_map (fun x' => iin (h x') x) p)
+  eval (map (fun x' => iin (h x') x) p)
   <-> 
   Qin x h p.
 Proof. induction p; simpl; tauto. Qed.
 
 
 Lemma Qeq_Qin: forall {X Y} {p p'} {h: X -> _} {h': Y -> _},
-  Qeq (boolean_map h p) (boolean_map h' p')
+  Qeq (map h p) (map h' p')
   -> forall x, Qin x h p <-> Qin x h' p'.
 Proof.
   intros. unfold eeq_boolean in H.
   pose proof (H (fun s => iin s x)).
-  repeat rewrite boolean_map_compose in H0.
+  repeat rewrite map_compose in H0.
   unfold Basics.compose in H0.
   repeat rewrite<- aux. apply H0.
   unfold respects. intros.
@@ -116,9 +116,9 @@ Definition mk_low {X} f h := enum (fun k: { x: X & f (h x) } => h (projT1 k)).
 
 Lemma xxx {X Y} {p} {h: X -> _} {f: set -> Prop} (g: Y -> _):
   respects eeq f ->
-  Qin (mk_low f (sum_funs h g)) h p <-> eval (boolean_map f (boolean_map h p)).
+  Qin (mk_low f (h <+> g)) h p <-> eval (map f (map h p)).
 Proof.
-  intro. induction p; simpl; simpl boolean_map; simpl Qin; simpl eval.
+  intro. induction p; simpl; simpl map; simpl Qin; simpl eval.
   - tauto.
   - unfold mk_low, enum. rewrite iin_unfold. simpl. unfold Ain.
     rewrite xor_false_r. split; intros.
@@ -132,9 +132,9 @@ Qed.
 
 Lemma xxx_r {X Y} {p} {h: X -> _} {f: set -> Prop} (g: Y -> _):
   respects eeq f ->
-  Qin (mk_low f (sum_funs g h)) h p <-> eval (boolean_map f (boolean_map h p)).
+  Qin (mk_low f (g <+> h)) h p <-> eval (map f (map h p)).
 Proof.
-  intro. induction p; simpl; simpl boolean_map; simpl Qin; simpl eval.
+  intro. induction p; simpl; simpl map; simpl Qin; simpl eval.
   - tauto.
   - unfold mk_low, enum. rewrite iin_unfold. simpl. unfold Ain.
     rewrite xor_false_r. split; intros.
@@ -148,7 +148,7 @@ Qed.
 
 Lemma Qin_Qeq: forall {X Y} {p p'} {h: X -> _} {h': Y -> _},
   (forall x, Qin x h p <-> Qin x h' p')
-  -> Qeq (boolean_map h p) (boolean_map h' p').
+  -> Qeq (map h p) (map h' p').
 Proof.
   intros. unfold Qeq, eeq_boolean. intros.
   pose (mk_low P h) as g.
@@ -157,7 +157,7 @@ Proof.
 Qed.
 
 Theorem Qext {X Y} {p p'} {h: X -> _} {h': Y -> _} :
-  Qeq (boolean_map h p) (boolean_map h' p')
+  Qeq (map h p) (map h' p')
   <-> forall x, Qin x h p <-> Qin x h' p'.
 Proof. split. apply Qeq_Qin. apply Qin_Qeq. Qed.
 

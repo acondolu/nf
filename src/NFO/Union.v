@@ -2,7 +2,7 @@ From Coq.Program Require Import Basics Combinators.
 
 Add LoadPath "src".
 From Internal Require Import Aux FunExt.
-From NFO Require Import Xor Bool Model Eeq Iin Morphs Sets Ext.
+From NFO Require Import Xor BoolExpr Model Eeq Iin Morphs Sets Ext.
 
 (* TODO: Union *)
 
@@ -15,10 +15,9 @@ Definition aux {X Y Z: Type} (A2: X -> set) (Q1: Y -> set) (p1: boolean) (Q2: Z 
 
 Definition cup B C := 
   match B, C with S A p h X f, S A' p' h' X' f' =>
-  let A'' := sum A A' in
-  let h'' := sum_funs h h' in
-  let p'' := Or (boolean_map inl p) (boolean_map inr p') in
-  S A'' p'' h'' _ (sum_funs (select f (compose (aux f' h p h' p') f)) (select f' (compose (aux f h' p' h p) f')))
+  let p'' := Or (map inl p) (map inr p') in
+  S _ p'' (h <+> h') _
+    ((select f (compose (aux f' h p h' p') f)) <+> (select f' (compose (aux f h' p' h p) f')))
 end.
 
 
