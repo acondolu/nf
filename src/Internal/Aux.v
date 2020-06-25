@@ -2,35 +2,29 @@ From Coq.Program Require Import Basics Combinators.
 
 (** * Auxiliary Aux
 
-  This module contains some auxiliary functions
+  This module contains various auxiliary definitions.
 *)
 
+(** 'select' restricts the domain of a function according to a predicate: *)
 Definition select {X Y} (f: X -> Y) (P: X -> Prop) : {x: X & P x} -> Y
   := fun x => f (projT1 x).
 
-Lemma and_morph {a a' b b'}:
-  (a <-> a') -> (b <-> b') -> (a /\ b) <-> (a' /\ b').
-Proof. tauto. Qed.
-
+(** A couple of trivial equivalences: *)
 Lemma ex_false {P: False -> Prop}: (exists x, P x) <-> False.
 Proof. split; intros. destruct H, x. destruct H. Qed.
 
 Lemma ex_unit {P: unit -> Prop}: (exists x, P x) <-> P tt.
 Proof. split; intros. destruct H, x. auto. eauto. Qed.
 
+(** Trivial properties of conjunction: *)
+Lemma and_morph {a a' b b'}:
+  (a <-> a') -> (b <-> b') -> (a /\ b) <-> (a' /\ b').
+Proof. tauto. Qed.
+
 Lemma and_true: forall X, X /\ True <-> X.
 Proof. intro. tauto. Qed.
 
-(* Lemma compose_sum_inl {X Y Z} {f: X -> Z} {g: Y -> Z} :
-  ext (compose (sum_funs f g) inl) f.
-Proof. unfold ext. intros. apply eq_refl. Qed.
-Hint Resolve compose_sum_inl : Bool.
-
-Lemma compose_sum_inr {X Y Z} {f: X -> Z} {g: Y -> Z} :
-  ext (compose (sum_funs f g) inr) g.
-Proof. intro x. apply eq_refl. Qed.
-Hint Resolve compose_sum_inr : Bool. *)
-
+(* ** Swapping a sum: *)
 Definition swap {X Y} (x: X + Y) := match x with
   | inl a => inr a
   | inr b => inl b
@@ -41,6 +35,7 @@ Proof. auto. Qed.
 Lemma comp_swap_inr {X Y}: (@swap X Y) ∘ inr = inl.
 Proof. auto. Qed.
 
+(* ** Sum of two functions: *)
 Definition sumF {X Y Z} f g : X + Y -> Z := fun s =>
   match s with
   | inl x => f x
@@ -52,10 +47,10 @@ Definition invert_sum {X Y Z} P R S (z : Z) :=
   (exists x : X, P (inl x) /\ R x z)
   \/ exists y : Y, P (inr y) /\ S y z.
 
-Definition compR {X Y Z} (R: Y -> Y -> Z) (f: X -> Y) y y' := R (f y) (f y').
+Definition compR {X Y Z} (R: Y -> Y -> Z) (f: X -> Y) x x' := R (f x) (f x').
 Infix "⨀" := compR (at level 79).
 
-(* Inverts a  *)
+(* ** Inverting function for orders TODO *)
 Definition invF {X Y} (f: X -> Y) (y: Y) := exists x, f x = y.
 
 Definition inv2 {X Y W} (f: X -> W) (g : Y -> W) w :=

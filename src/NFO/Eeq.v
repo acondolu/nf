@@ -94,7 +94,7 @@ Proof.
 Qed.
 Hint Resolve eeq_trans : Eeq.
 
-(* Register eeq as an equivalence *)
+(** Register (set, eeq) as a setoid *)
 Instance eeqs : Equivalence eeq.
 Proof.
   constructor. exact @eeq_refl. exact @eeq_sym. exact @eeq_trans.
