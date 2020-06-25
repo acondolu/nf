@@ -12,19 +12,24 @@ remake: clean all
 
 # Coq
 
-coq: coq-nf2 coq-nfo
+coq: coq-common coq-nf2 coq-nfo
 
+coq-common: src/Internal/FunExt.vos src/Internal/Aux.vos
 coq-nf2: src/NF2/Model.vos src/NF2/Ext.vos src/NF2/Sets.vos src/NF2/ZF.vos src/NF2/Classp.vos
-coq-nfo : src/NFO/Aux.vos src/NFO/FunExt.vos src/NFO/Xor.vos src/NFO/Bool.vos src/NFO/Model.vos src/NFO/Wff.vos src/NFO/Eeq.vos src/NFO/Iin.vos src/NFO/Sets.vos src/NFO/Morphs.vos src/NFO/Ext.vos src/NFO/Union.vos src/NFO/Main.vos
+coq-nfo : src/NFO/Aux.vos src/NFO/Xor.vos src/NFO/Bool.vos src/NFO/Model.vos src/NFO/Wff.vos src/NFO/Eeq.vos src/NFO/Iin.vos src/NFO/Sets.vos src/NFO/Morphs.vos src/NFO/Ext.vos src/NFO/Union.vos src/NFO/Main.vos
+
+src/Internal/%.vos: src/Internal/%.v
+	coqc -R src "" $<
 
 src/NFO/%.vos: src/NFO/%.v
 	coqc -R src "" $<
 
-src/%.vos: src/%.v
+src/NF2/%.vos: src/NF2/%.v
 	coqc -R src "" $<
 
 coq-clean:
-	rm -f src/**/*.glob src/**/*.vo src/**/*.vok src/**/*.vos src/**/.*.aux src/**/*.html src/**/*.css
+	rm -f src/**/*.glob src/**/*.vo src/**/*.vok src/**/*.vos src/**/.*.aux
+	rm -rf doc
 
 coq-doc: coq # NFO-only!
 	rm -rf doc

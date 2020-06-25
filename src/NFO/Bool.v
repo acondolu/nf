@@ -3,7 +3,7 @@ Require Import Coq.Program.Basics.
 Require Import Coq.Program.Combinators.
 
 Add LoadPath "src".
-From NFO Require Import Aux FunExt.
+From Internal Require Import Aux FunExt.
 
 
 (* A boolean expression with atoms of type X *)

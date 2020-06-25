@@ -3,7 +3,8 @@ Require Import Coq.Program.Combinators.
 Require Import Setoid Morphisms.
 
 Add LoadPath "src".
-From NFO Require Import FunExt Aux Bool Model Wff.
+From Internal Require Import Aux FunExt.
+From NFO Require Import Bool Model Wff.
 
 Definition eeq' : set * set -> Prop.
 refine ( Fix wf_two (fun _ => Prop) (
