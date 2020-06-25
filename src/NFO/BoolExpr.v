@@ -117,29 +117,27 @@ Proof. induction e; simpl; auto. Qed.
 (** ** Transitivity
 
 TODO: This needs some love... *)
-Lemma eeq_boolean_trans {X Y Z W} {h h' h''}
-  {p : @boolean X} {p' : @boolean Y} {p'' : @boolean Z}
-  {P : W -> W -> Prop}
-  :  (forall a b, P a b -> P b a)
-  -> (forall a b c, inv3 h h' h'' a -> inv3 h h' h'' b -> inv3 h h' h'' c -> P a b -> P b c -> P a c)
-  -> eeq_boolean (P ⨀ (h ⨁ h')) (map inl p) (map inr p')
-  -> eeq_boolean (P ⨀ (h' ⨁ h'')) (map inl p') (map inr p'')
-  -> eeq_boolean (P ⨀ (h ⨁ h'')) (map inl p) (map inr p'').
+Lemma eeq_boolean_trans {X Y Z W} {f1 f2 f3}
+  {e1 : @boolean X} {e2 : @boolean Y} {e3 : @boolean Z}
+  {R : W -> W -> Prop}
+  :  (forall a b, R a b -> R b a)
+  -> (forall a b c, inv3 f1 f2 f3 a -> inv3 f1 f2 f3 b -> inv3 f1 f2 f3 c -> R a b -> R b c -> R a c)
+  -> eeq_boolean (R ⨀ (f1 ⨁ f2)) (map inl e1) (map inr e2)
+  -> eeq_boolean (R ⨀ (f2 ⨁ f3)) (map inl e2) (map inr e3)
+  -> eeq_boolean (R ⨀ (f1 ⨁ f3)) (map inl e1) (map inr e3).
 Proof.
   Ltac lr H3 x :=
     repeat destruct H3; [left | right]; exists x; split; eauto.
-  intros sym trans.
-  unfold eeq_boolean.
-  intros.
-  pose (invert_sum P0 (fun a b => P (h a) (h' b)) (fun a b => P (h' b) (h'' a))) as g.
-  specialize H with (P0 ∘ inl ⨁ g).
-  specialize H0 with (g ⨁ P0 ∘ inr).
+  intros sym trans. unfold eeq_boolean. intros.
+  pose (invert_sum P (fun a b => R (f1 a) (f2 b)) (fun a b => R (f2 b) (f3 a))) as g.
+  specialize H with (P ∘ inl ⨁ g).
+  specialize H0 with (g ⨁ P ∘ inr).
   revert H H0.
   repeat rewrite map_compose.
   repeat rewrite map_compose_inl.
   repeat rewrite map_compose_inr.
   intros.
-  apply (fun A B => iff_trans (H A) (H0 B)); unfold respects; intros; destruct x; destruct x'; simpl sumF; unfold respects in H1; simpl in H2; unfold g; unfold compose; auto. unfold compR, sumF in H2.
+  apply (fun A B => iff_trans (H A) (H0 B)); unfold respects; intros; destruct x; destruct x'; simpl sumF;  unfold respects in H1; simpl in H2; unfold g; unfold compose; auto. unfold compR, sumF in H2.
   - split; intro.
   -- left. exists x. auto.
   -- repeat destruct H3; unfold compR, sumF in H1.
