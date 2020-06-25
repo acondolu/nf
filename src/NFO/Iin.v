@@ -1,7 +1,7 @@
 Require Import Coq.Wellfounded.Lexicographic_Product.
 Require Import Relation_Operators.
 
-Add LoadPath "NFO/".
+Add LoadPath "src".
 From NFO Require Import Bool Model Eeq Xor Wff.
 
 (* Membership on the `Aczel` part of a NFO-set. *)
@@ -53,15 +53,15 @@ Lemma iin_unfold {x A' p' h' X' f'} :
 Proof. apply (@iin_def (x, S A' p' h' X' f')). Qed.
 
 
-Fixpoint Qin {X} x (h: X -> set) (p : boolean X) := match p with
-  | Bot _ => False
-  | Atom _ a => iin (h a) x
-  | Not _ p' => ~ Qin x h p'
-  | Or _ p1 p2 => Qin x h p1 \/ Qin x h p2
+Fixpoint Qin {X} x (h: X -> set) (p : boolean) := match p with
+  | Bot => False
+  | Atom a => iin (h a) x
+  | Not p' => ~ Qin x h p'
+  | Or p1 p2 => Qin x h p1 \/ Qin x h p2
 end.
 
 
-Lemma Qin_aux {x A} {p: boolean A} {h} :
+Lemma Qin_aux {x A} {p: @boolean A} {h} :
   (let w a := iin (h a) x
   in eval (boolean_map w p))
   <-> Qin x h p.

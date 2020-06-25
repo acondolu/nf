@@ -111,8 +111,8 @@ Proof.
   apply iin_respects_eeq. assumption.
 Qed.
 
-Definition mk_low {X} f h :=
-S False (Bot _) (False_rect _) { x: X & f (h x) } (fun k => h (projT1 k)).
+(* TODO: check if this is select? *)
+Definition mk_low {X} f h := enum (fun k: { x: X & f (h x) } => h (projT1 k)).
 
 Lemma xxx {X Y} {p} {h: X -> _} {f: set -> Prop} (g: Y -> _):
   respects eeq f ->
@@ -120,7 +120,7 @@ Lemma xxx {X Y} {p} {h: X -> _} {f: set -> Prop} (g: Y -> _):
 Proof.
   intro. induction p; simpl; simpl boolean_map; simpl Qin; simpl eval.
   - tauto.
-  - unfold mk_low. rewrite iin_unfold. simpl. unfold Ain.
+  - unfold mk_low, enum. rewrite iin_unfold. simpl. unfold Ain.
     rewrite xor_false_r. split; intros.
     destruct H0, x0, x0.
     simpl sum_funs in *. apply (H (h x0) (h x) H0). assumption.
@@ -136,7 +136,7 @@ Lemma xxx_r {X Y} {p} {h: X -> _} {f: set -> Prop} (g: Y -> _):
 Proof.
   intro. induction p; simpl; simpl boolean_map; simpl Qin; simpl eval.
   - tauto.
-  - unfold mk_low. rewrite iin_unfold. simpl. unfold Ain.
+  - unfold mk_low, enum. rewrite iin_unfold. simpl. unfold Ain.
     rewrite xor_false_r. split; intros.
     destruct H0, x0, x0.
     simpl sum_funs in *. apply (H (g y) (h x) H0). assumption.

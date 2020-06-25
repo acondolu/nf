@@ -6,7 +6,7 @@ From NFO Require Import Xor Bool Model Eeq Iin Morphs Sets Ext.
 
 (* TODO: Union *)
 
-Definition aux {X Y Z: Type} (A2: X -> set) (Q1: Y -> set) (p1: boolean Y) (Q2: Z -> set) (p2: boolean Z) a := 
+Definition aux {X Y Z: Type} (A2: X -> set) (Q1: Y -> set) (p1: boolean) (Q2: Z -> set) (p2: boolean) a := 
 (Qin a Q2 p2 -> Qin a Q1 p1)
 /\ (Qin a Q1 p1 -> (Ain a A2 <-> Qin a Q2 p2))
 .
@@ -17,7 +17,7 @@ Definition cup B C :=
   match B, C with S A p h X f, S A' p' h' X' f' =>
   let A'' := sum A A' in
   let h'' := sum_funs h h' in
-  let p'' := Or _ (boolean_map inl p) (boolean_map inr p') in
+  let p'' := Or (boolean_map inl p) (boolean_map inr p') in
   S A'' p'' h'' _ (sum_funs (select f (compose (aux f' h p h' p') f)) (select f' (compose (aux f h' p' h p) f')))
 end.
 

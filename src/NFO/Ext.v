@@ -4,7 +4,7 @@ From NFO Require Import Bool Model Wff Eeq Iin Sets Xor Morphs.
 
 (* This file needs cleaning!!! *)
 
-Lemma sloppy_Qext {A} {h: A -> set} {p : boolean A} {x y} :
+Lemma sloppy_Qext {A} {h: A -> set} {p : boolean} {x y} :
   (forall i, iin (h i) y <-> iin (h i) x) -> Qin x h p -> Qin y h p.
 Proof.
   revert x y. induction p; simpl; intros.
@@ -17,7 +17,7 @@ Proof.
   -- right. apply (IHp2 x y H H0).
 Qed.
 
-Lemma sloppy_Aext {x y} {J X} {f: X -> set} {h: J -> set} {p : boolean J}:
+Lemma sloppy_Aext {x y} {J X} {f: X -> set} {h: J -> set} {p : boolean}:
   (forall x, Ain x f <-> Qin x h p)
   -> (forall i, iin (h i) y <-> iin (h i) x) -> Ain x f -> Ain y f.
 Proof.
@@ -146,7 +146,7 @@ Proof.
   apply xor_comm.
 Qed.
 
-Lemma universal_low {J X} {f: X -> set} (h: J -> set) (p : boolean J):
+Lemma universal_low {J X} {f: X -> set} (h: J -> set) (p : boolean):
   (forall x, Ain x f <-> Qin x h p)
   -> (exists x, Ain x f)
   -> forall x, Ain x (All f h).

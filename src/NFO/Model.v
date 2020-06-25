@@ -2,7 +2,7 @@ Add LoadPath "src".
 From NFO Require Import Bool.
 
 Inductive set :=
-  S : forall A (p : boolean A) (h: A -> set) X (f: X -> set), set.
+  S : forall A (p : @boolean A) (h: A -> set) X (f: X -> set), set.
 
 Require Import Coq.Program.Tactics .
 Require Import Coq.Program.Wf.

@@ -5,7 +5,7 @@ From Internal Require Import Aux FunExt.
 From NFO Require Import Xor Bool Model Eeq Iin.
 
 (* Axuliary *)
-Definition enum {X} f := S False (Bot _) (False_rect _) X f.
+Definition enum {X} f := S False Bot (False_rect _) X f.
 
 Lemma Ain_sum {X Y} (f: X + Y -> set) x:
   Ain x f <-> Ain x (compose f inl) \/ Ain x (compose f inr).
@@ -64,7 +64,7 @@ Qed.
 
 (* Set complement *)
 Definition compl x := match x with
-  S A p h X f => S A (Not _ p) h X f
+  S A p h X f => S A (Not p) h X f
 end.
 
 Lemma compl_ok: forall x y,
@@ -75,7 +75,7 @@ Proof.
 Qed.
 
 (* Co-singleton *)
-Definition cosin x := S unit (Atom _ tt) (fun _ => x) False (False_rect _).
+Definition cosin x := S unit (Atom tt) (fun _ => x) False (False_rect _).
 
 Lemma cosin_ok: forall x y, iin x (cosin y) <-> iin y x.
 Proof.
@@ -95,8 +95,8 @@ Qed.
 
 (* Exclusive or of sets *)
 
-Local Definition boolean_xor {A} (p p': boolean A) :=
-  Or _ (Not _ (Or _ p (Not _ p'))) (Not _ (Or _ (Not _ p) p')).
+Local Definition boolean_xor {A} (p p': @boolean A) :=
+  Or (Not (Or p (Not p'))) (Not (Or (Not p) p')).
 
 Definition AXor {X Y} (f: X -> set) (g: Y -> set)
   : sum {x & ~ exists y, eeq (g y) (f x)} {y & ~ exists x, eeq (f x) (g y)} -> set

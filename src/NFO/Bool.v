@@ -1,58 +1,60 @@
 Require Import Setoid.
-Require Import Coq.Program.Basics.
-Require Import Coq.Program.Combinators.
+From Coq.Program Require Import Basics Combinators.
 
 Add LoadPath "src".
 From Internal Require Import Aux FunExt.
 
 
 (** A boolean expression with atoms of type X *)
-Inductive boolean X :=
-  | Bot : boolean X
-  | Atom : X -> boolean X
-  | Not : boolean X -> boolean X
-  | Or : boolean X -> boolean X -> boolean X
+Inductive boolean {X} :=
+  | Bot : boolean
+  | Atom : X -> boolean
+  | Not : boolean -> boolean
+  | Or : boolean -> boolean -> boolean
 .
 
 (** Evaluate a boolean expression of Props to a Prop *)
-Fixpoint eval (p: boolean Prop) := match p with
-  | Atom _ a => a
-  | Bot _ => False
-  | Not _ p => eval p -> False
-  | Or _ p1 p2 => eval p1 \/ eval p2
+Fixpoint eval (p: boolean) := match p with
+  | Atom a => a
+  | Bot => False
+  | Not p => eval p -> False
+  | Or p1 p2 => eval p1 \/ eval p2
 end.
 
 (** Maps the atoms in a boolean expression *)
-Fixpoint boolean_map {X Y} (f: X -> Y) (p: boolean X) : boolean Y :=
+Fixpoint boolean_map {X Y} (f: X -> Y) (p: boolean) : boolean :=
 match p with
-  | Atom _ a => Atom _ (f a)
-  | Bot _ => Bot _
-  | Not _ p => Not _ (boolean_map f p)
-  | Or _ p1 p2 => Or _ (boolean_map f p1) (boolean_map f p2)
+  | Atom a => Atom (f a)
+  | Bot => Bot
+  | Not p => Not (boolean_map f p)
+  | Or p1 p2 => Or (boolean_map f p1) (boolean_map f p2)
 end.
 
-Lemma boolean_map_extP {X} {p: boolean X} P Q:
-  extP P Q -> eval (boolean_map P p) <-> eval (boolean_map Q p).
+(** Evaluating a boolean expression with respect to equivalent predicates
+    yields equivalent results.
+*)
+Lemma boolean_map_extP {X} {b: @boolean X} P Q:
+  extP P Q -> eval (boolean_map P b) <-> eval (boolean_map Q b).
 Proof.
-  unfold extP. intro E. induction p; simpl; eauto. tauto.
-  rewrite IHp. tauto.
-  rewrite IHp1. rewrite IHp2. tauto.
+  unfold extP. intro E. induction b; simpl; eauto. tauto.
+  rewrite IHb. tauto.
+  rewrite IHb1. rewrite IHb2. tauto.
 Qed.
 
 (** The composition of maps on boolean expressions *)
-Lemma boolean_map_compose {X Y Z f g p}:
-  boolean_map f (boolean_map g p) = boolean_map (@compose X Y Z f g) p.
+Lemma boolean_map_compose {X Y Z f g b}:
+  boolean_map f (boolean_map g b) = boolean_map (@compose X Y Z f g) b.
 Proof.
-  induction p; simpl; auto.
-  - rewrite IHp. auto.
-  - rewrite IHp1. rewrite IHp2. auto.
+  induction b; simpl; auto.
+  - rewrite IHb. auto.
+  - rewrite IHb1. rewrite IHb2. auto.
 Qed.
 
 (** Extensional equality of boolean expressions *)
 
-Definition eeq_boolean {X} R (p1 p2: boolean X) : Prop :=
+Definition eeq_boolean {X} (R: X -> X -> Prop) b1 b2 : Prop :=
   forall P, respects R P ->
-    eval (boolean_map P p1) <-> eval (boolean_map P p2).
+    eval (boolean_map P b1) <-> eval (boolean_map P b2).
 
 Lemma eeq_boolean_ext {X} {R1 R2: X -> X -> Prop} :
   extP2 R1 R2 -> extP2 (eeq_boolean R1) (eeq_boolean R2).
@@ -62,33 +64,33 @@ Proof.
 Qed.
 
 (* SUM_I *)
-Definition sum_i {X Y Z} (R: Z -> Z -> Prop) h h' (i j: X + Y) := 
+Definition sum_i {X Y Z} (R: Z -> Z -> Prop) f g (i j: X + Y) := 
 match i, j with
-  | inl i', inl j' => R (h i') (h j')
-  | inl i', inr j' => R (h i') (h' j')
-  | inr i', inl j' => R (h' i') (h j')
-  | inr i', inr j' => R (h' i') (h' j')
+  | inl x, inl x' => R (f x) (f x')
+  | inl x, inr y => R (f x) (g y)
+  | inr y, inl x => R (g y) (f x)
+  | inr y, inr y' => R (g y) (g y')
 end.
 
 (** Rexflexivity for eeq_boolean *)
 Lemma eeq_boolean_refl {X Y} :
-  forall (p: boolean X) (f: Y -> Y -> Prop) (h: X -> Y),
-    (forall x, f (h x) (h x))
-      -> eeq_boolean (sum_i f h h)
-          (boolean_map inl p) (boolean_map inr p).
+  forall b (R: Y -> Y -> Prop) (f: X -> Y),
+    (forall x, R (f x) (f x))
+      -> eeq_boolean (sum_i R f f)
+          (boolean_map inl b) (boolean_map inr b).
 Proof.
   unfold eeq_boolean. intros.
-  induction p; simpl; try tauto; eauto.
+  induction b; simpl; try tauto; eauto.
   apply H0. apply H.
 Qed.
 Hint Resolve eeq_boolean_refl : Bool.
 
 (** SYMMETRY *)
 
-Lemma sum_i_sym: forall {X Y Z R f g a b},
-  sum_i R f g a b -> @sum_i X Y Z R g f (swap a) (swap b).
+Lemma sum_i_sym: forall {X Y Z R f g b1 b2},
+  sum_i R f g b1 b2 -> @sum_i X Y Z R g f (swap b1) (swap b2).
 Proof.
-  unfold sum_i. intros. destruct a, b; assumption.
+  unfold sum_i. intros. destruct b1, b2; assumption.
 Qed.
 
 Lemma respects_swap {X Y Z P} :
@@ -131,7 +133,7 @@ Lemma boolean_map_compose_inr {X Y Z} {f: X -> Z} {g: Y -> Z} {a}:
 Proof. induction a; simpl; auto. Qed.
 
 Lemma eeq_boolean_trans {X Y Z W} {h h' h''}
-  {p : boolean X} {p' : boolean Y} {p'' : boolean Z}
+  {p : @boolean X} {p' : @boolean Y} {p'' : @boolean Z}
   {P : W -> W -> Prop}
   :  (forall a b, P a b -> P b a)
   -> (forall a b c, inv3 h h' h'' a -> inv3 h h' h'' b -> inv3 h h' h'' c -> P a b -> P b c -> P a c)
