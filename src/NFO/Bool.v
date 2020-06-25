@@ -138,7 +138,7 @@ Definition sum_funs {X Y Z} f g : X + Y -> Z := fun s =>
   | inr y => g y
   end.
 
-Lemma compose_sum_inl {X Y Z} {f: X -> Z} {g: Y -> Z} :
+(* Lemma compose_sum_inl {X Y Z} {f: X -> Z} {g: Y -> Z} :
   ext (compose (sum_funs f g) inl) f.
 Proof. unfold ext. intros. apply eq_refl. Qed.
 Hint Resolve compose_sum_inl : Bool.
@@ -146,7 +146,7 @@ Hint Resolve compose_sum_inl : Bool.
 Lemma compose_sum_inr {X Y Z} {f: X -> Z} {g: Y -> Z} :
   ext (compose (sum_funs f g) inr) g.
 Proof. intro x. apply eq_refl. Qed.
-Hint Resolve compose_sum_inr : Bool.
+Hint Resolve compose_sum_inr : Bool. *)
 
 Lemma boolean_map_compose_inl {X Y Z} {f: X -> Z} {g: Y -> Z} {a}:
   boolean_map (compose (sum_funs f g) inl) a = boolean_map f a.

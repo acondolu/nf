@@ -16,6 +16,16 @@ Proof. split; intros. destruct H, x. auto. eauto. Qed.
 Lemma and_true: forall X, X /\ True <-> X.
 Proof. intro. tauto. Qed.
 
+(* Lemma compose_sum_inl {X Y Z} {f: X -> Z} {g: Y -> Z} :
+  ext (compose (sum_funs f g) inl) f.
+Proof. unfold ext. intros. apply eq_refl. Qed.
+Hint Resolve compose_sum_inl : Bool.
+
+Lemma compose_sum_inr {X Y Z} {f: X -> Z} {g: Y -> Z} :
+  ext (compose (sum_funs f g) inr) g.
+Proof. intro x. apply eq_refl. Qed.
+Hint Resolve compose_sum_inr : Bool. *)
+
 (* Inverts a  *)
 Definition invF {X Y} (f: X -> Y) (y: Y) := exists x, f x = y.
 
