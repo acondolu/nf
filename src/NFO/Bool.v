@@ -70,8 +70,7 @@ match i, j with
   | inr i', inr j' => R (h' i') (h' j')
 end.
 
-(* REFLEXIVITY *)
-
+(** Rexflexivity for eeq_boolean *)
 Lemma eeq_boolean_refl {X Y} :
   forall (p: boolean X) (f: Y -> Y -> Prop) (h: X -> Y),
     (forall x, f (h x) (h x))
@@ -84,17 +83,7 @@ Proof.
 Qed.
 Hint Resolve eeq_boolean_refl : Bool.
 
-(* SYMMETRY *)
-
-Definition swap {X Y} (x: X + Y) := match x with
-  | inl a => inr a
-  | inr b => inl b
-end.
-
-Lemma comp_swap_inl {X Y}: compose (@swap X Y) inl = inr.
-Proof. auto. Qed.
-Lemma comp_swap_inr {X Y}: compose (@swap X Y) inr = inl.
-Proof. auto. Qed.
+(** SYMMETRY *)
 
 Lemma sum_i_sym: forall {X Y Z R f g a b},
   sum_i R f g a b -> @sum_i X Y Z R g f (swap a) (swap b).
@@ -133,12 +122,6 @@ Qed.
 
 (* sum_funs *)
 
-Definition sum_funs {X Y Z} f g : X + Y -> Z := fun s =>
-  match s with
-  | inl x => f x
-  | inr y => g y
-  end.
-
 Lemma boolean_map_compose_inl {X Y Z} {f: X -> Z} {g: Y -> Z} {a}:
   boolean_map (compose (sum_funs f g) inl) a = boolean_map f a.
 Proof. induction a; simpl; auto. Qed.
@@ -146,10 +129,6 @@ Proof. induction a; simpl; auto. Qed.
 Lemma boolean_map_compose_inr {X Y Z} {f: X -> Z} {g: Y -> Z} {a}:
   boolean_map (compose (sum_funs f g) inr) a = boolean_map g a.
 Proof. induction a; simpl; auto. Qed.
-
-Definition invert_sum {X Y Z} P R S (z : Z) := 
-    (exists x : X, P (inl x) /\ R x z)
-    \/ exists y : Y, P (inr y) /\ S y z.
 
 Lemma eeq_boolean_trans {X Y Z W} {h h' h''}
   {p : boolean X} {p' : boolean Y} {p'' : boolean Z}

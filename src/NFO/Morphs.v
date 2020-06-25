@@ -4,7 +4,7 @@ Require Export Relation_Definitions.
 Require Export Setoid.
 
 Add LoadPath "src".
-From Internal Require Import FunExt.
+From Internal Require Import FunExt Aux.
 From NFO Require Import Bool Model Wff Eeq Iin Sets Xor.
 
 (* Aext *)

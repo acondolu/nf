@@ -1,3 +1,6 @@
+Require Import Coq.Program.Basics.
+Require Import Coq.Program.Combinators.
+
 (* This module contains some auxiliary functions *)
 
 Definition select {X Y} (f: X -> Y) (P: X -> Prop) : {x: X & P x} -> Y
@@ -25,6 +28,26 @@ Lemma compose_sum_inr {X Y Z} {f: X -> Z} {g: Y -> Z} :
   ext (compose (sum_funs f g) inr) g.
 Proof. intro x. apply eq_refl. Qed.
 Hint Resolve compose_sum_inr : Bool. *)
+
+Definition swap {X Y} (x: X + Y) := match x with
+  | inl a => inr a
+  | inr b => inl b
+end.
+
+Lemma comp_swap_inl {X Y}: compose (@swap X Y) inl = inr.
+Proof. auto. Qed.
+Lemma comp_swap_inr {X Y}: compose (@swap X Y) inr = inl.
+Proof. auto. Qed.
+
+Definition sum_funs {X Y Z} f g : X + Y -> Z := fun s =>
+  match s with
+  | inl x => f x
+  | inr y => g y
+  end.
+
+Definition invert_sum {X Y Z} P R S (z : Z) := 
+  (exists x : X, P (inl x) /\ R x z)
+  \/ exists y : Y, P (inr y) /\ S y z.
 
 (* Inverts a  *)
 Definition invF {X Y} (f: X -> Y) (y: Y) := exists x, f x = y.
