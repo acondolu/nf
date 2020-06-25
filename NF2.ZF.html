@@ -22,7 +22,6 @@
 <span class="id" title="keyword">Add</span> <span class="id" title="var">LoadPath</span> "src".<br/>
 
 <br/>
-<span class="comment">(*&nbsp;When&nbsp;sets&nbsp;are&nbsp;low&nbsp;*)</span><br/>
 <span class="id" title="keyword">Lemma</span> <a name="low_empty"><span class="id" title="lemma">low_empty</span></a>: <a class="idref" href="NF2.Model.html#low"><span class="id" title="definition">low</span></a> <a class="idref" href="NF2.Sets.html#dd3d5eb0013c3bde1e0dc0f80a071555"><span class="id" title="definition">Ø</span></a>.<br/>
  
 <br/>
@@ -38,20 +37,10 @@
 <span class="id" title="keyword">Lemma</span> <a name="low_cup"><span class="id" title="lemma">low_cup</span></a>: <span class="id" title="keyword">∀</span> <span class="id" title="var">x</span> <span class="id" title="var">y</span>, <a class="idref" href="NF2.Model.html#low"><span class="id" title="definition">low</span></a> (<a class="idref" href="NF2.ZF.html#x"><span class="id" title="variable">x</span></a> <a class="idref" href="NF2.Sets.html#ee7d96fc379cbf67726a95b71cdead1d"><span class="id" title="notation">∪</span></a> <a class="idref" href="NF2.ZF.html#y"><span class="id" title="variable">y</span></a>) <a class="idref" href="http://coq.inria.fr/distrib/V8.11.2/stdlib//Coq.Init.Logic.html#4bfb4f2d0721ba668e3a802ab1b745a1"><span class="id" title="notation">↔</span></a> <a class="idref" href="http://coq.inria.fr/distrib/V8.11.2/stdlib//Coq.Init.Logic.html#4bfb4f2d0721ba668e3a802ab1b745a1"><span class="id" title="notation">(</span></a><a class="idref" href="NF2.Model.html#low"><span class="id" title="definition">low</span></a> <a class="idref" href="NF2.ZF.html#x"><span class="id" title="variable">x</span></a> <a class="idref" href="http://coq.inria.fr/distrib/V8.11.2/stdlib//Coq.Init.Logic.html#ba2b0e492d2b4675a0acf3ea92aabadd"><span class="id" title="notation">∧</span></a> <a class="idref" href="NF2.Model.html#low"><span class="id" title="definition">low</span></a> <a class="idref" href="NF2.ZF.html#y"><span class="id" title="variable">y</span></a><a class="idref" href="http://coq.inria.fr/distrib/V8.11.2/stdlib//Coq.Init.Logic.html#4bfb4f2d0721ba668e3a802ab1b745a1"><span class="id" title="notation">)</span></a>.<br/>
 
 <br/>
-<span class="comment">(*&nbsp;ZF&nbsp;axioms&nbsp;*)</span><br/>
-<span class="comment">(*&nbsp;WORK&nbsp;IN&nbsp;PROGRESS&nbsp;*)</span><br/>
 
 <br/>
-<span class="comment">(*&nbsp;2.&nbsp;Regularity<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;forall&nbsp;x,&nbsp;neq&nbsp;x&nbsp;empty&nbsp;-&gt;&nbsp;exists&nbsp;y&nbsp;in&nbsp;x,&nbsp;y&nbsp;cap&nbsp;x&nbsp;=&nbsp;emptyset<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;It&nbsp;does&nbsp;not&nbsp;hold,&nbsp;either&nbsp;for&nbsp;positive&nbsp;or&nbsp;negative&nbsp;sets.<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Ex.:&nbsp;x=&nbsp;{u},&nbsp;y&nbsp;=&nbsp;u&nbsp;for&nbsp;positives.&nbsp;U&nbsp;minus&nbsp;{{}}&nbsp;for&nbsp;negatives.<br/>
-*)</span><br/>
 
 <br/>
-<span class="comment">(*&nbsp;3.&nbsp;Comprehension<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Yes&nbsp;for&nbsp;positive&nbsp;sets&nbsp;and&nbsp;sound&nbsp;formulas.<br/>
-*)</span><br/>
 <span class="id" title="keyword">Definition</span> <a name="pred_sound"><span class="id" title="definition">pred_sound</span></a> <span class="id" title="var">P</span> := <span class="id" title="keyword">∀</span> <span class="id" title="var">x</span> <span class="id" title="var">y</span>, <a class="idref" href="NF2.ZF.html#x"><span class="id" title="variable">x</span></a> <a class="idref" href="NF2.Model.html#8f9238d4eefe0b5c60a6c98165047666"><span class="id" title="notation">≡</span></a> <a class="idref" href="NF2.ZF.html#y"><span class="id" title="variable">y</span></a> <a class="idref" href="http://coq.inria.fr/distrib/V8.11.2/stdlib//Coq.Init.Logic.html#1c93e43e07fbeaeb6a625cb6614beb5d"><span class="id" title="notation">→</span></a> <a class="idref" href="http://coq.inria.fr/distrib/V8.11.2/stdlib//Coq.Init.Logic.html#1c93e43e07fbeaeb6a625cb6614beb5d"><span class="id" title="notation">(</span></a><a class="idref" href="NF2.ZF.html#P"><span class="id" title="variable">P</span></a> <a class="idref" href="NF2.ZF.html#x"><span class="id" title="variable">x</span></a> <a class="idref" href="http://coq.inria.fr/distrib/V8.11.2/stdlib//Coq.Init.Logic.html#4bfb4f2d0721ba668e3a802ab1b745a1"><span class="id" title="notation">↔</span></a> <a class="idref" href="NF2.ZF.html#P"><span class="id" title="variable">P</span></a> <a class="idref" href="NF2.ZF.html#y"><span class="id" title="variable">y</span></a><a class="idref" href="http://coq.inria.fr/distrib/V8.11.2/stdlib//Coq.Init.Logic.html#1c93e43e07fbeaeb6a625cb6614beb5d"><span class="id" title="notation">)</span></a>.<br/>
 <span class="id" title="keyword">Definition</span> <a name="compr"><span class="id" title="definition">compr</span></a>: <span class="id" title="keyword">∀</span> {<span class="id" title="var">x</span>}, <a class="idref" href="NF2.Model.html#low"><span class="id" title="definition">low</span></a> <a class="idref" href="NF2.ZF.html#x"><span class="id" title="variable">x</span></a> <a class="idref" href="http://coq.inria.fr/distrib/V8.11.2/stdlib//Coq.Init.Logic.html#1c93e43e07fbeaeb6a625cb6614beb5d"><span class="id" title="notation">→</span></a> <a class="idref" href="http://coq.inria.fr/distrib/V8.11.2/stdlib//Coq.Init.Logic.html#1c93e43e07fbeaeb6a625cb6614beb5d"><span class="id" title="notation">(</span></a><a class="idref" href="NF2.Model.html#set"><span class="id" title="inductive">set</span></a> <a class="idref" href="http://coq.inria.fr/distrib/V8.11.2/stdlib//Coq.Init.Logic.html#1c93e43e07fbeaeb6a625cb6614beb5d"><span class="id" title="notation">→</span></a> <span class="id" title="keyword">Prop</span><a class="idref" href="http://coq.inria.fr/distrib/V8.11.2/stdlib//Coq.Init.Logic.html#1c93e43e07fbeaeb6a625cb6614beb5d"><span class="id" title="notation">)</span></a> <a class="idref" href="http://coq.inria.fr/distrib/V8.11.2/stdlib//Coq.Init.Logic.html#1c93e43e07fbeaeb6a625cb6614beb5d"><span class="id" title="notation">→</span></a> <a class="idref" href="NF2.Model.html#set"><span class="id" title="inductive">set</span></a>.<br/>
 
@@ -59,36 +48,14 @@
 <span class="id" title="keyword">Lemma</span> <a name="compr_ok"><span class="id" title="lemma">compr_ok</span></a>: <span class="id" title="keyword">∀</span> {<span class="id" title="var">x</span>} <span class="id" title="var">P</span> (<span class="id" title="var">pos</span>: <a class="idref" href="NF2.Model.html#low"><span class="id" title="definition">low</span></a> <a class="idref" href="NF2.ZF.html#x"><span class="id" title="variable">x</span></a>) (<span class="id" title="var">pok</span>: <a class="idref" href="NF2.ZF.html#pred_sound"><span class="id" title="definition">pred_sound</span></a> <a class="idref" href="NF2.ZF.html#P"><span class="id" title="variable">P</span></a>), <span class="id" title="keyword">∀</span> <span class="id" title="var">z</span>, <a class="idref" href="NF2.Model.html#iin"><span class="id" title="definition">iin</span></a> <a class="idref" href="NF2.ZF.html#z"><span class="id" title="variable">z</span></a> (<a class="idref" href="NF2.ZF.html#compr"><span class="id" title="definition">compr</span></a> <a class="idref" href="NF2.ZF.html#pos"><span class="id" title="variable">pos</span></a> <a class="idref" href="NF2.ZF.html#P"><span class="id" title="variable">P</span></a>) <a class="idref" href="http://coq.inria.fr/distrib/V8.11.2/stdlib//Coq.Init.Logic.html#4bfb4f2d0721ba668e3a802ab1b745a1"><span class="id" title="notation">↔</span></a> <a class="idref" href="NF2.Model.html#iin"><span class="id" title="definition">iin</span></a> <a class="idref" href="NF2.ZF.html#z"><span class="id" title="variable">z</span></a> <a class="idref" href="NF2.ZF.html#x"><span class="id" title="variable">x</span></a> <a class="idref" href="http://coq.inria.fr/distrib/V8.11.2/stdlib//Coq.Init.Logic.html#ba2b0e492d2b4675a0acf3ea92aabadd"><span class="id" title="notation">∧</span></a> <a class="idref" href="NF2.ZF.html#P"><span class="id" title="variable">P</span></a> <a class="idref" href="NF2.ZF.html#z"><span class="id" title="variable">z</span></a>.<br/>
 
 <br/>
-<span class="comment">(*&nbsp;4.&nbsp;Pairing.&nbsp;OBVIOUS&nbsp;*)</span><br/>
 
 <br/>
-<span class="comment">(*&nbsp;5.&nbsp;Union.&nbsp;Work&nbsp;in&nbsp;Progress&nbsp;*)</span><br/>
 <span class="id" title="keyword">Lemma</span> <a name="union_ax"><span class="id" title="lemma">union_ax</span></a>: <span class="id" title="keyword">∀</span> <span class="id" title="var">x</span>, <a class="idref" href="http://coq.inria.fr/distrib/V8.11.2/stdlib//Coq.Init.Logic.html#a883bdd010993579f99d60b3775bcf54"><span class="id" title="notation">∃</span></a> <span class="id" title="var">y</span><a class="idref" href="http://coq.inria.fr/distrib/V8.11.2/stdlib//Coq.Init.Logic.html#a883bdd010993579f99d60b3775bcf54"><span class="id" title="notation">,</span></a> <span class="id" title="keyword">∀</span> <span class="id" title="var">z</span>, <a class="idref" href="NF2.Model.html#iin"><span class="id" title="definition">iin</span></a> <a class="idref" href="NF2.ZF.html#z"><span class="id" title="variable">z</span></a> <a class="idref" href="NF2.ZF.html#y"><span class="id" title="variable">y</span></a> <a class="idref" href="http://coq.inria.fr/distrib/V8.11.2/stdlib//Coq.Init.Logic.html#4bfb4f2d0721ba668e3a802ab1b745a1"><span class="id" title="notation">↔</span></a> <a class="idref" href="http://coq.inria.fr/distrib/V8.11.2/stdlib//Coq.Init.Logic.html#a883bdd010993579f99d60b3775bcf54"><span class="id" title="notation">∃</span></a> <span class="id" title="var">x'</span><a class="idref" href="http://coq.inria.fr/distrib/V8.11.2/stdlib//Coq.Init.Logic.html#a883bdd010993579f99d60b3775bcf54"><span class="id" title="notation">,</span></a> <a class="idref" href="NF2.Model.html#iin"><span class="id" title="definition">iin</span></a> <a class="idref" href="NF2.ZF.html#x'"><span class="id" title="variable">x'</span></a> <a class="idref" href="NF2.ZF.html#x"><span class="id" title="variable">x</span></a> <a class="idref" href="http://coq.inria.fr/distrib/V8.11.2/stdlib//Coq.Init.Logic.html#ba2b0e492d2b4675a0acf3ea92aabadd"><span class="id" title="notation">∧</span></a> <a class="idref" href="NF2.Model.html#iin"><span class="id" title="definition">iin</span></a> <a class="idref" href="NF2.ZF.html#z"><span class="id" title="variable">z</span></a> <a class="idref" href="NF2.ZF.html#x'"><span class="id" title="variable">x'</span></a>.<br/>
 
 <br/>
-&nbsp;&nbsp;<span class="comment">(*&nbsp;<br/>
-&nbsp;&nbsp;6.&nbsp;REPLACEMENT<br/>
-&nbsp;&nbsp;7.&nbsp;INFINITY<br/>
-&nbsp;&nbsp;8.&nbsp;POWER&nbsp;SET<br/>
-&nbsp;&nbsp;9.&nbsp;WELL-ORDERING<br/>
-&nbsp;&nbsp;*)</span><br/>
 
 <br/>
-<span class="comment">(*&nbsp;Definition&nbsp;pow&nbsp;X&nbsp;(f:&nbsp;X&nbsp;-&gt;&nbsp;set)&nbsp;:=<br/>
-&nbsp;&nbsp;@Pos&nbsp;(X&nbsp;-&gt;&nbsp;Prop)<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;(fun&nbsp;s&nbsp;=&gt;&nbsp;@Pos&nbsp;{&nbsp;x&nbsp;:&nbsp;X&nbsp;&amp;&nbsp;s&nbsp;x&nbsp;}<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(fun&nbsp;ex&nbsp;=&gt;&nbsp;match&nbsp;ex&nbsp;with&nbsp;existT&nbsp;_&nbsp;x&nbsp;_&nbsp;=&gt;&nbsp;f&nbsp;x&nbsp;end)&nbsp;)<br/>
-.<br/>
-<br/>
-Definition&nbsp;subset&nbsp;x&nbsp;y&nbsp;:=&nbsp;forall&nbsp;z,&nbsp;iin&nbsp;z&nbsp;x&nbsp;-&gt;&nbsp;iin&nbsp;z&nbsp;y.<br/>
-<br/>
-Lemma&nbsp;subset_ex&nbsp;:&nbsp;forall&nbsp;x,&nbsp;isZF&nbsp;x&nbsp;-&gt;&nbsp;exists&nbsp;y,&nbsp;forall&nbsp;z,&nbsp;iin&nbsp;z&nbsp;y&nbsp;&lt;-&gt;&nbsp;subset&nbsp;z&nbsp;x.<br/>
-Proof.<br/>
-&nbsp;&nbsp;intros.&nbsp;destruct&nbsp;x;&nbsp;destruct&nbsp;H.<br/>
-&nbsp;&nbsp;exists&nbsp;(pow&nbsp;X&nbsp;s).&nbsp;intros.&nbsp;split.<br/>
-&nbsp;&nbsp;-&nbsp;unfold&nbsp;pow.&nbsp;simpl&nbsp;iin.&nbsp;intro.&nbsp;destruct&nbsp;H.&nbsp;unfold&nbsp;subset.<br/>
-&nbsp;&nbsp;intros.&nbsp;simpl&nbsp;iin.<br/>
-&nbsp;&nbsp;destruct&nbsp;z.&nbsp;destruct&nbsp;H0.&nbsp;destruct&nbsp;H.&nbsp;*)</span></div>
+</div>
 </div>
 
 <div id="footer">

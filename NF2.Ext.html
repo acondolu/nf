@@ -22,27 +22,9 @@
 <span class="id" title="keyword">Add</span> <span class="id" title="var">LoadPath</span> "src".<br/>
 
 <br/>
-<span class="comment">(*<br/>
-&nbsp;&nbsp;The&nbsp;axiom&nbsp;of&nbsp;regularity&nbsp;does&nbsp;not&nbsp;hold&nbsp;in&nbsp;this&nbsp;set&nbsp;theory.<br/>
-&nbsp;&nbsp;The&nbsp;weaker&nbsp;form&nbsp;of&nbsp;regularity&nbsp;holds,&nbsp;and&nbsp;its&nbsp;necessary&nbsp;to&nbsp;<br/>
-&nbsp;&nbsp;prove&nbsp;extensionality:&nbsp;a&nbsp;positive&nbsp;set&nbsp;does&nbsp;cannot&nbsp;belong&nbsp;to&nbsp;itself.<br/>
-*)</span><br/>
 <span class="id" title="keyword">Theorem</span> <a name="weak_regularity"><span class="id" title="lemma">weak_regularity</span></a>: <span class="id" title="keyword">∀</span> {<span class="id" title="var">x</span>}, <a class="idref" href="NF2.Model.html#low"><span class="id" title="definition">low</span></a> <a class="idref" href="NF2.Ext.html#x"><span class="id" title="variable">x</span></a> <a class="idref" href="http://coq.inria.fr/distrib/V8.11.2/stdlib//Coq.Init.Logic.html#1c93e43e07fbeaeb6a625cb6614beb5d"><span class="id" title="notation">→</span></a> <a class="idref" href="NF2.Model.html#iin"><span class="id" title="definition">iin</span></a> <a class="idref" href="NF2.Ext.html#x"><span class="id" title="variable">x</span></a> <a class="idref" href="NF2.Ext.html#x"><span class="id" title="variable">x</span></a> <a class="idref" href="http://coq.inria.fr/distrib/V8.11.2/stdlib//Coq.Init.Logic.html#1c93e43e07fbeaeb6a625cb6614beb5d"><span class="id" title="notation">→</span></a> <a class="idref" href="http://coq.inria.fr/distrib/V8.11.2/stdlib//Coq.Init.Logic.html#False"><span class="id" title="inductive">False</span></a>.<br/>
 
 <br/>
-<span class="comment">(*&nbsp;<br/>
-&nbsp;&nbsp;The&nbsp;lemma&nbsp;<span class="inlinecode"><span class="id" title="var">pos_neg_ext_neq</span></span>&nbsp;below&nbsp;is&nbsp;fundamental&nbsp;to<br/>
-&nbsp;&nbsp;prove&nbsp;extensionality.&nbsp;It&nbsp;proves&nbsp;that&nbsp;a&nbsp;positive&nbsp;set&nbsp;cannot<br/>
-&nbsp;&nbsp;be&nbsp;extensionally&nbsp;equal&nbsp;to&nbsp;a&nbsp;negative&nbsp;set.<br/>
-<br/>
-&nbsp;&nbsp;In&nbsp;order&nbsp;to&nbsp;prove&nbsp;<span class="inlinecode"><span class="id" title="var">pos_neg_ext_neq</span></span>,&nbsp;we&nbsp;first&nbsp;prove&nbsp;the<br/>
-&nbsp;&nbsp;auxiliary&nbsp;<span class="inlinecode"><span class="id" title="var">pos_univ</span></span>.&nbsp;It&nbsp;says&nbsp;that&nbsp;if&nbsp;a&nbsp;positive&nbsp;set&nbsp;is<br/>
-&nbsp;&nbsp;extensionally&nbsp;equal&nbsp;to&nbsp;a&nbsp;negative&nbsp;set,&nbsp;then&nbsp;one&nbsp;can<br/>
-&nbsp;&nbsp;express&nbsp;the&nbsp;universal&nbsp;set&nbsp;(defined&nbsp;as&nbsp;negative)&nbsp;as&nbsp;a<br/>
-&nbsp;&nbsp;positive&nbsp;set.<br/>
-&nbsp;&nbsp;This,&nbsp;together&nbsp;with&nbsp;weak&nbsp;regularity,&nbsp;yields&nbsp;the&nbsp;required<br/>
-&nbsp;&nbsp;contradiction.<br/>
-*)</span><br/>
 
 <br/>
 <span class="id" title="keyword">Definition</span> <a name="f_sum"><span class="id" title="definition">f_sum</span></a> {<span class="id" title="var">X</span> <span class="id" title="var">Y</span>} <span class="id" title="var">f</span> <span class="id" title="var">g</span> (<span class="id" title="var">z</span>: <a class="idref" href="NF2.Ext.html#X"><span class="id" title="variable">X</span></a> <a class="idref" href="http://coq.inria.fr/distrib/V8.11.2/stdlib//Coq.Init.Datatypes.html#e03f39daf98516fa530d3f6f5a1b4d92"><span class="id" title="notation">+</span></a> <a class="idref" href="NF2.Ext.html#Y"><span class="id" title="variable">Y</span></a>): <a class="idref" href="NF2.Model.html#set"><span class="id" title="inductive">set</span></a> := <span class="id" title="keyword">match</span> <a class="idref" href="NF2.Ext.html#z"><span class="id" title="variable">z</span></a> <span class="id" title="keyword">with</span><br/>
