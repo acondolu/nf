@@ -48,7 +48,9 @@ Qed.
 Lemma Aeq_AXor_select {Y} (h: Y -> set) sig sig' :
 respects (eeq ⨀ h) sig
   -> respects (eeq ⨀ h) sig'
-    -> Aeq (AXor (select h sig) (select h sig')) (select h (xorP sig' sig)).
+    -> Aeq
+        (AXor (select h sig) (select h sig'))
+        (select h (sig' ^^ sig)).
 Proof.
   intros. apply Aext. intro. rewrite AXor_ok.
   (* unfold Ain, select.
@@ -90,7 +92,7 @@ Definition All {X Y} (f: X -> set) (h: Y -> set)
 Lemma inv_sig {X X' J} {f: X -> set} {f': X' -> set} h {sig sig': J -> Prop}:
   respects (eeq ⨀ h) sig -> respects (eeq ⨀ h) sig'
   -> Aeq f (AXor (AXor f' (select h sig)) (select h sig'))
-  -> Aeq (AXor f (select h (xorP sig' sig))) f'.
+  -> Aeq (AXor f (select h (sig' ^^ sig))) f'.
 Proof.
   repeat rewrite Aeq_AXor_assoc.
   intros A B. intro. apply (fun X => Aeq_trans _ _ _ H X).
@@ -107,7 +109,7 @@ Proof.
   apply iff_refl.
   apply iff_refl.
   refine (iff_trans _ _).
-  apply (iff_sym xor_assoc).
+  apply (iff_sym (xor_assoc _ _ _)).
   refine (iff_trans _ _).
   apply xor_comm.
   apply xor_iff; try apply iff_refl.
@@ -156,7 +158,7 @@ Proof.
   pose proof (fun X => @sloppy_Aext _ x_signed _ _ f h p H X H0).
   cut ((forall i : J, iin (h i) x_signed <-> iin (h i) x0)). intro.
   destruct (H1 H2). clear H1 H2.
-  pose (xorP sig_x0 sig_x) as sig_xor.
+  pose (sig_x0 ^^ sig_x) as sig_xor.
   cut (respects (eeq ⨀ h) sig_xor). intro xr.
   exists (x, existT _ sig_xor xr).
 
