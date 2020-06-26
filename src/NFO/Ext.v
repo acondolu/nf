@@ -39,8 +39,8 @@ Lemma Aeq_AXor_assoc {X Y Z} {f: X -> set} {g: Y -> set} {h: Z -> set}:
 Proof.
   repeat setoid_rewrite Aext.
   repeat setoid_rewrite AXor_ok.
-  setoid_rewrite<- (@Xor_neg _ (Ain _ h)).
-  setoid_rewrite<- (@Xor_neg (Ain _ f) _).
+  setoid_rewrite<- (@xor_neg _ (Ain _ h)).
+  setoid_rewrite<- (@xor_neg (Ain _ f) _).
   setoid_rewrite xor_assoc.
   apply iff_refl.
 Qed.
@@ -58,18 +58,18 @@ Proof.
   unfold xorP. *)
   unfold Aeq, AXor, select. unfold xorP. unfold Ain. split; intros.
   destruct H1, H1.
-  - destruct H1, x0. cut (Xor (sig' x0) (sig x0)). intro.
-  unfold xorP. exists (existT _ x0 H3). assumption. apply Xor_2. intro H'.
+  - destruct H1, x0. cut (sig' x0 ⊻ sig x0). intro.
+  unfold xorP. exists (existT _ x0 H3). assumption. apply xor_2. intro H'.
   apply (H2 (ex_intro _ (existT _ x0 H') H1)).
   assumption.
-  - destruct H2, x0. cut (Xor (sig' x0) (sig x0)). intro.
-  unfold xorP. exists (existT _ x0 H3). assumption. apply Xor_1. assumption.
+  - destruct H2, x0. cut (sig' x0 ⊻ sig x0). intro.
+  unfold xorP. exists (existT _ x0 H3). assumption. apply xor_1. assumption.
   intro H'. apply (H1 (ex_intro _ (existT _ x0 H') H2)).
   - destruct H1, x0. destruct x1, a.
-  -- apply Xor_2.
+  -- apply xor_2.
       intro H'. destruct H', x1. pose proof (H x0 x1 (eeq_trans H1 (eeq_sym H2))). simpl in *. tauto.
       exists (existT _ x0 s). assumption.
-  -- apply Xor_1.
+  -- apply xor_1.
       exists (existT _ x0 s). assumption.
       intro H'. destruct H', x1. pose proof (H0 x0 x1 (eeq_trans H1 (eeq_sym H2))). simpl in *. tauto.
 Qed.
@@ -127,7 +127,7 @@ Proof.
 Qed.
 
 Local Lemma trivial_xor_lemma {a b c d}:
-  Xor (Xor (Xor a (Xor a b)) (Xor c d)) b <-> Xor c d.
+  ((a ⊻ (a ⊻ b)) ⊻ (c ⊻ d)) ⊻ b <-> c ⊻ d.
 Proof.
   repeat setoid_rewrite xor_assoc.
   setoid_rewrite xor_absorb.
@@ -194,7 +194,7 @@ Lemma not_iin_not_Ain {A p h X f}:
 Proof.
   unfold ext_empty.
   setoid_rewrite iin_unfold'.
-  setoid_rewrite Xor_neg.
+  setoid_rewrite xor_neg.
   intros H x H0. pose proof (universal_low _ _ H).
   destruct (weak_regularity (enum (All f h)) (H1 (ex_intro _ x H0) _)).
 Qed.
@@ -203,24 +203,24 @@ Lemma no_urelements: forall x y, ext_empty (QXor x y) -> x == y.
 Proof.
   intros x y. unfold ext_empty.
   setoid_rewrite xor_ok. destruct x, y.
-  intro. setoid_rewrite Xor_neg in H.
+  intro. setoid_rewrite xor_neg in H.
   setoid_rewrite iin_unfold' in H.
-  setoid_rewrite<- Xor_neg in H.
+  setoid_rewrite<- xor_neg in H.
   setoid_rewrite xor_pairs in H.
-  setoid_rewrite Xor_neg in H.
+  setoid_rewrite xor_neg in H.
   pose H as H'.
   setoid_rewrite<- AXor_ok in H'.
   setoid_rewrite<- QXor_ok in H'.
-  setoid_rewrite<- Xor_neg in H'.
+  setoid_rewrite<- xor_neg in H'.
   setoid_rewrite<- iin_unfold' in H'.
   pose proof (not_iin_not_Ain H').
   rewrite eeq_unfold.
   setoid_rewrite AXor_ok in H0.
   pose H0 as H0'.
-  setoid_rewrite Xor_neg in H0'.
+  setoid_rewrite xor_neg in H0'.
   rewrite<- Aext in H0'.
-  cut (forall z, ~Xor (Qin z h p) (Qin z h0 p0)). intro.
-  setoid_rewrite Xor_neg in H1.
+  cut (forall z, ~ (Qin z h p ⊻ Qin z h0 p0)). intro.
+  setoid_rewrite xor_neg in H1.
   setoid_rewrite<- Qext in H1.
   split; auto.
   intro z.

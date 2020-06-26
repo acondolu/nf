@@ -181,7 +181,7 @@ Proof.
   intros.
   unfold ext_empty.
   setoid_rewrite xor_ok.
-  setoid_rewrite Xor_neg.
+  setoid_rewrite xor_neg.
   apply iff_refl.
 Qed.
 

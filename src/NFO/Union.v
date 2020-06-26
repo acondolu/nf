@@ -48,7 +48,7 @@ Proof.
         classic (exists x, f0 x == z);
           classic (Qin z h p);
             classic (Qin z h0 p0);
-              clear; unfold Xor; tauto.
+              clear; unfold xor; tauto.
   - unfold respects. intros. unfold aux.
     setoid_rewrite (eeq_Qin H).
     setoid_rewrite (eeq_Ain H).

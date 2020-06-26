@@ -13,10 +13,7 @@ Definition iin' : set * set -> Prop.
   fun x rec => (
     match x as x0 return (x = x0 -> Prop) with (x', S A' p' h' X' f')
   => fun eqx
-  => Xor
-    (Ain x' f')
-    (let w a := rec (h' a, x') _
-      in eval (map w p'))
+  => Ain x' f' ⊻ let w a := rec (h' a, x') _ in eval (map w p')
   end) eq_refl
  )).
 rewrite eqx. apply sp_swap. apply right_sym. apply lt_h.
@@ -31,10 +28,8 @@ Lemma iin_def : forall {x},
   iin' x
     <->
     match x with (x', S A' p' h' X' f') =>
-    Xor
-      (Ain x' f')
-      (let w a := iin' (h' a, x')
-       in eval (map w p')) end.
+      Ain x' f' ⊻ let w a := iin' (h' a, x') in eval (map w p')
+    end.
 Proof.
   apply (well_founded_ind ((wf_swapprod _ lt wf_lt))).
   destruct x. intros.
@@ -46,10 +41,7 @@ Qed.
 Lemma iin_unfold {x A' p' h' X' f'} :
   iin x (S A' p' h' X' f')
     <->
-    Xor
-      (Ain x f')
-      (let w a := iin' (h' a, x)
-       in eval (map w p')).
+    Ain x f' ⊻ let w a := iin' (h' a, x) in eval (map w p').
 Proof. apply (@iin_def (x, S A' p' h' X' f')). Qed.
 
 
@@ -70,9 +62,7 @@ Proof. induction p; simpl; tauto. Qed.
 Lemma iin_unfold' {x A p h X f} :
   iin x (S A p h X f)
     <->
-    Xor
-      (Ain x f)
-      (Qin x h p).
+    Ain x f ⊻ Qin x h p.
 Proof.
   rewrite iin_unfold.
   apply xor_iff. tauto.
