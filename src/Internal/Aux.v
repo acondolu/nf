@@ -1,15 +1,10 @@
 From Coq.Program Require Import Basics Combinators.
 
-(** * Auxiliary Aux
-
-  This module contains various auxiliary definitions.
+(** 
+  This module contains various auxiliary concepts and definitions.
 *)
 
-(** 'select' restricts the domain of a function according to a predicate: *)
-Definition select {X Y} (f: X -> Y) (P: X -> Prop) : {x: X & P x} -> Y
-  := fun x => f (projT1 x).
-
-(** A couple of trivial equivalences: *)
+(** Some trivial equivalences: *)
 Lemma rewr_true: forall {p: Prop}, p -> (p <-> True).
 Proof. tauto. Qed.
 
@@ -22,41 +17,6 @@ Proof. split; intros. destruct H, x. destruct H. Qed.
 Lemma ex_unit {P: unit -> Prop}: (exists x, P x) <-> P tt.
 Proof. split; intros. destruct H, x. auto. eauto. Qed.
 
-(** Trivial properties of conjunction: *)
-Lemma and_morph {a a' b b'}:
-  (a <-> a') -> (b <-> b') -> (a /\ b) <-> (a' /\ b').
-Proof. tauto. Qed.
-
-Lemma and_true: forall X, X /\ True <-> X.
-Proof. intro. tauto. Qed.
-
-(* ** Swapping a sum: *)
-Definition swap {X Y} (x: X + Y) := match x with
-  | inl a => inr a
-  | inr b => inl b
-end.
-
-Lemma comp_swap_inl {X Y}: (@swap X Y) ∘ inl = inr.
-Proof. auto. Qed.
-Lemma comp_swap_inr {X Y}: (@swap X Y) ∘ inr = inl.
-Proof. auto. Qed.
-
-(* ** Sum of two functions: *)
-Definition sumF {X Y Z} f g : X + Y -> Z := fun s =>
-  match s with
-  | inl x => f x
-  | inr y => g y
-  end.
-Infix "⨁" := sumF (at level 80, right associativity).
-
-Definition invert_sum {X Y Z} P R S (z : Z) := 
-  (exists x : X, P (inl x) /\ R x z)
-  \/ exists y : Y, P (inr y) /\ S y z.
-
-Definition compR {X Y Z} (R: Y -> Y -> Z) (f: X -> Y) x x' := R (f x) (f x').
-Infix "⨀" := compR (at level 79).
-
-
 Lemma ex_T {Y} (P Q: Y -> Prop):
   (exists x : {y : Y & P y}, Q (projT1 x)) <-> (exists x, P x /\ Q x).
 Proof.
@@ -64,12 +24,58 @@ Proof.
   destruct H. exists (existT _ x H). auto.
 Qed.
 
+(** 'select f P' restricts the domain of a function f according to a predicate P: *)
+Definition select {X Y} (f: X -> Y) (P: X -> Prop) : {x: X & P x} -> Y
+  := fun x => f (projT1 x).
+
+(** Composition of a predicate with a function (in both its arguments): *)
+Definition compR {X Y Z} (R: Y -> Y -> Z) (f: X -> Y) x x' := R (f x) (f x').
+Infix "⨀" := compR (at level 79).
+
+(** * Conjunction
+  Trivial properties of conjunction: *)
+Lemma and_morph {a a' b b'}:
+  (a <-> a') -> (b <-> b') -> (a /\ b) <-> (a' /\ b').
+Proof. tauto. Qed.
+
+Lemma and_true: forall X, X /\ True <-> X.
+Proof. intro. tauto. Qed.
+
+(** * Sums *)
+
+(** Swapping a sum: *)
+Definition swap {X Y}: X + Y -> Y + X := 
+  fun x => match x with
+  | inl a => inr a
+  | inr b => inl b
+  end.
+
+(** Composing swap with injections: *)
+Lemma comp_swap_inl {X Y}: (@swap X Y) ∘ inl = inr.
+Proof. auto. Qed.
+Lemma comp_swap_inr {X Y}: (@swap X Y) ∘ inr = inl.
+Proof. auto. Qed.
+
+(** Sum of two functions: *)
+Definition sumF {X Y Z} : (X -> Z) -> (Y -> Z) -> X + Y -> Z := fun f g s =>
+  match s with
+  | inl x => f x
+  | inr y => g y
+  end.
+Infix "⨁" := sumF (at level 80, right associativity).
+
+(** TODO: remove! too technical! *)
+Definition invert_sum {X Y Z} P R S (z : Z) := 
+  (exists x : X, P (inl x) /\ R x z)
+  \/ exists y : Y, P (inr y) /\ S y z.
+
+(* An auxiliary tactic to prove stuff by cases: *)
 From Coq.Logic Require Import Classical_Prop.
 Ltac classic P := 
 destruct (classic P) as [H | H];
 [setoid_rewrite (rewr_true H) | setoid_rewrite (rewr_false H)]; clear H.
 
-(* ** Inverting function for orders TODO *)
+(** Inverting function for orders TODO: *)
 Definition invF {X Y} (f: X -> Y) (y: Y) := exists x, f x = y.
 
 Definition inv2 {X Y W} (f: X -> W) (g : Y -> W) w :=
