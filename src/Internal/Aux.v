@@ -10,6 +10,12 @@ Definition select {X Y} (f: X -> Y) (P: X -> Prop) : {x: X & P x} -> Y
   := fun x => f (projT1 x).
 
 (** A couple of trivial equivalences: *)
+Lemma rewr_true: forall {p: Prop}, p -> (p <-> True).
+Proof. tauto. Qed.
+
+Lemma rewr_false: forall {p: Prop}, ~p -> (p <-> False).
+Proof. tauto. Qed.
+
 Lemma ex_false {P: False -> Prop}: (exists x, P x) <-> False.
 Proof. split; intros. destruct H, x. destruct H. Qed.
 
@@ -49,6 +55,19 @@ Definition invert_sum {X Y Z} P R S (z : Z) :=
 
 Definition compR {X Y Z} (R: Y -> Y -> Z) (f: X -> Y) x x' := R (f x) (f x').
 Infix "⨀" := compR (at level 79).
+
+
+Lemma ex_T {Y} (P Q: Y -> Prop):
+  (exists x : {y : Y & P y}, Q (projT1 x)) <-> (exists x, P x /\ Q x).
+Proof.
+  split; intro H; destruct H. destruct x. eauto.
+  destruct H. exists (existT _ x H). auto.
+Qed.
+
+From Coq.Logic Require Import Classical_Prop.
+Ltac classic P := 
+destruct (classic P) as [H | H];
+[setoid_rewrite (rewr_true H) | setoid_rewrite (rewr_false H)]; clear H.
 
 (* ** Inverting function for orders TODO *)
 Definition invF {X Y} (f: X -> Y) (y: Y) := exists x, f x = y.

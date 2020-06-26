@@ -1,8 +1,9 @@
+(* begin hide *)
 From Coq.Program Require Import Basics Combinators.
-
 Add LoadPath "src".
 From Internal Require Import Aux FunExt.
 From NFO Require Import Xor BoolExpr Model Eeq Iin.
+(* end hide *)
 
 (* Axuliary *)
 Definition enum {X} f := S False Bot (False_rect _) X f.

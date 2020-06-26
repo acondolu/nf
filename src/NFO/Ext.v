@@ -1,11 +1,18 @@
+(* begin hide *)
 Add LoadPath "src".
 From Internal Require Import Aux FunExt.
 From NFO Require Import BoolExpr Model Wff Eeq Iin Sets Xor Morphs.
+(* end hide *)
+(** * Axiom of extensionality
+    This module contains the proof that two sets are equivalent
+    if and only they have the same elements.
+*)
 
-(* This file needs cleaning!!! *)
+(** TODO: This file needs cleaning!!! *)
 
-Lemma sloppy_Qext {A} {h: A -> set} {p : boolean} {x y} :
-  (forall i, iin (h i) y <-> iin (h i) x) -> Qin x h p -> Qin y h p.
+(** B-sets have the following property: if two sets agree (or not) on the sets enumerated by 'h', then the B-set agrees on them. *)
+Lemma sloppy_Qext {J} {b: J -> set} {p : boolean} {x y} :
+  (forall i, iin (b i) y <-> iin (b i) x) -> Qin x b p -> Qin y b p.
 Proof.
   revert x y. induction p; simpl; intros.
   - destruct H0.
@@ -17,6 +24,9 @@ Proof.
   -- right. apply (IHp2 x y H H0).
 Qed.
 
+(** In case a A-set is extensionally equal to a B-set, the
+    same holds for the A-set: it cannot distinguish between
+    sets that agree on the image of 'h'. *)
 Lemma sloppy_Aext {x y} {J X} {f: X -> set} {h: J -> set} {p : boolean}:
   (forall x, Ain x f <-> Qin x h p)
   -> (forall i, iin (h i) y <-> iin (h i) x) -> Ain x f -> Ain y f.
@@ -35,28 +45,9 @@ Proof.
   apply iff_refl.
 Qed.
 
-Definition respects_sig {A} (h: A -> set) (sig: A -> Prop) :=
-  respects (fun a b => h a == h b) sig.
-
-Lemma ex_T {Y} (P Q: Y -> Prop):
-  (exists x : {y : Y & P y}, Q (projT1 x)) <-> (exists x, P x /\ Q x).
-Proof.
-  split; intro H; destruct H. destruct x. eauto.
-  destruct H. exists (existT _ x H). auto.
-Qed.
-
-Lemma aaa: forall {X} P z f,
-  respects eeq P ->
-(exists xp : {x: X & P (f x) : Prop}, f (projT1 xp) == z) <-> P z /\ exists x, f x == z.
-Proof.
-  intros. setoid_rewrite (ex_T (fun X => P (f X)) (fun X => f X == z)).
-  split; intro H0; destruct H0. destruct H0; split; eauto. apply (H _ _ H1). auto.
-  firstorder.
-Qed.
-
 Lemma Aeq_AXor_select {Y} (h: Y -> set) sig sig' :
-  respects_sig h sig
-  -> respects_sig h sig'
+respects (eeq ⨀ h) sig
+  -> respects (eeq ⨀ h) sig'
     -> Aeq (AXor (select h sig) (select h sig')) (select h (xorP sig' sig)).
 Proof.
   intros. apply Aext. intro. rewrite AXor_ok.
@@ -84,16 +75,20 @@ Proof.
 Qed.
 
 Definition completion A {B} (h: B -> set) :=
-  prod A { sig : B -> Prop & respects_sig h sig }.
+  prod A { sig : B -> Prop & respects (eeq ⨀ h) sig }.
 
 (* Enumerates all sets, under the hypothesis that there exists a paradoxical set *)
-Definition All {X Y} (f: X -> set) (h: Y -> set) : completion X h -> set :=
-  fun pr => match f (fst pr) with
-  | S A p h' X f =>  S A p h' _ (AXor f (select h (projT1 (snd pr))))
-  end.
+Definition All {X Y} (f: X -> set) (h: Y -> set)
+  : completion X h -> set :=
+  fun c =>
+    let (x, resp) := c in
+    let (sig, _) := resp in
+    match f x with
+    | S A p h' X f =>  S A p h' _ (AXor f (select h sig))
+    end.
 
 Lemma inv_sig {X X' J} {f: X -> set} {f': X' -> set} h {sig sig': J -> Prop}:
-  respects_sig h sig -> respects_sig h sig'
+  respects (eeq ⨀ h) sig -> respects (eeq ⨀ h) sig'
   -> Aeq f (AXor (AXor f' (select h sig)) (select h sig'))
   -> Aeq (AXor f (select h (xorP sig' sig))) f'.
 Proof.
@@ -154,7 +149,7 @@ Proof.
   intros. destruct H0.
   pose (fun j => iin (h j) x0) as sig_x0 (* the good signature *) .
   pose (fun j => iin (h j) x) as sig_x (* the current signature *) .
-  cut (respects_sig h sig_x0). cut (respects_sig h sig_x). intros R1 R2.
+  cut (respects (eeq ⨀ h) sig_x0). cut (respects (eeq ⨀ h) sig_x). intros R1 R2.
 
   destruct x.
   pose (S A p0 h0 _ (AXor (AXor f0 (select h sig_x)) (select h (sig_x0)))) as x_signed.
@@ -162,7 +157,7 @@ Proof.
   cut ((forall i : J, iin (h i) x_signed <-> iin (h i) x0)). intro.
   destruct (H1 H2). clear H1 H2.
   pose (xorP sig_x0 sig_x) as sig_xor.
-  cut (respects_sig h sig_xor). intro xr.
+  cut (respects (eeq ⨀ h) sig_xor). intro xr.
   exists (x, existT _ sig_xor xr).
 
   unfold All. unfold Ain. simpl.
@@ -184,13 +179,13 @@ Proof.
      setoid_rewrite and_true.
      apply trivial_xor_lemma.
      intro. split; intros; auto. exists i0. reflexivity.
-   unfold sig_x, respects_sig, respects. intros.
+   unfold sig_x, respects. intros.
     apply (iin_respects_eeq _ _ _ H2).
-   unfold sig_x, respects_sig, respects. intros.
+   unfold sig_x, respects. intros.
     apply (iin_respects_eeq _ _ _ H2).
-  -unfold sig_x, respects_sig, respects. intros.
+  -unfold sig_x, respects. intros.
   apply (iin_respects_eeq _ _ _ H1).
-  -unfold sig_x, respects_sig, respects. intros.
+  -unfold sig_x, respects. intros.
   apply (iin_respects_eeq _ _ _ H1). 
 Qed.
 
