@@ -36,6 +36,18 @@ Definition Aeq {X Y} f g :=
   (forall x: X, exists y, f x == g y)
   /\ forall y: Y, exists x, f x == g y.
 
+  (* TODO:
+  Change Aczel's equality to:
+  Definition A := { I : Type & I -> X }.
+Definition C {I} : (I -> X) -> A := existT _ I.
+
+Definition aeq (x y: A) :=
+  (forall i, exists j, R (projT2 x i) (projT2 y j))
+  /\ forall j, exists i, R (projT2 x i) (projT2 y j).
+  
+  So that it can be registered as a setoid.
+  *)
+
 (* Temporary unfolding lemma for eeq. 
    It will be improved in eeq_unfold. *)
 Local Lemma eeq_def : forall x y,
@@ -59,14 +71,16 @@ Proof.
        destruct x, y; repeat rewrite H0; tauto.
 Qed.
 
-Lemma eeq_refl {x} : eeq x x.
+(** ** Reflexivity *)
+Lemma eeq_refl: forall {x}, eeq x x.
 Proof.
   induction x. rewrite eeq_def. unfold Aeq. split.
   split; intro; eauto. eauto with Bool.
 Qed.
 Hint Immediate eeq_refl : Eeq.
 
-Lemma eeq_sym : forall {x y}, eeq x y -> eeq y x.
+(** ** Symmetry *)
+Lemma eeq_sym: forall {x y}, eeq x y -> eeq y x.
 Proof.
   apply (wf_two_ind (fun x y => eeq x y -> eeq y x)).
   destruct x1, x2.
@@ -78,6 +92,7 @@ Proof.
 Qed.
 Hint Resolve eeq_sym : Eeq.
 
+(** ** Transitivity *)
 Lemma eeq_trans : forall {x y z}, eeq x y -> eeq y z -> eeq x z.
 Proof.
   apply (wf_three_ind (fun x y z => eeq x y -> eeq y z -> eeq x z)).
