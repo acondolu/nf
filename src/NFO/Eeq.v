@@ -7,6 +7,8 @@ From Internal Require Import Aux FunExt.
 From NFO Require Import BoolExpr Model Wff.
 (* end hide *)
 
+(** TODO: rename to Eq *)
+
 (* begin hide *)
 Local Definition eeq' : set * set -> Prop.
 refine ( Fix wf_two (fun _ => Prop) (

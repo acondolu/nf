@@ -4,6 +4,8 @@ Require Import Relation_Operators.
 Add LoadPath "src".
 From NFO Require Import BoolExpr Model Eeq Xor Wff.
 
+(** TODO: rename to In *)
+
 (* Membership on the `Aczel` part of a NFO-set. *)
 Definition Ain {X} (y: set) (f: X -> set) :=
   exists x, eeq (f x) y.

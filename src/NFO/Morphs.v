@@ -38,7 +38,10 @@ Qed.
 
 (* respects eeq (iin z)
 /\ respecs eeq (fun x => iin x z) *)
-
+(** TODO: pose g is suspiciously similar to invert_sum
+  and then simply prove cut (respects eeq g)
+  with invert_sum_respects.
+*)
 Lemma iin_respects_eeq: forall z x y, eeq x y ->
   (iin z x <-> iin z y)
   /\ (iin x z <-> iin y z).
@@ -82,15 +85,20 @@ Proof.
     apply (proj1 (H a (S A0 p0 h0 X0 f0) (S A1 p1 h1 X1 f1) H2)).
 Qed.
 
+(** Register iin as a morphism with respect to eeq *)
 Add Morphism iin with signature eeq ==> eeq ==> iff as iin_mor.
 Proof.
   intros. destruct (iin_respects_eeq x x0 y0 H0).
   destruct (iin_respects_eeq y0 x y H). tauto.
 Qed.
 
-(* Qext *)
+(** TODO: il resto del file prova che Q e' ext. 
+  Forse va bene, perche' in cima abbiamo dimostrato che A e' ext.
+*)
+(** Qext *)
 
-Lemma aux {X p} {h: X -> _} {x}:
+(** TODO: remove *)
+Local Lemma aux {X p} {h: X -> _} {x}:
   eval (map (fun x' => iin (h x') x) p)
   <-> 
   Qin x h p.
@@ -168,28 +176,4 @@ Proof.
   - intro. apply iin_respects_eeq.
   - intro. specialize IHp with h. tauto.
   - intro h. specialize IHp1 with h. specialize IHp2 with h. tauto.
-Qed.
-
-(* Extensionality *)
-
-Definition ext_empty x := forall z, ~ iin z x.
-
-Lemma xor_ext: forall {x y},
-  (forall z, iin z x <-> iin z y) <-> ext_empty (QXor x y).
-Proof.
-  intros.
-  unfold ext_empty.
-  setoid_rewrite xor_ok.
-  setoid_rewrite xor_neg.
-  apply iff_refl.
-Qed.
-
-Lemma weak_regularity x :
-  match x with S _ _ _ _ f => Ain x f -> False end.
-Proof.
-  induction x. intros. unfold Ain in H1. destruct H1.
-  pose proof (H0 x). assert (H1' := H1). destruct (f x) in H1, H2.
-  apply H2. unfold Ain. assert (H1'' := H1).
-  rewrite eeq_unfold in H1. destruct H1, H1.
-  destruct (H4 x). exists x0. eauto with Eeq.
 Qed.

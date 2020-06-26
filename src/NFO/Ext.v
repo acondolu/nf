@@ -3,12 +3,39 @@ Add LoadPath "src".
 From Internal Require Import Aux FunExt.
 From NFO Require Import BoolExpr Model Wff Eeq Iin Sets Xor Morphs.
 (* end hide *)
+
 (** * Axiom of extensionality
     This module contains the proof that two sets are equivalent
     if and only they have the same elements.
 *)
 
 (** TODO: This file needs cleaning!!! *)
+
+(** * ? *)
+
+Definition ext_empty x := forall z, ~ iin z x.
+
+Lemma xor_ext: forall {x y},
+  (forall z, iin z x <-> iin z y) <-> ext_empty (QXor x y).
+Proof.
+  intros.
+  unfold ext_empty.
+  setoid_rewrite xor_ok.
+  setoid_rewrite xor_neg.
+  apply iff_refl.
+Qed.
+
+Lemma weak_regularity x :
+  match x with S _ _ _ _ f => Ain x f -> False end.
+Proof.
+  induction x. intros. unfold Ain in H1. destruct H1.
+  pose proof (H0 x). assert (H1' := H1). destruct (f x) in H1, H2.
+  apply H2. unfold Ain. assert (H1'' := H1).
+  rewrite eeq_unfold in H1. destruct H1, H1.
+  destruct (H4 x). exists x0. eauto with Eeq.
+Qed.
+
+(** * ? *)
 
 (** B-sets have the following property: if two sets agree (or not) on the sets enumerated by 'h', then the B-set agrees on them. *)
 Lemma sloppy_Qext {J} {b: J -> set} {p : boolean} {x y} :
