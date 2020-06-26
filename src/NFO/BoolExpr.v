@@ -137,13 +137,15 @@ Proof.
   repeat rewrite map_compose_inl.
   repeat rewrite map_compose_inr.
   intros.
-  apply (fun A B => iff_trans (H A) (H0 B)); unfold respects; intros; destruct x; destruct x'; simpl sumF;  unfold respects in H1; simpl in H2; unfold g; unfold compose; auto. unfold compR, sumF in H2.
+  apply (fun A B => iff_trans (H A) (H0 B)); unfold respects; intros; destruct x, x'; simpl sumF; unfold respects in H1; simpl; unfold g; unfold compose; auto; unfold compR, sumF.
   - split; intro.
   -- left. exists x. auto.
   -- repeat destruct H3; unfold compR, sumF in H1.
       specialize H1 with (inl x) (inl x0). 
+      unfold sumF in H2.
       apply (fun X Y Z => H1 (trans _ _ _ X Y Z H2 (sym _ _ H4))); auto.
       specialize H1 with (inl x) (inr x0).
+      unfold sumF in H2.
       apply (fun X Y Z => H1 (trans _ _ _ X Y Z H2 H4)); auto.
   - split; intro.
     -- repeat destruct H3; unfold compR, sumF in H2.
@@ -168,4 +170,44 @@ Proof.
      apply H1; eauto.
      specialize H1 with (inr x) (inr z). unfold compR, sumF in H1. 
      apply H1; eauto.
+Qed.
+
+
+Lemma eeq_boolean_simpl:
+  forall {X Y Z R p p'} {h: X -> Z} {h': Y -> Z},
+    Equivalence R ->
+      eeq_boolean (R ⨀ (h ⨁ h')) (map inl p) (map inr p')
+        <-> eeq_boolean R (map h p) (map h' p').
+Proof.
+  intros. rename H into EE. pose EE as EE'. destruct EE.
+  unfold eeq_boolean. split; intros.
+  - specialize H with (P ∘ (h ⨁ h')).
+    repeat rewrite map_compose in H.
+    repeat rewrite compose_assoc in H.
+    rewrite<- map_compose in H.
+    rewrite map_compose_inl in H.
+    rewrite<- map_compose in H.
+    rewrite map_compose_inr in H.
+    apply H. unfold respects in *. intros.
+    destruct x, x'; unfold compose, sumF; apply H0; apply H1.
+  - pose (invert_sum P (compose R h) (compose R h')) as g.
+    specialize H with g.
+    cut (respects R g).
+  -- intro. repeat rewrite map_compose.
+    rewrite (map_extP (compose P inl) (compose g h)).
+    rewrite (map_extP (compose P inr) (compose g h')).
+    repeat rewrite<- map_compose. apply (H H1).
+    --- unfold FunExt.extP. unfold compose.
+        intros. unfold g. split; intro.
+        right. exists x. split; auto.
+        repeat destruct H2.
+        apply (H0 (inl x0)); auto.
+        apply (H0 (inr x0)); auto.
+    --- unfold FunExt.extP. unfold compose.
+        intros. unfold g. split; intro.
+        left. exists x. split; auto.
+        repeat destruct H2.
+        apply (H0 (inl x0)); auto.
+        apply (H0 (inr x0)); auto.
+  -- revert H0. apply (invert_sum_respects EE').
 Qed.

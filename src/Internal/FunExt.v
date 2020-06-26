@@ -34,3 +34,14 @@ Proof.
   unfold respects. unfold compR, sumF. 
   intros. destruct x, x'; unfold compose; simpl; apply H; assumption.
 Qed.
+
+(*  *)
+
+Lemma invert_sum_respects {X Y Z h h'} {R: Z -> Z -> Prop} {P: X + Y -> Prop}:
+  Equivalence R ->
+    respects (R ⨀ (h ⨁ h')) P -> respects R (invert_sum P (R ∘ h) (R ∘ h')).
+Proof.
+  unfold respects in *. intros. intros.
+  destruct H.
+  split; intros; repeat destruct H; firstorder.
+Qed.

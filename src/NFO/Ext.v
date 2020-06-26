@@ -69,11 +69,11 @@ Proof.
   intro H'. apply (H1 (ex_intro _ (existT _ x0 H') H2)).
   - destruct H1, x0. destruct x1, a.
   -- apply xor_2.
-      intro H'. destruct H', x1. pose proof (H x0 x1 (eeq_trans H1 (eeq_sym H2))). simpl in *. tauto.
+      intro H'. destruct H', x1. pose proof (H x0 x1 (eeq_trans _ _ _ H1 (eeq_sym _ _ H2))). simpl in *. tauto.
       exists (existT _ x0 s). assumption.
   -- apply xor_1.
       exists (existT _ x0 s). assumption.
-      intro H'. destruct H', x1. pose proof (H0 x0 x1 (eeq_trans H1 (eeq_sym H2))). simpl in *. tauto.
+      intro H'. destruct H', x1. pose proof (H0 x0 x1 (eeq_trans _ _ _ H1 (eeq_sym _ _ H2))). simpl in *. tauto.
 Qed.
 
 Definition completion A {B} (h: B -> set) :=

@@ -64,7 +64,7 @@ Definition sumF {X Y Z} : (X -> Z) -> (Y -> Z) -> X + Y -> Z := fun f g s =>
   end.
 Infix "⨁" := sumF (at level 80, right associativity).
 
-(** TODO: remove! too technical! *)
+(** TODO: used only in transitivity proofs *)
 Definition invert_sum {X Y Z} P R S (z : Z) := 
   (exists x : X, P (inl x) /\ R x z)
   \/ exists y : Y, P (inr y) /\ S y z.

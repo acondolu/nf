@@ -13,9 +13,9 @@ Lemma Aeq_Ain: forall {X Y} {f: X -> _} {g: Y -> _},
   Aeq f g -> forall x, Ain x f <-> Ain x g.
 Proof.
   intros. unfold Ain. destruct H. split; intro; destruct H1.
-  - destruct (H x0). exists x1. apply (eeq_trans (eeq_sym H2) H1).
-  - destruct (H0 x0). exists x1. apply (eeq_trans H2 H1).
-Qed.
+  - destruct (H x0). exists x1. eauto with Eeq.
+  - destruct (H0 x0). exists x1. eauto with Eeq.
+  Qed.
 Lemma Ain_Aeq: forall {X Y} {f: X -> _} {g: Y -> _},
   (forall x, Ain x f <-> Ain x g) -> Aeq f g.
 Proof.
@@ -33,8 +33,7 @@ Proof. split. apply Aeq_Ain. apply Ain_Aeq. Qed.
 Lemma eeq_Ain: forall {x y X} {f: X -> _},
   x == y -> Ain x f <-> Ain y f.
 Proof.
-  intros. unfold Ain. split; intro; destruct H0; exists x0.
-  apply (eeq_trans H0 H). apply (eeq_trans H0 (eeq_sym H)).
+  intros. unfold Ain. split; intro; destruct H0; exists x0; eauto with Eeq.
 Qed.
 
 (* respects eeq (iin z)
@@ -66,9 +65,9 @@ Proof.
       right. exists x0. split; eauto with Eeq.
     -- apply map_extP. unfold FunExt.extP. intro a1.
        unfold Basics.compose. unfold g. split; intro. repeat destruct H5; auto.
-       apply (fun K => proj2 (H1 (h0 x) (h1 a1) K (eeq_sym H5))).
+       apply (fun K => proj2 (H1 (h0 x) (h1 a1) K (eeq_sym _ _ H5))).
        auto with Wff. assumption.
-       apply (fun K => proj2 (H1 (h1 x) (h1 a1) K (eeq_sym H5))).
+       apply (fun K => proj2 (H1 (h1 x) (h1 a1) K (eeq_sym _ _ H5))).
        auto with Wff. assumption.
        right. exists a1. split; eauto with Eeq.
     -- apply map_extP. unfold FunExt.extP. intro a1.
@@ -192,6 +191,5 @@ Proof.
   pose proof (H0 x). assert (H1' := H1). destruct (f x) in H1, H2.
   apply H2. unfold Ain. assert (H1'' := H1).
   rewrite eeq_unfold in H1. destruct H1, H1.
-  destruct (H4 x). exists x0.
-  apply (eeq_trans (eeq_trans H5 H1') (eeq_sym H1'')).
+  destruct (H4 x). exists x0. eauto with Eeq.
 Qed.
