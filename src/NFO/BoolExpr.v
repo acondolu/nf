@@ -42,7 +42,7 @@ Proof.
   rewrite IHe1. rewrite IHe2. tauto.
 Qed.
 
-(** The composition of maps on boolean expressions *)
+(** The usual property about compositions of maps: *)
 Lemma map_compose {X Y Z} {f: Y -> Z} {g: X -> Y} {e}:
   map f (map g e) = map (f ∘ g) e.
 Proof.
@@ -51,13 +51,22 @@ Proof.
   - rewrite IHe1. rewrite IHe2. auto.
 Qed.
 
-(** Extensional equality of boolean expressions *)
+(* Auxiliary lemmas on mapping and composing with projections. *)
+Local Lemma map_compose_inl {X Y Z} {f: X -> Z} {g: Y -> Z} {e}:
+  map ((f ⨁ g) ∘ inl) e = map f e.
+Proof. induction e; simpl; auto. Qed.
+
+Local Lemma map_compose_inr {X Y Z} {f: X -> Z} {g: Y -> Z} {e}:
+  map ((f ⨁ g) ∘ inr) e = map g e.
+Proof. induction e; simpl; auto. Qed.
+
+(** * Extensional equality of boolean expressions *)
 
 (** Two boolean expressions are extensionally equal iff 
     they evaluate to equivalent values with respect to every
     truth assignment P. However, not every assignment is allowed.
-    Here we consider only only P's that respect the binary relation
-    R in input. R is supposed to characterize equality of atoms of 
+    Here we consider only P's that respect the binary relation
+    R in input. R is supposed to characterize the equality on atoms of 
     type X. *)
 Definition eeq_boolean {X} (R: X -> X -> Prop) e e' : Prop :=
   forall P, respects R P -> ⟦map P e⟧ <-> ⟦map P e'⟧.
@@ -69,6 +78,47 @@ Proof.
   apply (respects_ext _ _ H); assumption.
 Qed.
 
+
+(** Gosh: important. This shows that the initial approximation of eeq is correct. *)
+Lemma eeq_boolean_simpl:
+  forall {X Y Z R} {f: X -> Z} {g: Y -> Z} {e e'},
+    Equivalence R ->
+      eeq_boolean (R ⨀ (f ⨁ g)) (map inl e) (map inr e')
+        <-> eeq_boolean R (map f e) (map g e').
+Proof.
+  intros. rename H into EE. pose EE as EE'. destruct EE.
+  unfold eeq_boolean. split; intros.
+  - specialize H with (P ∘ (f ⨁ g)).
+    repeat rewrite map_compose in H.
+    repeat rewrite compose_assoc in H.
+    rewrite<- map_compose in H.
+    rewrite map_compose_inl in H.
+    rewrite<- map_compose in H.
+    rewrite map_compose_inr in H.
+    apply H. unfold respects in *. intros.
+    destruct x, x'; unfold compose, sumF; apply H0; apply H1.
+  - pose (invert_sum P (R ∘ f) (R ∘ g)) as K.
+    specialize H with K.
+    cut (respects R K).
+  -- intro. repeat rewrite map_compose.
+    rewrite (map_extP (compose P inl) (compose K f)).
+    rewrite (map_extP (compose P inr) (compose K g)).
+    repeat rewrite<- map_compose. apply (H H1).
+    --- unfold FunExt.extP. unfold compose.
+        intros. unfold K. split; intro.
+        right. exists x. split; auto.
+        repeat destruct H2.
+        apply (H0 (inl x0)); auto.
+        apply (H0 (inr x0)); auto.
+    --- unfold FunExt.extP. unfold compose.
+        intros. unfold K. split; intro.
+        left. exists x. split; auto.
+        repeat destruct H2.
+        apply (H0 (inl x0)); auto.
+        apply (H0 (inr x0)); auto.
+  -- revert H0. apply (invert_sum_respects EE').
+Qed.
+
 (** * Equivalence
 
     In this section, we prove that eeq_boolean is an equivalence relation.
@@ -77,7 +127,6 @@ Qed.
     that equality of NFO sets is an equivalence relation (see NFO.Eeq).
 *)
 
-(** ** Rexflexivity *)
 Lemma eeq_boolean_refl {X Y} {f: X -> Y} {R: Y -> Y -> Prop} {e}:
     (forall x, R (f x) (f x))
       -> eeq_boolean (R ⨀ (f ⨁ f)) (map inl e) (map inr e).
@@ -88,7 +137,6 @@ Proof.
 Qed.
 Hint Resolve eeq_boolean_refl : Bool.
 
-(** ** Symmetry *)
 Lemma eeq_boolean_sym {X Y Z R} {f: X -> Z} {g: Y -> Z} {e e'} :
   eeq_boolean (R ⨀ (f ⨁ g)) (map inl e) (map inr e')
     -> eeq_boolean (R ⨀ (g ⨁ f)) (map inl e') (map inr e).
@@ -105,21 +153,9 @@ Proof.
   apply respects_swap. assumption.
 Qed.
 
-(** Auxiliary lemmas on mapping and composing with projections. *)
-Lemma map_compose_inl {X Y Z} {f: X -> Z} {g: Y -> Z} {e}:
-  map ((f ⨁ g) ∘ inl) e = map f e.
-Proof. induction e; simpl; auto. Qed.
-
-Lemma map_compose_inr {X Y Z} {f: X -> Z} {g: Y -> Z} {e}:
-  map ((f ⨁ g) ∘ inr) e = map g e.
-Proof. induction e; simpl; auto. Qed.
-
-(** ** Transitivity
-
-TODO: This needs some love... *)
-Lemma eeq_boolean_trans {X Y Z W} {f1 f2 f3}
+(** TODO: This needs some love... *)
+Lemma eeq_boolean_trans {X Y Z W} {R : W -> W -> Prop} {f1 f2 f3}
   {e1 : @boolean X} {e2 : @boolean Y} {e3 : @boolean Z}
-  {R : W -> W -> Prop}
   :  (forall a b, R a b -> R b a)
   -> (forall a b c, inv3 f1 f2 f3 a -> inv3 f1 f2 f3 b -> inv3 f1 f2 f3 c -> R a b -> R b c -> R a c)
   -> eeq_boolean (R ⨀ (f1 ⨁ f2)) (map inl e1) (map inr e2)
@@ -170,44 +206,4 @@ Proof.
      apply H1; eauto.
      specialize H1 with (inr x) (inr z). unfold compR, sumF in H1. 
      apply H1; eauto.
-Qed.
-
-
-Lemma eeq_boolean_simpl:
-  forall {X Y Z R p p'} {h: X -> Z} {h': Y -> Z},
-    Equivalence R ->
-      eeq_boolean (R ⨀ (h ⨁ h')) (map inl p) (map inr p')
-        <-> eeq_boolean R (map h p) (map h' p').
-Proof.
-  intros. rename H into EE. pose EE as EE'. destruct EE.
-  unfold eeq_boolean. split; intros.
-  - specialize H with (P ∘ (h ⨁ h')).
-    repeat rewrite map_compose in H.
-    repeat rewrite compose_assoc in H.
-    rewrite<- map_compose in H.
-    rewrite map_compose_inl in H.
-    rewrite<- map_compose in H.
-    rewrite map_compose_inr in H.
-    apply H. unfold respects in *. intros.
-    destruct x, x'; unfold compose, sumF; apply H0; apply H1.
-  - pose (invert_sum P (compose R h) (compose R h')) as g.
-    specialize H with g.
-    cut (respects R g).
-  -- intro. repeat rewrite map_compose.
-    rewrite (map_extP (compose P inl) (compose g h)).
-    rewrite (map_extP (compose P inr) (compose g h')).
-    repeat rewrite<- map_compose. apply (H H1).
-    --- unfold FunExt.extP. unfold compose.
-        intros. unfold g. split; intro.
-        right. exists x. split; auto.
-        repeat destruct H2.
-        apply (H0 (inl x0)); auto.
-        apply (H0 (inr x0)); auto.
-    --- unfold FunExt.extP. unfold compose.
-        intros. unfold g. split; intro.
-        left. exists x. split; auto.
-        repeat destruct H2.
-        apply (H0 (inl x0)); auto.
-        apply (H0 (inr x0)); auto.
-  -- revert H0. apply (invert_sum_respects EE').
 Qed.

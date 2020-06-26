@@ -1,3 +1,4 @@
+(** * NFO.Eeq : Equality of NFO sets *)
 (* begin hide *)
 From Coq.Program Require Import Basics Combinators.
 Require Import Setoid Morphisms.
@@ -6,10 +7,8 @@ From Internal Require Import Aux FunExt.
 From NFO Require Import BoolExpr Model Wff.
 (* end hide *)
 
-(** * Equality on NFO sets *)
-
-(** A  *)
-Definition eeq' : set * set -> Prop.
+(* begin hide *)
+Local Definition eeq' : set * set -> Prop.
 refine ( Fix wf_two (fun _ => Prop) (
   fun x rec => (
     match x as x0 return (x = x0 -> Prop) with
@@ -27,8 +26,11 @@ refine ( Fix wf_two (fun _ => Prop) (
  ))
  ; rewrite eqx; eauto with Wff.
 Defined.
+(* end hide *)
 
-Definition eeq x y := eeq' (x, y).
+Definition eeq : set -> set -> Prop.
+  intros x y. exact (eeq' (x, y)).
+Defined.
 Infix "==" := eeq (at level 50) : type_scope.
 
 (** * "Aczel" equality: *)
@@ -58,8 +60,7 @@ Proof.
        destruct x, y; repeat rewrite H0; tauto.
 Qed.
 
-(** * eeq is an equivalence *)
-(** Reflexivity: *)
+(** eeq is an equivalence relation: *)
 Lemma eeq_refl: forall x, eeq x x.
 Proof.
   induction x. rewrite eeq_def. unfold Aeq. split.
@@ -67,7 +68,6 @@ Proof.
 Qed.
 Hint Immediate eeq_refl : Eeq.
 
-(** Symmetry: *)
 Lemma eeq_sym: forall x y, eeq x y -> eeq y x.
 Proof.
   apply (wf_two_ind (fun x y => eeq x y -> eeq y x)).
@@ -80,7 +80,6 @@ Proof.
 Qed.
 Hint Resolve eeq_sym : Eeq.
 
-(** Transitivity: *)
 Lemma eeq_trans : forall x y z, eeq x y -> eeq y z -> eeq x z.
 Proof.
   apply (wf_three_ind (fun x y z => eeq x y -> eeq y z -> eeq x z)).
@@ -92,13 +91,13 @@ Proof.
     eauto with Wff.
   - intro y. destruct (H5 y). destruct (H3 x).
     eauto with Wff.
-  - apply (fun X => eeq_boolean_trans (@eeq_sym) X H2 H4).
+  - apply (fun X => eeq_boolean_trans eeq_sym X H2 H4).
     intros. repeat destruct H6; destruct H7; repeat destruct H6; destruct H8; repeat destruct H6; apply (fun X => H _ _ _ X H9 H10); eauto with Wff.
 Qed.
 Hint Resolve eeq_trans : Eeq.
 
-(** Register (set, eeq) as a setoid *)
-Instance eeqs : Equivalence eeq.
+(** Register (set, eeq) as a setoid: *)
+Instance nfo_setoid : Equivalence eeq.
 Proof.
   constructor. exact @eeq_refl. exact @eeq_sym. exact @eeq_trans.
 Qed.
@@ -125,11 +124,12 @@ Qed.
 (** TODO: rename in Beq *)
 Definition Qeq := eeq_boolean eeq.
 
+(** The good unfolding lemma for eeq: *)
 Lemma eeq_unfold {A p h X f A' p' h' X' f'}:
   eeq (S A p h X f) (S A' p' h' X' f')
     <-> Aeq f f' /\ Qeq (map h p) (map h' p').
 Proof.
-  unfold Qeq. rewrite<- (eeq_boolean_simpl eeqs).
+  unfold Qeq. rewrite<- (eeq_boolean_simpl nfo_setoid).
   rewrite eeq_def.
   tauto.
 Qed.

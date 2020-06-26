@@ -34,7 +34,7 @@ coq-clean:
 coq-doc: coq # NFO-only!
 	rm -rf doc
 	mkdir doc
-	coqdoc -l -d doc -R "src" "" --verbose --utf8 src/**/*.v
+	coqdoc --light --lib-subtitles -d doc -R "src" "" --verbose --utf8 src/**/*.v
 
 # LaTeX
 
