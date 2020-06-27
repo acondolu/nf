@@ -52,11 +52,11 @@ Proof.
 Qed.
 
 (* Auxiliary lemmas on mapping and composing with projections. *)
-Local Lemma map_compose_inl {X Y Z} {f: X -> Z} {g: Y -> Z} {e}:
+Lemma map_compose_inl {X Y Z} {f: X -> Z} {g: Y -> Z} {e}:
   map ((f ⨁ g) ∘ inl) e = map f e.
 Proof. induction e; simpl; auto. Qed.
 
-Local Lemma map_compose_inr {X Y Z} {f: X -> Z} {g: Y -> Z} {e}:
+Lemma map_compose_inr {X Y Z} {f: X -> Z} {g: Y -> Z} {e}:
   map ((f ⨁ g) ∘ inr) e = map g e.
 Proof. induction e; simpl; auto. Qed.
 

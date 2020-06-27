@@ -2,7 +2,7 @@
 From Coq.Program Require Import Basics Combinators.
 Add LoadPath "src".
 From Internal Require Import Aux FunExt.
-From NFO Require Import Xor BoolExpr Model Eeq Iin.
+From NFO Require Import Xor BoolExpr Model Eeq Iin Morphs.
 (* end hide *)
 
 (* Axuliary *)
@@ -97,6 +97,7 @@ Definition AXor {X Y} (f: X -> set) (g: Y -> set)
       | inl x => f (projT1 x)
       | inr y => g (projT1 y) 
     end.
+Infix "^A^" := AXor (at level 50).
 
 Local Definition boolean_xor {A} (p p': @boolean A) :=
   Or (Not (Or p (Not p'))) (Not (Or (Not p) p')).
@@ -107,6 +108,7 @@ Definition QXor B C :=
     let e'' := boolean_xor (map inl e) (map inr e') in
     S _ (sum Y Y') (AXor f f') (g ⨁ g') e''
   end.
+Infix "^^^" := QXor (at level 50).
 
 Lemma AXor_ok {X X'} {f: X -> set} {f': X' -> set} {x}:
   Ain x (AXor f f') <-> Ain x f ⊻ Ain x f'.
@@ -135,4 +137,18 @@ Proof.
   intros. destruct x, y. unfold QXor. setoid_rewrite iin_unfold.
   setoid_rewrite AXor_ok. setoid_rewrite QXor_ok.
   rewrite xor_pairs. tauto.
+Qed.
+
+(** LOL *)
+Lemma xor_empty: forall x y, (x ^^^ y) == emptyset -> x == y.
+  destruct x, y. unfold QXor, emptyset. setoid_rewrite eeq_unfold.
+  apply and_morph.
+  - setoid_rewrite Aext. setoid_rewrite AXor_ok.
+    cut (forall x, Ain x (False_rect set) <-> False). intro.
+    setoid_rewrite H. split; intros. split; try tauto. apply xor_neg. auto.
+    apply xor_neg. rewrite H0. tauto. 
+    unfold Ain. firstorder.
+  - setoid_rewrite Qext. setoid_rewrite QXor_ok. simpl.
+    split; intros. split. apply xor_neg. auto. tauto.
+    apply xor_neg. rewrite H. tauto. 
 Qed.

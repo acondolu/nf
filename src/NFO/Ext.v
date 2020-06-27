@@ -1,13 +1,15 @@
+(** * NFO.Ext : Extensionality of NFO sets *)
+(** This module proves extensionality, i.e. that two sets are equivalent
+    if and only they have the same elements.
+*)
+
 (* begin hide *)
 Add LoadPath "src".
 From Internal Require Import Aux FunExt.
 From NFO Require Import BoolExpr Model Wff Eeq Iin Sets Xor Morphs.
 (* end hide *)
 
-(** * Axiom of extensionality
-    This module contains the proof that two sets are equivalent
-    if and only they have the same elements.
-*)
+
 
 (** TODO: This file needs cleaning!!! *)
 
@@ -16,7 +18,7 @@ From NFO Require Import BoolExpr Model Wff Eeq Iin Sets Xor Morphs.
 Definition ext_empty x := forall z, ~ iin z x.
 
 Lemma xor_ext: forall {x y},
-  (forall z, iin z x <-> iin z y) <-> ext_empty (QXor x y).
+  (forall z, iin z x <-> iin z y) <-> ext_empty (x ^^^ y).
 Proof.
   intros.
   unfold ext_empty.
@@ -54,7 +56,7 @@ Qed.
 (** In case a A-set is extensionally equal to a B-set, the
     same holds for the A-set: it cannot distinguish between
     sets that agree on the image of 'h'. *)
-Lemma sloppy_Aext {x y} {J X} {f: X -> set} {h: J -> set} {p : boolean}:
+Lemma sloppy_Aext {J X} {f: X -> set} {h: J -> set} {p x y}:
   (forall x, Ain x f <-> Qin x h p)
   -> (forall i, iin (h i) y <-> iin (h i) x) -> Ain x f -> Ain y f.
 Proof.
@@ -76,7 +78,7 @@ Lemma Aeq_AXor_select {Y} (h: Y -> set) sig sig' :
 respects (eeq ⨀ h) sig
   -> respects (eeq ⨀ h) sig'
     -> Aeq
-        (AXor (select h sig) (select h sig'))
+        (select h sig ^A^ select h sig')
           (select h (sig' ^^ sig)).
 Proof.
   intros. apply Aext. intro. rewrite AXor_ok.
@@ -163,7 +165,7 @@ Proof.
 
   destruct x.
   pose (S _ Y (AXor (AXor f0 (select h sig_x)) (select h (sig_x0))) g e) as x_signed.
-  pose proof (fun X => @sloppy_Aext _ x_signed _ _ f h p H X H0).
+  pose proof (fun X => @sloppy_Aext _ _ f h p _ x_signed H X H0).
   cut ((forall i : J, iin (h i) x_signed <-> iin (h i) x0)). intro.
   destruct (H1 H2). clear H1 H2.
   pose (sig_x0 ^^ sig_x) as sig_xor.
@@ -209,42 +211,28 @@ Proof.
   destruct (weak_regularity (enum (All f g)) (H1 (ex_intro _ x H0) _)).
 Qed.
 
-Lemma no_urelements: forall x y, ext_empty (QXor x y) -> x == y.
+
+Lemma no_urelements: forall x, ext_empty x -> x == emptyset.
 Proof.
-  intros x y. unfold ext_empty.
-  setoid_rewrite xor_ok. destruct x, y.
-  intro. setoid_rewrite xor_neg in H.
-  setoid_rewrite iin_unfold in H.
-  setoid_rewrite<- xor_neg in H.
-  setoid_rewrite xor_pairs in H.
-  setoid_rewrite xor_neg in H.
-  pose H as H'.
-  setoid_rewrite<- AXor_ok in H'.
-  setoid_rewrite<- QXor_ok in H'.
-  setoid_rewrite<- xor_neg in H'.
-  setoid_rewrite<- iin_unfold in H'.
-  pose proof (not_iin_not_Ain H').
-  rewrite eeq_unfold.
-  setoid_rewrite AXor_ok in H0.
-  pose H0 as H0'.
-  setoid_rewrite xor_neg in H0'.
-  rewrite<- Aext in H0'.
-  cut (forall z, ~ (Qin z g e ⊻ Qin z g0 e0)). intro.
-  setoid_rewrite xor_neg in H1.
-  setoid_rewrite<- Qext in H1.
-  split; auto.
-  intro z.
-  specialize H with z. setoid_rewrite<- H. apply H0.
+  destruct x. intro. pose proof (not_iin_not_Ain H).
+  unfold emptyset, enum. setoid_rewrite eeq_unfold.
+  unfold ext_empty in H. setoid_rewrite iin_unfold in H.
+  setoid_rewrite xor_neg in H. pose H0 as H0'.
+  setoid_rewrite H in H0'. split.
+  - rewrite Aext. firstorder.
+  - rewrite Qext. firstorder.
 Qed.
 
+(* As a consequence of the  *)
 Lemma iin_eeq: forall x y, 
   (forall z, iin z x <-> iin z y) -> x == y.
 Proof.
-  setoid_rewrite xor_ext. apply no_urelements.
+  intros. apply xor_empty. apply no_urelements. apply xor_ext. assumption.
 Qed.
 
+(** We can finally prove extensionality of NFO sets: *)
 Theorem ext:
   forall x y, x == y <-> forall z, iin z x <-> iin z y.
-  Proof.
+Proof.
   intros. split. intro H. setoid_rewrite H. tauto. apply iin_eeq.
 Qed.

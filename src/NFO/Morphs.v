@@ -14,7 +14,7 @@ Require Export Setoid.
 
 Add LoadPath "src".
 From Internal Require Import FunExt Aux.
-From NFO Require Import BoolExpr Model Wff Eeq Iin Sets Xor.
+From NFO Require Import BoolExpr Model Wff Eeq Iin Xor.
 (* end hide *)
 
 (** * Proofs for Aeq and Ain *)
@@ -40,9 +40,7 @@ Theorem Aext {X Y} {f: X -> _} {g: Y -> _} :
   Aeq f g <-> forall x, Ain x f <-> Ain x g.
 Proof. split. apply Aeq_Ain. apply Ain_Aeq. Qed.
 
-(** TODO: Vale anche nell'altra direzione, mentre eeq_Qin no.
-    Si potrebbe spiegare che questo e' un punto chiave
-    della prova di estensionality. *)
+(** TODO: Vale anche nell'altra direzione, ma non ci serve. Lo stesso per Bin. *)
 Lemma eeq_Ain: forall {x y X} {f: X -> _},
   x == y -> Ain x f <-> Ain y f.
 Proof.
@@ -96,11 +94,11 @@ Proof.
        auto with Wff. assumption.
        left. exists a1. split; eauto with Eeq.
   - apply (eeq_Ain H2).
-  -  setoid_rewrite<- Bin_bexpr. apply map_extP. unfold FunExt.extP. intro a.
+  - setoid_rewrite<- Bin_bexpr. apply map_extP. unfold FunExt.extP. intro a.
     apply (proj1 (H0 a (S X0 Y0 f0 g0 e0) (S X1 Y1 f1 g1 e1) H2)).
 Qed.
 
-(** Register iin as a morphism with respect to eeq *)
+(** Register iin as a eeq-morphism: *)
 Add Morphism iin with signature eeq ==> eeq ==> iff as iin_mor.
 Proof.
   intros. destruct (iin_respects_eeq x x0 y0 H0).
