@@ -19,9 +19,10 @@ Definition aux {X Y Z: Type} (A2: X -> set) (Q1: Y -> set) (p1: boolean) (Q2: Z 
     - The resulting B-part is the union of the input B-parts.
 *)
 Definition cup B C := 
-  match B, C with S A p h X f, S A' p' h' X' f' =>
-  S _ (Or (map inl p) (map inr p')) (h ⨁ h')
-    _ (select f (aux f' h p h' p' ∘ f) ⨁ select f' (aux f h' p' h p ∘ f'))
+  match B, C with S X Y f g e, S X' Y' f' g' e' =>
+  S _ _
+    (select f (aux f' g e g' e' ∘ f) ⨁ select f' (aux f g' e' g e ∘ f'))
+      (g ⨁ g') (Or (map inl e) (map inr e'))
 end.
 
 Lemma aaa: forall {X Y R} P z (f: X -> Y),
@@ -41,13 +42,13 @@ Proof.
   setoid_rewrite iin_unfold.
   unfold Ain, select.
   unfold compose.
-  setoid_rewrite (aaa (aux f0 h p h0 p0) z f).
-  setoid_rewrite (aaa (aux f h0 p0 h p) z f0).
+  setoid_rewrite (aaa (aux f0 g e g0 e0) z f).
+  setoid_rewrite (aaa (aux f g0 e0 g e) z f0).
   - unfold aux.
       classic (exists x, f x == z);
         classic (exists x, f0 x == z);
-          classic (Qin z h p);
-            classic (Qin z h0 p0);
+          classic (Qin z g e);
+            classic (Qin z g0 e0);
               clear; unfold xor; tauto.
   - unfold respects. intros. unfold aux.
     setoid_rewrite (eeq_Qin H).

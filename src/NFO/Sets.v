@@ -6,7 +6,7 @@ From NFO Require Import Xor BoolExpr Model Eeq Iin.
 (* end hide *)
 
 (* Axuliary *)
-Definition enum {X} f := S False Bot (False_rect _) X f.
+Definition enum {X} f := S X False f (False_rect _) Bot.
 
 Lemma Ain_sum {X Y} (f: X + Y -> set) x:
   Ain x f <-> Ain x (compose f inl) \/ Ain x (compose f inr).
@@ -65,7 +65,7 @@ Qed.
 
 (* Set complement *)
 Definition compl x := match x with
-  S A p h X f => S A (Not p) h X f
+  S X Y f g e => S X Y f g (Not e)
 end.
 
 Lemma compl_ok: forall x y,
@@ -76,7 +76,7 @@ Proof.
 Qed.
 
 (* Co-singleton *)
-Definition cosin x := S unit (Atom tt) (fun _ => x) False (False_rect _).
+Definition cosin x := S False unit (False_rect _) (fun _ => x) (Atom tt).
 
 Lemma cosin_ok: forall x y, iin x (cosin y) <-> iin y x.
 Proof.
@@ -96,9 +96,6 @@ Qed.
 
 (* Exclusive or of sets *)
 
-Local Definition boolean_xor {A} (p p': @boolean A) :=
-  Or (Not (Or p (Not p'))) (Not (Or (Not p) p')).
-
 Definition AXor {X Y} (f: X -> set) (g: Y -> set)
   : sum {x & ~ exists y, eeq (g y) (f x)} {y & ~ exists x, eeq (f x) (g y)} -> set
   := fun s => match s with
@@ -106,12 +103,15 @@ Definition AXor {X Y} (f: X -> set) (g: Y -> set)
       | inr y => g (projT1 y) 
     end.
 
+Local Definition boolean_xor {A} (p p': @boolean A) :=
+  Or (Not (Or p (Not p'))) (Not (Or (Not p) p')).
+
+(** Rename! *)
 Definition QXor B C := 
-  match B, C with S A p h X f, S A' p' h' X' f' =>
-  let A'' := sum A A' in
-  let p'' := boolean_xor (map inl p) (map inr p') in
-  S A'' p'' (h ⨁ h') _ (AXor f f')
-end.
+  match B, C with S X Y f g e, S X' Y' f' g' e' =>
+    let e'' := boolean_xor (map inl e) (map inr e') in
+    S _ (sum Y Y') (AXor f f') (g ⨁ g') e''
+  end.
 
 Lemma AXor_ok {X X'} {f: X -> set} {f': X' -> set} {x}:
   Ain x (AXor f f') <-> Ain x f ⊻ Ain x f'.

@@ -14,16 +14,16 @@ Local Definition eeq' : set * set -> Prop.
 refine ( Fix wf_two (fun _ => Prop) (
   fun x rec => (
     match x as x0 return (x = x0 -> Prop) with
-    | (S A p h X f, S A' p' h' X' f') => fun eqx =>
-          ((forall x, exists y, rec (f x, f' y) _)
-          /\ (forall y, exists x, rec (f x, f' y) _))
-          /\ let w (i j: A + A') := match i, j with
-            | inl i', inl j' => rec (h i', h j') _
-            | inl i', inr j' => rec (h i', h' j') _
-            | inr i', inl j' => rec (h' i', h j') _
-            | inr i', inr j' => rec (h' i', h' j') _
+    | (S X Y f g e, S X' Y' f' g' e') => fun eqx =>
+          ((forall x, exists x', rec (f x, f' x') _)
+          /\ (forall x', exists x, rec (f x, f' x') _))
+          /\ let w (yy yy': Y + Y') := match yy, yy' with
+            | inl y, inl y' => rec (g y, g y') _
+            | inl y, inr y' => rec (g y, g' y') _
+            | inr y, inl y' => rec (g' y, g y') _
+            | inr y, inr y' => rec (g' y, g' y') _
             end in 
-            eeq_boolean w (map inl p) (map inr p')
+            eeq_boolean w (map inl e) (map inr e')
     end) eq_refl
  ))
  ; rewrite eqx; eauto with Wff.
@@ -42,22 +42,22 @@ Definition Aeq {X Y} f g :=
 (* Temporary unfolding lemma for eeq. 
    It will be improved in eeq_unfold. *)
 Local Lemma eeq_def : forall x y,
-  eeq x y <-> match x, y with S A p h X f, S A' p' h' X' f' =>
+  eeq x y <-> match x, y with S X Y f g e, S X' Y' f' g' e' =>
     Aeq f f'
       /\
-        eeq_boolean (eeq ⨀ (h ⨁ h')) (map inl p) (map inr p')
+        eeq_boolean (eeq ⨀ (g ⨁ g')) (map inl e) (map inr e')
 end.
 Proof.
   apply wf_two_ind.
   destruct x1, x2. intros.
   unfold eeq at 1. unfold eeq' at 1. rewrite Fix_iff. fold eeq'.
   - apply and_morph. apply iff_refl. apply eeq_boolean_ext.
-    unfold compR, sumF, extR. destruct x, y; apply iff_refl.
+    unfold compR, sumF, extR. intros. destruct x, y; apply iff_refl.
   - intros. destruct x, s, s0. apply and_morph. apply and_morph.
     -- split; intros. destruct (H1 x). exists x0. rewrite<- H0. assumption.
         destruct (H1 x). exists x0. rewrite H0. assumption.
-    -- split; intros. destruct (H1 y). exists x. rewrite<- H0. assumption.
-    destruct (H1 y). exists x. rewrite H0. assumption.
+    -- split; intros. destruct (H1 x'). exists x. rewrite<- H0. assumption.
+    destruct (H1 x'). exists x. rewrite H0. assumption.
     -- apply eeq_boolean_ext. unfold FunExt.extR. intros.
        destruct x, y; repeat rewrite H0; tauto.
 Qed.
@@ -127,9 +127,9 @@ Qed.
 Definition Qeq := eeq_boolean eeq.
 
 (** The good unfolding lemma for eeq: *)
-Lemma eeq_unfold {A p h X f A' p' h' X' f'}:
-  eeq (S A p h X f) (S A' p' h' X' f')
-    <-> Aeq f f' /\ Qeq (map h p) (map h' p').
+Lemma eeq_unfold {X' Y' f' g' e' X Y f g e}:
+  eeq (S X Y f g e) (S X' Y' f' g' e')
+    <-> Aeq f f' /\ Qeq (map g e) (map g' e').
 Proof.
   unfold Qeq. rewrite<- (eeq_boolean_simpl nfo_setoid).
   rewrite eeq_def.

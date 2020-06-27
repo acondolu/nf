@@ -26,10 +26,10 @@ Proof.
 Qed.
 
 Lemma weak_regularity x :
-  match x with S _ _ _ _ f => Ain x f -> False end.
+  match x with S _ _ f _ _ => Ain x f -> False end.
 Proof.
   induction x. intros. unfold Ain in H1. destruct H1.
-  pose proof (H0 x). assert (H1' := H1). destruct (f x) in H1, H2.
+  pose proof (H x). assert (H1' := H1). destruct (f x) in H1, H2.
   apply H2. unfold Ain. assert (H1'' := H1).
   rewrite eeq_unfold in H1. destruct H1, H1.
   destruct (H4 x). exists x0. eauto with Eeq.
@@ -113,7 +113,7 @@ Definition All {X Y} (f: X -> set) (h: Y -> set)
     let (x, resp) := c in
     let (sig, _) := resp in
     match f x with
-    | S A p h' X f =>  S A p h' _ (AXor f (select h sig))
+    | S X Y f g e =>  S _ Y (AXor f (select h sig)) g e
     end.
 
 Lemma inv_sig {X X' J} {f: X -> set} {f': X' -> set} h {sig sig': J -> Prop}:
@@ -181,7 +181,7 @@ Proof.
   cut (respects (eeq ⨀ h) sig_x0). cut (respects (eeq ⨀ h) sig_x). intros R1 R2.
 
   destruct x.
-  pose (S A p0 h0 _ (AXor (AXor f0 (select h sig_x)) (select h (sig_x0)))) as x_signed.
+  pose (S _ Y (AXor (AXor f0 (select h sig_x)) (select h (sig_x0))) g e) as x_signed.
   pose proof (fun X => @sloppy_Aext _ x_signed _ _ f h p H X H0).
   cut ((forall i : J, iin (h i) x_signed <-> iin (h i) x0)). intro.
   destruct (H1 H2). clear H1 H2.
@@ -200,8 +200,8 @@ Proof.
     repeat rewrite iin_unfold.
     (* Deep rewrites *)
     repeat setoid_rewrite AXor_ok.
-    setoid_rewrite (Ain_sigma h (fun X => iin X (S A p0 h0 X0 f0))).
-    setoid_rewrite (Ain_sigma h (fun X => iin X (S A0 p1 h1 X1 f1))).
+    setoid_rewrite (Ain_sigma h (fun X => iin X (S X0 Y f0 g e))).
+    setoid_rewrite (Ain_sigma h (fun X => iin X (S X1 Y0 f1 g0 e0))).
     setoid_rewrite iin_unfold.
     cut (forall i, (exists x : J, h x == h i) <-> True). intro.
      setoid_rewrite H2.
@@ -218,14 +218,14 @@ Proof.
   apply (iin_respects_eeq _ _ _ H1). 
 Qed.
 
-Lemma not_iin_not_Ain {A p h X f}:
-  ext_empty (S A p h X f) -> forall x, ~ Ain x f.
+Lemma not_iin_not_Ain {X Y f g e}:
+  ext_empty (S X Y f g e) -> forall x, ~ Ain x f.
 Proof.
   unfold ext_empty.
   setoid_rewrite iin_unfold.
   setoid_rewrite xor_neg.
   intros H x H0. pose proof (universal_low _ _ H).
-  destruct (weak_regularity (enum (All f h)) (H1 (ex_intro _ x H0) _)).
+  destruct (weak_regularity (enum (All f g)) (H1 (ex_intro _ x H0) _)).
 Qed.
 
 Lemma no_urelements: forall x y, ext_empty (QXor x y) -> x == y.
@@ -248,7 +248,7 @@ Proof.
   pose H0 as H0'.
   setoid_rewrite xor_neg in H0'.
   rewrite<- Aext in H0'.
-  cut (forall z, ~ (Qin z h p ⊻ Qin z h0 p0)). intro.
+  cut (forall z, ~ (Qin z g e ⊻ Qin z g0 e0)). intro.
   setoid_rewrite xor_neg in H1.
   setoid_rewrite<- Qext in H1.
   split; auto.

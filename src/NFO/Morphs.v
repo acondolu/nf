@@ -52,37 +52,37 @@ Proof.
   - apply Aeq_Ain. rewrite eeq_unfold in H2; destruct H2. assumption.
   - rewrite eeq_unfold in H2; destruct H2. 
     pose (fun s : set =>
-      (exists a0, s == h0 a0 /\ iin (h0 a0) (S A p h X f))
-      \/ (exists a1, s == h1 a1 /\ iin (h1 a1) (S A p h X f))
-    ) as g.
+      (exists a0, s == g0 a0 /\ iin (g0 a0) (S X Y f g e))
+      \/ (exists a1, s == g1 a1 /\ iin (g1 a1) (S X Y f g e))
+    ) as K.
     repeat rewrite map_compose in H3. setoid_rewrite<- Bin_bexpr.
-    cut (eval (map (Basics.compose g h0) p0) <-> (let w := fun a : A0 => iin (h0 a) (S A p h X f) in eval (map w p0))). intro.
-    cut (eval (map (Basics.compose g h1) p1) <-> (let w := fun a : A1 => iin (h1 a) (S A p h X f) in eval (map w p1))). intro.
+    cut (eval (map (Basics.compose K g0) e0) <-> (let w := fun a => iin (g0 a) (S X Y f g e) in eval (map w e0))). intro.
+    cut (eval (map (Basics.compose K g1) e1) <-> (let w := fun a => iin (g1 a) (S X Y f g e) in eval (map w e1))). intro.
     rewrite<- H4. rewrite<- H5. 
-    cut (respects eeq g). 
+    cut (respects eeq K). 
     -- repeat rewrite<- map_compose. apply H3.
-    -- unfold respects. intros. unfold g. split; intro; repeat destruct H7.
+    -- unfold respects. intros. unfold K. split; intro; repeat destruct H7.
       left. exists x0. split; eauto with Eeq.
       right. exists x0. split; eauto with Eeq.
       left. exists x0. split; eauto with Eeq.
       right. exists x0. split; eauto with Eeq.
     -- apply map_extP. unfold FunExt.extP. intro a1.
-       unfold Basics.compose. unfold g. split; intro. repeat destruct H5; auto.
-       apply (fun K => proj2 (H1 (h0 x) (h1 a1) K (eeq_sym _ _ H5))).
+       unfold Basics.compose. unfold K. split; intro. repeat destruct H5; auto.
+       apply (fun K => proj2 (H1 (g0 x) (g1 a1) K (eeq_sym _ _ H5))).
        auto with Wff. assumption.
-       apply (fun K => proj2 (H1 (h1 x) (h1 a1) K (eeq_sym _ _ H5))).
+       apply (fun K => proj2 (H1 (g1 x) (g1 a1) K (eeq_sym _ _ H5))).
        auto with Wff. assumption.
        right. exists a1. split; eauto with Eeq.
     -- apply map_extP. unfold FunExt.extP. intro a1.
-       unfold Basics.compose. unfold g. split; intro. repeat destruct H4; auto.
-       apply (fun K => proj2 (H1 (h0 a1) (h0 x) K H4)).
+       unfold Basics.compose. unfold K. split; intro. repeat destruct H4; auto.
+       apply (fun K => proj2 (H1 (g0 a1) (g0 x) K H4)).
        auto with Wff. assumption.
-       apply (fun K => proj2 (H1 (h0 a1) (h1 x) K H4)).
+       apply (fun K => proj2 (H1 (g0 a1) (g1 x) K H4)).
        auto with Wff. assumption.
        left. exists a1. split; eauto with Eeq.
   - apply (eeq_Ain H2).
   -  setoid_rewrite<- Bin_bexpr. apply map_extP. unfold FunExt.extP. intro a.
-    apply (proj1 (H a (S A0 p0 h0 X0 f0) (S A1 p1 h1 X1 f1) H2)).
+    apply (proj1 (H0 a (S X0 Y0 f0 g0 e0) (S X1 Y1 f1 g1 e1) H2)).
 Qed.
 
 (** Register iin as a morphism with respect to eeq *)
