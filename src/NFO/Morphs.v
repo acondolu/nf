@@ -1,3 +1,12 @@
+(** * NFO.Morphs : Morphisms *)
+(** In this module we prove that:
+    - iin, Ain, Bin are eeq-morphisms.
+    - Ain and Bin are respectively Aeq- and Beq-morphisms.
+    - The axiom of extensionality for Aeq and Beq.
+      Extensionality for iin and eeq will be proved in NFO.Ext.
+*)
+
+(* begin hide *)
 Require Import Coq.Wellfounded.Lexicographic_Product.
 Require Import Relation_Operators.
 Require Export Relation_Definitions.
@@ -6,8 +15,9 @@ Require Export Setoid.
 Add LoadPath "src".
 From Internal Require Import FunExt Aux.
 From NFO Require Import BoolExpr Model Wff Eeq Iin Sets Xor.
+(* end hide *)
 
-(* Aext *)
+(** * Proofs for Aeq and Ain *)
 
 Lemma Aeq_Ain: forall {X Y} {f: X -> _} {g: Y -> _},
   Aeq f g -> forall x, Ain x f <-> Ain x g.
@@ -30,11 +40,16 @@ Theorem Aext {X Y} {f: X -> _} {g: Y -> _} :
   Aeq f g <-> forall x, Ain x f <-> Ain x g.
 Proof. split. apply Aeq_Ain. apply Ain_Aeq. Qed.
 
+(** TODO: Vale anche nell'altra direzione, mentre eeq_Qin no.
+    Si potrebbe spiegare che questo e' un punto chiave
+    della prova di estensionality. *)
 Lemma eeq_Ain: forall {x y X} {f: X -> _},
   x == y -> Ain x f <-> Ain y f.
 Proof.
   intros. unfold Ain. split; intro; destruct H0; exists x0; eauto with Eeq.
 Qed.
+
+(** * Proofs for eeq and iin *)
 
 (* respects eeq (iin z)
 /\ respecs eeq (fun x => iin x z) *)
@@ -92,11 +107,7 @@ Proof.
   destruct (iin_respects_eeq y0 x y H). tauto.
 Qed.
 
-(** TODO: il resto del file prova che Q e' ext. 
-  Forse va bene, perche' in cima abbiamo dimostrato che A e' ext.
-*)
-(** Qext *)
-
+(** * Proofs for Beq and Bin *)
 
 Lemma Qeq_Qin: forall {X Y} {p p'} {h: X -> _} {h': Y -> _},
   Qeq (map h p) (map h' p')
