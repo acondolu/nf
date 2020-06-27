@@ -4,7 +4,7 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <link href="coqdoc.css" rel="stylesheet" type="text/css" />
-<title>NFO.Morphs</title>
+<title>NFO.Morphs: Morphisms</title>
 </head>
 
 <body>
@@ -16,14 +16,39 @@
 
 <div id="main">
 
-<h1 class="libtitle">Library NFO.Morphs</h1>
+<h1 class="libtitle">Library NFO.Morphs: Morphisms</h1>
 
+<div class="code">
+</div>
+
+<div class="doc">
+ In this module we prove that:
+<ul class="doclist">
+<li> iin, Ain, Bin are eeq-morphisms.
+
+</li>
+<li> Ain and Bin are respectively Aeq- and Beq-morphisms.
+
+</li>
+<li> The axiom of extensionality for Aeq and Beq.
+      Extensionality for iin and eeq will be proved in NFO.Ext.
+
+</li>
+</ul>
+
+</div>
 <div class="code">
 
 <br/>
-<span class="id" title="keyword">Add</span> <span class="id" title="var">LoadPath</span> "src".<br/>
 
 <br/>
+</div>
+
+<div class="doc">
+<a name="lab10"></a><h1 class="section">Proofs for Aeq and Ain</h1>
+
+</div>
+<div class="code">
 
 <br/>
 <span class="id" title="keyword">Lemma</span> <a name="Aeq_Ain"><span class="id" title="lemma">Aeq_Ain</span></a>: <span class="id" title="keyword">∀</span> {<span class="id" title="var">X</span> <span class="id" title="var">Y</span>} {<span class="id" title="var">f</span>: <a class="idref" href="NFO.Morphs.html#X"><span class="id" title="variable">X</span></a> <a class="idref" href="http://coq.inria.fr/distrib/V8.11.2/stdlib//Coq.Init.Logic.html#1c93e43e07fbeaeb6a625cb6614beb5d"><span class="id" title="notation">→</span></a> <span class="id" title="var">_</span>} {<span class="id" title="var">g</span>: <a class="idref" href="NFO.Morphs.html#Y"><span class="id" title="variable">Y</span></a> <a class="idref" href="http://coq.inria.fr/distrib/V8.11.2/stdlib//Coq.Init.Logic.html#1c93e43e07fbeaeb6a625cb6614beb5d"><span class="id" title="notation">→</span></a> <span class="id" title="var">_</span>},<br/>
@@ -36,8 +61,25 @@
 &nbsp;&nbsp;<a class="idref" href="NFO.Eeq.html#Aeq"><span class="id" title="definition">Aeq</span></a> <a class="idref" href="NFO.Morphs.html#f"><span class="id" title="variable">f</span></a> <a class="idref" href="NFO.Morphs.html#g"><span class="id" title="variable">g</span></a> <a class="idref" href="http://coq.inria.fr/distrib/V8.11.2/stdlib//Coq.Init.Logic.html#4bfb4f2d0721ba668e3a802ab1b745a1"><span class="id" title="notation">↔</span></a> <span class="id" title="keyword">∀</span> <span class="id" title="var">x</span>, <a class="idref" href="NFO.Iin.html#Ain"><span class="id" title="definition">Ain</span></a> <a class="idref" href="NFO.Morphs.html#x"><span class="id" title="variable">x</span></a> <a class="idref" href="NFO.Morphs.html#f"><span class="id" title="variable">f</span></a> <a class="idref" href="http://coq.inria.fr/distrib/V8.11.2/stdlib//Coq.Init.Logic.html#4bfb4f2d0721ba668e3a802ab1b745a1"><span class="id" title="notation">↔</span></a> <a class="idref" href="NFO.Iin.html#Ain"><span class="id" title="definition">Ain</span></a> <a class="idref" href="NFO.Morphs.html#x"><span class="id" title="variable">x</span></a> <a class="idref" href="NFO.Morphs.html#g"><span class="id" title="variable">g</span></a>.<br/>
  
 <br/>
+</div>
+
+<div class="doc">
+TODO: Vale anche nell'altra direzione, mentre eeq_Qin no.
+    Si potrebbe spiegare che questo e' un punto chiave
+    della prova di estensionality. 
+</div>
+<div class="code">
 <span class="id" title="keyword">Lemma</span> <a name="eeq_Ain"><span class="id" title="lemma">eeq_Ain</span></a>: <span class="id" title="keyword">∀</span> {<span class="id" title="var">x</span> <span class="id" title="var">y</span> <span class="id" title="var">X</span>} {<span class="id" title="var">f</span>: <a class="idref" href="NFO.Morphs.html#X"><span class="id" title="variable">X</span></a> <a class="idref" href="http://coq.inria.fr/distrib/V8.11.2/stdlib//Coq.Init.Logic.html#1c93e43e07fbeaeb6a625cb6614beb5d"><span class="id" title="notation">→</span></a> <span class="id" title="var">_</span>},<br/>
 &nbsp;&nbsp;<a class="idref" href="NFO.Morphs.html#x"><span class="id" title="variable">x</span></a> <a class="idref" href="NFO.Eeq.html#2596316c6f2ff161cb03e25fd8914390"><span class="id" title="notation">==</span></a> <a class="idref" href="NFO.Morphs.html#y"><span class="id" title="variable">y</span></a> <a class="idref" href="http://coq.inria.fr/distrib/V8.11.2/stdlib//Coq.Init.Logic.html#1c93e43e07fbeaeb6a625cb6614beb5d"><span class="id" title="notation">→</span></a> <a class="idref" href="NFO.Iin.html#Ain"><span class="id" title="definition">Ain</span></a> <a class="idref" href="NFO.Morphs.html#x"><span class="id" title="variable">x</span></a> <a class="idref" href="NFO.Morphs.html#f"><span class="id" title="variable">f</span></a> <a class="idref" href="http://coq.inria.fr/distrib/V8.11.2/stdlib//Coq.Init.Logic.html#4bfb4f2d0721ba668e3a802ab1b745a1"><span class="id" title="notation">↔</span></a> <a class="idref" href="NFO.Iin.html#Ain"><span class="id" title="definition">Ain</span></a> <a class="idref" href="NFO.Morphs.html#y"><span class="id" title="variable">y</span></a> <a class="idref" href="NFO.Morphs.html#f"><span class="id" title="variable">f</span></a>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+<a name="lab11"></a><h1 class="section">Proofs for eeq and iin</h1>
+
+</div>
+<div class="code">
 
 <br/>
 </div>
@@ -66,9 +108,8 @@ Register iin as a morphism with respect to eeq
 </div>
 
 <div class="doc">
-TODO: il resto del file prova che Q e' ext. 
-  Forse va bene, perche' in cima abbiamo dimostrato che A e' ext.
- Qext 
+<a name="lab12"></a><h1 class="section">Proofs for Beq and Bin</h1>
+
 </div>
 <div class="code">
 
