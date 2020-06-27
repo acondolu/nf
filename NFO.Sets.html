@@ -4,7 +4,7 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <link href="coqdoc.css" rel="stylesheet" type="text/css" />
-<title>NFO.Sets</title>
+<title>NFO.Sets: Set operators</title>
 </head>
 
 <body>
@@ -16,11 +16,28 @@
 
 <div id="main">
 
-<h1 class="libtitle">Library NFO.Sets</h1>
+<h1 class="libtitle">Library NFO.Sets: Set operators</h1>
 
+<div class="code">
+</div>
+
+<div class="doc">
+ In this module we define the following set constructors:
+    emptyset, complement, singleton, co-singleton, exclusive
+    disjunction. Union is defined separately, in NFO.Union.
+
+</div>
 <div class="code">
 
 <br/>
+
+<br/>
+</div>
+
+<div class="doc">
+TODO: Axuliary INTRODUCE! 
+</div>
+<div class="code">
 <span class="id" title="keyword">Definition</span> <a name="enum"><span class="id" title="definition">enum</span></a> {<span class="id" title="var">X</span>} <span class="id" title="var">f</span> := <a class="idref" href="NFO.Model.html#S"><span class="id" title="constructor">S</span></a> <a class="idref" href="NFO.Sets.html#X"><span class="id" title="variable">X</span></a> <a class="idref" href="http://coq.inria.fr/distrib/V8.11.2/stdlib//Coq.Init.Logic.html#False"><span class="id" title="inductive">False</span></a> <a class="idref" href="NFO.Sets.html#f"><span class="id" title="variable">f</span></a> (<a class="idref" href="http://coq.inria.fr/distrib/V8.11.2/stdlib//Coq.Init.Logic.html#False_rect"><span class="id" title="definition">False_rect</span></a> <span class="id" title="var">_</span>) <a class="idref" href="NFO.BoolExpr.html#Bot"><span class="id" title="constructor">Bot</span></a>.<br/>
 
 <br/>
@@ -45,12 +62,24 @@
 &nbsp;&nbsp;<a class="idref" href="NFO.Iin.html#Qin"><span class="id" title="definition">Qin</span></a> <a class="idref" href="NFO.Sets.html#z"><span class="id" title="variable">z</span></a> (<a class="idref" href="NFO.Sets.html#f"><span class="id" title="variable">f</span></a> <a class="idref" href="Internal.Aux.html#83cea7e11d306b46465cb9fceb0427c4"><span class="id" title="notation">⨁</span></a> <a class="idref" href="NFO.Sets.html#g"><span class="id" title="variable">g</span></a>) (<a class="idref" href="NFO.BoolExpr.html#map"><span class="id" title="definition">map</span></a> <a class="idref" href="http://coq.inria.fr/distrib/V8.11.2/stdlib//Coq.Init.Datatypes.html#inr"><span class="id" title="constructor">inr</span></a> <a class="idref" href="NFO.Sets.html#p"><span class="id" title="variable">p</span></a>) <a class="idref" href="http://coq.inria.fr/distrib/V8.11.2/stdlib//Coq.Init.Logic.html#4bfb4f2d0721ba668e3a802ab1b745a1"><span class="id" title="notation">↔</span></a> <a class="idref" href="NFO.Iin.html#Qin"><span class="id" title="definition">Qin</span></a> <a class="idref" href="NFO.Sets.html#z"><span class="id" title="variable">z</span></a> <a class="idref" href="NFO.Sets.html#g"><span class="id" title="variable">g</span></a> <a class="idref" href="NFO.Sets.html#p"><span class="id" title="variable">p</span></a>.<br/>
 
 <br/>
+</div>
+
+<div class="doc">
+Empty set 
+</div>
+<div class="code">
 <span class="id" title="keyword">Definition</span> <a name="emptyset"><span class="id" title="definition">emptyset</span></a> := <a class="idref" href="NFO.Sets.html#enum"><span class="id" title="definition">enum</span></a> (<a class="idref" href="http://coq.inria.fr/distrib/V8.11.2/stdlib//Coq.Init.Logic.html#False_rect"><span class="id" title="definition">False_rect</span></a> <span class="id" title="var">_</span>).<br/>
 
 <br/>
 <span class="id" title="keyword">Lemma</span> <a name="emptyset_ok"><span class="id" title="lemma">emptyset_ok</span></a>: <span class="id" title="keyword">∀</span> <span class="id" title="var">x</span>, <a class="idref" href="http://coq.inria.fr/distrib/V8.11.2/stdlib//Coq.Init.Logic.html#63a68285c81db8f9bc456233bb9ed181"><span class="id" title="notation">¬</span></a> <a class="idref" href="NFO.Iin.html#iin"><span class="id" title="definition">iin</span></a> <a class="idref" href="NFO.Sets.html#x"><span class="id" title="variable">x</span></a> <a class="idref" href="NFO.Sets.html#emptyset"><span class="id" title="definition">emptyset</span></a>.<br/>
 
 <br/>
+</div>
+
+<div class="doc">
+Set complement 
+</div>
+<div class="code">
 <span class="id" title="keyword">Definition</span> <a name="compl"><span class="id" title="definition">compl</span></a> <span class="id" title="var">x</span> := <span class="id" title="keyword">match</span> <a class="idref" href="NFO.Sets.html#x"><span class="id" title="variable">x</span></a> <span class="id" title="keyword">with</span><br/>
 &nbsp;&nbsp;<a class="idref" href="NFO.Model.html#S"><span class="id" title="constructor">S</span></a> <span class="id" title="var">X</span> <span class="id" title="var">Y</span> <span class="id" title="var">f</span> <span class="id" title="var">g</span> <span class="id" title="var">e</span> ⇒ <a class="idref" href="NFO.Model.html#S"><span class="id" title="constructor">S</span></a> <span class="id" title="var">X</span> <span class="id" title="var">Y</span> <span class="id" title="var">f</span> <span class="id" title="var">g</span> (<a class="idref" href="NFO.BoolExpr.html#Not"><span class="id" title="constructor">Not</span></a> <span class="id" title="var">e</span>)<br/>
 <span class="id" title="keyword">end</span>.<br/>
@@ -60,18 +89,36 @@
 &nbsp;&nbsp;<a class="idref" href="NFO.Iin.html#iin"><span class="id" title="definition">iin</span></a> <a class="idref" href="NFO.Sets.html#x"><span class="id" title="variable">x</span></a> (<a class="idref" href="NFO.Sets.html#compl"><span class="id" title="definition">compl</span></a> <a class="idref" href="NFO.Sets.html#y"><span class="id" title="variable">y</span></a>) <a class="idref" href="http://coq.inria.fr/distrib/V8.11.2/stdlib//Coq.Init.Logic.html#4bfb4f2d0721ba668e3a802ab1b745a1"><span class="id" title="notation">↔</span></a> <a class="idref" href="http://coq.inria.fr/distrib/V8.11.2/stdlib//Coq.Init.Logic.html#4bfb4f2d0721ba668e3a802ab1b745a1"><span class="id" title="notation">(</span></a><a class="idref" href="NFO.Iin.html#iin"><span class="id" title="definition">iin</span></a> <a class="idref" href="NFO.Sets.html#x"><span class="id" title="variable">x</span></a> <a class="idref" href="NFO.Sets.html#y"><span class="id" title="variable">y</span></a> <a class="idref" href="http://coq.inria.fr/distrib/V8.11.2/stdlib//Coq.Init.Logic.html#1c93e43e07fbeaeb6a625cb6614beb5d"><span class="id" title="notation">→</span></a> <a class="idref" href="http://coq.inria.fr/distrib/V8.11.2/stdlib//Coq.Init.Logic.html#False"><span class="id" title="inductive">False</span></a><a class="idref" href="http://coq.inria.fr/distrib/V8.11.2/stdlib//Coq.Init.Logic.html#4bfb4f2d0721ba668e3a802ab1b745a1"><span class="id" title="notation">)</span></a>.<br/>
 
 <br/>
-<span class="id" title="keyword">Definition</span> <a name="cosin"><span class="id" title="definition">cosin</span></a> <span class="id" title="var">x</span> := <a class="idref" href="NFO.Model.html#S"><span class="id" title="constructor">S</span></a> <a class="idref" href="http://coq.inria.fr/distrib/V8.11.2/stdlib//Coq.Init.Logic.html#False"><span class="id" title="inductive">False</span></a> <a class="idref" href="http://coq.inria.fr/distrib/V8.11.2/stdlib//Coq.Init.Datatypes.html#unit"><span class="id" title="inductive">unit</span></a> (<a class="idref" href="http://coq.inria.fr/distrib/V8.11.2/stdlib//Coq.Init.Logic.html#False_rect"><span class="id" title="definition">False_rect</span></a> <span class="id" title="var">_</span>) (<span class="id" title="keyword">fun</span> <span class="id" title="var">_</span> ⇒ <a class="idref" href="NFO.Sets.html#x"><span class="id" title="variable">x</span></a>) (<a class="idref" href="NFO.BoolExpr.html#Atom"><span class="id" title="constructor">Atom</span></a> <a class="idref" href="http://coq.inria.fr/distrib/V8.11.2/stdlib//Coq.Init.Datatypes.html#tt"><span class="id" title="constructor">tt</span></a>).<br/>
+</div>
 
-<br/>
-<span class="id" title="keyword">Lemma</span> <a name="cosin_ok"><span class="id" title="lemma">cosin_ok</span></a>: <span class="id" title="keyword">∀</span> <span class="id" title="var">x</span> <span class="id" title="var">y</span>, <a class="idref" href="NFO.Iin.html#iin"><span class="id" title="definition">iin</span></a> <a class="idref" href="NFO.Sets.html#x"><span class="id" title="variable">x</span></a> (<a class="idref" href="NFO.Sets.html#cosin"><span class="id" title="definition">cosin</span></a> <a class="idref" href="NFO.Sets.html#y"><span class="id" title="variable">y</span></a>) <a class="idref" href="http://coq.inria.fr/distrib/V8.11.2/stdlib//Coq.Init.Logic.html#4bfb4f2d0721ba668e3a802ab1b745a1"><span class="id" title="notation">↔</span></a> <a class="idref" href="NFO.Iin.html#iin"><span class="id" title="definition">iin</span></a> <a class="idref" href="NFO.Sets.html#y"><span class="id" title="variable">y</span></a> <a class="idref" href="NFO.Sets.html#x"><span class="id" title="variable">x</span></a>.<br/>
-
-<br/>
+<div class="doc">
+Singleton 
+</div>
+<div class="code">
 <span class="id" title="keyword">Definition</span> <a name="sin"><span class="id" title="definition">sin</span></a> <span class="id" title="var">x</span> := <a class="idref" href="NFO.Sets.html#enum"><span class="id" title="definition">enum</span></a> (<span class="id" title="keyword">fun</span> <span class="id" title="var">_</span>: <a class="idref" href="http://coq.inria.fr/distrib/V8.11.2/stdlib//Coq.Init.Datatypes.html#unit"><span class="id" title="inductive">unit</span></a> ⇒ <a class="idref" href="NFO.Sets.html#x"><span class="id" title="variable">x</span></a>).<br/>
 
 <br/>
 <span class="id" title="keyword">Lemma</span> <a name="sin_ok"><span class="id" title="lemma">sin_ok</span></a>: <span class="id" title="keyword">∀</span> <span class="id" title="var">x</span> <span class="id" title="var">y</span>, <a class="idref" href="NFO.Iin.html#iin"><span class="id" title="definition">iin</span></a> <a class="idref" href="NFO.Sets.html#x"><span class="id" title="variable">x</span></a> (<a class="idref" href="NFO.Sets.html#sin"><span class="id" title="definition">sin</span></a> <a class="idref" href="NFO.Sets.html#y"><span class="id" title="variable">y</span></a>) <a class="idref" href="http://coq.inria.fr/distrib/V8.11.2/stdlib//Coq.Init.Logic.html#4bfb4f2d0721ba668e3a802ab1b745a1"><span class="id" title="notation">↔</span></a> <a class="idref" href="NFO.Eeq.html#eeq"><span class="id" title="definition">eeq</span></a> <a class="idref" href="NFO.Sets.html#y"><span class="id" title="variable">y</span></a> <a class="idref" href="NFO.Sets.html#x"><span class="id" title="variable">x</span></a>.<br/>
 
 <br/>
+</div>
+
+<div class="doc">
+Co-singleton 
+</div>
+<div class="code">
+<span class="id" title="keyword">Definition</span> <a name="cosin"><span class="id" title="definition">cosin</span></a> <span class="id" title="var">x</span> := <a class="idref" href="NFO.Model.html#S"><span class="id" title="constructor">S</span></a> <a class="idref" href="http://coq.inria.fr/distrib/V8.11.2/stdlib//Coq.Init.Logic.html#False"><span class="id" title="inductive">False</span></a> <a class="idref" href="http://coq.inria.fr/distrib/V8.11.2/stdlib//Coq.Init.Datatypes.html#unit"><span class="id" title="inductive">unit</span></a> (<a class="idref" href="http://coq.inria.fr/distrib/V8.11.2/stdlib//Coq.Init.Logic.html#False_rect"><span class="id" title="definition">False_rect</span></a> <span class="id" title="var">_</span>) (<span class="id" title="keyword">fun</span> <span class="id" title="var">_</span> ⇒ <a class="idref" href="NFO.Sets.html#x"><span class="id" title="variable">x</span></a>) (<a class="idref" href="NFO.BoolExpr.html#Atom"><span class="id" title="constructor">Atom</span></a> <a class="idref" href="http://coq.inria.fr/distrib/V8.11.2/stdlib//Coq.Init.Datatypes.html#tt"><span class="id" title="constructor">tt</span></a>).<br/>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <a name="cosin_ok"><span class="id" title="lemma">cosin_ok</span></a>: <span class="id" title="keyword">∀</span> <span class="id" title="var">x</span> <span class="id" title="var">y</span>, <a class="idref" href="NFO.Iin.html#iin"><span class="id" title="definition">iin</span></a> <a class="idref" href="NFO.Sets.html#x"><span class="id" title="variable">x</span></a> (<a class="idref" href="NFO.Sets.html#cosin"><span class="id" title="definition">cosin</span></a> <a class="idref" href="NFO.Sets.html#y"><span class="id" title="variable">y</span></a>) <a class="idref" href="http://coq.inria.fr/distrib/V8.11.2/stdlib//Coq.Init.Logic.html#4bfb4f2d0721ba668e3a802ab1b745a1"><span class="id" title="notation">↔</span></a> <a class="idref" href="NFO.Iin.html#iin"><span class="id" title="definition">iin</span></a> <a class="idref" href="NFO.Sets.html#y"><span class="id" title="variable">y</span></a> <a class="idref" href="NFO.Sets.html#x"><span class="id" title="variable">x</span></a>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+Exclusive disjunction 
+</div>
+<div class="code">
 
 <br/>
 <span class="id" title="keyword">Definition</span> <a name="AXor"><span class="id" title="definition">AXor</span></a> {<span class="id" title="var">X</span> <span class="id" title="var">Y</span>} (<span class="id" title="var">f</span>: <a class="idref" href="NFO.Sets.html#X"><span class="id" title="variable">X</span></a> <a class="idref" href="http://coq.inria.fr/distrib/V8.11.2/stdlib//Coq.Init.Logic.html#1c93e43e07fbeaeb6a625cb6614beb5d"><span class="id" title="notation">→</span></a> <a class="idref" href="NFO.Model.html#set"><span class="id" title="inductive">set</span></a>) (<span class="id" title="var">g</span>: <a class="idref" href="NFO.Sets.html#Y"><span class="id" title="variable">Y</span></a> <a class="idref" href="http://coq.inria.fr/distrib/V8.11.2/stdlib//Coq.Init.Logic.html#1c93e43e07fbeaeb6a625cb6614beb5d"><span class="id" title="notation">→</span></a> <a class="idref" href="NFO.Model.html#set"><span class="id" title="inductive">set</span></a>)<br/>
@@ -93,8 +140,9 @@ Rename!
 <div class="code">
 <span class="id" title="keyword">Definition</span> <a name="QXor"><span class="id" title="definition">QXor</span></a> <span class="id" title="var">B</span> <span class="id" title="var">C</span> := <br/>
 &nbsp;&nbsp;<span class="id" title="keyword">match</span> <a class="idref" href="NFO.Sets.html#B"><span class="id" title="variable">B</span></a>, <a class="idref" href="NFO.Sets.html#C"><span class="id" title="variable">C</span></a> <span class="id" title="keyword">with</span> <a class="idref" href="NFO.Model.html#S"><span class="id" title="constructor">S</span></a> <span class="id" title="var">X</span> <span class="id" title="var">Y</span> <span class="id" title="var">f</span> <span class="id" title="var">g</span> <span class="id" title="var">e</span>, <a class="idref" href="NFO.Model.html#S"><span class="id" title="constructor">S</span></a> <span class="id" title="var">X'</span> <span class="id" title="var">Y'</span> <span class="id" title="var">f'</span> <span class="id" title="var">g'</span> <span class="id" title="var">e'</span> ⇒<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">let</span> <span class="id" title="var">e''</span> := <a class="idref" href="NFO.Sets.html#boolean_xor"><span class="id" title="definition">boolean_xor</span></a> (<a class="idref" href="NFO.BoolExpr.html#map"><span class="id" title="definition">map</span></a> <a class="idref" href="http://coq.inria.fr/distrib/V8.11.2/stdlib//Coq.Init.Datatypes.html#inl"><span class="id" title="constructor">inl</span></a> <span class="id" title="var">e</span>) (<a class="idref" href="NFO.BoolExpr.html#map"><span class="id" title="definition">map</span></a> <a class="idref" href="http://coq.inria.fr/distrib/V8.11.2/stdlib//Coq.Init.Datatypes.html#inr"><span class="id" title="constructor">inr</span></a> <span class="id" title="var">e'</span>) <span class="id" title="tactic">in</span><br/>
-&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="NFO.Model.html#S"><span class="id" title="constructor">S</span></a> <span class="id" title="var">_</span> (<a class="idref" href="http://coq.inria.fr/distrib/V8.11.2/stdlib//Coq.Init.Datatypes.html#sum"><span class="id" title="inductive">sum</span></a> <span class="id" title="var">Y</span> <span class="id" title="var">Y'</span>) (<a class="idref" href="NFO.Sets.html#AXor"><span class="id" title="definition">AXor</span></a> <span class="id" title="var">f</span> <span class="id" title="var">f'</span>) (<span class="id" title="var">g</span> <a class="idref" href="Internal.Aux.html#83cea7e11d306b46465cb9fceb0427c4"><span class="id" title="notation">⨁</span></a> <span class="id" title="var">g'</span>) <a class="idref" href="NFO.Sets.html#e''"><span class="id" title="variable">e''</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="NFO.Model.html#S"><span class="id" title="constructor">S</span></a> <span class="id" title="var">_</span> <span class="id" title="var">_</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<a class="idref" href="NFO.Sets.html#AXor"><span class="id" title="definition">AXor</span></a> <span class="id" title="var">f</span> <span class="id" title="var">f'</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">g</span> <a class="idref" href="Internal.Aux.html#83cea7e11d306b46465cb9fceb0427c4"><span class="id" title="notation">⨁</span></a> <span class="id" title="var">g'</span>) (<a class="idref" href="NFO.Sets.html#boolean_xor"><span class="id" title="definition">boolean_xor</span></a> (<a class="idref" href="NFO.BoolExpr.html#map"><span class="id" title="definition">map</span></a> <a class="idref" href="http://coq.inria.fr/distrib/V8.11.2/stdlib//Coq.Init.Datatypes.html#inl"><span class="id" title="constructor">inl</span></a> <span class="id" title="var">e</span>) (<a class="idref" href="NFO.BoolExpr.html#map"><span class="id" title="definition">map</span></a> <a class="idref" href="http://coq.inria.fr/distrib/V8.11.2/stdlib//Coq.Init.Datatypes.html#inr"><span class="id" title="constructor">inr</span></a> <span class="id" title="var">e'</span>))<br/>
 &nbsp;&nbsp;<span class="id" title="keyword">end</span>.<br/>
 <span class="id" title="keyword">Infix</span> <a name="ea92127ac42b0393064f6b3448c90ab7"><span class="id" title="notation">&quot;</span></a>^^^" := <a class="idref" href="NFO.Sets.html#QXor"><span class="id" title="definition">QXor</span></a> (<span class="id" title="tactic">at</span> <span class="id" title="keyword">level</span> 50).<br/>
 
