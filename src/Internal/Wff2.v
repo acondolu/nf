@@ -1,15 +1,17 @@
+(** * Internal.Wff2 : Well-orderings *)
+(** In this section we defined... TODO:*)
+Require Import Coq.Lists.List.
+Require Import Coq.Arith.PeanoNat.
+Require Import Coq.Program.Equality.
+Require Import Coq.omega.Omega.
+
 (* Multiset Extension, Take I *)
 
 Parameter A : Type.
 Parameter lt : A -> A -> Prop.
 Axiom wf_lt: well_founded lt.
 
-Require Import Coq.Lists.List.
-Require Import Coq.Program.Equality.
-Require Import Coq.Arith.PeanoNat.
-Require Import Coq.Program.Equality.
-Require Import Coq.omega.Omega.
-
+(** Replace an element of a list with another list: *)
 Definition replace : forall {i: nat} {l: list A},
   i < length l -> list A -> list A.
 Proof.
@@ -19,6 +21,19 @@ Proof.
   - simpl. omega.
   - intros. refine (a :: IHi l (lt_S_n _ _ H) X).
 Defined.
+
+Lemma replace_succ: forall {i l l' x} (p: S i < length (x::l)),
+  replace p l' = x :: replace (lt_S_n _ _ p: i < length l) l'.
+Proof.
+  induction i; intros; destruct l; simpl length in *.
+  - omega.
+  - reflexivity.
+  - omega.
+  - simpl. pose proof (IHi l l' a (lt_S_n _ _ p)). simpl in H.
+    tauto.
+Qed.
+
+(** Get an element of the list by its index: *)
 Definition get : forall {i: nat} {l: list A}, i < length l -> A.
 Proof.
   induction i; destruct l.
@@ -27,18 +42,6 @@ Proof.
   - simpl. omega.
   - intros. refine (IHi l (lt_S_n _ _ H)).
 Defined.
-
-Fixpoint all P (x: list A) := match x with
-| nil => True
-| cons b bs => P b /\ all P bs
-end.
-
-Inductive lt_lst : list A -> list A -> Prop :=
-  | C: forall i (l l': list A) (p: i < length l),
-         all (fun x => lt x (get p)) l'
-         ->
-         lt_lst (replace p l') l
-.
 
 Lemma get_succ: forall {i l x} (p: S i < length (x::l)),
   get p = get (lt_S_n _ _ p).
@@ -51,16 +54,17 @@ Proof.
     tauto.
 Qed.
 
-Lemma replace_succ: forall {i l l' x} (p: S i < length (x::l)),
-  replace p l' = x :: replace (lt_S_n _ _ p: i < length l) l'.
-Proof.
-  induction i; intros; destruct l; simpl length in *.
-  - omega.
-  - reflexivity.
-  - omega.
-  - simpl. pose proof (IHi l l' a (lt_S_n _ _ p)). simpl in H.
-    tauto.
-Qed.
+Fixpoint all P (x: list A) := match x with
+| nil => True
+| cons b bs => P b /\ all P bs
+end.
+
+Inductive lt_lst : list A -> list A -> Prop :=
+  | C: forall i (l l': list A) (p: i < length l),
+         all (fun x => lt x (get p)) l'
+         ->
+         lt_lst (replace p l') l
+.
 
 Lemma xxx: forall {y a l}, 
   lt_lst y (a :: l) -> 
@@ -114,3 +118,34 @@ Proof.
     simpl length in p. omega.
   - apply (l2p3 a IHl).
 Qed.
+
+Require Import Coq.Sorting.Permutation.
+
+Definition permle l l' := exists l'', Permutation l l'' /\ lt_lst l'' l'.
+
+Axiom perm_lt_dx: forall {a b b'}, 
+  Permutation b b' -> lt_lst a b' -> permle a b.
+
+
+Lemma perm_Acc : forall l l', Permutation l l' -> Acc permle l -> Acc permle l'.
+Proof.
+  intros. induction H.
+  - auto.
+  - apply Acc_intro. intros. apply H0. destruct H1, H1. unfold permle.
+    destruct (perm_lt_dx (perm_skip x H) H2). destruct H3. exists x1. split.
+    transitivity x0; auto. auto.
+  - apply Acc_intro. intros. apply H0. destruct H, H. unfold permle.
+    destruct (perm_lt_dx (perm_swap x y l) H1). destruct H2. exists x1. split.
+    transitivity x0; auto. auto.
+  - auto.
+Qed.
+
+Lemma wf_perm : well_founded permle.
+Proof.
+    red in |- *.
+    induction a; intros. apply Acc_intro. intros. destruct H, H. dependent destruction H0. simpl length in p. omega.
+
+    (* revert a. apply (well_founded_ind wf_lt (fun a => Acc permle (a :: a0))). intros.
+
+    apply Acc_intro. intros. apply IHa. destruct H1, H1. unfold permle. *)
+Admitted.
