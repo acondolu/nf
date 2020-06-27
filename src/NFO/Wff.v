@@ -1,8 +1,12 @@
+(** * NFO.Wff : Well-founded orders on tuples *)
+
+(* begin hide *)
 Require Import Coq.Init.Wf.
 Add LoadPath "src".
 From NFO Require Import Model.
+(* end hide *)
 
-(* Variant of Coq.Init.Wf.Fix_F_inv with iff instead of eq *)
+(** Variant of Coq.Init.Wf.Fix_F_inv with iff instead of eq *)
 Lemma Fix_F_inv_iff {A} {R: A -> A -> Prop} {Rwf: well_founded R} {F : forall x:A, (forall y:A, R y x -> Prop) -> Prop} : forall (F_ext :
 forall (x:A) (f g:forall y:A, R y x -> Prop),
   (forall (y:A) (p:R y x), f y p <-> g y p) -> F x f <-> F x g)
@@ -13,7 +17,7 @@ rewrite <- (Fix_F_eq _ F r); rewrite <- (Fix_F_eq _ F s); intros.
   apply F_ext; auto.
 Qed.
 
-(* Variant of Coq.Init.Wf.Fix_eq *)
+(** Variant of Coq.Init.Wf.Fix_eq *)
 Lemma Fix_iff {A} {R: A -> A -> Prop} {Rwf: well_founded R} {F : forall x:A, (forall y:A, R y x -> Prop) -> Prop} : forall (F_ext :
 forall (x:A) (f g:forall y:A, R y x -> Prop),
   (forall (y:A) (p:R y x), f y p <-> g y p) -> F x f <-> F x g) (x:A), Fix Rwf (fun _ => Prop) F x <-> F x (fun (y:A) (p: R y x) => Fix Rwf (fun _ => Prop) F y).
@@ -28,7 +32,7 @@ Qed.
 TODO: use the multiset order extension in https://www21.in.tum.de/~nipkow/misc/multiset.ps
 *)
 
-(* 2 *)
+(** 2 *)
 
 Definition le12 : set -> set * set -> Prop := fun a bs =>
   match bs with (b1, b2) => a < b1 \/ a < b2 end.
@@ -52,6 +56,7 @@ Proof.
     apply (H0 (y1, y2)). assumption.
 Qed.
 
+(* begin hide *)
 Ltac auto2 := unfold le22; unfold le12; tauto.
 Lemma AA {a a' b b'}: a < a' -> b < a' -> (a, b) << (a', b').
 Proof. auto2. Qed. Hint Resolve AA : Wff.
@@ -61,8 +66,9 @@ Lemma BA {a a' b b'}: a < b' -> b < a' -> (a, b) << (a', b').
 Proof. auto2. Qed. Hint Resolve BA : Wff.
 Lemma BB {a a' b b'}: a < b' -> b < b' -> (a, b) << (a', b').
 Proof. auto2. Qed. Hint Resolve BB : Wff.
+(* end hide *)
 
-(* 3 *)
+(** 3 *)
 
 Definition le13 : set -> set * set * set -> Prop := fun a bs =>
   match bs with (b1, b2, b3) => a < b1 \/ a < b2 \/ a < b3 end.
@@ -87,6 +93,7 @@ Proof.
     apply (H0 (y1, y2, y3)). assumption.
 Qed.
 
+(* begin hide *)
 Ltac auto3 := unfold le33; unfold le13; tauto.
 Hint Extern 1 (_ <<< _) => unfold le33; unfold le13; tauto : Wff.
 
@@ -148,3 +155,4 @@ Lemma CCC {a a' b b' c c'}: a < c' -> b < c' -> c < c' -> (a, b, c) <<< (a', b',
 Proof. auto3. Qed.
 
 Hint Resolve AAA AAB AAC ABA ABB ABC ACA ACB ACC BAA BAB BAC BBA BBB BBC BCA BCB BCC CAA CAB CAC CBA CBB CBC CCA CCB CCC : Wff.
+(* end hide *)
