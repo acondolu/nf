@@ -1,3 +1,9 @@
+(** * NFO.Sets : Set operators *)
+(** In this module we define the following set constructors:
+    emptyset, complement, singleton, co-singleton, exclusive
+    disjunction. Union is defined separately, in NFO.Union.
+*)
+
 (* begin hide *)
 From Coq.Program Require Import Basics Combinators.
 Add LoadPath "src".
@@ -5,7 +11,7 @@ From Internal Require Import Aux FunExt.
 From NFO Require Import Xor BoolExpr Model Eeq Iin Morphs.
 (* end hide *)
 
-(* Axuliary *)
+(** TODO: Axuliary INTRODUCE! *)
 Definition enum {X} f := S X False f (False_rect _) Bot.
 
 Lemma Ain_sum {X Y} (f: X + Y -> set) x:
@@ -49,7 +55,7 @@ Proof.
   - setoid_rewrite IHp1. setoid_rewrite IHp2. tauto.
 Qed.
 
-(* Empty set *)
+(** Empty set *)
 Definition emptyset := enum (False_rect _).
 
 Lemma emptyset_ok: forall x, ~ iin x emptyset.
@@ -58,7 +64,7 @@ Proof.
   unfold Ain, xor. setoid_rewrite ex_false. tauto.
 Qed.
 
-(* Set complement *)
+(** Set complement *)
 Definition compl x := match x with
   S X Y f g e => S X Y f g (Not e)
 end.
@@ -70,16 +76,7 @@ Proof.
   simpl Qin. setoid_rewrite xor_neg_commute. tauto.
 Qed.
 
-(* Co-singleton *)
-Definition cosin x := S False unit (False_rect _) (fun _ => x) (Atom tt).
-
-Lemma cosin_ok: forall x y, iin x (cosin y) <-> iin y x.
-Proof.
-  intros. unfold cosin. rewrite iin_unfold.
-  setoid_rewrite ex_false. simpl Qin. apply xor_false_l.
-Qed.
-
-(* Singleton *)
+(** Singleton *)
 Definition sin x := enum (fun _: unit => x).
 
 Lemma sin_ok: forall x y, iin x (sin y) <-> eeq y x.
@@ -89,7 +86,16 @@ Proof.
   apply xor_false_r.
 Qed.
 
-(* Exclusive or of sets *)
+(** Co-singleton *)
+Definition cosin x := S False unit (False_rect _) (fun _ => x) (Atom tt).
+
+Lemma cosin_ok: forall x y, iin x (cosin y) <-> iin y x.
+Proof.
+  intros. unfold cosin. rewrite iin_unfold.
+  setoid_rewrite ex_false. simpl Qin. apply xor_false_l.
+Qed.
+
+(** Exclusive disjunction *)
 
 Definition AXor {X Y} (f: X -> set) (g: Y -> set)
   : sum {x & ~ exists y, eeq (g y) (f x)} {y & ~ exists x, eeq (f x) (g y)} -> set
@@ -105,8 +111,9 @@ Local Definition boolean_xor {A} (p p': @boolean A) :=
 (** Rename! *)
 Definition QXor B C := 
   match B, C with S X Y f g e, S X' Y' f' g' e' =>
-    let e'' := boolean_xor (map inl e) (map inr e') in
-    S _ (sum Y Y') (AXor f f') (g ⨁ g') e''
+    S _ _
+      (AXor f f')
+        (g ⨁ g') (boolean_xor (map inl e) (map inr e'))
   end.
 Infix "^^^" := QXor (at level 50).
 
