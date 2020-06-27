@@ -197,12 +197,12 @@ Proof.
   - apply xorP_respects; assumption.
   - intros. destruct x0.
     unfold x_signed, sig_x0, sig_x, select.
-    repeat rewrite iin_unfold'.
+    repeat rewrite iin_unfold.
     (* Deep rewrites *)
     repeat setoid_rewrite AXor_ok.
     setoid_rewrite (Ain_sigma h (fun X => iin X (S A p0 h0 X0 f0))).
     setoid_rewrite (Ain_sigma h (fun X => iin X (S A0 p1 h1 X1 f1))).
-    setoid_rewrite iin_unfold'.
+    setoid_rewrite iin_unfold.
     cut (forall i, (exists x : J, h x == h i) <-> True). intro.
      setoid_rewrite H2.
      setoid_rewrite and_true.
@@ -222,7 +222,7 @@ Lemma not_iin_not_Ain {A p h X f}:
   ext_empty (S A p h X f) -> forall x, ~ Ain x f.
 Proof.
   unfold ext_empty.
-  setoid_rewrite iin_unfold'.
+  setoid_rewrite iin_unfold.
   setoid_rewrite xor_neg.
   intros H x H0. pose proof (universal_low _ _ H).
   destruct (weak_regularity (enum (All f h)) (H1 (ex_intro _ x H0) _)).
@@ -233,7 +233,7 @@ Proof.
   intros x y. unfold ext_empty.
   setoid_rewrite xor_ok. destruct x, y.
   intro. setoid_rewrite xor_neg in H.
-  setoid_rewrite iin_unfold' in H.
+  setoid_rewrite iin_unfold in H.
   setoid_rewrite<- xor_neg in H.
   setoid_rewrite xor_pairs in H.
   setoid_rewrite xor_neg in H.
@@ -241,7 +241,7 @@ Proof.
   setoid_rewrite<- AXor_ok in H'.
   setoid_rewrite<- QXor_ok in H'.
   setoid_rewrite<- xor_neg in H'.
-  setoid_rewrite<- iin_unfold' in H'.
+  setoid_rewrite<- iin_unfold in H'.
   pose proof (not_iin_not_Ain H').
   rewrite eeq_unfold.
   setoid_rewrite AXor_ok in H0.

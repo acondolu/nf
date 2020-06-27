@@ -50,12 +50,12 @@ Proof.
   apply (wf_two_ind (fun x y => eeq x y -> _: Prop)).
   destruct x1, x2. intros. repeat rewrite iin_unfold. split; apply xor_iff.
   - apply Aeq_Ain. rewrite eeq_unfold in H2; destruct H2. assumption.
-  - rewrite eeq_unfold in H2; destruct H2. unfold eeq_boolean in H1.
+  - rewrite eeq_unfold in H2; destruct H2. 
     pose (fun s : set =>
       (exists a0, s == h0 a0 /\ iin (h0 a0) (S A p h X f))
       \/ (exists a1, s == h1 a1 /\ iin (h1 a1) (S A p h X f))
     ) as g.
-    repeat rewrite map_compose in H3.
+    repeat rewrite map_compose in H3. setoid_rewrite<- Bin_bexpr.
     cut (eval (map (Basics.compose g h0) p0) <-> (let w := fun a : A0 => iin (h0 a) (S A p h X f) in eval (map w p0))). intro.
     cut (eval (map (Basics.compose g h1) p1) <-> (let w := fun a : A1 => iin (h1 a) (S A p h X f) in eval (map w p1))). intro.
     rewrite<- H4. rewrite<- H5. 
@@ -80,8 +80,8 @@ Proof.
        apply (fun K => proj2 (H1 (h0 a1) (h1 x) K H4)).
        auto with Wff. assumption.
        left. exists a1. split; eauto with Eeq.
-  - apply eeq_Ain. rewrite eeq_unfold. rewrite eeq_unfold in H2; destruct H2. auto.
-  - apply map_extP. unfold FunExt.extP. intro a.
+  - apply (eeq_Ain H2).
+  -  setoid_rewrite<- Bin_bexpr. apply map_extP. unfold FunExt.extP. intro a.
     apply (proj1 (H a (S A0 p0 h0 X0 f0) (S A1 p1 h1 X1 f1) H2)).
 Qed.
 

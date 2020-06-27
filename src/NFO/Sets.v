@@ -71,7 +71,7 @@ end.
 Lemma compl_ok: forall x y,
   iin x (compl y) <-> (iin x y -> False).
 Proof.
-  intros. destruct y. unfold compl. repeat rewrite iin_unfold'.
+  intros. destruct y. unfold compl. repeat rewrite iin_unfold.
   simpl Qin. setoid_rewrite xor_neg_commute. tauto.
 Qed.
 
@@ -80,7 +80,7 @@ Definition cosin x := S unit (Atom tt) (fun _ => x) False (False_rect _).
 
 Lemma cosin_ok: forall x y, iin x (cosin y) <-> iin y x.
 Proof.
-  intros. unfold cosin. rewrite iin_unfold'.
+  intros. unfold cosin. rewrite iin_unfold.
   setoid_rewrite ex_false. simpl Qin. apply xor_false_l.
 Qed.
 
@@ -89,7 +89,7 @@ Definition sin x := enum (fun _: unit => x).
 
 Lemma sin_ok: forall x y, iin x (sin y) <-> eeq y x.
 Proof.
-  intros x y. unfold sin, enum. rewrite iin_unfold'.
+  intros x y. unfold sin, enum. rewrite iin_unfold.
   simpl Qin. unfold Ain. setoid_rewrite ex_unit.
   apply xor_false_r.
 Qed.
@@ -137,7 +137,7 @@ Qed.
 Lemma xor_ok: forall x y z,
   iin z (QXor x y) <-> iin z x ⊻ iin z y.
 Proof.
-  intros. destruct x, y. unfold QXor. setoid_rewrite iin_unfold'.
+  intros. destruct x, y. unfold QXor. setoid_rewrite iin_unfold.
   setoid_rewrite AXor_ok. setoid_rewrite QXor_ok.
   rewrite xor_pairs. tauto.
 Qed.
