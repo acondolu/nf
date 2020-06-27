@@ -22,16 +22,11 @@ Proof.
   setoid_rewrite Ain_sum. unfold compose, sumF. tauto.
 Qed.
 
-Lemma Ain_sigma {X} (f: X -> set) (P: set -> Prop) a:
+Lemma Ain_select {X} (f: X -> set) (P: set -> Prop) a:
   respects eeq P ->
-  Ain a
-    (fun x : {x & P (f x)} => f (projT1 x))
-  <-> P a /\ exists x, f x == a.
+    Ain a (select f (P ∘ f)) <-> P a /\ exists x, f x == a.
 Proof.
-  unfold Ain. split; intros. destruct H0, x. simpl in *.
-  split. rewrite<- (H _ _ H0). auto. eauto.
-  destruct H0, H1. rewrite<- (H _ _ H1) in H0.
-  exists (existT _ x H0). auto.
+  unfold Ain. intro H. setoid_rewrite (ex_T_resp P f a H). apply iff_refl.
 Qed.
 
 Lemma Qin_sum_inl: forall X Y z (f: X -> set) (g: Y -> set) p,
@@ -117,8 +112,8 @@ Lemma AXor_ok {X X'} {f: X -> set} {f': X' -> set} {x}:
   Ain x (AXor f f') <-> Ain x f ⊻ Ain x f'.
 Proof.
   unfold AXor. setoid_rewrite Ain_sum. unfold compose; simpl.
-  setoid_rewrite (Ain_sigma f (fun X => ~ exists y, f' y == X)).
-  setoid_rewrite (Ain_sigma f' (fun X => ~ exists x, f x == X)).
+  setoid_rewrite (Ain_select f (fun X => ~ exists y, f' y == X)).
+  setoid_rewrite (Ain_select f' (fun X => ~ exists x, f x == X)).
   unfold xor, Ain. tauto.
   unfold respects. intros. setoid_rewrite H. tauto.
   unfold respects. intros. setoid_rewrite H. tauto.

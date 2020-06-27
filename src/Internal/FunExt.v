@@ -47,7 +47,7 @@ Qed.
 
 (*  *)
 
-Lemma ex_T_resp: forall {X Y R} P y (f: X -> Y),
+Lemma ex_T_resp: forall {X Y R} P (f: X -> Y) y,
   respects R P ->
     (exists ex: {x: X & P (f x) : Prop}, R (f (projT1 ex)) y) <-> P y /\ exists x, R (f x) y.
 Proof.

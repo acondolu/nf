@@ -77,30 +77,20 @@ respects (eeq ⨀ h) sig
   -> respects (eeq ⨀ h) sig'
     -> Aeq
         (AXor (select h sig) (select h sig'))
-        (select h (sig' ^^ sig)).
+          (select h (sig' ^^ sig)).
 Proof.
   intros. apply Aext. intro. rewrite AXor_ok.
-  (* unfold Ain, select.
+  unfold Aeq, AXor, select. unfold xorP. unfold Ain.
   setoid_rewrite (ex_T sig (fun X => h X == x)).
   setoid_rewrite (ex_T sig' (fun X => h X == x)).
-  setoid_rewrite (ex_T (xorP sig' sig) (fun X => h X == x)).
-  unfold xorP. *)
-  unfold Aeq, AXor, select. unfold xorP. unfold Ain. split; intros.
-  destruct H1, H1.
-  - destruct H1, x0. cut (sig' x0 ⊻ sig x0). intro.
-  unfold xorP. exists (existT _ x0 H3). assumption. apply xor_2. intro H'.
-  apply (H2 (ex_intro _ (existT _ x0 H') H1)).
-  assumption.
-  - destruct H2, x0. cut (sig' x0 ⊻ sig x0). intro.
-  unfold xorP. exists (existT _ x0 H3). assumption. apply xor_1. assumption.
-  intro H'. apply (H1 (ex_intro _ (existT _ x0 H') H2)).
-  - destruct H1, x0. destruct x1, a.
-  -- apply xor_2.
-      intro H'. destruct H', x1. pose proof (H x0 x1 (eeq_trans _ _ _ H1 (eeq_sym _ _ H2))). simpl in *. tauto.
-      exists (existT _ x0 s). assumption.
-  -- apply xor_1.
-      exists (existT _ x0 s). assumption.
-      intro H'. destruct H', x1. pose proof (H0 x0 x1 (eeq_trans _ _ _ H1 (eeq_sym _ _ H2))). simpl in *. tauto.
+  setoid_rewrite (ex_T (sig' ^^ sig) (fun X => h X == x)).
+  split; intros. 
+  - destruct H1, H1. clear H H0.
+  -- destruct H1. exists x0. unfold xorP. firstorder.
+  -- destruct H2. exists x0. unfold xorP. firstorder.
+  - destruct H1, H1. setoid_rewrite<- H2. destruct H1, H1.
+  -- right. split. intro. destruct H4, H4. firstorder. firstorder.
+  -- left. split. firstorder. intro. destruct H4, H4. firstorder.
 Qed.
 
 Definition completion A {B} (h: B -> set) :=
@@ -144,15 +134,6 @@ Proof.
   apply Aext.
   
   apply Aeq_AXor_select; assumption.
-Qed.
-
-Lemma ain_aux {J h z i}:
-Ain (h i) (fun y : {x : J & iin (h x) z} => let (x, _) := y in h x)
-<-> iin (h i) z.
-Proof.
-  unfold Ain. split; intros.
-  - destruct H, x. destruct (iin_respects_eeq z _ _ H). tauto.
-  - exists (existT _ i H). apply eeq_refl.
 Qed.
 
 Local Lemma trivial_xor_lemma {a b c d}:
@@ -200,8 +181,8 @@ Proof.
     repeat rewrite iin_unfold.
     (* Deep rewrites *)
     repeat setoid_rewrite AXor_ok.
-    setoid_rewrite (Ain_sigma h (fun X => iin X (S X0 Y f0 g e))).
-    setoid_rewrite (Ain_sigma h (fun X => iin X (S X1 Y0 f1 g0 e0))).
+    setoid_rewrite (Ain_select h (fun X => iin X (S X0 Y f0 g e))).
+    setoid_rewrite (Ain_select h (fun X => iin X (S X1 Y0 f1 g0 e0))).
     setoid_rewrite iin_unfold.
     cut (forall i, (exists x : J, h x == h i) <-> True). intro.
      setoid_rewrite H2.

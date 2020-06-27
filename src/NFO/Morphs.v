@@ -97,13 +97,6 @@ Qed.
 *)
 (** Qext *)
 
-(** TODO: remove *)
-Local Lemma aux {X p} {h: X -> _} {x}:
-  eval (map (fun x' => iin (h x') x) p)
-  <-> 
-  Qin x h p.
-Proof. induction p; simpl; tauto. Qed.
-
 
 Lemma Qeq_Qin: forall {X Y} {p p'} {h: X -> _} {h': Y -> _},
   Qeq (map h p) (map h' p')
@@ -113,54 +106,17 @@ Proof.
   pose proof (H (fun s => iin s x)).
   repeat rewrite map_compose in H0.
   unfold Basics.compose in H0.
-  repeat rewrite<- aux. apply H0.
+  repeat rewrite<- Bin_bexpr. apply H0.
   unfold respects. intros.
   apply iin_respects_eeq. assumption.
 Qed.
 
-(* TODO: check if this is select? *)
-Definition mk_low {X} f h := enum (fun k: { x: X & f (h x) } => h (projT1 k)).
-
-Lemma xxx {X Y} {p} {h: X -> _} {f: set -> Prop} (g: Y -> _):
-  respects eeq f ->
-  Qin (mk_low f (h ⨁ g)) h p <-> eval (map f (map h p)).
-Proof.
-  intro. induction p; simpl; simpl map; simpl Qin; simpl eval.
-  - tauto.
-  - unfold mk_low, enum. rewrite iin_unfold. simpl. unfold Ain.
-    rewrite xor_false_r. split; intros.
-    destruct H0, x0, x0.
-    simpl sumF in *. apply (H (h x0) (h x) H0). assumption.
-    simpl sumF in *. apply (H (g y) (h x) H0). assumption.
-    exists (existT _ (inl x) H0). eauto with Eeq.
-  - rewrite IHp. tauto.
-  - rewrite IHp1. rewrite IHp2. tauto.
-Qed.
-
-Lemma xxx_r {X Y} {p} {h: X -> _} {f: set -> Prop} (g: Y -> _):
-  respects eeq f ->
-  Qin (mk_low f (g ⨁ h)) h p <-> eval (map f (map h p)).
-Proof.
-  intro. induction p; simpl; simpl map; simpl Qin; simpl eval.
-  - tauto.
-  - unfold mk_low, enum. rewrite iin_unfold. simpl. unfold Ain.
-    rewrite xor_false_r. split; intros.
-    destruct H0, x0, x0.
-    simpl sumF in *. apply (H (g y) (h x) H0). assumption.
-    simpl sumF in *. apply (H (h x0) (h x) H0). assumption.
-    exists (existT _ (inr x) H0). eauto with Eeq.
-  - rewrite IHp. tauto.
-  - rewrite IHp1. rewrite IHp2. tauto.
-Qed.
-
 Lemma Qin_Qeq: forall {X Y} {p p'} {h: X -> _} {h': Y -> _},
   (forall x, Qin x h p <-> Qin x h' p')
-  -> Qeq (map h p) (map h' p').
+    -> Qeq (map h p) (map h' p').
 Proof.
   intros. unfold Qeq, eeq_boolean. intros.
-  pose (mk_low P h) as g.
-  pose proof (H g).
-  rewrite<- (xxx h'). rewrite<- (xxx_r h). apply H. auto. auto.
+  rewrite<- (xxx_r h' H0). rewrite<- (xxx h H0). apply H.
 Qed.
 
 Theorem Qext {X Y} {p p'} {h: X -> _} {h': Y -> _} :

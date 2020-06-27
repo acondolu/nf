@@ -2,6 +2,7 @@
 Require Import Coq.Wellfounded.Lexicographic_Product.
 Require Import Relation_Operators.
 Add LoadPath "src".
+From Internal Require Import FunExt Aux.
 From NFO Require Import BoolExpr Model Eeq Xor Wff.
 (* end hide *)
 
@@ -61,4 +62,41 @@ Proof.
   unfold iin. rewrite iin_def.
   apply xor_iff. tauto.
   apply Bin_bexpr.
+Qed.
+
+(** Some random results about Qin *)
+
+
+(* TODO: check if this is enum + select? NO! *)
+Definition mk_low {X} P f :=
+  S { x: X & P (f x) } False
+      (fun ex => f (projT1 ex)) (False_rect _) Bot.
+
+(** FIX & RENAME *)
+Lemma xxx {X Y} {p} {h: X -> _} {f: set -> Prop} (g: Y -> _):
+  respects eeq f ->
+    Qin (mk_low f (h ⨁ g)) h p <-> eval (map f (map h p)).
+Proof.
+  intro. induction p; simpl map; simpl Qin; simpl eval.
+  - tauto.
+  - unfold mk_low. rewrite iin_unfold. simpl. unfold Ain.
+    setoid_rewrite (ex_T_resp _ _ _ H).
+    cut (exists x0, (h ⨁ g) x0 == h x). intro.
+    unfold xor. tauto. exists (inl x). reflexivity.
+  - rewrite IHp. tauto.
+  - rewrite IHp1. rewrite IHp2. tauto.
+Qed.
+
+Lemma xxx_r {X Y} {p} {h: X -> _} {f: set -> Prop} (g: Y -> _):
+  respects eeq f ->
+  Qin (mk_low f (g ⨁ h)) h p <-> eval (map f (map h p)).
+Proof.
+  intro. induction p; simpl; simpl map; simpl Qin; simpl eval.
+  - tauto.
+  - unfold mk_low. rewrite iin_unfold. simpl. unfold Ain.
+    setoid_rewrite (ex_T_resp _ _ _ H).
+    cut (exists x0, (g ⨁ h) x0 == h x). intro.
+    unfold xor. tauto. exists (inr x). reflexivity.
+  - rewrite IHp. tauto.
+  - rewrite IHp1. rewrite IHp2. tauto.
 Qed.
