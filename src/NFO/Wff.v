@@ -48,7 +48,7 @@ Definition list2 {A: Type} := fun x: prod A A => let (x1, x2) := x in
   Require Import Coq.Wellfounded.Transitive_Closure.
   Require Import Relation_Definitions.
 Require Import Relation_Operators.
-Definition permletrans := (clos_trans _ (Wff2.permle _ Model.lt)).
+Definition permletrans := (clos_trans _ (Wff2.permle Model.lt)).
 Definition wf_trans: well_founded permletrans.
 Proof.
   apply wf_clos_trans. apply Wff2.wf_perm. apply wf_lt.

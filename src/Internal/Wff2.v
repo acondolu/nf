@@ -1,12 +1,17 @@
-(** * Internal.Wff2 : Well-orderings *)
-(** In this section we define... TODO:*)
+(** * Internal.Wff2 : Well-founded multiset extension *)
+(** In this module we define the multiset extension
+    of a well-founded binary relation.
+    
+    We represent multisets just as lists.
+TODO:
+
+*)
 Require Import Coq.Lists.List.
 Require Import Coq.Arith.PeanoNat.
 Require Import Coq.Program.Equality.
 Require Import Coq.omega.Omega.
 Require Import Coq.Sorting.Permutation.
 
-(* Multiset Extension? Kind of *)
 
 Section Wff2.
 
@@ -181,5 +186,7 @@ Proof.
     intro a. induction (wf_lst a). apply Acc_intro. intros.
     destruct H1, H1. apply (perm_Acc _ _ (Permutation_sym H1)). auto.
 Qed.
-
 End Wff2.
+
+Arguments permle : default implicits.
+Arguments wf_perm : default implicits.
