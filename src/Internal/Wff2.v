@@ -1,11 +1,11 @@
 (** * Internal.Wff2 : Well-orderings *)
-(** In this section we defined... TODO:*)
+(** In this section we define... TODO:*)
 Require Import Coq.Lists.List.
 Require Import Coq.Arith.PeanoNat.
 Require Import Coq.Program.Equality.
 Require Import Coq.omega.Omega.
 
-(* Multiset Extension, Take I *)
+(* Multiset Extension? Kind of*)
 
 Parameter A : Type.
 Parameter lt : A -> A -> Prop.
@@ -137,10 +137,27 @@ Proof.
   -- rewrite H1 in *. clear a H1. exists (x0 ++ l). split.
      apply Permutation_app_head. apply Permutation_sym. auto.
      refine (C O (x::l) x0 _ H2). simpl length. omega.
-  - admit.
+  - destruct (xxx H0); destruct H, H.
+  -- rewrite H1 in *. clear a H1. destruct (xxx H); destruct H1, H1.
+  --- rewrite H2 in *. clear x0 H2. exists (y :: x :: x1).
+      split. apply perm_swap. 
+      dependent destruction H1.
+      pose proof ((lt_n_S _ _ (lt_n_S _ _ p)) : S (S i) < length (y :: x :: l)).
+      pose proof (fun X => C (S (S i)) (y :: x :: l) l' H2 X). simpl replace in H3.
+      setoid_rewrite replace_succ in H3. apply H3.
+      cut (get H2 = get p). intro. rewrite H4. assumption.
+      simpl get.
+      setoid_rewrite get_succ. apply eq_refl. auto.
+  --- rewrite H1 in *. clear x0 H1. exists (x1 ++ x :: l). split.
+      apply Permutation_cons_app. reflexivity.
+      refine (C O (y :: x :: l) x1 _ _). apply H2.
+  -- rewrite H in *. clear a H. exists (y :: x0 ++ l). split.
+     symmetry. apply Permutation_cons_app. reflexivity.
+     refine (C 1 (y :: x :: l) x0 _ _). apply H1.
   - destruct (IHPermutation2 _ H1), H2. destruct (IHPermutation1 _ H3), H4.
     exists x0. split. transitivity x; auto. auto.
-Admitted.
+    Grab Existential Variables. simpl length. omega. simpl length. omega.
+Qed.
 (* use https://coq.github.io/doc/master/stdlib/Coq.Sorting.Permutation.html *)
 
 Lemma perm_Acc : forall l l', Permutation l l' -> Acc permle l -> Acc permle l'.
@@ -156,11 +173,8 @@ Proof.
   - auto.
 Qed.
 
-Lemma wf_perm : well_founded permle.
+Theorem wf_perm : well_founded permle.
 Proof.
-    red in |- *. intro a.
-    induction (wf_lst a). apply Acc_intro. intros.
-    destruct H1, H1.
-    pose proof (H0 _ H2).
-    apply (perm_Acc _ _ (Permutation_sym H1)). auto.
+    intro a. induction (wf_lst a). apply Acc_intro. intros.
+    destruct H1, H1. apply (perm_Acc _ _ (Permutation_sym H1)). auto.
 Qed.
