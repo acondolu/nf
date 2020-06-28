@@ -22,15 +22,15 @@ Proof.
   - intros. refine (a :: IHi l (lt_S_n _ _ H) X).
 Defined.
 
-Lemma replace_succ: forall {i l l' x} (p: S i < length (x::l)),
-  replace p l' = x :: replace (lt_S_n _ _ p: i < length l) l'.
+Lemma replace_succ: forall {i l l' x} (p: S i < length (x::l)) (p': i < length l),
+  replace p l' = x :: replace p' l'.
 Proof.
   induction i; intros; destruct l; simpl length in *.
   - omega.
   - reflexivity.
   - omega.
-  - simpl. pose proof (IHi l l' a (lt_S_n _ _ p)). simpl in H.
-    tauto.
+  - simpl. setoid_rewrite (IHi l l' a). apply eq_refl.
+  Grab Existential Variables. apply (lt_S_n _ _ p').
 Qed.
 
 (** Get an element of the list by its index: *)
@@ -43,15 +43,15 @@ Proof.
   - intros. refine (IHi l (lt_S_n _ _ H)).
 Defined.
 
-Lemma get_succ: forall {i l x} (p: S i < length (x::l)),
-  get p = get (lt_S_n _ _ p).
+Lemma get_succ: forall {i l x} (p: S i < length (x::l)) (p': i < length (l)),
+  get p = get p'.
 Proof.
   induction i; intros; destruct l; simpl length in *.
   - omega.
   - reflexivity.
   - omega.
-  - simpl. pose proof (IHi l a (lt_S_n _ _ p)). simpl in H.
-    tauto.
+  - simpl. setoid_rewrite (IHi l a p' (lt_S_n _ _ p')).
+  setoid_rewrite (IHi l a (lt_S_n _ _ p) (lt_S_n _ _ p')). apply eq_refl.
 Qed.
 
 Fixpoint all P (x: list A) := match x with
@@ -123,9 +123,25 @@ Require Import Coq.Sorting.Permutation.
 
 Definition permle l l' := exists l'', Permutation l l'' /\ lt_lst l'' l'.
 
-Axiom perm_lt_dx: forall {a b b'}, 
-  Permutation b b' -> lt_lst a b' -> permle a b.
-
+Lemma perm_lt_dx: forall {a b b'}, Permutation b b' -> lt_lst a b' -> permle a b.
+Proof.
+  intros. revert a H0. dependent induction H; intros; unfold permle.
+  - dependent destruction H0. simpl length in p. omega.
+  - destruct (xxx H0); destruct H1, H1.
+  -- rewrite H2 in *. clear a H2.
+    destruct (IHPermutation _ H1), H2.
+    exists (x :: x1). split.
+  --- apply perm_skip. auto.
+  --- dependent destruction H3. rewrite<- (replace_succ (lt_n_S _ _ p)).
+      refine (C (S i) (x::l) l'0 _ _). rewrite (get_succ _ p). auto.
+  -- rewrite H1 in *. clear a H1. exists (x0 ++ l). split.
+     apply Permutation_app_head. apply Permutation_sym. auto.
+     refine (C O (x::l) x0 _ H2). simpl length. omega.
+  - admit.
+  - destruct (IHPermutation2 _ H1), H2. destruct (IHPermutation1 _ H3), H4.
+    exists x0. split. transitivity x; auto. auto.
+Admitted.
+(* use https://coq.github.io/doc/master/stdlib/Coq.Sorting.Permutation.html *)
 
 Lemma perm_Acc : forall l l', Permutation l l' -> Acc permle l -> Acc permle l'.
 Proof.
@@ -142,10 +158,9 @@ Qed.
 
 Lemma wf_perm : well_founded permle.
 Proof.
-    red in |- *.
-    induction a; intros. apply Acc_intro. intros. destruct H, H. dependent destruction H0. simpl length in p. omega.
-
-    (* revert a. apply (well_founded_ind wf_lt (fun a => Acc permle (a :: a0))). intros.
-
-    apply Acc_intro. intros. apply IHa. destruct H1, H1. unfold permle. *)
-Admitted.
+    red in |- *. intro a.
+    induction (wf_lst a). apply Acc_intro. intros.
+    destruct H1, H1.
+    pose proof (H0 _ H2).
+    apply (perm_Acc _ _ (Permutation_sym H1)). auto.
+Qed.
