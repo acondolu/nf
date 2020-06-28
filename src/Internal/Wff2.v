@@ -19,7 +19,7 @@ Variable A : Type.
 Variable lt : A -> A -> Prop.
 Variable wf_lt: well_founded lt.
 
-(** Replace an element of a list with another list: *)
+(** Replace an element of a list by concatenating another list in its place: *)
 Definition replace : forall {i: nat} {l: list A},
   i < length l -> list A -> list A.
 Proof.
@@ -51,30 +51,30 @@ Proof.
   - intros. refine (IHi l (lt_S_n _ _ H)).
 Defined.
 
-Lemma get_succ: forall {i l x} (p: S i < length (x::l)) (p': i < length (l)),
+Lemma get_succ: forall {i x l} (p: S i < length (x::l)) (p': i < length (l)),
   get p = get p'.
 Proof.
   induction i; intros; destruct l; simpl length in *.
   - omega.
   - reflexivity.
   - omega.
-  - simpl. setoid_rewrite (IHi l a p' (lt_S_n _ _ p')).
-  setoid_rewrite (IHi l a (lt_S_n _ _ p) (lt_S_n _ _ p')). apply eq_refl.
+  - simpl. setoid_rewrite (IHi a l p' (lt_S_n _ _ p')).
+  setoid_rewrite (IHi a l (lt_S_n _ _ p) (lt_S_n _ _ p')). apply eq_refl.
 Qed.
 
-Fixpoint all P (x: list A) := match x with
+(** Check whether a predicate is satisfied by all the elements of a list: *)
+Fixpoint all P (l: list A) := match l with
 | nil => True
 | cons b bs => P b /\ all P bs
 end.
 
+(* rename to ltl *)
 Inductive lt_lst : list A -> list A -> Prop :=
-  | C: forall i (l l': list A) (p: i < length l),
+  | C : forall i (l l': list A) (p: i < length l),
          all (fun x => lt x (get p)) l'
-         ->
-         lt_lst (replace p l') l
-.
+          -> lt_lst (replace p l') l .
 
-Lemma xxx: forall {y a l}, 
+Lemma ltl_cases: forall {y a l}, 
   lt_lst y (a :: l) -> 
     (exists l', lt_lst l' l /\ y = a :: l') \/
       (exists l', y = l' ++ l /\ all (fun x => lt x a) l').
@@ -94,7 +94,7 @@ Lemma l2p1: forall {a M0},
   -> (forall M, lt_lst M M0 -> Acc lt_lst (a :: M))
   -> Acc lt_lst (a :: M0).
 Proof.
-  intros. apply Acc_intro. intros. destruct (xxx H2).
+  intros. apply Acc_intro. intros. destruct (ltl_cases H2).
   - destruct H3, H3. rewrite H4 in *. clear H4 y. apply (H1 x H3).
   - destruct H3, H3. rewrite H3 in *; clear H3 y. induction x; simpl; intros.
   -- assumption.
@@ -127,15 +127,22 @@ Proof.
   - apply (l2p3 a IHl).
 Qed.
 
+(** * Unordered
+    To consider lists as multisets, we now use permutations so to make
+    our order relation ignore the position of elements in a list.
 
+    We use Coq's Permutation library
+    (see https://coq.github.io/doc/master/stdlib/Coq.Sorting.Permutation.html).
+*)
 
+(* Rename to ltlp ? *)
 Definition permle l l' := exists l'', Permutation l l'' /\ lt_lst l'' l'.
 
 Lemma perm_lt_dx: forall {a b b'}, Permutation b b' -> lt_lst a b' -> permle a b.
 Proof.
   intros. revert a H0. dependent induction H; intros; unfold permle.
   - dependent destruction H0. simpl length in p. omega.
-  - destruct (xxx H0); destruct H1, H1.
+  - destruct (ltl_cases H0); destruct H1, H1.
   -- rewrite H2 in *. clear a H2.
     destruct (IHPermutation _ H1), H2.
     exists (x :: x1). split.
@@ -145,8 +152,8 @@ Proof.
   -- rewrite H1 in *. clear a H1. exists (x0 ++ l). split.
      apply Permutation_app_head. apply Permutation_sym. auto.
      refine (C O (x::l) x0 _ H2). simpl length. omega.
-  - destruct (xxx H0); destruct H, H.
-  -- rewrite H1 in *. clear a H1. destruct (xxx H); destruct H1, H1.
+  - destruct (ltl_cases H0); destruct H, H.
+  -- rewrite H1 in *. clear a H1. destruct (ltl_cases H); destruct H1, H1.
   --- rewrite H2 in *. clear x0 H2. exists (y :: x :: x1).
       split. apply perm_swap. 
       dependent destruction H1.
@@ -166,7 +173,6 @@ Proof.
     exists x0. split. transitivity x; auto. auto.
     Grab Existential Variables. simpl length. omega. simpl length. omega.
 Qed.
-(* use https://coq.github.io/doc/master/stdlib/Coq.Sorting.Permutation.html *)
 
 Lemma perm_Acc : forall l l', Permutation l l' -> Acc permle l -> Acc permle l'.
 Proof.

@@ -11,7 +11,7 @@ From NFO Require Import BoolExpr Model Wff.
 
 (* begin hide *)
 Local Definition eeq' : set * set -> Prop.
-refine ( Fix wf_two (fun _ => Prop) (
+refine ( Fix (wf_two wf_lt) (fun _ => Prop) (
   fun x rec => (
     match x as x0 return (x = x0 -> Prop) with
     | (S X Y f g e, S X' Y' f' g' e') => fun eqx =>
@@ -48,7 +48,7 @@ Local Lemma eeq_def : forall x y,
         eeq_boolean (eeq ⨀ (g ⨁ g')) (map inl e) (map inr e')
 end.
 Proof.
-  apply wf_two_ind.
+  apply (wf_two_ind wf_lt).
   destruct x1, x2. intros.
   unfold eeq at 1. unfold eeq' at 1. rewrite Fix_iff. fold eeq'.
   - apply and_morph. apply iff_refl. apply eeq_boolean_ext.
@@ -72,7 +72,7 @@ Hint Immediate eeq_refl : Eeq.
 
 Lemma eeq_sym: forall x y, eeq x y -> eeq y x.
 Proof.
-  apply (wf_two_ind (fun x y => eeq x y -> eeq y x)).
+  apply (wf_two_ind wf_lt (fun x y => eeq x y -> eeq y x)).
   destruct x1, x2.
   repeat rewrite eeq_def. intros. repeat destruct H0.
   split. split.
@@ -84,7 +84,7 @@ Hint Resolve eeq_sym : Eeq.
 
 Lemma eeq_trans : forall x y z, eeq x y -> eeq y z -> eeq x z.
 Proof.
-  apply (wf_three_ind (fun x y z => eeq x y -> eeq y z -> eeq x z)).
+  apply (wf_three_ind wf_lt (fun x y z => eeq x y -> eeq y z -> eeq x z)).
   destruct x1, x2, x3. 
   repeat rewrite eeq_def. unfold Aeq in *. intros.
   repeat destruct H0. repeat destruct H1.
