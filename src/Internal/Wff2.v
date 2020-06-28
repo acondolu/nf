@@ -4,12 +4,15 @@ Require Import Coq.Lists.List.
 Require Import Coq.Arith.PeanoNat.
 Require Import Coq.Program.Equality.
 Require Import Coq.omega.Omega.
+Require Import Coq.Sorting.Permutation.
 
-(* Multiset Extension? Kind of*)
+(* Multiset Extension? Kind of *)
 
-Parameter A : Type.
-Parameter lt : A -> A -> Prop.
-Axiom wf_lt: well_founded lt.
+Section Wff2.
+
+Variable A : Type.
+Variable lt : A -> A -> Prop.
+Variable wf_lt: well_founded lt.
 
 (** Replace an element of a list with another list: *)
 Definition replace : forall {i: nat} {l: list A},
@@ -119,7 +122,7 @@ Proof.
   - apply (l2p3 a IHl).
 Qed.
 
-Require Import Coq.Sorting.Permutation.
+
 
 Definition permle l l' := exists l'', Permutation l l'' /\ lt_lst l'' l'.
 
@@ -178,3 +181,5 @@ Proof.
     intro a. induction (wf_lst a). apply Acc_intro. intros.
     destruct H1, H1. apply (perm_Acc _ _ (Permutation_sym H1)). auto.
 Qed.
+
+End Wff2.

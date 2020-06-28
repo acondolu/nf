@@ -4,6 +4,7 @@
 Require Import Coq.Init.Wf.
 Add LoadPath "src".
 From NFO Require Import Model.
+From Internal Require Wff2.
 (* end hide *)
 
 (** Variant of Coq.Init.Wf.Fix_F_inv with iff instead of eq *)
@@ -38,10 +39,61 @@ Definition le12 : set -> set * set -> Prop := fun a bs =>
   match bs with (b1, b2) => a < b1 \/ a < b2 end.
 
 Definition le22 : set * set -> set * set -> Prop := fun a bs =>
-  match a with (a1, a2) => le12 a1 bs \/ le12 a2 bs end.
+  match a with (a1, a2) => le12 a1 bs /\ le12 a2 bs end.
 Infix "<<" := le22 (at level 50) : type_scope.
 
-Axiom wf_two: well_founded le22.
+Definition list2 {A: Type} := fun x: prod A A => let (x1, x2) := x in 
+  cons x1 (cons x2 nil).
+
+  Require Import Coq.Wellfounded.Transitive_Closure.
+  Require Import Relation_Definitions.
+Require Import Relation_Operators.
+Definition permletrans := (clos_trans _ (Wff2.permle _ Model.lt)).
+Definition wf_trans: well_founded permletrans.
+Proof.
+  apply wf_clos_trans. apply Wff2.wf_perm. apply wf_lt.
+Qed.
+
+Require Import Coq.Lists.List.
+Require Import Coq.Sorting.Permutation.
+Lemma le2lst:
+  forall x y, x << y -> permletrans (list2 x) (list2 y).
+Proof.
+  intros. destruct x, y. destruct H, H, H0; simpl list2.
+   - apply (t_trans _ _ _ (cons s1 nil)); apply t_step.
+     red. exists (s :: s0 :: nil). split; auto. 
+     pose proof (Wff2.C set Model.lt O (s1 :: nil) (s :: s0 :: nil) ). simpl in H1. auto.
+     exists (s1 :: nil). split; auto. 
+     pose proof (Wff2.C set Model.lt 1 (s1 :: s2 :: nil) nil). simpl in H1. auto.
+  - apply (t_trans _ _ _ (s1 :: s0 :: nil)); apply t_step.
+    red. exists (s :: s0 :: nil). split; auto. 
+    pose proof (Wff2.C set Model.lt O (s1 :: s0 :: nil) (s :: nil) ). simpl in H1. auto.
+    exists (s1 :: s0 :: nil). split; auto. 
+    pose proof (Wff2.C set Model.lt 1 (s1 :: s2 :: nil) (s0 :: nil)). simpl in H1. auto.
+  - apply (t_trans _ _ _ (s0 :: s2 :: nil)); apply t_step.
+  red. exists (s0 :: s :: nil). split. apply perm_swap.
+    pose proof (Wff2.C set Model.lt 1 (s0 :: s2 :: nil) (s :: nil)). simpl in H1. auto.
+    exists (s0 :: s2 :: nil). split; auto. 
+    pose proof (Wff2.C set Model.lt O (s1 :: s2 :: nil) (s0 :: nil) ). simpl in H1. auto.
+  - apply (t_trans _ _ _ (cons s2 nil)); apply t_step.
+    red. exists (s :: s0 :: nil). split; auto. 
+    pose proof (Wff2.C set Model.lt O (s2 :: nil) (s :: s0 :: nil) ). simpl in H1. auto.
+    exists (s2 :: nil). split; auto. 
+    pose proof (Wff2.C set Model.lt 0 (s1 :: s2 :: nil) nil). simpl in H1. auto.
+Qed.
+Require Import Coq.Wellfounded.Inclusion.
+Require Import Coq.Wellfounded.Inverse_Image.
+Require Import Coq.Wellfounded.Transitive_Closure.
+
+Theorem wf_two: well_founded le22.
+Proof.
+  apply (wf_incl _ _ (fun x y => permletrans (list2 x) (list2 y))).
+  unfold inclusion. apply le2lst.
+  apply (wf_inverse_image _ _ (permletrans) list2).
+  apply wf_clos_trans.
+  apply Wff2.wf_perm.
+  apply wf_lt.
+Qed.
 
 Lemma wf_two_ind: forall P : set -> set -> Prop,
   (forall x1 x2,
@@ -74,10 +126,25 @@ Definition le13 : set -> set * set * set -> Prop := fun a bs =>
   match bs with (b1, b2, b3) => a < b1 \/ a < b2 \/ a < b3 end.
 
 Definition le33 : set * set * set -> set * set * set -> Prop := fun a bs =>
-  match a with (a1, a2, a3) => le13 a1 bs \/ le13 a2 bs \/ le13 a3 bs end.
+  match a with (a1, a2, a3) => le13 a1 bs /\ le13 a2 bs /\ le13 a3 bs end.
 Infix "<<<" := le33 (at level 50) : type_scope.
 
-Axiom wf_three: well_founded le33.
+Definition list3 {A: Type} := fun x : A *A *A=> 
+  match x with (x1, x2, x3) =>
+  x1 :: x2 :: x3 :: nil end.
+
+Axiom le3lst:
+  forall x y, x <<< y -> permletrans (list3 x) (list3 y).
+
+Theorem wf_three: well_founded le33.
+Proof.
+  apply (wf_incl _ _ (fun x y => permletrans (list3 x) (list3 y))).
+  unfold inclusion. apply le3lst.
+  apply (wf_inverse_image _ _ (permletrans) list3).
+  apply wf_clos_trans.
+  apply Wff2.wf_perm.
+  apply wf_lt.
+Qed.
 
 Lemma wf_three_ind:
   forall P : set -> set -> set -> Prop,
