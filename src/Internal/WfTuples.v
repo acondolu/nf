@@ -1,16 +1,12 @@
 (* begin hide *)
 Require Import Coq.Init.Wf.
-Require Import Coq.Wellfounded.Inclusion.
-Require Import Coq.Wellfounded.Inverse_Image.
-Require Import Coq.Wellfounded.Transitive_Closure.
-Require Import Coq.Wellfounded.Transitive_Closure.
-  Require Import Relation_Definitions.
-Require Import Relation_Operators.
 Require Import Coq.Lists.List.
 Require Import Coq.Sorting.Permutation.
-
+Require Import Relation_Definitions.
+Require Import Relation_Operators.
+From Coq.Wellfounded
+  Require Import Inclusion Inverse_Image Transitive_Closure.
 Add LoadPath "src".
-(* From NFO Require Import Model. *)
 From Internal Require Wff2.
 (* end hide *)
 
