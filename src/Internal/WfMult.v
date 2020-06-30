@@ -14,6 +14,7 @@ Require Import Coq.Sorting.Permutation.
 
 Section WfMult.
 
+(** We assume a well-founded relation [<<] over A: *)
 Variable A : Type.
 Variable lt : A -> A -> Prop.
 Local Infix "<<" := lt (at level 80).
