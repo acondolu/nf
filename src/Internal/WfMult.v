@@ -53,7 +53,7 @@ Proof.
   - intros. refine (IHi l (lt_S_n _ _ H)).
 Defined.
 
-Lemma get_cons: forall {i x l} (p: S i < length (x::l)) (p': i < length (l)),
+Lemma get_cons: forall {i x l} (p: S i < length (x::l)) (p': i < length l),
   get p = get p'.
 Proof.
   induction i; intros; destruct l; simpl length in *.
@@ -70,13 +70,13 @@ Fixpoint all P (l: list A) := match l with
 | cons b bs => P b /\ all P bs
 end.
 
-(** A strict order between lists. 'l1 <<< l2' holds iff there exists an element 'x'
-    in 'l1' such that 'l2' is obtained by replacing that element with a
-    (possibly empty) list whose elements are all strictly smaller than 'x'.
+(** A strict order between lists. [l <<< l'] holds iff there exists an element [x]
+    in [l] such that [l'] is obtained by replacing that element with a
+    (possibly empty) list whose elements are all strictly smaller than [x].
 *)
 Inductive ltl : list A -> list A -> Prop :=
   | C : forall i (l l': list A) (p: i < length l),
-         all (fun x => lt x (get p)) l'
+         all (fun x => x << get p) l'
           -> ltl (replace p l') l .
 Local Infix "<<<" := ltl (at level 80).
 
