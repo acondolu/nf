@@ -22,7 +22,7 @@
 </div>
 
 <div class="doc">
- In this module we define the multiset extension
+ This module defines the multiset extension
     of a well-founded binary relation.
 
 <div class="paragraph"> </div>
@@ -87,9 +87,9 @@ Check whether a predicate is satisfied by all the elements of a list:
 </div>
 
 <div class="doc">
-A strict order between lists. l <tt>&lt; l' iff there exists an element x
-    in l' such that l is obtained by replacing that element with a
-    (possibly empty) list whose elements are all strictly smaller than x.
+A strict order between lists. 'l1 <tt>&lt; l2' holds iff there exists an element 'x'
+    in 'l1' such that 'l2' is obtained by replacing that element with a
+    (possibly empty) list whose elements are all strictly smaller than 'x'.
 </tt>
 </div>
 <div class="code">
@@ -121,7 +121,7 @@ We follow the proof of wellfoundedness of the multiset
 
 <div class="paragraph"> </div>
 
- Lemma 2.1 
+ Lemma 2.1: 
 </div>
 <div class="code">
 <span class="id" title="keyword">Lemma</span> <a name="l2p1"><span class="id" title="lemma">l2p1</span></a>: <span class="id" title="keyword">∀</span> {<span class="id" title="var">a</span> <span class="id" title="var">M0</span>},<br/>
@@ -134,7 +134,7 @@ We follow the proof of wellfoundedness of the multiset
 </div>
 
 <div class="doc">
-Lemma 2.2 
+Lemma 2.2: 
 </div>
 <div class="code">
 <span class="id" title="keyword">Lemma</span> <a name="l2p2"><span class="id" title="lemma">l2p2</span></a>: <span class="id" title="keyword">∀</span> <span class="id" title="var">a</span>,<br/>
@@ -145,7 +145,7 @@ Lemma 2.2
 </div>
 
 <div class="doc">
-Lemma 2.3 
+Lemma 2.3: 
 </div>
 <div class="code">
 <span class="id" title="keyword">Lemma</span> <a name="l2p3"><span class="id" title="lemma">l2p3</span></a>: <span class="id" title="keyword">∀</span> {<span class="id" title="var">a</span>} <span class="id" title="var">M</span>, <a class="idref" href="http://coq.inria.fr/distrib/V8.11.2/stdlib//Coq.Init.Wf.html#Acc"><span class="id" title="inductive">Acc</span></a> <a class="idref" href="Internal.WfMult.html#ltl"><span class="id" title="inductive">ltl</span></a> <a class="idref" href="Internal.WfMult.html#M"><span class="id" title="variable">M</span></a> <a class="idref" href="http://coq.inria.fr/distrib/V8.11.2/stdlib//Coq.Init.Logic.html#1c93e43e07fbeaeb6a625cb6614beb5d"><span class="id" title="notation">→</span></a> <a class="idref" href="http://coq.inria.fr/distrib/V8.11.2/stdlib//Coq.Init.Wf.html#Acc"><span class="id" title="inductive">Acc</span></a> <a class="idref" href="Internal.WfMult.html#ltl"><span class="id" title="inductive">ltl</span></a> (<a class="idref" href="Internal.WfMult.html#a"><span class="id" title="variable">a</span></a> <a class="idref" href="http://coq.inria.fr/distrib/V8.11.2/stdlib//Coq.Init.Datatypes.html#cbcf67aac0c2a85b8d93d37de9969adf"><span class="id" title="notation">::</span></a> <a class="idref" href="Internal.WfMult.html#M"><span class="id" title="variable">M</span></a>).<br/>
