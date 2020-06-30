@@ -6,7 +6,7 @@ Require Import Relation_Definitions.
 Require Import Relation_Operators.
 From Coq.Wellfounded Require Import Inclusion Inverse_Image Transitive_Closure.
 Add LoadPath "src".
-From Internal Require Wff2.
+From Internal Require WfMult.
 (* end hide *)
 
 Section MultiWf.
@@ -42,10 +42,10 @@ Variable lt: A -> A -> Prop.
 Variable wf_lt: well_founded lt.
 Local Infix "<" := lt.
 
-Definition lltlp := (clos_trans _ (Wff2.ltlp lt)).
+Definition lltlp := (clos_trans _ (WfMult.ltlp lt)).
 Definition wf_trans: well_founded lltlp.
 Proof.
-  apply wf_clos_trans. apply Wff2.wf_perm. apply wf_lt.
+  apply wf_clos_trans. apply WfMult.wf_perm. apply wf_lt.
 Qed.
 
 
@@ -67,24 +67,24 @@ Proof.
   intros. destruct x, y. destruct H, H, H0; simpl list2.
    - apply (t_trans _ _ _ (a1 :: nil)); apply t_step.
      red. exists (a :: a0 :: nil). split; auto. 
-     pose proof (Wff2.C _ lt O (a1 :: nil) (a :: a0 :: nil) ). simpl in H1. auto.
+     pose proof (WfMult.C _ lt O (a1 :: nil) (a :: a0 :: nil) ). simpl in H1. auto.
      exists (a1 :: nil). split; auto. 
-     pose proof (Wff2.C _ lt 1 (a1 :: a2 :: nil) nil). simpl in H1. auto.
+     pose proof (WfMult.C _ lt 1 (a1 :: a2 :: nil) nil). simpl in H1. auto.
   - apply (t_trans _ _ _ (a1 :: a0 :: nil)); apply t_step.
     red. exists (a :: a0 :: nil). split; auto. 
-    pose proof (Wff2.C _ lt O (a1 :: a0 :: nil) (a :: nil) ). simpl in H1. auto.
+    pose proof (WfMult.C _ lt O (a1 :: a0 :: nil) (a :: nil) ). simpl in H1. auto.
     exists (a1 :: a0 :: nil). split; auto. 
-    pose proof (Wff2.C _ lt 1 (a1 :: a2 :: nil) (a0 :: nil)). simpl in H1. auto.
+    pose proof (WfMult.C _ lt 1 (a1 :: a2 :: nil) (a0 :: nil)). simpl in H1. auto.
   - apply (t_trans _ _ _ (a0 :: a2 :: nil)); apply t_step.
     red. exists (a0 :: a :: nil). split. apply perm_swap.
-    pose proof (Wff2.C _ lt 1 (a0 :: a2 :: nil) (a :: nil)). simpl in H1. auto.
+    pose proof (WfMult.C _ lt 1 (a0 :: a2 :: nil) (a :: nil)). simpl in H1. auto.
     exists (a0 :: a2 :: nil). split; auto. 
-    pose proof (Wff2.C _ lt O (a1 :: a2 :: nil) (a0 :: nil) ). simpl in H1. auto.
+    pose proof (WfMult.C _ lt O (a1 :: a2 :: nil) (a0 :: nil) ). simpl in H1. auto.
   - apply (t_trans _ _ _ (a2 :: nil)); apply t_step.
     red. exists (a :: a0 :: nil). split; auto. 
-    pose proof (Wff2.C _ lt O (a2 :: nil) (a :: a0 :: nil) ). simpl in H1. auto.
+    pose proof (WfMult.C _ lt O (a2 :: nil) (a :: a0 :: nil) ). simpl in H1. auto.
     exists (a2 :: nil). split; auto. 
-    pose proof (Wff2.C _ lt 0 (a1 :: a2 :: nil) nil). simpl in H1. auto.
+    pose proof (WfMult.C _ lt 0 (a1 :: a2 :: nil) nil). simpl in H1. auto.
 Qed.
 
 Theorem wf_two: well_founded le22.
@@ -93,7 +93,7 @@ Proof.
   unfold inclusion. apply le2lst.
   apply (wf_inverse_image _ _ (lltlp) list2).
   apply wf_clos_trans.
-  apply Wff2.wf_perm.
+  apply WfMult.wf_perm.
   apply wf_lt.
 Qed.
 
@@ -130,12 +130,12 @@ Proof.
   - apply (t_trans _ _ _ (a3 :: nil)).
   -- apply t_step. red. exists (a1 :: a2 :: a :: nil). split. 
     reflexivity.
-    pose proof (Wff2.C _ lt O (a3 :: nil) (a1 :: a2 :: a :: nil) ). simpl in H2. auto.
+    pose proof (WfMult.C _ lt O (a3 :: nil) (a1 :: a2 :: a :: nil) ). simpl in H2. auto.
   -- apply (t_trans _ _ _ (a3 :: a0 :: nil)). apply t_step.
      exists (a3 :: nil). split; auto. 
-     pose proof (Wff2.C _ lt 1 (a3 :: a0 :: nil) nil). simpl in H2. auto.
+     pose proof (WfMult.C _ lt 1 (a3 :: a0 :: nil) nil). simpl in H2. auto.
      apply t_step. exists (a3 :: a0 :: nil). split; auto. 
-     pose proof (Wff2.C _ lt 1 (a3 :: a4 :: a0 :: nil) nil). simpl in H2. auto.
+     pose proof (WfMult.C _ lt 1 (a3 :: a4 :: a0 :: nil) nil). simpl in H2. auto.
   -
 Admitted.
 
@@ -145,7 +145,7 @@ Proof.
   unfold inclusion. apply le3lst.
   apply (wf_inverse_image _ _ (lltlp) list3).
   apply wf_clos_trans.
-  apply Wff2.wf_perm.
+  apply WfMult.wf_perm.
   apply wf_lt.
 Qed.
 
@@ -191,24 +191,24 @@ Proof.
   intros. destruct x, y. destruct H, H, H0; simpl list2.
    - apply (t_trans _ _ _ (a1 :: nil)); apply t_step.
      red. exists (a :: a0 :: nil). split; auto. 
-     pose proof (Wff2.C _ lt O (a1 :: nil) (a :: a0 :: nil) ). simpl in H1. auto.
+     pose proof (WfMult.C _ lt O (a1 :: nil) (a :: a0 :: nil) ). simpl in H1. auto.
      exists (a1 :: nil). split; auto. 
-     pose proof (Wff2.C _ lt 1 (a1 :: a2 :: nil) nil). simpl in H1. auto.
+     pose proof (WfMult.C _ lt 1 (a1 :: a2 :: nil) nil). simpl in H1. auto.
   - apply (t_trans _ _ _ (a1 :: a0 :: nil)); apply t_step.
     red. exists (a :: a0 :: nil). split; auto. 
-    pose proof (Wff2.C _ lt O (a1 :: a0 :: nil) (a :: nil) ). simpl in H1. auto.
+    pose proof (WfMult.C _ lt O (a1 :: a0 :: nil) (a :: nil) ). simpl in H1. auto.
     exists (a1 :: a0 :: nil). split; auto. 
-    pose proof (Wff2.C _ lt 1 (a1 :: a2 :: nil) (a0 :: nil)). simpl in H1. auto.
+    pose proof (WfMult.C _ lt 1 (a1 :: a2 :: nil) (a0 :: nil)). simpl in H1. auto.
   - apply (t_trans _ _ _ (a0 :: a2 :: nil)); apply t_step.
     red. exists (a0 :: a :: nil). split. apply perm_swap.
-    pose proof (Wff2.C _ lt 1 (a0 :: a2 :: nil) (a :: nil)). simpl in H1. auto.
+    pose proof (WfMult.C _ lt 1 (a0 :: a2 :: nil) (a :: nil)). simpl in H1. auto.
     exists (a0 :: a2 :: nil). split; auto. 
-    pose proof (Wff2.C _ lt O (a1 :: a2 :: nil) (a0 :: nil) ). simpl in H1. auto.
+    pose proof (WfMult.C _ lt O (a1 :: a2 :: nil) (a0 :: nil) ). simpl in H1. auto.
   - apply (t_trans _ _ _ (a2 :: nil)); apply t_step.
     red. exists (a :: a0 :: nil). split; auto. 
-    pose proof (Wff2.C _ lt O (a2 :: nil) (a :: a0 :: nil) ). simpl in H1. auto.
+    pose proof (WfMult.C _ lt O (a2 :: nil) (a :: a0 :: nil) ). simpl in H1. auto.
     exists (a2 :: nil). split; auto. 
-    pose proof (Wff2.C _ lt 0 (a1 :: a2 :: nil) nil). simpl in H1. auto.
+    pose proof (WfMult.C _ lt 0 (a1 :: a2 :: nil) nil). simpl in H1. auto.
 Qed. *)
 
 End MultiWf.

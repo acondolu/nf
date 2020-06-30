@@ -1,10 +1,10 @@
-(** * Internal.Wff2 : Well-founded multiset extension *)
+(** * Internal.WfMult : Well-founded multiset extension *)
 (** In this module we define the multiset extension
     of a well-founded binary relation.
     
-    We represent multisets just as lists.
-TODO:
-
+    We represent multisets simply as lists. Then we use
+    permutations so to ignore the the position of elements in 
+    a list.
 *)
 Require Import Coq.Lists.List.
 Require Import Coq.Arith.PeanoNat.
@@ -12,14 +12,16 @@ Require Import Coq.Program.Equality.
 Require Import Coq.omega.Omega.
 Require Import Coq.Sorting.Permutation.
 
-Section Wff2.
+Section WfMult.
 
 Variable A : Type.
 Variable lt : A -> A -> Prop.
 Local Infix "<<" := lt (at level 80).
 Variable wf_lt: well_founded lt.
 
-(** Replace an element of a list by concatenating another list in its place: *)
+(** Replace the element of a list at a certain position by concatenating
+    another list in its place:
+*)
 Definition replace : forall {i: nat} {l: list A},
   i < length l -> list A -> list A.
 Proof.
@@ -68,14 +70,17 @@ Fixpoint all P (l: list A) := match l with
 | cons b bs => P b /\ all P bs
 end.
 
-(* rename to ltl *)
+(** A strict order between lists. l <<< l' iff there exists an element x
+    in l' such that l is obtained by replacing that element with a
+    (possibly empty) list whose elements are all strictly smaller than x.
+*)
 Inductive ltl : list A -> list A -> Prop :=
   | C : forall i (l l': list A) (p: i < length l),
          all (fun x => lt x (get p)) l'
           -> ltl (replace p l') l .
 Local Infix "<<<" := ltl (at level 80).
 
-(** A useful inversion lemma.  *)
+(** A useful inversion lemma:  *)
 Lemma ltl_cases: forall {y a l}, 
   y <<< a::l
     -> (exists l', l' <<< l /\ y = a :: l')
@@ -201,7 +206,7 @@ Proof.
     intro a. induction (wf_ltl a). apply Acc_intro. intros.
     destruct H1, H1. apply (perm_Acc _ _ (Permutation_sym H1)). auto.
 Qed.
-End Wff2.
+End WfMult.
 
 Arguments ltlp : default implicits.
 Arguments wf_perm : default implicits.
