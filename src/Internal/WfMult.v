@@ -1,5 +1,5 @@
 (** * Internal.WfMult : Well-founded multiset extension *)
-(** In this module we define the multiset extension
+(** This module defines the multiset extension
     of a well-founded binary relation.
     
     We represent multisets simply as lists. Then we use
@@ -70,9 +70,9 @@ Fixpoint all P (l: list A) := match l with
 | cons b bs => P b /\ all P bs
 end.
 
-(** A strict order between lists. l <<< l' iff there exists an element x
-    in l' such that l is obtained by replacing that element with a
-    (possibly empty) list whose elements are all strictly smaller than x.
+(** A strict order between lists. 'l1 <<< l2' holds iff there exists an element 'x'
+    in 'l1' such that 'l2' is obtained by replacing that element with a
+    (possibly empty) list whose elements are all strictly smaller than 'x'.
 *)
 Inductive ltl : list A -> list A -> Prop :=
   | C : forall i (l l': list A) (p: i < length l),
@@ -101,7 +101,7 @@ Qed.
     in that document to the case of lists instead of multisets.
 *)
 
-(** Lemma 2.1 *)
+(** Lemma 2.1: *)
 Lemma l2p1: forall {a M0},
   (forall b, b << a -> forall M, Acc ltl M -> Acc ltl (b :: M))
     -> Acc ltl M0
@@ -116,7 +116,7 @@ Proof.
       apply (C O (a :: M0) x (Nat.lt_0_succ _) H4).
 Qed.
 
-(** Lemma 2.2 *)
+(** Lemma 2.2: *)
 Lemma l2p2: forall a,
   (forall b, b << a -> forall M, Acc ltl M -> Acc ltl (b :: M))
     -> forall M, Acc ltl M ->  Acc ltl (a :: M).
@@ -127,7 +127,7 @@ Proof.
     revert H H2 H4. clear. exact l2p1.
 Qed.
 
-(** Lemma 2.3 *)
+(** Lemma 2.3: *)
 Lemma l2p3: forall {a} M, Acc ltl M -> Acc ltl (a :: M).
 Proof.
   apply (well_founded_ind wf_lt (fun a => forall M, Acc ltl M -> Acc ltl (a :: M))).
