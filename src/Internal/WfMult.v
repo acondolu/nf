@@ -96,10 +96,14 @@ Proof.
     apply (replace_cons p).
 Qed.
 
-(** We follow the proof of wellfoundedness of the multiset
-    order in by Tobias Nipkov in "An inductive Proof of the 
+(** We follow the proof by Tobias Nipkov in "An inductive Proof of the 
     Wellfoundedness of the Multiset Order". We adapt the lemmas
     in that document to the case of lists instead of multisets.
+
+    Note: the definition of [<<<] above is justified by our need to keep
+    the proofs nicely inductive on the structure of lists. We are forced to 
+    concatenate the new list of smaller elements exactly at the position
+    where the removed element was.
 *)
 
 (** Lemma 2.1: *)
