@@ -82,17 +82,17 @@ Inductive ltl : list A -> list A -> Prop :=
 Local Infix "<<<" := ltl (at level 80).
 
 (** A useful inversion lemma:  *)
-Lemma ltl_cases: forall {y a l}, 
-  y <<< a::l
-    -> (exists l', l' <<< l /\ y = a :: l')
-      \/ exists l', y = l' ++ l /\ all (fun x => lt x a) l'.
+Lemma ltl_cases: forall {a l l'}, 
+  l <<< a :: l'
+    -> (exists l'', l'' <<< l' /\ l = a :: l'')
+      \/ exists l'', l = l'' ++ l' /\ all (fun x => lt x a) l''.
 Proof.
   intros. dependent destruction H.
   induction i.
-  - right. exists l'. simpl. split; auto.
-  - left. exists (replace (lt_S_n _ _ p) l'). split.
+  - right. exists l'0. simpl. split; auto.
+  - left. exists (replace (lt_S_n _ _ p) l'0). split.
     pose proof (get_cons p).
-    refine (C _ l l' (lt_S_n _ _ p) H).
+    refine (C _ l' l'0 (lt_S_n _ _ p) H).
     apply (replace_cons p).
 Qed.
 
