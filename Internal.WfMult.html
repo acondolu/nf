@@ -120,10 +120,16 @@ A useful inversion lemma:
 </div>
 
 <div class="doc">
-We follow the proof of wellfoundedness of the multiset
-    order in by Tobias Nipkov in "An inductive Proof of the 
+We follow the proof by Tobias Nipkov in "An inductive Proof of the 
     Wellfoundedness of the Multiset Order". We adapt the lemmas
     in that document to the case of lists instead of multisets.
+
+<div class="paragraph"> </div>
+
+    Note: the definition of <span class="inlinecode">&lt;&lt;&lt;</span> above is justified by our need to keep
+    the proofs nicely inductive on the structure of lists. We are forced to 
+    concatenate the new list of smaller elements exactly at the position
+    where the removed element was.
 
 <div class="paragraph"> </div>
 
