@@ -7,6 +7,7 @@ Require Import Relation_Operators.
 From Coq.Wellfounded Require Import Inclusion Inverse_Image Transitive_Closure.
 Add LoadPath "src".
 From Internal Require WfMult.
+From Internal Require Import WfMult2.
 (* end hide *)
 
 Section MultiWf.
@@ -124,29 +125,20 @@ Definition list3 {A: Type} := fun x : A *A *A=>
   x1 :: x2 :: x3 :: nil end.
 
 Lemma le3lst:
-  forall x y, x <<< y -> lltlp (list3 x) (list3 y).
+  forall x y, x <<< y -> other' lt (list3 x) (list3 y).
 Proof.
-  intros. destruct x, y, p, p0. destruct H, H, H0, H0, H1; simpl list3.
-  - apply (t_trans _ _ _ (a3 :: nil)).
-  -- apply t_step. red. exists (a1 :: a2 :: a :: nil). split. 
-    reflexivity.
-    pose proof (WfMult.C _ lt O (a3 :: nil) (a1 :: a2 :: a :: nil) ). simpl in H2. auto.
-  -- apply (t_trans _ _ _ (a3 :: a0 :: nil)). apply t_step.
-     exists (a3 :: nil). split; auto. 
-     pose proof (WfMult.C _ lt 1 (a3 :: a0 :: nil) nil). simpl in H2. auto.
-     apply t_step. exists (a3 :: a0 :: nil). split; auto. 
-     pose proof (WfMult.C _ lt 1 (a3 :: a4 :: a0 :: nil) nil). simpl in H2. auto.
-  -
-Admitted.
+  intros. destruct x, y, p, p0.
+  cut (forall a (b: list A), a :: b <> nil <-> True). intro Y.
+  destruct H, H, H0, H0, H1; simpl list3; rewrite other'_unfold; simpl; rewrite Y; tauto.
+  intros. Search (_ :: _ = nil). split. auto. intro. apply not_eq_sym. apply nil_cons.
+Qed.
 
 Theorem wf_three: well_founded le33.
 Proof.
-  apply (wf_incl _ _ (fun x y => lltlp (list3 x) (list3 y))).
+  apply (wf_incl _ _ (fun x y => other' lt (list3 x) (list3 y))).
   unfold inclusion. apply le3lst.
-  apply (wf_inverse_image _ _ (lltlp) list3).
-  apply wf_clos_trans.
-  apply WfMult.wf_perm.
-  apply wf_lt.
+  apply (wf_inverse_image _ _ (other' lt) list3).
+  apply wf_other. assumption.
 Qed.
 
 Lemma wf_three_ind:
