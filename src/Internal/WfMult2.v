@@ -82,6 +82,24 @@ Proof.
   destruct (IHl H). refine (PP _ _). right. auto.
 Qed.
 
+Lemma all'_mono: forall (P: A -> Type) (Q: A -> Type),
+  (forall x, P x -> Q x) ->
+  forall l, all' P l -> all' Q l.
+Proof.
+  induction l; simpl; auto.
+  intro. destruct X0. firstorder.
+Qed.
+
+Lemma all_mono: forall (P: A -> Prop) (Q: A -> Prop),
+  (forall x, P x -> Q x) ->
+  forall l, all P l -> all Q l.
+Proof.
+  induction l; simpl; auto.
+  intro. destruct H0. firstorder.
+Qed.
+
+(* other *)
+
 Definition other: list A -> list A -> Type :=
 fun l l' =>  prod (l' <> nil) (all' (fun a => some' (lt a) l') l).
 
@@ -126,13 +144,35 @@ Proof.
   - split. auto. apply IHl.
 Qed.
 
-Conjecture lltlp_concat: forall a a' b b', lltlp a a' -> lltlp b b' -> lltlp (a ++ b) (a' ++ b').
+Lemma lltlp_concat: forall a a' b b',
+  lltlp a a' -> lltlp b b' -> lltlp (a ++ b) (a' ++ b').
+Proof.
+  intros.
+  apply (t_trans _ _ _ (a ++ b')); fold lltlp.
+Admitted.
 
-Conjecture XXX: forall l l' a a0,
- Permutation (gather l l' a a0 ++ drop l l' a a0) l.
+Lemma XXX: forall l l' a a0,
+ Permutation l (gather l l' a a0 ++ drop l l' a a0).
+Proof.
+  intros. induction l; simpl.
+  reflexivity. destruct a0. destruct s. simpl.
+  specialize IHl with a0. apply perm_skip. auto.
+  transitivity (a1 :: gather l l' a a0 ++ drop l l' a a0).
+  apply perm_skip. auto. apply Permutation_middle.
+Qed.
 
-Conjecture l_perm_lt_sx: forall {a a' b}, Permutation a a' -> lltlp a b -> lltlp a' b.
-
+Lemma l_perm_lt_sx: forall {a a' b},
+  Permutation a' a -> lltlp a b -> lltlp a' b.
+Proof.
+  intros. revert a' H. induction H0; intros.
+  - apply t_step. destruct H, H. exists x0. split.
+    transitivity x. auto. auto. auto.
+  - destruct H0_, H0_0.
+  -- destruct H0, H0. apply (t_trans _ _ a' y); apply t_step; auto. 
+     exists x0. split. transitivity x. auto. auto. auto.
+  -- destruct H0, H0. apply (t_trans _ _ a' y). apply t_step. exists x0.
+     split. transitivity x; auto. auto. apply (t_trans _ _ y y0); auto.
+Admitted.
 
 
 Theorem other_ok: forall l l', other l l' -> lltlp l l'.
@@ -166,14 +206,6 @@ Proof.
   apply WfMult.wf_perm.
   apply wf_lt.
 Qed.
-
-Conjecture all'_mono: forall (P: A -> Type) (Q: A -> Type),
-  (forall x, P x -> Q x) ->
-  forall l, all' P l -> all' Q l.
-
-Conjecture all_mono: forall (P: A -> Prop) (Q: A -> Prop),
-  (forall x, P x -> Q x) ->
-  forall l, all P l -> all Q l.
 
 Lemma other'_unfold : forall l l',
 other' l l' <-> (l' <> nil) /\ (all (fun a => some (lt a) l') l).
