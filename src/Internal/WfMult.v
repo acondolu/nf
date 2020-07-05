@@ -3,7 +3,7 @@
     of a well-founded binary relation.
     
     We represent multisets simply as lists. Then we use
-    permutations so to ignore the the position of elements in 
+    permutations so to ignore the position of elements in 
     a list.
 *)
 Require Import Coq.Lists.List.
@@ -71,8 +71,8 @@ Fixpoint all P (l: list A) := match l with
 | cons b bs => P b /\ all P bs
 end.
 
-(** A strict order between lists. [l <<< l'] holds iff there exists an element [x]
-    in [l] such that [l'] is obtained by replacing that element with a
+(** The extension of [<<] to lists. [l <<< l'] holds iff there exists an element [x]
+    in [l] such that [l'] is obtained from [l] by replacing that element with a
     (possibly empty) list whose elements are all strictly smaller than [x].
 *)
 Inductive ltl : list A -> list A -> Prop :=
