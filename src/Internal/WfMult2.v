@@ -200,25 +200,23 @@ Qed.
 
 Theorem other_ok: forall l l', other l l' -> lltlp l l'.
 Proof.
-  unfold other. intros l l'. revert l. induction l'.
-  - destruct l; simpl; intros. destruct H. admit. tauto.
-  - intros. destruct X.
-    (* destruct l'.
-    apply t_step. exists (gather _ _ _ a0). split. reflexivity.
-    cut (0 < length (a :: nil)). intro. pose proof (C A lt O (a::nil) (gather l l' a a0) H0). simpl in H1.
-    rewrite app_nil_r in H1. apply H1.
-    pose proof (gather_ok a0). apply (all_all _ _ X). simpl length. omega. *)
-
-
-    pose proof (lltlp_concat (gather _ _ _ a0) (a::nil) (drop _ _ _ a0) l').
+  unfold other. intros l l'. revert l. induction l'; intros; destruct X.
+  - destruct (n (eq_refl)).
+  - destruct l'.
+  -- apply t_step. exists l. split. reflexivity.
+    pose proof (C A lt O (a :: nil) l (Nat.lt_0_succ _)).
+    simpl in H. simpl in a0. rewrite app_nil_r in H. apply H.
+    clear n H. induction l; simpl. auto. destruct a0, s. split. assumption.
+    apply IHl; auto. destruct f.
+  -- pose proof (lltlp_concat (gather _ _ _ a0) (a::nil) (drop _ _ _ a0) (a1::l')).
     apply (fun X Y => l_perm_lt_sx (gather_drop_okay _ _ _ _) (H X Y)).
-    -- apply t_step. exists (gather l l' a a0). split. reflexivity.
-    cut (0 < length (a :: nil)). intro. pose proof (C A lt O (a::nil) (gather l l' a a0) H0). simpl in H1.
+    --- apply t_step. exists (gather l (a1 :: l') a a0). split. reflexivity.
+    cut (0 < length (a :: nil)). intro. pose proof (C A lt O (a::nil) (gather l (a1 :: l') a a0) H0). simpl in H1.
     rewrite app_nil_r in H1. apply H1.
     pose proof (gather_ok a0). apply (all_all _ _ X). simpl length. omega.
-    -- simpl. apply IHl'. split. admit.
+    --- simpl. apply IHl'. split. intro X. pose proof (@nil_cons _ a1 l'). auto.
       apply (drop_ok a0).
-Admitted.
+Qed.
 
 Definition other' (a b: list A) : Prop := ☐ (other a b).
 Theorem wf_other: well_founded other'.

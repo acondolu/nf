@@ -1,12 +1,10 @@
 (* begin hide *)
 Require Import Coq.Init.Wf.
 Require Import Coq.Lists.List.
-Require Import Coq.Sorting.Permutation.
 Require Import Relation_Definitions.
 Require Import Relation_Operators.
 From Coq.Wellfounded Require Import Inclusion Inverse_Image Transitive_Closure.
 Add LoadPath "src".
-From Internal Require WfMult.
 From Internal Require Import WfMult2.
 (* end hide *)
 
@@ -34,10 +32,6 @@ Proof.
   apply (@Fix_F_inv_iff _ _ Rwf _ F_ext).
 Qed.
 
-(* 
-TODO: use the multiset order extension in https://www21.in.tum.de/~nipkow/misc/multiset.ps
-*)
-
 Variable A: Type.
 Variable lt: A -> A -> Prop.
 Variable wf_lt: well_founded lt.
@@ -63,39 +57,20 @@ Definition list2 {A: Type} := fun x: prod A A => let (x1, x2) := x in
   x1 :: x2 :: nil.
 
 Lemma le2lst:
-  forall x y, x << y -> lltlp (list2 x) (list2 y).
+  forall x y, x << y -> other' lt (list2 x) (list2 y).
 Proof.
-  intros. destruct x, y. destruct H, H, H0; simpl list2.
-   - apply (t_trans _ _ _ (a1 :: nil)); apply t_step.
-     red. exists (a :: a0 :: nil). split; auto. 
-     pose proof (WfMult.C _ lt O (a1 :: nil) (a :: a0 :: nil) ). simpl in H1. auto.
-     exists (a1 :: nil). split; auto. 
-     pose proof (WfMult.C _ lt 1 (a1 :: a2 :: nil) nil). simpl in H1. auto.
-  - apply (t_trans _ _ _ (a1 :: a0 :: nil)); apply t_step.
-    red. exists (a :: a0 :: nil). split; auto. 
-    pose proof (WfMult.C _ lt O (a1 :: a0 :: nil) (a :: nil) ). simpl in H1. auto.
-    exists (a1 :: a0 :: nil). split; auto. 
-    pose proof (WfMult.C _ lt 1 (a1 :: a2 :: nil) (a0 :: nil)). simpl in H1. auto.
-  - apply (t_trans _ _ _ (a0 :: a2 :: nil)); apply t_step.
-    red. exists (a0 :: a :: nil). split. apply perm_swap.
-    pose proof (WfMult.C _ lt 1 (a0 :: a2 :: nil) (a :: nil)). simpl in H1. auto.
-    exists (a0 :: a2 :: nil). split; auto. 
-    pose proof (WfMult.C _ lt O (a1 :: a2 :: nil) (a0 :: nil) ). simpl in H1. auto.
-  - apply (t_trans _ _ _ (a2 :: nil)); apply t_step.
-    red. exists (a :: a0 :: nil). split; auto. 
-    pose proof (WfMult.C _ lt O (a2 :: nil) (a :: a0 :: nil) ). simpl in H1. auto.
-    exists (a2 :: nil). split; auto. 
-    pose proof (WfMult.C _ lt 0 (a1 :: a2 :: nil) nil). simpl in H1. auto.
+  intros. destruct x, y.
+  cut (forall a (b: list A), a :: b <> nil <-> True). intro Y.
+  destruct H, H, H0; simpl list2; rewrite other'_unfold; simpl; rewrite Y; tauto.
+  intros. pose proof (@nil_cons _ a3 b). clear wf_lt H. firstorder.
 Qed.
 
 Theorem wf_two: well_founded le22.
 Proof.
-  apply (wf_incl _ _ (fun x y => lltlp (list2 x) (list2 y))).
+  apply (wf_incl _ _ (fun x y => other' lt (list2 x) (list2 y))).
   unfold inclusion. apply le2lst.
-  apply (wf_inverse_image _ _ (lltlp) list2).
-  apply wf_clos_trans.
-  apply WfMult.wf_perm.
-  apply wf_lt.
+  apply (wf_inverse_image _ _ (other' lt) list2).
+  apply wf_other. assumption.
 Qed.
 
 Lemma wf_two_ind: forall P : A -> A -> Prop,
@@ -130,7 +105,7 @@ Proof.
   intros. destruct x, y, p, p0.
   cut (forall a (b: list A), a :: b <> nil <-> True). intro Y.
   destruct H, H, H0, H0, H1; simpl list3; rewrite other'_unfold; simpl; rewrite Y; tauto.
-  intros. Search (_ :: _ = nil). split. auto. intro. apply not_eq_sym. apply nil_cons.
+  intros. pose proof (@nil_cons _ a5 b). clear wf_lt H. firstorder.
 Qed.
 
 Theorem wf_three: well_founded le33.
@@ -154,54 +129,6 @@ Proof.
     intros. destruct x, p. apply (H a0 a1 a). intros.
     apply (H0 (y1, y2, y3)). assumption.
 Qed.
-
-(* N *)
-(* 
-Fixpoint tupleN n : Type := match n with
-  | O => A
-  | S m => prod A (tupleN m)
-  end.
-
-Fixpoint le1M {m} : A -> tupleN m -> Prop :=
-  match m with 
-  | O => lt
-  | S _ => fun a t => let (a', t') := t in a < a' /\ le1M a t'
-  end.
-
-Fixpoint leNM {n m} : tupleN n -> tupleN m -> Prop :=
-  match n with 
-  | O => le1M
-  | S _ => fun t s => let (a, t') := t in le1M a s /\ leNM t' s
-  end.
-
-  (* Continue here *)
-Definition listN {n} : tupleN n -> list A := match n with
-
-Lemma le2lst:
-  forall x y, x << y -> lltlp (list2 x) (list2 y).
-Proof.
-  intros. destruct x, y. destruct H, H, H0; simpl list2.
-   - apply (t_trans _ _ _ (a1 :: nil)); apply t_step.
-     red. exists (a :: a0 :: nil). split; auto. 
-     pose proof (WfMult.C _ lt O (a1 :: nil) (a :: a0 :: nil) ). simpl in H1. auto.
-     exists (a1 :: nil). split; auto. 
-     pose proof (WfMult.C _ lt 1 (a1 :: a2 :: nil) nil). simpl in H1. auto.
-  - apply (t_trans _ _ _ (a1 :: a0 :: nil)); apply t_step.
-    red. exists (a :: a0 :: nil). split; auto. 
-    pose proof (WfMult.C _ lt O (a1 :: a0 :: nil) (a :: nil) ). simpl in H1. auto.
-    exists (a1 :: a0 :: nil). split; auto. 
-    pose proof (WfMult.C _ lt 1 (a1 :: a2 :: nil) (a0 :: nil)). simpl in H1. auto.
-  - apply (t_trans _ _ _ (a0 :: a2 :: nil)); apply t_step.
-    red. exists (a0 :: a :: nil). split. apply perm_swap.
-    pose proof (WfMult.C _ lt 1 (a0 :: a2 :: nil) (a :: nil)). simpl in H1. auto.
-    exists (a0 :: a2 :: nil). split; auto. 
-    pose proof (WfMult.C _ lt O (a1 :: a2 :: nil) (a0 :: nil) ). simpl in H1. auto.
-  - apply (t_trans _ _ _ (a2 :: nil)); apply t_step.
-    red. exists (a :: a0 :: nil). split; auto. 
-    pose proof (WfMult.C _ lt O (a2 :: nil) (a :: a0 :: nil) ). simpl in H1. auto.
-    exists (a2 :: nil). split; auto. 
-    pose proof (WfMult.C _ lt 0 (a1 :: a2 :: nil) nil). simpl in H1. auto.
-Qed. *)
 
 End MultiWf.
 
