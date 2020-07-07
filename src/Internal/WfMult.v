@@ -81,6 +81,46 @@ Inductive ltl : list A -> list A -> Prop :=
           -> ltl (replace p l') l .
 Local Infix "<<<" := ltl (at level 80).
 
+(** Comment: *)
+
+Lemma ltl_cons: forall b a a',
+  ltl a a' -> ltl (b :: a) (b :: a').
+Proof.
+  intros. destruct H. 
+  pose proof (C (S i) (b :: l) l' (lt_n_S _ _ p)).
+  rewrite (@get_cons i b l (lt_n_S _ _ p) p) in H0.
+  rewrite (@replace_cons i b l l' (lt_n_S _ _ p) p) in H0.
+  tauto.
+Qed.
+
+Lemma ltl_concat_left: forall a b b',
+  ltl b b' -> ltl (a ++ b) (a ++ b').
+Proof.
+  induction a; simpl. auto.
+  intros. pose proof (IHa _ _ H). destruct H0.
+  pose proof (C (S i) (a :: l) l' (lt_n_S _ _ p)).
+  setoid_rewrite (@replace_cons i a l l' (lt_n_S _ _ p) p) in H1.
+  apply H1.
+  rewrite (@get_cons i a l (lt_n_S _ _ p) p).
+  assumption.
+Qed.
+
+Lemma ltl_concat_right: forall b a a',
+  ltl a a' -> ltl (a ++ b) (a' ++ b).
+Proof.
+  intros. revert b.
+  dependent destruction H. revert i p H.
+  induction l; simpl; intros. omega.
+  destruct i.
+  - pose proof (C O (a :: l ++ b) l').
+  cut (0 < length (a :: l ++ b)). intro.
+  specialize H0 with H1. simpl.
+  rewrite<- app_assoc. apply H0. assumption.
+  simpl. omega.
+  - simpl replace. fold (@length A). apply ltl_cons. apply IHl. 
+  rewrite<- (@get_cons i a l p (lt_S_n _ _ p)). assumption.
+Qed.
+
 (** A useful inversion lemma:  *)
 Lemma ltl_cases: forall {a l l'}, 
   l <<< a :: l'
@@ -211,6 +251,7 @@ Proof.
     intro a. induction (wf_ltl a). apply Acc_intro. intros.
     destruct H1, H1. apply (perm_Acc _ _ (Permutation_sym H1)). auto.
 Qed.
+
 End WfMult.
 
 Arguments ltlp : default implicits.

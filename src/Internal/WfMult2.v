@@ -34,6 +34,53 @@ Proof.
   apply wf_clos_trans. apply WfMult.wf_perm. apply wf_lt.
 Qed.
 
+(** Aux: comment *)
+Lemma lltlp_concat_left: forall a b b',
+  lltlp b b' -> lltlp (a ++ b) (a ++ b').
+Proof.
+  intros. revert a. induction H; intro a.
+  - destruct H, H. apply t_step. exists (a ++ x0).
+    split. apply (Permutation_app_head a). assumption.
+    apply (ltl_concat_left _ _ a). assumption.
+  - apply (t_trans _ _ _ (a ++ y)).
+    apply IHclos_trans1. apply IHclos_trans2.
+Qed.
+
+Lemma lltlp_concat_right: forall b a a',
+  lltlp a a' -> lltlp (a ++ b) (a' ++ b).
+Proof.
+  intros. revert b. induction H; intro b.
+  - destruct H, H. apply t_step. exists (x0 ++ b).
+    split. apply (Permutation_app_tail b). assumption.
+    apply (ltl_concat_right _ _ b). assumption.
+  - apply (t_trans _ _ _ (y ++ b)).
+    apply IHclos_trans1. apply IHclos_trans2.
+Qed.
+
+Lemma lltlp_concat: forall a a' b b',
+  lltlp a a' -> lltlp b b' -> lltlp (a ++ b) (a' ++ b').
+Proof.
+  intros.
+  apply (t_trans _ _ _ (a ++ b')); fold lltlp.
+  apply lltlp_concat_left. assumption.
+  apply lltlp_concat_right. assumption.
+Qed.
+
+Lemma l_perm_lt_sx: forall {a a' b},
+  Permutation a' a -> lltlp a b -> lltlp a' b.
+Proof.
+  intros. revert a' H. induction H0; intros.
+  - apply t_step. destruct H, H. exists x0. split.
+    transitivity x. auto. auto. auto.
+  - destruct H0_, H0_0.
+  -- destruct H0, H0. apply (t_trans _ _ a' y); apply t_step; auto. 
+     exists x0. split. transitivity x. auto. auto. auto.
+  -- destruct H0, H0. apply (t_trans _ _ a' y). apply t_step. exists x0.
+     split. transitivity x; auto. auto. apply (t_trans _ _ y y0); auto.
+Admitted.
+
+(** all/some *)
+
 Fixpoint all P (l: list A): Prop := match l with
 | nil => True
 | cons b bs => P b /\ all P bs
@@ -144,14 +191,7 @@ Proof.
   - split. auto. apply IHl.
 Qed.
 
-Lemma lltlp_concat: forall a a' b b',
-  lltlp a a' -> lltlp b b' -> lltlp (a ++ b) (a' ++ b').
-Proof.
-  intros.
-  apply (t_trans _ _ _ (a ++ b')); fold lltlp.
-Admitted.
-
-Lemma XXX: forall l l' a a0,
+Lemma gather_drop_okay: forall l l' a a0,
  Permutation l (gather l l' a a0 ++ drop l l' a a0).
 Proof.
   intros. induction l; simpl.
@@ -160,20 +200,6 @@ Proof.
   transitivity (a1 :: gather l l' a a0 ++ drop l l' a a0).
   apply perm_skip. auto. apply Permutation_middle.
 Qed.
-
-Lemma l_perm_lt_sx: forall {a a' b},
-  Permutation a' a -> lltlp a b -> lltlp a' b.
-Proof.
-  intros. revert a' H. induction H0; intros.
-  - apply t_step. destruct H, H. exists x0. split.
-    transitivity x. auto. auto. auto.
-  - destruct H0_, H0_0.
-  -- destruct H0, H0. apply (t_trans _ _ a' y); apply t_step; auto. 
-     exists x0. split. transitivity x. auto. auto. auto.
-  -- destruct H0, H0. apply (t_trans _ _ a' y). apply t_step. exists x0.
-     split. transitivity x; auto. auto. apply (t_trans _ _ y y0); auto.
-Admitted.
-
 
 Theorem other_ok: forall l l', other l l' -> lltlp l l'.
 Proof.
@@ -188,7 +214,7 @@ Proof.
 
 
     pose proof (lltlp_concat (gather _ _ _ a0) (a::nil) (drop _ _ _ a0) l').
-    apply (fun X Y => l_perm_lt_sx (XXX _ _ _ _) (H X Y)).
+    apply (fun X Y => l_perm_lt_sx (gather_drop_okay _ _ _ _) (H X Y)).
     -- apply t_step. exists (gather l l' a a0). split. reflexivity.
     cut (0 < length (a :: nil)). intro. pose proof (C A lt O (a::nil) (gather l l' a a0) H0). simpl in H1.
     rewrite app_nil_r in H1. apply H1.
