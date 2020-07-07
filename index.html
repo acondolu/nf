@@ -47,7 +47,7 @@
 <td><a href="index.html#global_Z">Z</a></td>
 <td>_</td>
 <td><a href="index.html#global_*">other</a></td>
-<td>(355 entries)</td>
+<td>(360 entries)</td>
 </tr>
 <tr>
 <td>Notation Index</td>
@@ -175,7 +175,7 @@
 <td>Z</td>
 <td>_</td>
 <td>other</td>
-<td>(184 entries)</td>
+<td>(189 entries)</td>
 </tr>
 <tr>
 <td>Constructor Index</td>
@@ -525,6 +525,7 @@
 <a href="NF2.Ext.html#f_sum">f_sum</a> [definition, in <a href="NF2.Ext.html">NF2.Ext</a>]<br/>
 <br/><br/><a name="global_G"></a><h2>G </h2>
 <a href="Internal.WfMult2.html#gather">gather</a> [definition, in <a href="Internal.WfMult2.html">Internal.WfMult2</a>]<br/>
+<a href="Internal.WfMult2.html#gather_drop_okay">gather_drop_okay</a> [lemma, in <a href="Internal.WfMult2.html">Internal.WfMult2</a>]<br/>
 <a href="Internal.WfMult2.html#gather_ok">gather_ok</a> [lemma, in <a href="Internal.WfMult2.html">Internal.WfMult2</a>]<br/>
 <a href="Internal.WfMult.html#get">get</a> [definition, in <a href="Internal.WfMult.html">Internal.WfMult</a>]<br/>
 <a href="Internal.WfMult.html#get_cons">get_cons</a> [lemma, in <a href="Internal.WfMult.html">Internal.WfMult</a>]<br/>
@@ -565,6 +566,8 @@
 <a href="Internal.WfMult2.html#lltlp">lltlp</a> [definition, in <a href="Internal.WfMult2.html">Internal.WfMult2</a>]<br/>
 <a href="Internal.WfTuples.html#lltlp">lltlp</a> [definition, in <a href="Internal.WfTuples.html">Internal.WfTuples</a>]<br/>
 <a href="Internal.WfMult2.html#lltlp_concat">lltlp_concat</a> [lemma, in <a href="Internal.WfMult2.html">Internal.WfMult2</a>]<br/>
+<a href="Internal.WfMult2.html#lltlp_concat_right">lltlp_concat_right</a> [lemma, in <a href="Internal.WfMult2.html">Internal.WfMult2</a>]<br/>
+<a href="Internal.WfMult2.html#lltlp_concat_left">lltlp_concat_left</a> [lemma, in <a href="Internal.WfMult2.html">Internal.WfMult2</a>]<br/>
 <a href="NF2.Model.html#low">low</a> [definition, in <a href="NF2.Model.html">NF2.Model</a>]<br/>
 <a href="NF2.ZF.html#low_cup">low_cup</a> [lemma, in <a href="NF2.ZF.html">NF2.ZF</a>]<br/>
 <a href="NF2.ZF.html#low_cap">low_cap</a> [lemma, in <a href="NF2.ZF.html">NF2.ZF</a>]<br/>
@@ -575,6 +578,9 @@
 <a href="Internal.WfMult.html#ltl">ltl</a> [inductive, in <a href="Internal.WfMult.html">Internal.WfMult</a>]<br/>
 <a href="Internal.WfMult.html#ltlp">ltlp</a> [definition, in <a href="Internal.WfMult.html">Internal.WfMult</a>]<br/>
 <a href="Internal.WfMult.html#ltl_cases">ltl_cases</a> [lemma, in <a href="Internal.WfMult.html">Internal.WfMult</a>]<br/>
+<a href="Internal.WfMult.html#ltl_concat_right">ltl_concat_right</a> [lemma, in <a href="Internal.WfMult.html">Internal.WfMult</a>]<br/>
+<a href="Internal.WfMult.html#ltl_concat_left">ltl_concat_left</a> [lemma, in <a href="Internal.WfMult.html">Internal.WfMult</a>]<br/>
+<a href="Internal.WfMult.html#ltl_cons">ltl_cons</a> [lemma, in <a href="Internal.WfMult.html">Internal.WfMult</a>]<br/>
 <a href="NFO.Model.html#lt_h">lt_h</a> [constructor, in <a href="NFO.Model.html">NFO.Model</a>]<br/>
 <a href="NFO.Model.html#lt_f">lt_f</a> [constructor, in <a href="NFO.Model.html">NFO.Model</a>]<br/>
 <a href="Internal.WfMult2.html#l_perm_lt_sx">l_perm_lt_sx</a> [lemma, in <a href="Internal.WfMult2.html">Internal.WfMult2</a>]<br/>
@@ -722,7 +728,6 @@
 <a href="NFO.Sets.html#xor_empty">xor_empty</a> [lemma, in <a href="NFO.Sets.html">NFO.Sets</a>]<br/>
 <a href="NFO.Sets.html#xor_ok">xor_ok</a> [lemma, in <a href="NFO.Sets.html">NFO.Sets</a>]<br/>
 <a href="NFO.Iin.html#xxx">xxx</a> [lemma, in <a href="NFO.Iin.html">NFO.Iin</a>]<br/>
-<a href="Internal.WfMult2.html#XXX">XXX</a> [lemma, in <a href="Internal.WfMult2.html">Internal.WfMult2</a>]<br/>
 <a href="NFO.Iin.html#xxx_r">xxx_r</a> [lemma, in <a href="NFO.Iin.html">NFO.Iin</a>]<br/>
 <br/><br/><a name="global_Z"></a><h2>Z </h2>
 <a href="NF2.ZF.html">ZF</a> [library]<br/>
@@ -929,6 +934,7 @@
 <a href="Internal.WfTuples.html#Fix_iff">Fix_iff</a> [in <a href="Internal.WfTuples.html">Internal.WfTuples</a>]<br/>
 <a href="Internal.WfTuples.html#Fix_F_inv_iff">Fix_F_inv_iff</a> [in <a href="Internal.WfTuples.html">Internal.WfTuples</a>]<br/>
 <br/><br/><a name="lemma_G"></a><h2>G </h2>
+<a href="Internal.WfMult2.html#gather_drop_okay">gather_drop_okay</a> [in <a href="Internal.WfMult2.html">Internal.WfMult2</a>]<br/>
 <a href="Internal.WfMult2.html#gather_ok">gather_ok</a> [in <a href="Internal.WfMult2.html">Internal.WfMult2</a>]<br/>
 <a href="Internal.WfMult.html#get_cons">get_cons</a> [in <a href="Internal.WfMult.html">Internal.WfMult</a>]<br/>
 <br/><br/><a name="lemma_I"></a><h2>I </h2>
@@ -949,12 +955,17 @@
 <a href="Internal.WfTuples.html#le2lst">le2lst</a> [in <a href="Internal.WfTuples.html">Internal.WfTuples</a>]<br/>
 <a href="Internal.WfTuples.html#le3lst">le3lst</a> [in <a href="Internal.WfTuples.html">Internal.WfTuples</a>]<br/>
 <a href="Internal.WfMult2.html#lltlp_concat">lltlp_concat</a> [in <a href="Internal.WfMult2.html">Internal.WfMult2</a>]<br/>
+<a href="Internal.WfMult2.html#lltlp_concat_right">lltlp_concat_right</a> [in <a href="Internal.WfMult2.html">Internal.WfMult2</a>]<br/>
+<a href="Internal.WfMult2.html#lltlp_concat_left">lltlp_concat_left</a> [in <a href="Internal.WfMult2.html">Internal.WfMult2</a>]<br/>
 <a href="NF2.ZF.html#low_cup">low_cup</a> [in <a href="NF2.ZF.html">NF2.ZF</a>]<br/>
 <a href="NF2.ZF.html#low_cap">low_cap</a> [in <a href="NF2.ZF.html">NF2.ZF</a>]<br/>
 <a href="NF2.ZF.html#low_neg">low_neg</a> [in <a href="NF2.ZF.html">NF2.ZF</a>]<br/>
 <a href="NF2.ZF.html#low_sing">low_sing</a> [in <a href="NF2.ZF.html">NF2.ZF</a>]<br/>
 <a href="NF2.ZF.html#low_empty">low_empty</a> [in <a href="NF2.ZF.html">NF2.ZF</a>]<br/>
 <a href="Internal.WfMult.html#ltl_cases">ltl_cases</a> [in <a href="Internal.WfMult.html">Internal.WfMult</a>]<br/>
+<a href="Internal.WfMult.html#ltl_concat_right">ltl_concat_right</a> [in <a href="Internal.WfMult.html">Internal.WfMult</a>]<br/>
+<a href="Internal.WfMult.html#ltl_concat_left">ltl_concat_left</a> [in <a href="Internal.WfMult.html">Internal.WfMult</a>]<br/>
+<a href="Internal.WfMult.html#ltl_cons">ltl_cons</a> [in <a href="Internal.WfMult.html">Internal.WfMult</a>]<br/>
 <a href="Internal.WfMult2.html#l_perm_lt_sx">l_perm_lt_sx</a> [in <a href="Internal.WfMult2.html">Internal.WfMult2</a>]<br/>
 <a href="Internal.WfMult.html#l2p1">l2p1</a> [in <a href="Internal.WfMult.html">Internal.WfMult</a>]<br/>
 <a href="Internal.WfMult.html#l2p2">l2p2</a> [in <a href="Internal.WfMult.html">Internal.WfMult</a>]<br/>
@@ -1030,7 +1041,6 @@
 <a href="NFO.Sets.html#xor_empty">xor_empty</a> [in <a href="NFO.Sets.html">NFO.Sets</a>]<br/>
 <a href="NFO.Sets.html#xor_ok">xor_ok</a> [in <a href="NFO.Sets.html">NFO.Sets</a>]<br/>
 <a href="NFO.Iin.html#xxx">xxx</a> [in <a href="NFO.Iin.html">NFO.Iin</a>]<br/>
-<a href="Internal.WfMult2.html#XXX">XXX</a> [in <a href="Internal.WfMult2.html">Internal.WfMult2</a>]<br/>
 <a href="NFO.Iin.html#xxx_r">xxx_r</a> [in <a href="NFO.Iin.html">NFO.Iin</a>]<br/>
 <br/><br/><hr/>
 <h1>Constructor Index</h1>
@@ -1230,7 +1240,7 @@
 <td><a href="index.html#global_Z">Z</a></td>
 <td>_</td>
 <td><a href="index.html#global_*">other</a></td>
-<td>(355 entries)</td>
+<td>(360 entries)</td>
 </tr>
 <tr>
 <td>Notation Index</td>
@@ -1358,7 +1368,7 @@
 <td>Z</td>
 <td>_</td>
 <td>other</td>
-<td>(184 entries)</td>
+<td>(189 entries)</td>
 </tr>
 <tr>
 <td>Constructor Index</td>
