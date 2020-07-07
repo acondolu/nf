@@ -72,12 +72,9 @@ Proof.
   intros. revert a' H. induction H0; intros.
   - apply t_step. destruct H, H. exists x0. split.
     transitivity x. auto. auto. auto.
-  - destruct H0_, H0_0.
-  -- destruct H0, H0. apply (t_trans _ _ a' y); apply t_step; auto. 
-     exists x0. split. transitivity x. auto. auto. auto.
-  -- destruct H0, H0. apply (t_trans _ _ a' y). apply t_step. exists x0.
-     split. transitivity x; auto. auto. apply (t_trans _ _ y y0); auto.
-Admitted.
+  - apply (t_trans _ _ _ y). apply (IHclos_trans1 _ H).
+    apply (IHclos_trans2 y). reflexivity. 
+Qed.
 
 (** all/some *)
 
