@@ -65,11 +65,11 @@ Qed.
 
 (* other *)
 
-Definition other: list A -> list A -> Type :=
-fun l l' =>  prod (l' <> nil) (all' (fun a => some' (lt a) l') l).
+Definition other l l': Type :=
+  prod (l' <> nil) (allT (fun a => someT (lt a) l') l).
 
 Definition gather: forall l l' a',
-  all' (fun a => some' (lt a) (a' :: l')) l -> list A.
+  allT (fun a => someT (lt a) (a' :: l')) l -> list A.
   induction l; simpl; intros.
   - exact nil.
   - destruct X. pose proof s as s'. destruct s. refine (a :: _).
@@ -78,8 +78,8 @@ Definition gather: forall l l' a',
 Defined.
 
 Lemma gather_ok: forall {l l' a'},
-  forall (p: all' (fun a => some' (lt a) (a' :: l')) l),
-    all' (fun a => lt a a') (gather _ _ _ p).
+  forall (p: allT (fun a => someT (lt a) (a' :: l')) l),
+    allT (fun a => lt a a') (gather _ _ _ p).
 Proof.
   intros. induction l.
   simpl. auto.
@@ -89,7 +89,7 @@ Proof.
 Qed.
 
 Definition drop: forall l l' a',
-  all' (fun a => some' (lt a) (a' :: l')) l -> list A.
+  allT (fun a => someT (lt a) (a' :: l')) l -> list A.
   induction l; simpl; intros.
   - exact nil.
   - destruct X. pose proof s as s'. destruct s.
@@ -99,8 +99,8 @@ Definition drop: forall l l' a',
 Defined.
 
 Lemma drop_ok: forall {l l' a'},
-  forall (p: all' (fun a => some' (lt a) (a' :: l')) l),
-    all' (fun a => some' (lt a) l') (drop _ _ _ p).
+  forall (p: allT (fun a => someT (lt a) (a' :: l')) l),
+    allT (fun a => someT (lt a) l') (drop _ _ _ p).
 Proof.
   intros. induction l.
   simpl. auto.
@@ -134,12 +134,13 @@ Proof.
     --- apply t_step. exists (gather l (a1 :: l') a a0). split. reflexivity.
     cut (0 < length (a :: nil)). intro. pose proof (C A lt O (a::nil) (gather l (a1 :: l') a a0) H0). simpl in H1.
     rewrite app_nil_r in H1. apply H1.
-    pose proof (gather_ok a0). apply (all_all _ _ X). simpl length. omega.
+    pose proof (gather_ok a0). apply (allT_all _ _ X). simpl length. omega.
     --- simpl. apply IHl'. split. intro X. pose proof (@nil_cons _ a1 l'). auto.
       apply (drop_ok a0).
 Qed.
 
 Definition other' (a b: list A) : Prop := ☐ (other a b).
+
 Theorem wf_other: well_founded other'.
 Proof.
   apply (wf_incl _ _ lltlp).
@@ -150,22 +151,23 @@ Proof.
 Qed.
 
 Lemma other'_unfold : forall l l',
-other' l l' <-> (l' <> nil) /\ (all _ (fun a => some (lt a) l') l).
+  other' l l'
+    <-> l' <> nil /\ all _ (fun a => some (lt a) l') l.
 Proof.
   intros. unfold other'. split; intros.
-  - destruct H, X. split; auto. apply all_all. auto.
-    refine (all'_mono _ _ _ _ a). intro. apply some_some.
+  - destruct H, X. split; auto. apply allT_all. auto.
+    refine (allT_mono _ _ _ _ a). intro. apply someT_some.
   - destruct H.
     unfold other.
     pose proof (fun Q K => all_mono _ Q K l H0).
-    pose proof (H1 _ (fun x => some_some_2 (lt x) l')).
+    pose proof (H1 _ (fun x => some_someT (lt x) l')).
     psplit. passumption.
     apply all_PROP. auto.
 Qed.
 
 Lemma other'_unfold_2 : forall l l',
-other' l l' <-> (l' <> nil)
-  /\ forall x, In x l -> exists y, In y l' /\ lt x y.
+  other' l l'
+    <-> l' <> nil /\ forall x, In x l -> exists y, In y l' /\ lt x y.
 Proof.
   intros.
   rewrite other'_unfold.
