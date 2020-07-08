@@ -3,7 +3,7 @@
 From Coq.Program Require Import Basics Combinators.
 Require Import Setoid Morphisms.
 Add LoadPath "src".
-From Internal Require Import Aux FunExt.
+From Internal Require Import Misc FunExt.
 From NFO Require Import BoolExpr Model Wff.
 (* end hide *)
 

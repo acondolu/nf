@@ -2,7 +2,7 @@
 From Coq.Program Require Import Basics Combinators.
 Require Import Setoid.
 Add LoadPath "src".
-From Internal Require Import Aux.
+From Internal Require Import Misc.
 (* end hide *)
 
 (** Extensionally equivalent predicates *)

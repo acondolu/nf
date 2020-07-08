@@ -6,9 +6,7 @@ Require Import Coq.omega.Omega.
 Require Import Coq.Sorting.Permutation.
 From Coq.Wellfounded Require Import Inclusion Inverse_Image Transitive_Closure.
 Add LoadPath "src".
-From Internal Require Import Aux WfMult List.
-
-
+From Internal Require Import Misc List WfMult.
 
 Section WfMult2.
 
@@ -152,7 +150,7 @@ Proof.
 Qed.
 
 Lemma other'_unfold : forall l l',
-other' l l' <-> (l' <> nil) /\ (all (fun a => some (lt a) l') l).
+other' l l' <-> (l' <> nil) /\ (all _ (fun a => some (lt a) l') l).
 Proof.
   intros. unfold other'. split; intros.
   - destruct H, X. split; auto. apply all_all. auto.

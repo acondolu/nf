@@ -1,8 +1,5 @@
+(** * Internal.Misc : Auxiliary concepts and definitions *)
 From Coq.Program Require Import Basics Combinators.
-
-(** 
-  This module contains various auxiliary concepts and definitions.
-*)
 
 (** Some trivial equivalences: *)
 Lemma rewr_true: forall {p: Prop}, p -> (p <-> True).

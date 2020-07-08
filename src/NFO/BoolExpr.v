@@ -2,7 +2,7 @@
 From Coq.Program Require Import Basics Combinators.
 Require Import Setoid.
 Add LoadPath "src".
-From Internal Require Import Aux FunExt.
+From Internal Require Import Misc FunExt.
 (* end hide *)
 
 (** A boolean expression with atoms of type X *)

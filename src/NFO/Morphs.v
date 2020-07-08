@@ -13,7 +13,7 @@ Require Export Relation_Definitions.
 Require Export Setoid.
 
 Add LoadPath "src".
-From Internal Require Import FunExt Aux.
+From Internal Require Import Misc FunExt.
 From NFO Require Import BoolExpr Model Wff Eeq Iin Xor.
 (* end hide *)
 
