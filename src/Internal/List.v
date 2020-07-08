@@ -15,7 +15,7 @@ Qed.
 Ltac psplit := apply PROP_prod.
 Ltac pleft := refine (PP _ _); left.
 Ltac pright := refine (PP _ _); right.
-Ltac passumption := refine (PP _ _); assumption.
+Ltac passumption := apply PP; assumption.
 Ltac pauto := refine (PP _ _); auto.
 
 Section List.
@@ -108,6 +108,9 @@ Proof.
   rewrite IHl in H. destruct H. exists x. firstorder. destruct H, H.
   left. rewrite H. auto. right. apply IHl. exists x. auto.
 Qed.
+
+Lemma cons_not_nil: forall x l, @cons A x l <> nil <-> True.
+Proof. intros. split; eauto. intro H. intro H0. apply (@nil_cons _ x l). eauto. Qed.
 
 End List.
 

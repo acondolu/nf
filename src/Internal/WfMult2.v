@@ -63,9 +63,9 @@ Proof.
 Qed.
 
 
-(* other *)
+(* decr' *)
 
-Definition other l l': Type :=
+Definition decr' l l': Type :=
   prod (l' <> nil) (allT (fun a => someT (lt a) l') l).
 
 Definition gather: forall l l' a',
@@ -109,7 +109,7 @@ Proof.
   - split. auto. apply IHl.
 Qed.
 
-Lemma gather_drop_okay: forall l l' a a0,
+Lemma gather_drop_ok: forall l l' a a0,
  Permutation l (gather l l' a a0 ++ drop l l' a a0).
 Proof.
   intros. induction l; simpl.
@@ -119,9 +119,9 @@ Proof.
   apply perm_skip. auto. apply Permutation_middle.
 Qed.
 
-Theorem other_ok: forall l l', other l l' -> lltlp l l'.
+Theorem decr'_ok: forall l l', decr' l l' -> lltlp l l'.
 Proof.
-  unfold other. intros l l'. revert l. induction l'; intros; destruct X.
+  unfold decr'. intros l l'. revert l. induction l'; intros; destruct X.
   - destruct (n (eq_refl)).
   - destruct l'.
   -- apply t_step. exists l. split. reflexivity.
@@ -130,7 +130,7 @@ Proof.
     clear n H. induction l; simpl. auto. destruct a0, s. split. assumption.
     apply IHl; auto. destruct f.
   -- pose proof (lltlp_concat (gather _ _ _ a0) (a::nil) (drop _ _ _ a0) (a1::l')).
-    apply (fun X Y => l_perm_lt_sx (gather_drop_okay _ _ _ _) (H X Y)).
+    apply (fun X Y => l_perm_lt_sx (gather_drop_ok _ _ _ _) (H X Y)).
     --- apply t_step. exists (gather l (a1 :: l') a a0). split. reflexivity.
     cut (0 < length (a :: nil)). intro. pose proof (C A lt O (a::nil) (gather l (a1 :: l') a a0) H0). simpl in H1.
     rewrite app_nil_r in H1. apply H1.
@@ -139,38 +139,38 @@ Proof.
       apply (drop_ok a0).
 Qed.
 
-Definition other' (a b: list A) : Prop := ☐ (other a b).
+Definition decr (a b: list A) : Prop := ☐ (decr' a b).
 
-Theorem wf_other: well_founded other'.
+Theorem wf_decr: well_founded decr.
 Proof.
   apply (wf_incl _ _ lltlp).
-  unfold inclusion. intros. destruct H. apply other_ok. auto.
+  unfold inclusion. intros. destruct H. apply decr'_ok. auto.
   apply wf_clos_trans.
   apply WfMult.wf_perm.
   apply wf_lt.
 Qed.
 
-Lemma other'_unfold : forall l l',
-  other' l l'
+Lemma decr_unfold : forall l l',
+  decr l l'
     <-> l' <> nil /\ all _ (fun a => some (lt a) l') l.
 Proof.
-  intros. unfold other'. split; intros.
+  intros. unfold decr. split; intros.
   - destruct H, X. split; auto. apply allT_all. auto.
     refine (allT_mono _ _ _ _ a). intro. apply someT_some.
   - destruct H.
-    unfold other.
+    unfold decr'.
     pose proof (fun Q K => all_mono _ Q K l H0).
     pose proof (H1 _ (fun x => some_someT (lt x) l')).
     psplit. passumption.
     apply all_PROP. auto.
 Qed.
 
-Lemma other'_unfold_2 : forall l l',
-  other' l l'
+Lemma decr_unfold_2 : forall l l',
+  decr l l'
     <-> l' <> nil /\ forall x, In x l -> exists y, In y l' /\ lt x y.
 Proof.
   intros.
-  rewrite other'_unfold.
+  rewrite decr_unfold.
   rewrite<- all_In.
   apply and_morph. apply iff_refl.
   apply all_ext. intros. apply some_In.
@@ -178,4 +178,4 @@ Qed.
 
 End WfMult2.
 
-Arguments other' : default implicits.
+Arguments decr : default implicits.

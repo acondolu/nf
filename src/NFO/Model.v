@@ -21,3 +21,11 @@ Proof.
   apply Acc_intro. intros.
   dependent destruction H1; eauto.
 Defined.
+(* 
+Lemma le_f_rew : 
+forall X Y f g e x, f x < @S X Y f g e <-> True.
+Admitted.
+
+Lemma le_g_rew : 
+forall X Y f g e x, g x < @S X Y f g e <-> True.
+Admitted. *)

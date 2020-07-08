@@ -3,7 +3,7 @@
 From Coq.Program Require Import Basics Combinators.
 Require Import Setoid Morphisms.
 Add LoadPath "src".
-From Internal Require Import Misc FunExt.
+From Internal Require Import List Misc FunExt WfMult2.
 From NFO Require Import BoolExpr Model Wff.
 (* end hide *)
 
@@ -29,6 +29,8 @@ refine ( Fix (wf_two wf_lt) (fun _ => Prop) (
  ; rewrite eqx; eauto with Wff.
 Defined.
 (* end hide *)
+
+(* rewrite eqx; unfold le22'; rewrite decr_unfold; unfold list2, all, List.some, WfMult.all; setoid_rewrite cons_not_nil; clear; try setoid_rewrite le_f_rew; try setoid_rewrite le_g_rew; clear; tauto. *)
 
 Definition eeq : set -> set -> Prop.
   intros x y. exact (eeq' (x, y)).
