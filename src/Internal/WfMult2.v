@@ -14,55 +14,6 @@ Variable A : Type.
 Variable lt : A -> A -> Prop.
 Variable wf_lt: well_founded lt.
 
-Definition lltlp := (clos_trans _ (WfMult.ltlp lt)).
-Definition wf_trans: well_founded lltlp.
-Proof.
-  apply wf_clos_trans. apply WfMult.wf_perm. apply wf_lt.
-Qed.
-
-(** Aux: comment *)
-Lemma lltlp_concat_left: forall a b b',
-  lltlp b b' -> lltlp (a ++ b) (a ++ b').
-Proof.
-  intros. revert a. induction H; intro a.
-  - destruct H, H. apply t_step. exists (a ++ x0).
-    split. apply (Permutation_app_head a). assumption.
-    apply (ltl_concat_left _ _ a). assumption.
-  - apply (t_trans _ _ _ (a ++ y)).
-    apply IHclos_trans1. apply IHclos_trans2.
-Qed.
-
-Lemma lltlp_concat_right: forall b a a',
-  lltlp a a' -> lltlp (a ++ b) (a' ++ b).
-Proof.
-  intros. revert b. induction H; intro b.
-  - destruct H, H. apply t_step. exists (x0 ++ b).
-    split. apply (Permutation_app_tail b). assumption.
-    apply (ltl_concat_right _ _ b). assumption.
-  - apply (t_trans _ _ _ (y ++ b)).
-    apply IHclos_trans1. apply IHclos_trans2.
-Qed.
-
-Lemma lltlp_concat: forall a a' b b',
-  lltlp a a' -> lltlp b b' -> lltlp (a ++ b) (a' ++ b').
-Proof.
-  intros.
-  apply (t_trans _ _ _ (a ++ b')); fold lltlp.
-  apply lltlp_concat_left. assumption.
-  apply lltlp_concat_right. assumption.
-Qed.
-
-Lemma l_perm_lt_sx: forall {a a' b},
-  Permutation a' a -> lltlp a b -> lltlp a' b.
-Proof.
-  intros. revert a' H. induction H0; intros.
-  - apply t_step. destruct H, H. exists x0. split.
-    transitivity x. auto. auto. auto.
-  - apply (t_trans _ _ _ y). apply (IHclos_trans1 _ H).
-    apply (IHclos_trans2 y). reflexivity. 
-Qed.
-
-
 (* decr' *)
 
 Definition decr' l l': Type :=
@@ -119,7 +70,7 @@ Proof.
   apply perm_skip. auto. apply Permutation_middle.
 Qed.
 
-Theorem decr'_ok: forall l l', decr' l l' -> lltlp l l'.
+Theorem decr'_ok: forall l l', decr' l l' -> lltlp lt l l'.
 Proof.
   unfold decr'. intros l l'. revert l. induction l'; intros; destruct X.
   - destruct (n (eq_refl)).
@@ -129,8 +80,8 @@ Proof.
     simpl in H. simpl in a0. rewrite app_nil_r in H. apply H.
     clear n H. induction l; simpl. auto. destruct a0, s. split. assumption.
     apply IHl; auto. destruct f.
-  -- pose proof (lltlp_concat (gather _ _ _ a0) (a::nil) (drop _ _ _ a0) (a1::l')).
-    apply (fun X Y => l_perm_lt_sx (gather_drop_ok _ _ _ _) (H X Y)).
+  -- pose proof (lltlp_concat _ lt (gather _ _ _ a0) (a::nil) (drop _ _ _ a0) (a1::l')).
+    apply (fun X Y => l_perm_lt_sx _ lt (gather_drop_ok _ _ _ _) (H X Y)).
     --- apply t_step. exists (gather l (a1 :: l') a a0). split. reflexivity.
     cut (0 < length (a :: nil)). intro. pose proof (C A lt O (a::nil) (gather l (a1 :: l') a a0) H0). simpl in H1.
     rewrite app_nil_r in H1. apply H1.
@@ -143,10 +94,9 @@ Definition decr (a b: list A) : Prop := ☐ (decr' a b).
 
 Theorem wf_decr: well_founded decr.
 Proof.
-  apply (wf_incl _ _ lltlp).
+  apply (wf_incl _ _ (lltlp lt)).
   unfold inclusion. intros. destruct H. apply decr'_ok. auto.
-  apply wf_clos_trans.
-  apply WfMult.wf_perm.
+  apply WfMult.wf_trans.
   apply wf_lt.
 Qed.
 

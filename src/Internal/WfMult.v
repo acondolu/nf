@@ -11,6 +11,9 @@ Require Import Coq.Arith.PeanoNat.
 Require Import Coq.Program.Equality.
 Require Import Coq.omega.Omega.
 Require Import Coq.Sorting.Permutation.
+Require Import Relation_Definitions.
+Require Import Relation_Operators.
+From Coq.Wellfounded Require Import Inclusion Inverse_Image Transitive_Closure.
 
 Section WfMult.
 
@@ -252,7 +255,58 @@ Proof.
     destruct H1, H1. apply (perm_Acc _ _ (Permutation_sym H1)). auto.
 Qed.
 
+(* lltlp *)
+
+
+Definition lltlp := clos_trans _ ltlp.
+Definition wf_trans: well_founded lltlp.
+Proof.
+  apply wf_clos_trans. apply wf_perm.
+Qed.
+
+(** Aux: comment *)
+Lemma lltlp_concat_left: forall a b b',
+  lltlp b b' -> lltlp (a ++ b) (a ++ b').
+Proof.
+  intros. revert a. induction H; intro a.
+  - destruct H, H. apply t_step. exists (a ++ x0).
+    split. apply (Permutation_app_head a). assumption.
+    apply (ltl_concat_left a). assumption.
+  - apply (t_trans _ _ _ (a ++ y)).
+    apply IHclos_trans1. apply IHclos_trans2.
+Qed.
+
+Lemma lltlp_concat_right: forall b a a',
+  lltlp a a' -> lltlp (a ++ b) (a' ++ b).
+Proof.
+  intros. revert b. induction H; intro b.
+  - destruct H, H. apply t_step. exists (x0 ++ b).
+    split. apply (Permutation_app_tail b). assumption.
+    apply (ltl_concat_right b). assumption.
+  - apply (t_trans _ _ _ (y ++ b)).
+    apply IHclos_trans1. apply IHclos_trans2.
+Qed.
+
+Lemma lltlp_concat: forall a a' b b',
+  lltlp a a' -> lltlp b b' -> lltlp (a ++ b) (a' ++ b').
+Proof.
+  intros.
+  apply (t_trans _ _ _ (a ++ b')); fold lltlp.
+  apply lltlp_concat_left. assumption.
+  apply lltlp_concat_right. assumption.
+Qed.
+
+Lemma l_perm_lt_sx: forall {a a' b},
+  Permutation a' a -> lltlp a b -> lltlp a' b.
+Proof.
+  intros. revert a' H. induction H0; intros.
+  - apply t_step. destruct H, H. exists x0. split.
+    transitivity x. auto. auto. auto.
+  - apply (t_trans _ _ _ y). apply (IHclos_trans1 _ H).
+    apply (IHclos_trans2 y). reflexivity. 
+Qed.
+
 End WfMult.
 
-Arguments ltlp : default implicits.
-Arguments wf_perm : default implicits.
+Arguments lltlp : default implicits.
+Arguments wf_trans : default implicits.
