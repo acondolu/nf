@@ -24,6 +24,8 @@ Variable A: Type.
 
 (** all/some *)
 
+
+(** Check whether a predicate is satisfied by all the elements of a list: *)
 Fixpoint all P (l: list A): Prop := match l with
 | nil => True
 | cons b bs => P b /\ all P bs

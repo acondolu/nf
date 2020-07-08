@@ -102,7 +102,7 @@ Qed.
 
 Lemma decr_unfold : forall l l',
   decr l l'
-    <-> l' <> nil /\ all _ (fun a => some (lt a) l') l.
+    <-> l' <> nil /\ all (fun a => some (lt a) l') l.
 Proof.
   intros. unfold decr. split; intros.
   - destruct H, X. split; auto. apply allT_all. auto.

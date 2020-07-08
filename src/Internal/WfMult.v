@@ -14,6 +14,8 @@ Require Import Coq.Sorting.Permutation.
 Require Import Relation_Definitions.
 Require Import Relation_Operators.
 From Coq.Wellfounded Require Import Inclusion Inverse_Image Transitive_Closure.
+Add LoadPath "src".
+From Internal Require Import List.
 
 Section WfMult.
 
@@ -67,12 +69,6 @@ Proof.
   - simpl. setoid_rewrite (IHi a l p' (lt_S_n _ _ p')).
   setoid_rewrite (IHi a l (lt_S_n _ _ p) (lt_S_n _ _ p')). apply eq_refl.
 Qed.
-
-(** Check whether a predicate is satisfied by all the elements of a list: *)
-Fixpoint all P (l: list A) := match l with
-| nil => True
-| cons b bs => P b /\ all P bs
-end.
 
 (** The extension of [<<] to lists. [l <<< l'] holds iff there exists an element [x]
     in [l] such that [l'] is obtained from [l] by replacing that element with a
