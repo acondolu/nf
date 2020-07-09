@@ -84,6 +84,14 @@ Variant of <span class="inlinecode"><span class="id" title="var">Coq.Init.Wf.Fix
 In the following sections, we define notations and resolving lemmas
     for our well-founded orders on 2-tuples and 3-tuples.
 
+<div class="paragraph"> </div>
+
+    The trivial lemmas are just named with sequences of letters, denoting
+    which elements of the tuple decrease to which positions.
+    These lemmas are registered in the <span class="inlinecode"><span class="id" title="var">Wff</span></span> scope, so that obligations
+    coming from fixpoint definitions can be solved automatically using
+    <span class="inlinecode"><span class="id" title="tactic">eauto</span></span> <span class="inlinecode"><span class="id" title="keyword">with</span></span> <span class="inlinecode"><span class="id" title="var">Wff</span></span>.
+
 </div>
 <div class="code">
 
@@ -147,6 +155,8 @@ In the following sections, we define notations and resolving lemmas
  
 <br/>
 <span class="id" title="keyword">End</span> <a class="idref" href="NFO.Wf.html#Three"><span class="id" title="section">Three</span></a>.<br/>
+
+<br/>
 
 <br/>
 </div>

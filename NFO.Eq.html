@@ -23,16 +23,11 @@
 
 <div class="doc">
 
-</div>
-<div class="code">
+<div class="paragraph"> </div>
 
-<br/>
- <span class="id" title="keyword">Add</span> <span class="id" title="var">LoadPath</span> "src". 
-<br/>
-</div>
+    This module defines <span class="inlinecode"><span class="id" title="var">eeq</span></span> (in symbols, <span class="inlinecode">==</span>), the
+    equality relation between NFO sets.
 
-<div class="doc">
-TODO: rename to Eq 
 </div>
 <div class="code">
 
@@ -49,14 +44,27 @@ TODO: rename to Eq
 </div>
 
 <div class="doc">
-<a name="lab6"></a><h1 class="section">"Aczel" equality:</h1>
+<a name="lab6"></a><h1 class="section">Aczel part</h1>
 
 </div>
 <div class="code">
 <span class="id" title="keyword">Definition</span> <a name="Aeq"><span class="id" title="definition">Aeq</span></a> {<span class="id" title="var">X</span> <span class="id" title="var">Y</span>} <span class="id" title="var">f</span> <span class="id" title="var">g</span> :=<br/>
-&nbsp;&nbsp;<a class="idref" href="http://coq.inria.fr/distrib/V8.11.2/stdlib//Coq.Init.Logic.html#ba2b0e492d2b4675a0acf3ea92aabadd"><span class="id" title="notation">(</span></a><span class="id" title="keyword">∀</span> <span class="id" title="var">x</span>: <a class="idref" href="NFO.Eq.html#X"><span class="id" title="variable">X</span></a>, <a class="idref" href="http://coq.inria.fr/distrib/V8.11.2/stdlib//Coq.Init.Logic.html#a883bdd010993579f99d60b3775bcf54"><span class="id" title="notation">∃</span></a> <span class="id" title="var">y</span><a class="idref" href="http://coq.inria.fr/distrib/V8.11.2/stdlib//Coq.Init.Logic.html#a883bdd010993579f99d60b3775bcf54"><span class="id" title="notation">,</span></a> <a class="idref" href="NFO.Eq.html#f"><span class="id" title="variable">f</span></a> <a class="idref" href="NFO.Eq.html#x"><span class="id" title="variable">x</span></a> <a class="idref" href="NFO.Eq.html#2596316c6f2ff161cb03e25fd8914390"><span class="id" title="notation">==</span></a> <a class="idref" href="NFO.Eq.html#g"><span class="id" title="variable">g</span></a> <a class="idref" href="NFO.Eq.html#y"><span class="id" title="variable">y</span></a><a class="idref" href="http://coq.inria.fr/distrib/V8.11.2/stdlib//Coq.Init.Logic.html#ba2b0e492d2b4675a0acf3ea92aabadd"><span class="id" title="notation">)</span></a> <a class="idref" href="http://coq.inria.fr/distrib/V8.11.2/stdlib//Coq.Init.Logic.html#ba2b0e492d2b4675a0acf3ea92aabadd"><span class="id" title="notation">∧</span></a> <span class="id" title="keyword">∀</span> <span class="id" title="var">y</span>: <a class="idref" href="NFO.Eq.html#Y"><span class="id" title="variable">Y</span></a>, <a class="idref" href="http://coq.inria.fr/distrib/V8.11.2/stdlib//Coq.Init.Logic.html#a883bdd010993579f99d60b3775bcf54"><span class="id" title="notation">∃</span></a> <span class="id" title="var">x</span><a class="idref" href="http://coq.inria.fr/distrib/V8.11.2/stdlib//Coq.Init.Logic.html#a883bdd010993579f99d60b3775bcf54"><span class="id" title="notation">,</span></a> <a class="idref" href="NFO.Eq.html#f"><span class="id" title="variable">f</span></a> <a class="idref" href="NFO.Eq.html#x"><span class="id" title="variable">x</span></a> <a class="idref" href="NFO.Eq.html#2596316c6f2ff161cb03e25fd8914390"><span class="id" title="notation">==</span></a> <a class="idref" href="NFO.Eq.html#g"><span class="id" title="variable">g</span></a> <a class="idref" href="NFO.Eq.html#y"><span class="id" title="variable">y</span></a>.<br/>
+&nbsp;&nbsp;<a class="idref" href="http://coq.inria.fr/distrib/V8.11.2/stdlib//Coq.Init.Logic.html#ba2b0e492d2b4675a0acf3ea92aabadd"><span class="id" title="notation">(</span></a><span class="id" title="keyword">∀</span> <span class="id" title="var">x</span>: <a class="idref" href="NFO.Eq.html#X"><span class="id" title="variable">X</span></a>, <a class="idref" href="http://coq.inria.fr/distrib/V8.11.2/stdlib//Coq.Init.Logic.html#a883bdd010993579f99d60b3775bcf54"><span class="id" title="notation">∃</span></a> <span class="id" title="var">y</span><a class="idref" href="http://coq.inria.fr/distrib/V8.11.2/stdlib//Coq.Init.Logic.html#a883bdd010993579f99d60b3775bcf54"><span class="id" title="notation">,</span></a> <a class="idref" href="NFO.Eq.html#f"><span class="id" title="variable">f</span></a> <a class="idref" href="NFO.Eq.html#x"><span class="id" title="variable">x</span></a> <a class="idref" href="NFO.Eq.html#2596316c6f2ff161cb03e25fd8914390"><span class="id" title="notation">==</span></a> <a class="idref" href="NFO.Eq.html#g"><span class="id" title="variable">g</span></a> <a class="idref" href="NFO.Eq.html#y"><span class="id" title="variable">y</span></a><a class="idref" href="http://coq.inria.fr/distrib/V8.11.2/stdlib//Coq.Init.Logic.html#ba2b0e492d2b4675a0acf3ea92aabadd"><span class="id" title="notation">)</span></a> <a class="idref" href="http://coq.inria.fr/distrib/V8.11.2/stdlib//Coq.Init.Logic.html#ba2b0e492d2b4675a0acf3ea92aabadd"><span class="id" title="notation">∧</span></a> <a class="idref" href="http://coq.inria.fr/distrib/V8.11.2/stdlib//Coq.Init.Logic.html#ba2b0e492d2b4675a0acf3ea92aabadd"><span class="id" title="notation">(</span></a><span class="id" title="keyword">∀</span> <span class="id" title="var">y</span>: <a class="idref" href="NFO.Eq.html#Y"><span class="id" title="variable">Y</span></a>, <a class="idref" href="http://coq.inria.fr/distrib/V8.11.2/stdlib//Coq.Init.Logic.html#a883bdd010993579f99d60b3775bcf54"><span class="id" title="notation">∃</span></a> <span class="id" title="var">x</span><a class="idref" href="http://coq.inria.fr/distrib/V8.11.2/stdlib//Coq.Init.Logic.html#a883bdd010993579f99d60b3775bcf54"><span class="id" title="notation">,</span></a> <a class="idref" href="NFO.Eq.html#f"><span class="id" title="variable">f</span></a> <a class="idref" href="NFO.Eq.html#x"><span class="id" title="variable">x</span></a> <a class="idref" href="NFO.Eq.html#2596316c6f2ff161cb03e25fd8914390"><span class="id" title="notation">==</span></a> <a class="idref" href="NFO.Eq.html#g"><span class="id" title="variable">g</span></a> <a class="idref" href="NFO.Eq.html#y"><span class="id" title="variable">y</span></a><a class="idref" href="http://coq.inria.fr/distrib/V8.11.2/stdlib//Coq.Init.Logic.html#ba2b0e492d2b4675a0acf3ea92aabadd"><span class="id" title="notation">)</span></a>.<br/>
 
 <br/>
+</div>
+
+<div class="doc">
+Temporary unfolding lemma for eeq. 
+   It will be improved in eeq_unfold. 
+</div>
+<div class="code">
+<span class="id" title="keyword">Lemma</span> <a name="eeq_def"><span class="id" title="lemma">eeq_def</span></a> : <span class="id" title="keyword">∀</span> <span class="id" title="var">x</span> <span class="id" title="var">y</span>,<br/>
+&nbsp;&nbsp;<a class="idref" href="NFO.Eq.html#eeq"><span class="id" title="definition">eeq</span></a> <a class="idref" href="NFO.Eq.html#x"><span class="id" title="variable">x</span></a> <a class="idref" href="NFO.Eq.html#y"><span class="id" title="variable">y</span></a> <a class="idref" href="http://coq.inria.fr/distrib/V8.11.2/stdlib//Coq.Init.Logic.html#4bfb4f2d0721ba668e3a802ab1b745a1"><span class="id" title="notation">↔</span></a> <span class="id" title="keyword">match</span> <a class="idref" href="NFO.Eq.html#x"><span class="id" title="variable">x</span></a>, <a class="idref" href="NFO.Eq.html#y"><span class="id" title="variable">y</span></a> <span class="id" title="keyword">with</span> <a class="idref" href="NFO.Model.html#S"><span class="id" title="constructor">S</span></a> <span class="id" title="var">X</span> <span class="id" title="var">Y</span> <span class="id" title="var">f</span> <span class="id" title="var">g</span> <span class="id" title="var">e</span>, <a class="idref" href="NFO.Model.html#S"><span class="id" title="constructor">S</span></a> <span class="id" title="var">X'</span> <span class="id" title="var">Y'</span> <span class="id" title="var">f'</span> <span class="id" title="var">g'</span> <span class="id" title="var">e'</span> ⇒<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="NFO.Eq.html#Aeq"><span class="id" title="definition">Aeq</span></a> <span class="id" title="var">f</span> <span class="id" title="var">f'</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="http://coq.inria.fr/distrib/V8.11.2/stdlib//Coq.Init.Logic.html#ba2b0e492d2b4675a0acf3ea92aabadd"><span class="id" title="notation">∧</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="NFO.BoolExpr.html#eeq_boolean"><span class="id" title="definition">eeq_boolean</span></a> (<a class="idref" href="NFO.Eq.html#eeq"><span class="id" title="definition">eeq</span></a> <a class="idref" href="Internal.Misc.html#e4d9a19f89b57a7c32d6669a0294b4ed"><span class="id" title="notation">⨀</span></a> <a class="idref" href="Internal.Misc.html#e4d9a19f89b57a7c32d6669a0294b4ed"><span class="id" title="notation">(</span></a><span class="id" title="var">g</span> <a class="idref" href="Internal.Misc.html#83cea7e11d306b46465cb9fceb0427c4"><span class="id" title="notation">⨁</span></a> <span class="id" title="var">g'</span><a class="idref" href="Internal.Misc.html#e4d9a19f89b57a7c32d6669a0294b4ed"><span class="id" title="notation">)</span></a>) (<a class="idref" href="NFO.BoolExpr.html#map"><span class="id" title="definition">map</span></a> <a class="idref" href="http://coq.inria.fr/distrib/V8.11.2/stdlib//Coq.Init.Datatypes.html#inl"><span class="id" title="constructor">inl</span></a> <span class="id" title="var">e</span>) (<a class="idref" href="NFO.BoolExpr.html#map"><span class="id" title="definition">map</span></a> <a class="idref" href="http://coq.inria.fr/distrib/V8.11.2/stdlib//Coq.Init.Datatypes.html#inr"><span class="id" title="constructor">inr</span></a> <span class="id" title="var">e'</span>)<br/>
+<span class="id" title="keyword">end</span>.<br/>
 
 <br/>
 </div>
