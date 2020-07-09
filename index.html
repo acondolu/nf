@@ -471,13 +471,13 @@
 <a href="NF2.Sets.html#cup_ok">cup_ok</a> [lemma, in <a href="NF2.Sets.html">NF2.Sets</a>]<br/>
 <a href="NFO.Union.html#cup_ok">cup_ok</a> [lemma, in <a href="NFO.Union.html">NFO.Union</a>]<br/>
 <br/><br/><a name="global_D"></a><h2>D </h2>
-<a href="Internal.WfMult2.html#decr">decr</a> [definition, in <a href="Internal.WfMult2.html">Internal.WfMult2</a>]<br/>
-<a href="Internal.WfMult2.html#decr_unfold_2">decr_unfold_2</a> [lemma, in <a href="Internal.WfMult2.html">Internal.WfMult2</a>]<br/>
-<a href="Internal.WfMult2.html#decr_unfold">decr_unfold</a> [lemma, in <a href="Internal.WfMult2.html">Internal.WfMult2</a>]<br/>
-<a href="Internal.WfMult2.html#decr'">decr'</a> [definition, in <a href="Internal.WfMult2.html">Internal.WfMult2</a>]<br/>
-<a href="Internal.WfMult2.html#decr'_ok">decr'_ok</a> [lemma, in <a href="Internal.WfMult2.html">Internal.WfMult2</a>]<br/>
-<a href="Internal.WfMult2.html#drop">drop</a> [definition, in <a href="Internal.WfMult2.html">Internal.WfMult2</a>]<br/>
-<a href="Internal.WfMult2.html#drop_ok">drop_ok</a> [lemma, in <a href="Internal.WfMult2.html">Internal.WfMult2</a>]<br/>
+<a href="Internal.WfDecr.html#decr">decr</a> [definition, in <a href="Internal.WfDecr.html">Internal.WfDecr</a>]<br/>
+<a href="Internal.WfDecr.html#decr_unfold_2">decr_unfold_2</a> [lemma, in <a href="Internal.WfDecr.html">Internal.WfDecr</a>]<br/>
+<a href="Internal.WfDecr.html#decr_unfold">decr_unfold</a> [lemma, in <a href="Internal.WfDecr.html">Internal.WfDecr</a>]<br/>
+<a href="Internal.WfDecr.html#decr'">decr'</a> [definition, in <a href="Internal.WfDecr.html">Internal.WfDecr</a>]<br/>
+<a href="Internal.WfDecr.html#decr'_ok">decr'_ok</a> [lemma, in <a href="Internal.WfDecr.html">Internal.WfDecr</a>]<br/>
+<a href="Internal.WfDecr.html#drop">drop</a> [definition, in <a href="Internal.WfDecr.html">Internal.WfDecr</a>]<br/>
+<a href="Internal.WfDecr.html#drop_ok">drop_ok</a> [lemma, in <a href="Internal.WfDecr.html">Internal.WfDecr</a>]<br/>
 <br/><br/><a name="global_E"></a><h2>E </h2>
 <a href="NFO.Eq.html#eeq">eeq</a> [definition, in <a href="NFO.Eq.html">NFO.Eq</a>]<br/>
 <a href="NF2.Model.html#eeq">eeq</a> [definition, in <a href="NF2.Model.html">NF2.Model</a>]<br/>
@@ -529,9 +529,9 @@
 <a href="Internal.FunExt.html">FunExt</a> [library]<br/>
 <a href="NF2.Ext.html#f_sum">f_sum</a> [definition, in <a href="NF2.Ext.html">NF2.Ext</a>]<br/>
 <br/><br/><a name="global_G"></a><h2>G </h2>
-<a href="Internal.WfMult2.html#gather">gather</a> [definition, in <a href="Internal.WfMult2.html">Internal.WfMult2</a>]<br/>
-<a href="Internal.WfMult2.html#gather_drop_ok">gather_drop_ok</a> [lemma, in <a href="Internal.WfMult2.html">Internal.WfMult2</a>]<br/>
-<a href="Internal.WfMult2.html#gather_ok">gather_ok</a> [lemma, in <a href="Internal.WfMult2.html">Internal.WfMult2</a>]<br/>
+<a href="Internal.WfDecr.html#gather">gather</a> [definition, in <a href="Internal.WfDecr.html">Internal.WfDecr</a>]<br/>
+<a href="Internal.WfDecr.html#gather_drop_ok">gather_drop_ok</a> [lemma, in <a href="Internal.WfDecr.html">Internal.WfDecr</a>]<br/>
+<a href="Internal.WfDecr.html#gather_ok">gather_ok</a> [lemma, in <a href="Internal.WfDecr.html">Internal.WfDecr</a>]<br/>
 <a href="Internal.WfMult.html#get">get</a> [definition, in <a href="Internal.WfMult.html">Internal.WfMult</a>]<br/>
 <a href="Internal.WfMult.html#get_cons">get_cons</a> [lemma, in <a href="Internal.WfMult.html">Internal.WfMult</a>]<br/>
 <br/><br/><a name="global_I"></a><h2>I </h2>
@@ -699,6 +699,7 @@
 <a href="NFO.Ext.html#weak_regularity">weak_regularity</a> [lemma, in <a href="NFO.Ext.html">NFO.Ext</a>]<br/>
 <a href="NF2.Ext.html#weak_regularity">weak_regularity</a> [lemma, in <a href="NF2.Ext.html">NF2.Ext</a>]<br/>
 <a href="NFO.Wf.html">Wf</a> [library]<br/>
+<a href="Internal.WfDecr.html">WfDecr</a> [library]<br/>
 <a href="Internal.WfMult.html#WfMult">WfMult</a> [section, in <a href="Internal.WfMult.html">Internal.WfMult</a>]<br/>
 <a href="Internal.WfMult.html">WfMult</a> [library]<br/>
 <a href="Internal.WfMult.html#WfMult.A">WfMult.A</a> [variable, in <a href="Internal.WfMult.html">Internal.WfMult</a>]<br/>
@@ -706,17 +707,16 @@
 <a href="Internal.WfMult.html#WfMult.wf_lt">WfMult.wf_lt</a> [variable, in <a href="Internal.WfMult.html">Internal.WfMult</a>]<br/>
 <a href="Internal.WfMult.html#bf33f9a4b19f9562f2af10f25ac60e4e">_ <<< _</a> [notation, in <a href="Internal.WfMult.html">Internal.WfMult</a>]<br/>
 <a href="Internal.WfMult.html#9eae522055d9d507d320f7c001dfe4c7">_ << _</a> [notation, in <a href="Internal.WfMult.html">Internal.WfMult</a>]<br/>
-<a href="Internal.WfMult2.html#WfMult2">WfMult2</a> [section, in <a href="Internal.WfMult2.html">Internal.WfMult2</a>]<br/>
-<a href="Internal.WfMult2.html">WfMult2</a> [library]<br/>
-<a href="Internal.WfMult2.html#WfMult2.A">WfMult2.A</a> [variable, in <a href="Internal.WfMult2.html">Internal.WfMult2</a>]<br/>
-<a href="Internal.WfMult2.html#WfMult2.lt">WfMult2.lt</a> [variable, in <a href="Internal.WfMult2.html">Internal.WfMult2</a>]<br/>
-<a href="Internal.WfMult2.html#WfMult2.wf_lt">WfMult2.wf_lt</a> [variable, in <a href="Internal.WfMult2.html">Internal.WfMult2</a>]<br/>
+<a href="Internal.WfDecr.html#WfMult2">WfMult2</a> [section, in <a href="Internal.WfDecr.html">Internal.WfDecr</a>]<br/>
+<a href="Internal.WfDecr.html#WfMult2.A">WfMult2.A</a> [variable, in <a href="Internal.WfDecr.html">Internal.WfDecr</a>]<br/>
+<a href="Internal.WfDecr.html#WfMult2.lt">WfMult2.lt</a> [variable, in <a href="Internal.WfDecr.html">Internal.WfDecr</a>]<br/>
+<a href="Internal.WfDecr.html#WfMult2.wf_lt">WfMult2.wf_lt</a> [variable, in <a href="Internal.WfDecr.html">Internal.WfDecr</a>]<br/>
 <a href="Internal.WfTuples.html">WfTuples</a> [library]<br/>
 <a href="Internal.WfMult.html#wf_trans">wf_trans</a> [definition, in <a href="Internal.WfMult.html">Internal.WfMult</a>]<br/>
 <a href="Internal.WfMult.html#wf_perm">wf_perm</a> [lemma, in <a href="Internal.WfMult.html">Internal.WfMult</a>]<br/>
 <a href="Internal.WfMult.html#wf_ltl">wf_ltl</a> [lemma, in <a href="Internal.WfMult.html">Internal.WfMult</a>]<br/>
-<a href="Internal.WfMult2.html#wf_decr">wf_decr</a> [lemma, in <a href="Internal.WfMult2.html">Internal.WfMult2</a>]<br/>
 <a href="NFO.Model.html#wf_lt">wf_lt</a> [lemma, in <a href="NFO.Model.html">NFO.Model</a>]<br/>
+<a href="Internal.WfDecr.html#wf_decr">wf_decr</a> [lemma, in <a href="Internal.WfDecr.html">Internal.WfDecr</a>]<br/>
 <a href="Internal.WfTuples.html#wf_three_ind">wf_three_ind</a> [lemma, in <a href="Internal.WfTuples.html">Internal.WfTuples</a>]<br/>
 <a href="Internal.WfTuples.html#wf_three">wf_three</a> [lemma, in <a href="Internal.WfTuples.html">Internal.WfTuples</a>]<br/>
 <a href="Internal.WfTuples.html#wf_two_ind">wf_two_ind</a> [lemma, in <a href="Internal.WfTuples.html">Internal.WfTuples</a>]<br/>
@@ -819,9 +819,9 @@
 <a href="Internal.WfMult.html#WfMult.A">WfMult.A</a> [in <a href="Internal.WfMult.html">Internal.WfMult</a>]<br/>
 <a href="Internal.WfMult.html#WfMult.lt">WfMult.lt</a> [in <a href="Internal.WfMult.html">Internal.WfMult</a>]<br/>
 <a href="Internal.WfMult.html#WfMult.wf_lt">WfMult.wf_lt</a> [in <a href="Internal.WfMult.html">Internal.WfMult</a>]<br/>
-<a href="Internal.WfMult2.html#WfMult2.A">WfMult2.A</a> [in <a href="Internal.WfMult2.html">Internal.WfMult2</a>]<br/>
-<a href="Internal.WfMult2.html#WfMult2.lt">WfMult2.lt</a> [in <a href="Internal.WfMult2.html">Internal.WfMult2</a>]<br/>
-<a href="Internal.WfMult2.html#WfMult2.wf_lt">WfMult2.wf_lt</a> [in <a href="Internal.WfMult2.html">Internal.WfMult2</a>]<br/>
+<a href="Internal.WfDecr.html#WfMult2.A">WfMult2.A</a> [in <a href="Internal.WfDecr.html">Internal.WfDecr</a>]<br/>
+<a href="Internal.WfDecr.html#WfMult2.lt">WfMult2.lt</a> [in <a href="Internal.WfDecr.html">Internal.WfDecr</a>]<br/>
+<a href="Internal.WfDecr.html#WfMult2.wf_lt">WfMult2.wf_lt</a> [in <a href="Internal.WfDecr.html">Internal.WfDecr</a>]<br/>
 <br/><br/><hr/>
 <h1>Library Index</h1>
 <a name="library_B"></a><h2>B </h2>
@@ -851,8 +851,8 @@
 <a href="NFO.Union.html">Union</a> <br/>
 <br/><br/><a name="library_W"></a><h2>W </h2>
 <a href="NFO.Wf.html">Wf</a> <br/>
+<a href="Internal.WfDecr.html">WfDecr</a> <br/>
 <a href="Internal.WfMult.html">WfMult</a> <br/>
-<a href="Internal.WfMult2.html">WfMult2</a> <br/>
 <a href="Internal.WfTuples.html">WfTuples</a> <br/>
 <br/><br/><a name="library_X"></a><h2>X </h2>
 <a href="NFO.Xor.html">Xor</a> <br/>
@@ -932,10 +932,10 @@
 <a href="NF2.Sets.html#cup_ok">cup_ok</a> [in <a href="NF2.Sets.html">NF2.Sets</a>]<br/>
 <a href="NFO.Union.html#cup_ok">cup_ok</a> [in <a href="NFO.Union.html">NFO.Union</a>]<br/>
 <br/><br/><a name="lemma_D"></a><h2>D </h2>
-<a href="Internal.WfMult2.html#decr_unfold_2">decr_unfold_2</a> [in <a href="Internal.WfMult2.html">Internal.WfMult2</a>]<br/>
-<a href="Internal.WfMult2.html#decr_unfold">decr_unfold</a> [in <a href="Internal.WfMult2.html">Internal.WfMult2</a>]<br/>
-<a href="Internal.WfMult2.html#decr'_ok">decr'_ok</a> [in <a href="Internal.WfMult2.html">Internal.WfMult2</a>]<br/>
-<a href="Internal.WfMult2.html#drop_ok">drop_ok</a> [in <a href="Internal.WfMult2.html">Internal.WfMult2</a>]<br/>
+<a href="Internal.WfDecr.html#decr_unfold_2">decr_unfold_2</a> [in <a href="Internal.WfDecr.html">Internal.WfDecr</a>]<br/>
+<a href="Internal.WfDecr.html#decr_unfold">decr_unfold</a> [in <a href="Internal.WfDecr.html">Internal.WfDecr</a>]<br/>
+<a href="Internal.WfDecr.html#decr'_ok">decr'_ok</a> [in <a href="Internal.WfDecr.html">Internal.WfDecr</a>]<br/>
+<a href="Internal.WfDecr.html#drop_ok">drop_ok</a> [in <a href="Internal.WfDecr.html">Internal.WfDecr</a>]<br/>
 <br/><br/><a name="lemma_E"></a><h2>E </h2>
 <a href="NFO.BoolExpr.html#eeq_boolean_trans">eeq_boolean_trans</a> [in <a href="NFO.BoolExpr.html">NFO.BoolExpr</a>]<br/>
 <a href="NFO.BoolExpr.html#eeq_boolean_sym">eeq_boolean_sym</a> [in <a href="NFO.BoolExpr.html">NFO.BoolExpr</a>]<br/>
@@ -966,8 +966,8 @@
 <a href="NFO.Wf.html#Fix_iff">Fix_iff</a> [in <a href="NFO.Wf.html">NFO.Wf</a>]<br/>
 <a href="NFO.Wf.html#Fix_F_inv_iff">Fix_F_inv_iff</a> [in <a href="NFO.Wf.html">NFO.Wf</a>]<br/>
 <br/><br/><a name="lemma_G"></a><h2>G </h2>
-<a href="Internal.WfMult2.html#gather_drop_ok">gather_drop_ok</a> [in <a href="Internal.WfMult2.html">Internal.WfMult2</a>]<br/>
-<a href="Internal.WfMult2.html#gather_ok">gather_ok</a> [in <a href="Internal.WfMult2.html">Internal.WfMult2</a>]<br/>
+<a href="Internal.WfDecr.html#gather_drop_ok">gather_drop_ok</a> [in <a href="Internal.WfDecr.html">Internal.WfDecr</a>]<br/>
+<a href="Internal.WfDecr.html#gather_ok">gather_ok</a> [in <a href="Internal.WfDecr.html">Internal.WfDecr</a>]<br/>
 <a href="Internal.WfMult.html#get_cons">get_cons</a> [in <a href="Internal.WfMult.html">Internal.WfMult</a>]<br/>
 <br/><br/><a name="lemma_I"></a><h2>I </h2>
 <a href="NFO.In.html#iin_unfold">iin_unfold</a> [in <a href="NFO.In.html">NFO.In</a>]<br/>
@@ -1046,8 +1046,8 @@
 <a href="NF2.Ext.html#weak_regularity">weak_regularity</a> [in <a href="NF2.Ext.html">NF2.Ext</a>]<br/>
 <a href="Internal.WfMult.html#wf_perm">wf_perm</a> [in <a href="Internal.WfMult.html">Internal.WfMult</a>]<br/>
 <a href="Internal.WfMult.html#wf_ltl">wf_ltl</a> [in <a href="Internal.WfMult.html">Internal.WfMult</a>]<br/>
-<a href="Internal.WfMult2.html#wf_decr">wf_decr</a> [in <a href="Internal.WfMult2.html">Internal.WfMult2</a>]<br/>
 <a href="NFO.Model.html#wf_lt">wf_lt</a> [in <a href="NFO.Model.html">NFO.Model</a>]<br/>
+<a href="Internal.WfDecr.html#wf_decr">wf_decr</a> [in <a href="Internal.WfDecr.html">Internal.WfDecr</a>]<br/>
 <a href="Internal.WfTuples.html#wf_three_ind">wf_three_ind</a> [in <a href="Internal.WfTuples.html">Internal.WfTuples</a>]<br/>
 <a href="Internal.WfTuples.html#wf_three">wf_three</a> [in <a href="Internal.WfTuples.html">Internal.WfTuples</a>]<br/>
 <a href="Internal.WfTuples.html#wf_two_ind">wf_two_ind</a> [in <a href="Internal.WfTuples.html">Internal.WfTuples</a>]<br/>
@@ -1114,7 +1114,7 @@
 <a href="NFO.Wf.html#Two">Two</a> [in <a href="NFO.Wf.html">NFO.Wf</a>]<br/>
 <br/><br/><a name="section_W"></a><h2>W </h2>
 <a href="Internal.WfMult.html#WfMult">WfMult</a> [in <a href="Internal.WfMult.html">Internal.WfMult</a>]<br/>
-<a href="Internal.WfMult2.html#WfMult2">WfMult2</a> [in <a href="Internal.WfMult2.html">Internal.WfMult2</a>]<br/>
+<a href="Internal.WfDecr.html#WfMult2">WfMult2</a> [in <a href="Internal.WfDecr.html">Internal.WfDecr</a>]<br/>
 <br/><br/><hr/>
 <h1>Instance Index</h1>
 <a name="instance_N"></a><h2>N </h2>
@@ -1152,9 +1152,9 @@
 <a href="NF2.Sets.html#cup">cup</a> [in <a href="NF2.Sets.html">NF2.Sets</a>]<br/>
 <a href="NFO.Union.html#cup">cup</a> [in <a href="NFO.Union.html">NFO.Union</a>]<br/>
 <br/><br/><a name="definition_D"></a><h2>D </h2>
-<a href="Internal.WfMult2.html#decr">decr</a> [in <a href="Internal.WfMult2.html">Internal.WfMult2</a>]<br/>
-<a href="Internal.WfMult2.html#decr'">decr'</a> [in <a href="Internal.WfMult2.html">Internal.WfMult2</a>]<br/>
-<a href="Internal.WfMult2.html#drop">drop</a> [in <a href="Internal.WfMult2.html">Internal.WfMult2</a>]<br/>
+<a href="Internal.WfDecr.html#decr">decr</a> [in <a href="Internal.WfDecr.html">Internal.WfDecr</a>]<br/>
+<a href="Internal.WfDecr.html#decr'">decr'</a> [in <a href="Internal.WfDecr.html">Internal.WfDecr</a>]<br/>
+<a href="Internal.WfDecr.html#drop">drop</a> [in <a href="Internal.WfDecr.html">Internal.WfDecr</a>]<br/>
 <br/><br/><a name="definition_E"></a><h2>E </h2>
 <a href="NFO.Eq.html#eeq">eeq</a> [in <a href="NFO.Eq.html">NFO.Eq</a>]<br/>
 <a href="NF2.Model.html#eeq">eeq</a> [in <a href="NF2.Model.html">NF2.Model</a>]<br/>
@@ -1175,7 +1175,7 @@
 <br/><br/><a name="definition_F"></a><h2>F </h2>
 <a href="NF2.Ext.html#f_sum">f_sum</a> [in <a href="NF2.Ext.html">NF2.Ext</a>]<br/>
 <br/><br/><a name="definition_G"></a><h2>G </h2>
-<a href="Internal.WfMult2.html#gather">gather</a> [in <a href="Internal.WfMult2.html">Internal.WfMult2</a>]<br/>
+<a href="Internal.WfDecr.html#gather">gather</a> [in <a href="Internal.WfDecr.html">Internal.WfDecr</a>]<br/>
 <a href="Internal.WfMult.html#get">get</a> [in <a href="Internal.WfMult.html">Internal.WfMult</a>]<br/>
 <br/><br/><a name="definition_I"></a><h2>I </h2>
 <a href="NFO.In.html#iin">iin</a> [in <a href="NFO.In.html">NFO.In</a>]<br/>
