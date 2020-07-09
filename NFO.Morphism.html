@@ -1,0 +1,143 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<link href="coqdoc.css" rel="stylesheet" type="text/css" />
+<title>NFO.Morphism</title>
+</head>
+
+<body>
+
+<div id="page">
+
+<div id="header">
+</div>
+
+<div id="main">
+
+<h1 class="libtitle">Library NFO.Morphism</h1>
+
+<div class="code">
+</div>
+
+<div class="doc">
+<a name="lab10"></a><h1 class="section">NFO.Morphs : Morphisms</h1>
+ In this module we prove that:
+<ul class="doclist">
+<li> iin, Ain, Bin are eeq-morphisms.
+
+</li>
+<li> Ain and Bin are respectively Aeq- and Beq-morphisms.
+
+</li>
+<li> The axiom of extensionality for Aeq and Beq.
+      Extensionality for iin and eeq will be proved in NFO.Ext.
+
+</li>
+</ul>
+
+</div>
+<div class="code">
+
+<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+<a name="lab11"></a><h1 class="section">Proofs for Aeq and Ain</h1>
+
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <a name="Aeq_Ain"><span class="id" title="lemma">Aeq_Ain</span></a>: <span class="id" title="keyword">∀</span> {<span class="id" title="var">X</span> <span class="id" title="var">Y</span>} {<span class="id" title="var">f</span>: <a class="idref" href="NFO.Morphism.html#X"><span class="id" title="variable">X</span></a> <a class="idref" href="http://coq.inria.fr/distrib/V8.11.2/stdlib//Coq.Init.Logic.html#1c93e43e07fbeaeb6a625cb6614beb5d"><span class="id" title="notation">→</span></a> <span class="id" title="var">_</span>} {<span class="id" title="var">g</span>: <a class="idref" href="NFO.Morphism.html#Y"><span class="id" title="variable">Y</span></a> <a class="idref" href="http://coq.inria.fr/distrib/V8.11.2/stdlib//Coq.Init.Logic.html#1c93e43e07fbeaeb6a625cb6614beb5d"><span class="id" title="notation">→</span></a> <span class="id" title="var">_</span>},<br/>
+&nbsp;&nbsp;<a class="idref" href="NFO.Eq.html#Aeq"><span class="id" title="definition">Aeq</span></a> <a class="idref" href="NFO.Morphism.html#f"><span class="id" title="variable">f</span></a> <a class="idref" href="NFO.Morphism.html#g"><span class="id" title="variable">g</span></a> <a class="idref" href="http://coq.inria.fr/distrib/V8.11.2/stdlib//Coq.Init.Logic.html#1c93e43e07fbeaeb6a625cb6614beb5d"><span class="id" title="notation">→</span></a> <span class="id" title="keyword">∀</span> <span class="id" title="var">x</span>, <a class="idref" href="NFO.In.html#Ain"><span class="id" title="definition">Ain</span></a> <a class="idref" href="NFO.Morphism.html#x"><span class="id" title="variable">x</span></a> <a class="idref" href="NFO.Morphism.html#f"><span class="id" title="variable">f</span></a> <a class="idref" href="http://coq.inria.fr/distrib/V8.11.2/stdlib//Coq.Init.Logic.html#4bfb4f2d0721ba668e3a802ab1b745a1"><span class="id" title="notation">↔</span></a> <a class="idref" href="NFO.In.html#Ain"><span class="id" title="definition">Ain</span></a> <a class="idref" href="NFO.Morphism.html#x"><span class="id" title="variable">x</span></a> <a class="idref" href="NFO.Morphism.html#g"><span class="id" title="variable">g</span></a>.<br/>
+<span class="id" title="keyword">Lemma</span> <a name="Ain_Aeq"><span class="id" title="lemma">Ain_Aeq</span></a>: <span class="id" title="keyword">∀</span> {<span class="id" title="var">X</span> <span class="id" title="var">Y</span>} {<span class="id" title="var">f</span>: <a class="idref" href="NFO.Morphism.html#X"><span class="id" title="variable">X</span></a> <a class="idref" href="http://coq.inria.fr/distrib/V8.11.2/stdlib//Coq.Init.Logic.html#1c93e43e07fbeaeb6a625cb6614beb5d"><span class="id" title="notation">→</span></a> <span class="id" title="var">_</span>} {<span class="id" title="var">g</span>: <a class="idref" href="NFO.Morphism.html#Y"><span class="id" title="variable">Y</span></a> <a class="idref" href="http://coq.inria.fr/distrib/V8.11.2/stdlib//Coq.Init.Logic.html#1c93e43e07fbeaeb6a625cb6614beb5d"><span class="id" title="notation">→</span></a> <span class="id" title="var">_</span>},<br/>
+&nbsp;&nbsp;<a class="idref" href="http://coq.inria.fr/distrib/V8.11.2/stdlib//Coq.Init.Logic.html#1c93e43e07fbeaeb6a625cb6614beb5d"><span class="id" title="notation">(</span></a><span class="id" title="keyword">∀</span> <span class="id" title="var">x</span>, <a class="idref" href="NFO.In.html#Ain"><span class="id" title="definition">Ain</span></a> <a class="idref" href="NFO.Morphism.html#x"><span class="id" title="variable">x</span></a> <a class="idref" href="NFO.Morphism.html#f"><span class="id" title="variable">f</span></a> <a class="idref" href="http://coq.inria.fr/distrib/V8.11.2/stdlib//Coq.Init.Logic.html#4bfb4f2d0721ba668e3a802ab1b745a1"><span class="id" title="notation">↔</span></a> <a class="idref" href="NFO.In.html#Ain"><span class="id" title="definition">Ain</span></a> <a class="idref" href="NFO.Morphism.html#x"><span class="id" title="variable">x</span></a> <a class="idref" href="NFO.Morphism.html#g"><span class="id" title="variable">g</span></a><a class="idref" href="http://coq.inria.fr/distrib/V8.11.2/stdlib//Coq.Init.Logic.html#1c93e43e07fbeaeb6a625cb6614beb5d"><span class="id" title="notation">)</span></a> <a class="idref" href="http://coq.inria.fr/distrib/V8.11.2/stdlib//Coq.Init.Logic.html#1c93e43e07fbeaeb6a625cb6614beb5d"><span class="id" title="notation">→</span></a> <a class="idref" href="NFO.Eq.html#Aeq"><span class="id" title="definition">Aeq</span></a> <a class="idref" href="NFO.Morphism.html#f"><span class="id" title="variable">f</span></a> <a class="idref" href="NFO.Morphism.html#g"><span class="id" title="variable">g</span></a>.<br/>
+
+<br/>
+<span class="id" title="keyword">Theorem</span> <a name="Aext"><span class="id" title="lemma">Aext</span></a> {<span class="id" title="var">X</span> <span class="id" title="var">Y</span>} {<span class="id" title="var">f</span>: <a class="idref" href="NFO.Morphism.html#X"><span class="id" title="variable">X</span></a> <a class="idref" href="http://coq.inria.fr/distrib/V8.11.2/stdlib//Coq.Init.Logic.html#1c93e43e07fbeaeb6a625cb6614beb5d"><span class="id" title="notation">→</span></a> <span class="id" title="var">_</span>} {<span class="id" title="var">g</span>: <a class="idref" href="NFO.Morphism.html#Y"><span class="id" title="variable">Y</span></a> <a class="idref" href="http://coq.inria.fr/distrib/V8.11.2/stdlib//Coq.Init.Logic.html#1c93e43e07fbeaeb6a625cb6614beb5d"><span class="id" title="notation">→</span></a> <span class="id" title="var">_</span>} :<br/>
+&nbsp;&nbsp;<a class="idref" href="NFO.Eq.html#Aeq"><span class="id" title="definition">Aeq</span></a> <a class="idref" href="NFO.Morphism.html#f"><span class="id" title="variable">f</span></a> <a class="idref" href="NFO.Morphism.html#g"><span class="id" title="variable">g</span></a> <a class="idref" href="http://coq.inria.fr/distrib/V8.11.2/stdlib//Coq.Init.Logic.html#4bfb4f2d0721ba668e3a802ab1b745a1"><span class="id" title="notation">↔</span></a> <span class="id" title="keyword">∀</span> <span class="id" title="var">x</span>, <a class="idref" href="NFO.In.html#Ain"><span class="id" title="definition">Ain</span></a> <a class="idref" href="NFO.Morphism.html#x"><span class="id" title="variable">x</span></a> <a class="idref" href="NFO.Morphism.html#f"><span class="id" title="variable">f</span></a> <a class="idref" href="http://coq.inria.fr/distrib/V8.11.2/stdlib//Coq.Init.Logic.html#4bfb4f2d0721ba668e3a802ab1b745a1"><span class="id" title="notation">↔</span></a> <a class="idref" href="NFO.In.html#Ain"><span class="id" title="definition">Ain</span></a> <a class="idref" href="NFO.Morphism.html#x"><span class="id" title="variable">x</span></a> <a class="idref" href="NFO.Morphism.html#g"><span class="id" title="variable">g</span></a>.<br/>
+ 
+<br/>
+</div>
+
+<div class="doc">
+TODO: Vale anche nell'altra direzione, ma non ci serve. Lo stesso per Bin. 
+</div>
+<div class="code">
+<span class="id" title="keyword">Lemma</span> <a name="eeq_Ain"><span class="id" title="lemma">eeq_Ain</span></a>: <span class="id" title="keyword">∀</span> {<span class="id" title="var">x</span> <span class="id" title="var">y</span> <span class="id" title="var">X</span>} {<span class="id" title="var">f</span>: <a class="idref" href="NFO.Morphism.html#X"><span class="id" title="variable">X</span></a> <a class="idref" href="http://coq.inria.fr/distrib/V8.11.2/stdlib//Coq.Init.Logic.html#1c93e43e07fbeaeb6a625cb6614beb5d"><span class="id" title="notation">→</span></a> <span class="id" title="var">_</span>},<br/>
+&nbsp;&nbsp;<a class="idref" href="NFO.Morphism.html#x"><span class="id" title="variable">x</span></a> <a class="idref" href="NFO.Eq.html#2596316c6f2ff161cb03e25fd8914390"><span class="id" title="notation">==</span></a> <a class="idref" href="NFO.Morphism.html#y"><span class="id" title="variable">y</span></a> <a class="idref" href="http://coq.inria.fr/distrib/V8.11.2/stdlib//Coq.Init.Logic.html#1c93e43e07fbeaeb6a625cb6614beb5d"><span class="id" title="notation">→</span></a> <a class="idref" href="NFO.In.html#Ain"><span class="id" title="definition">Ain</span></a> <a class="idref" href="NFO.Morphism.html#x"><span class="id" title="variable">x</span></a> <a class="idref" href="NFO.Morphism.html#f"><span class="id" title="variable">f</span></a> <a class="idref" href="http://coq.inria.fr/distrib/V8.11.2/stdlib//Coq.Init.Logic.html#4bfb4f2d0721ba668e3a802ab1b745a1"><span class="id" title="notation">↔</span></a> <a class="idref" href="NFO.In.html#Ain"><span class="id" title="definition">Ain</span></a> <a class="idref" href="NFO.Morphism.html#y"><span class="id" title="variable">y</span></a> <a class="idref" href="NFO.Morphism.html#f"><span class="id" title="variable">f</span></a>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+<a name="lab12"></a><h1 class="section">Proofs for eeq and iin</h1>
+
+</div>
+<div class="code">
+
+<br/>
+</div>
+
+<div class="doc">
+TODO: pose g is suspiciously similar to invert_sum
+  and then simply prove cut (respects eeq g)
+  with invert_sum_respects.
+
+</div>
+<div class="code">
+<span class="id" title="keyword">Lemma</span> <a name="iin_respects_eeq"><span class="id" title="lemma">iin_respects_eeq</span></a>: <span class="id" title="keyword">∀</span> <span class="id" title="var">z</span> <span class="id" title="var">x</span> <span class="id" title="var">y</span>, <a class="idref" href="NFO.Eq.html#eeq"><span class="id" title="definition">eeq</span></a> <a class="idref" href="NFO.Morphism.html#x"><span class="id" title="variable">x</span></a> <a class="idref" href="NFO.Morphism.html#y"><span class="id" title="variable">y</span></a> <a class="idref" href="http://coq.inria.fr/distrib/V8.11.2/stdlib//Coq.Init.Logic.html#1c93e43e07fbeaeb6a625cb6614beb5d"><span class="id" title="notation">→</span></a><br/>
+&nbsp;&nbsp;<a class="idref" href="http://coq.inria.fr/distrib/V8.11.2/stdlib//Coq.Init.Logic.html#ba2b0e492d2b4675a0acf3ea92aabadd"><span class="id" title="notation">(</span></a><a class="idref" href="NFO.In.html#iin"><span class="id" title="definition">iin</span></a> <a class="idref" href="NFO.Morphism.html#z"><span class="id" title="variable">z</span></a> <a class="idref" href="NFO.Morphism.html#x"><span class="id" title="variable">x</span></a> <a class="idref" href="http://coq.inria.fr/distrib/V8.11.2/stdlib//Coq.Init.Logic.html#4bfb4f2d0721ba668e3a802ab1b745a1"><span class="id" title="notation">↔</span></a> <a class="idref" href="NFO.In.html#iin"><span class="id" title="definition">iin</span></a> <a class="idref" href="NFO.Morphism.html#z"><span class="id" title="variable">z</span></a> <a class="idref" href="NFO.Morphism.html#y"><span class="id" title="variable">y</span></a><a class="idref" href="http://coq.inria.fr/distrib/V8.11.2/stdlib//Coq.Init.Logic.html#ba2b0e492d2b4675a0acf3ea92aabadd"><span class="id" title="notation">)</span></a><br/>
+&nbsp;&nbsp;<a class="idref" href="http://coq.inria.fr/distrib/V8.11.2/stdlib//Coq.Init.Logic.html#ba2b0e492d2b4675a0acf3ea92aabadd"><span class="id" title="notation">∧</span></a> <a class="idref" href="http://coq.inria.fr/distrib/V8.11.2/stdlib//Coq.Init.Logic.html#ba2b0e492d2b4675a0acf3ea92aabadd"><span class="id" title="notation">(</span></a><a class="idref" href="NFO.In.html#iin"><span class="id" title="definition">iin</span></a> <a class="idref" href="NFO.Morphism.html#x"><span class="id" title="variable">x</span></a> <a class="idref" href="NFO.Morphism.html#z"><span class="id" title="variable">z</span></a> <a class="idref" href="http://coq.inria.fr/distrib/V8.11.2/stdlib//Coq.Init.Logic.html#4bfb4f2d0721ba668e3a802ab1b745a1"><span class="id" title="notation">↔</span></a> <a class="idref" href="NFO.In.html#iin"><span class="id" title="definition">iin</span></a> <a class="idref" href="NFO.Morphism.html#y"><span class="id" title="variable">y</span></a> <a class="idref" href="NFO.Morphism.html#z"><span class="id" title="variable">z</span></a><a class="idref" href="http://coq.inria.fr/distrib/V8.11.2/stdlib//Coq.Init.Logic.html#ba2b0e492d2b4675a0acf3ea92aabadd"><span class="id" title="notation">)</span></a>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+Register iin as a eeq-morphism: 
+</div>
+<div class="code">
+<span class="id" title="keyword">Add</span> <span class="id" title="var">Morphism</span> <a class="idref" href="NFO.In.html#iin"><span class="id" title="definition">iin</span></a> <span class="id" title="keyword">with</span> <span class="id" title="var">signature</span> <a class="idref" href="NFO.Eq.html#eeq"><span class="id" title="definition">eeq</span></a> <a class="idref" href="http://coq.inria.fr/distrib/V8.11.2/stdlib//Coq.Classes.Morphisms.html#8dc5652698a6e16f72dd37bd17d3b973"><span class="id" title="notation">==&gt;</span></a> <a class="idref" href="NFO.Eq.html#eeq"><span class="id" title="definition">eeq</span></a> <a class="idref" href="http://coq.inria.fr/distrib/V8.11.2/stdlib//Coq.Classes.Morphisms.html#8dc5652698a6e16f72dd37bd17d3b973"><span class="id" title="notation">==&gt;</span></a> <a class="idref" href="http://coq.inria.fr/distrib/V8.11.2/stdlib//Coq.Init.Logic.html#iff"><span class="id" title="definition">iff</span></a> <span class="id" title="keyword">as</span> <span class="id" title="var">iin_mor</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+<a name="lab13"></a><h1 class="section">Proofs for Beq and Bin</h1>
+
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <a name="Qeq_Qin"><span class="id" title="lemma">Qeq_Qin</span></a>: <span class="id" title="keyword">∀</span> {<span class="id" title="var">X</span> <span class="id" title="var">Y</span>} {<span class="id" title="var">p</span> <span class="id" title="var">p'</span>} {<span class="id" title="var">h</span>: <a class="idref" href="NFO.Morphism.html#X"><span class="id" title="variable">X</span></a> <a class="idref" href="http://coq.inria.fr/distrib/V8.11.2/stdlib//Coq.Init.Logic.html#1c93e43e07fbeaeb6a625cb6614beb5d"><span class="id" title="notation">→</span></a> <span class="id" title="var">_</span>} {<span class="id" title="var">h'</span>: <a class="idref" href="NFO.Morphism.html#Y"><span class="id" title="variable">Y</span></a> <a class="idref" href="http://coq.inria.fr/distrib/V8.11.2/stdlib//Coq.Init.Logic.html#1c93e43e07fbeaeb6a625cb6614beb5d"><span class="id" title="notation">→</span></a> <span class="id" title="var">_</span>},<br/>
+&nbsp;&nbsp;<a class="idref" href="NFO.Eq.html#Qeq"><span class="id" title="definition">Qeq</span></a> (<a class="idref" href="NFO.BoolExpr.html#map"><span class="id" title="definition">map</span></a> <a class="idref" href="NFO.Morphism.html#h"><span class="id" title="variable">h</span></a> <a class="idref" href="NFO.Morphism.html#p"><span class="id" title="variable">p</span></a>) (<a class="idref" href="NFO.BoolExpr.html#map"><span class="id" title="definition">map</span></a> <a class="idref" href="NFO.Morphism.html#h'"><span class="id" title="variable">h'</span></a> <a class="idref" href="NFO.Morphism.html#p'"><span class="id" title="variable">p'</span></a>)<br/>
+&nbsp;&nbsp;<a class="idref" href="http://coq.inria.fr/distrib/V8.11.2/stdlib//Coq.Init.Logic.html#1c93e43e07fbeaeb6a625cb6614beb5d"><span class="id" title="notation">→</span></a> <span class="id" title="keyword">∀</span> <span class="id" title="var">x</span>, <a class="idref" href="NFO.In.html#Qin"><span class="id" title="definition">Qin</span></a> <a class="idref" href="NFO.Morphism.html#x"><span class="id" title="variable">x</span></a> <a class="idref" href="NFO.Morphism.html#h"><span class="id" title="variable">h</span></a> <a class="idref" href="NFO.Morphism.html#p"><span class="id" title="variable">p</span></a> <a class="idref" href="http://coq.inria.fr/distrib/V8.11.2/stdlib//Coq.Init.Logic.html#4bfb4f2d0721ba668e3a802ab1b745a1"><span class="id" title="notation">↔</span></a> <a class="idref" href="NFO.In.html#Qin"><span class="id" title="definition">Qin</span></a> <a class="idref" href="NFO.Morphism.html#x"><span class="id" title="variable">x</span></a> <a class="idref" href="NFO.Morphism.html#h'"><span class="id" title="variable">h'</span></a> <a class="idref" href="NFO.Morphism.html#p'"><span class="id" title="variable">p'</span></a>.<br/>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <a name="Qin_Qeq"><span class="id" title="lemma">Qin_Qeq</span></a>: <span class="id" title="keyword">∀</span> {<span class="id" title="var">X</span> <span class="id" title="var">Y</span>} {<span class="id" title="var">p</span> <span class="id" title="var">p'</span>} {<span class="id" title="var">h</span>: <a class="idref" href="NFO.Morphism.html#X"><span class="id" title="variable">X</span></a> <a class="idref" href="http://coq.inria.fr/distrib/V8.11.2/stdlib//Coq.Init.Logic.html#1c93e43e07fbeaeb6a625cb6614beb5d"><span class="id" title="notation">→</span></a> <span class="id" title="var">_</span>} {<span class="id" title="var">h'</span>: <a class="idref" href="NFO.Morphism.html#Y"><span class="id" title="variable">Y</span></a> <a class="idref" href="http://coq.inria.fr/distrib/V8.11.2/stdlib//Coq.Init.Logic.html#1c93e43e07fbeaeb6a625cb6614beb5d"><span class="id" title="notation">→</span></a> <span class="id" title="var">_</span>},<br/>
+&nbsp;&nbsp;<a class="idref" href="http://coq.inria.fr/distrib/V8.11.2/stdlib//Coq.Init.Logic.html#1c93e43e07fbeaeb6a625cb6614beb5d"><span class="id" title="notation">(</span></a><span class="id" title="keyword">∀</span> <span class="id" title="var">x</span>, <a class="idref" href="NFO.In.html#Qin"><span class="id" title="definition">Qin</span></a> <a class="idref" href="NFO.Morphism.html#x"><span class="id" title="variable">x</span></a> <a class="idref" href="NFO.Morphism.html#h"><span class="id" title="variable">h</span></a> <a class="idref" href="NFO.Morphism.html#p"><span class="id" title="variable">p</span></a> <a class="idref" href="http://coq.inria.fr/distrib/V8.11.2/stdlib//Coq.Init.Logic.html#4bfb4f2d0721ba668e3a802ab1b745a1"><span class="id" title="notation">↔</span></a> <a class="idref" href="NFO.In.html#Qin"><span class="id" title="definition">Qin</span></a> <a class="idref" href="NFO.Morphism.html#x"><span class="id" title="variable">x</span></a> <a class="idref" href="NFO.Morphism.html#h'"><span class="id" title="variable">h'</span></a> <a class="idref" href="NFO.Morphism.html#p'"><span class="id" title="variable">p'</span></a><a class="idref" href="http://coq.inria.fr/distrib/V8.11.2/stdlib//Coq.Init.Logic.html#1c93e43e07fbeaeb6a625cb6614beb5d"><span class="id" title="notation">)</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="http://coq.inria.fr/distrib/V8.11.2/stdlib//Coq.Init.Logic.html#1c93e43e07fbeaeb6a625cb6614beb5d"><span class="id" title="notation">→</span></a> <a class="idref" href="NFO.Eq.html#Qeq"><span class="id" title="definition">Qeq</span></a> (<a class="idref" href="NFO.BoolExpr.html#map"><span class="id" title="definition">map</span></a> <a class="idref" href="NFO.Morphism.html#h"><span class="id" title="variable">h</span></a> <a class="idref" href="NFO.Morphism.html#p"><span class="id" title="variable">p</span></a>) (<a class="idref" href="NFO.BoolExpr.html#map"><span class="id" title="definition">map</span></a> <a class="idref" href="NFO.Morphism.html#h'"><span class="id" title="variable">h'</span></a> <a class="idref" href="NFO.Morphism.html#p'"><span class="id" title="variable">p'</span></a>).<br/>
+
+<br/>
+<span class="id" title="keyword">Theorem</span> <a name="Qext"><span class="id" title="lemma">Qext</span></a> {<span class="id" title="var">X</span> <span class="id" title="var">Y</span>} {<span class="id" title="var">p</span> <span class="id" title="var">p'</span>} {<span class="id" title="var">h</span>: <a class="idref" href="NFO.Morphism.html#X"><span class="id" title="variable">X</span></a> <a class="idref" href="http://coq.inria.fr/distrib/V8.11.2/stdlib//Coq.Init.Logic.html#1c93e43e07fbeaeb6a625cb6614beb5d"><span class="id" title="notation">→</span></a> <span class="id" title="var">_</span>} {<span class="id" title="var">h'</span>: <a class="idref" href="NFO.Morphism.html#Y"><span class="id" title="variable">Y</span></a> <a class="idref" href="http://coq.inria.fr/distrib/V8.11.2/stdlib//Coq.Init.Logic.html#1c93e43e07fbeaeb6a625cb6614beb5d"><span class="id" title="notation">→</span></a> <span class="id" title="var">_</span>} :<br/>
+&nbsp;&nbsp;<a class="idref" href="NFO.Eq.html#Qeq"><span class="id" title="definition">Qeq</span></a> (<a class="idref" href="NFO.BoolExpr.html#map"><span class="id" title="definition">map</span></a> <a class="idref" href="NFO.Morphism.html#h"><span class="id" title="variable">h</span></a> <a class="idref" href="NFO.Morphism.html#p"><span class="id" title="variable">p</span></a>) (<a class="idref" href="NFO.BoolExpr.html#map"><span class="id" title="definition">map</span></a> <a class="idref" href="NFO.Morphism.html#h'"><span class="id" title="variable">h'</span></a> <a class="idref" href="NFO.Morphism.html#p'"><span class="id" title="variable">p'</span></a>)<br/>
+&nbsp;&nbsp;<a class="idref" href="http://coq.inria.fr/distrib/V8.11.2/stdlib//Coq.Init.Logic.html#4bfb4f2d0721ba668e3a802ab1b745a1"><span class="id" title="notation">↔</span></a> <span class="id" title="keyword">∀</span> <span class="id" title="var">x</span>, <a class="idref" href="NFO.In.html#Qin"><span class="id" title="definition">Qin</span></a> <a class="idref" href="NFO.Morphism.html#x"><span class="id" title="variable">x</span></a> <a class="idref" href="NFO.Morphism.html#h"><span class="id" title="variable">h</span></a> <a class="idref" href="NFO.Morphism.html#p"><span class="id" title="variable">p</span></a> <a class="idref" href="http://coq.inria.fr/distrib/V8.11.2/stdlib//Coq.Init.Logic.html#4bfb4f2d0721ba668e3a802ab1b745a1"><span class="id" title="notation">↔</span></a> <a class="idref" href="NFO.In.html#Qin"><span class="id" title="definition">Qin</span></a> <a class="idref" href="NFO.Morphism.html#x"><span class="id" title="variable">x</span></a> <a class="idref" href="NFO.Morphism.html#h'"><span class="id" title="variable">h'</span></a> <a class="idref" href="NFO.Morphism.html#p'"><span class="id" title="variable">p'</span></a>.<br/>
+ 
+<br/>
+<span class="id" title="keyword">Lemma</span> <a name="eeq_Qin"><span class="id" title="lemma">eeq_Qin</span></a>: <span class="id" title="keyword">∀</span> {<span class="id" title="var">x</span> <span class="id" title="var">y</span> <span class="id" title="var">A</span> <span class="id" title="var">p</span>} {<span class="id" title="var">h</span>: <a class="idref" href="NFO.Morphism.html#A"><span class="id" title="variable">A</span></a> <a class="idref" href="http://coq.inria.fr/distrib/V8.11.2/stdlib//Coq.Init.Logic.html#1c93e43e07fbeaeb6a625cb6614beb5d"><span class="id" title="notation">→</span></a> <span class="id" title="var">_</span>},<br/>
+&nbsp;&nbsp;<a class="idref" href="NFO.Morphism.html#x"><span class="id" title="variable">x</span></a> <a class="idref" href="NFO.Eq.html#2596316c6f2ff161cb03e25fd8914390"><span class="id" title="notation">==</span></a> <a class="idref" href="NFO.Morphism.html#y"><span class="id" title="variable">y</span></a> <a class="idref" href="http://coq.inria.fr/distrib/V8.11.2/stdlib//Coq.Init.Logic.html#1c93e43e07fbeaeb6a625cb6614beb5d"><span class="id" title="notation">→</span></a> <a class="idref" href="NFO.In.html#Qin"><span class="id" title="definition">Qin</span></a> <a class="idref" href="NFO.Morphism.html#x"><span class="id" title="variable">x</span></a> <a class="idref" href="NFO.Morphism.html#h"><span class="id" title="variable">h</span></a> <a class="idref" href="NFO.Morphism.html#p"><span class="id" title="variable">p</span></a> <a class="idref" href="http://coq.inria.fr/distrib/V8.11.2/stdlib//Coq.Init.Logic.html#4bfb4f2d0721ba668e3a802ab1b745a1"><span class="id" title="notation">↔</span></a> <a class="idref" href="NFO.In.html#Qin"><span class="id" title="definition">Qin</span></a> <a class="idref" href="NFO.Morphism.html#y"><span class="id" title="variable">y</span></a> <a class="idref" href="NFO.Morphism.html#h"><span class="id" title="variable">h</span></a> <a class="idref" href="NFO.Morphism.html#p"><span class="id" title="variable">p</span></a>.<br/>
+</div>
+</div>
+
+<div id="footer">
+<hr/><a href="index.html">Index</a><hr/>This page has been generated by <a href="http://coq.inria.fr/">coqdoc</a>
+</div>
+
+</div>
+
+</body>
+</html>
