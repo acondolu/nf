@@ -1,5 +1,5 @@
 SHELL := /bin/bash
-.PHONY: all clean remake coq coq-clean latex-clean coq-nf2 coq-nfo coq-common coq-doc
+.PHONY: all clean remake coq coq-clean latex-clean coq-nf2 coq-nfo coq-common coq-doc coq-stats
 .DEFAULT_GOAL := all
 
 # SHELL=/bin/bash
@@ -35,6 +35,9 @@ coq-doc: coq
 	rm -rf doc
 	mkdir doc
 	coqdoc --light --lib-subtitles -d doc -R "src" "" --verbose --utf8 src/**/*.v
+
+coq-stats:
+	find src -name '*.v' | xargs wc -l
 
 # LaTeX
 
