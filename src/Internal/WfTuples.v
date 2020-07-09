@@ -5,7 +5,7 @@ Require Import Relation_Definitions.
 Require Import Relation_Operators.
 From Coq.Wellfounded Require Import Inclusion Inverse_Image Transitive_Closure.
 Add LoadPath "src".
-From Internal Require Import WfMult2.
+From Internal Require Import WfDecr.
 (* end hide *)
 
 Section MultiWf.
