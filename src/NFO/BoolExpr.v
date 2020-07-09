@@ -163,7 +163,7 @@ Lemma eeq_boolean_trans {X Y Z W} {R : W -> W -> Prop} {f1 f2 f3}
   -> eeq_boolean (R ⨀ (f1 ⨁ f3)) (map inl e1) (map inr e3).
 Proof.
   Ltac lr H3 x :=
-    repeat destruct H3; [left | right]; exists x; split; eauto.
+    repeat destruct H3; [left | right]; exists x; split; eauto with misc.
   intros sym trans. unfold eeq_boolean. intros.
   pose (invert_sum P (fun a b => R (f1 a) (f2 b)) (fun a b => R (f2 b) (f3 a))) as g.
   specialize H with (P ∘ inl ⨁ g).
@@ -179,31 +179,31 @@ Proof.
   -- repeat destruct H3; unfold compR, sumF in H1.
       specialize H1 with (inl x) (inl x0). 
       unfold sumF in H2.
-      apply (fun X Y Z => H1 (trans _ _ _ X Y Z H2 (sym _ _ H4))); auto.
+      apply (fun X Y Z => H1 (trans _ _ _ X Y Z H2 (sym _ _ H4))); eauto with misc.
       specialize H1 with (inl x) (inr x0).
       unfold sumF in H2.
-      apply (fun X Y Z => H1 (trans _ _ _ X Y Z H2 H4)); auto.
+      apply (fun X Y Z => H1 (trans _ _ _ X Y Z H2 H4)); eauto with misc.
   - split; intro.
     -- repeat destruct H3; unfold compR, sumF in H2.
       specialize H1 with (inl x) (inl x0).
-      apply (fun X Y Z => H1 (trans _ _ _ X Y Z (sym _ _ H2) (sym _ _ H4))); auto.
+      apply (fun X Y Z => H1 (trans _ _ _ X Y Z (sym _ _ H2) (sym _ _ H4))); eauto with misc.
       specialize H1 with (inl x) (inr x0).
-      apply (fun X Y Z => H1 (trans _ _ _ X Y Z (sym _ _ H2) H4)); auto.
+      apply (fun X Y Z => H1 (trans _ _ _ X Y Z (sym _ _ H2) H4)); eauto with misc.
     -- left. exists x. auto.
   - split; intro; lr H3 x.
   - split; intro; lr H3 x.
   - split; intro.
     -- repeat destruct H3.
       specialize H1 with (inl x) (inr z). unfold compR, sumF in H1.
-      apply H1; eauto.
+      apply H1; eauto with misc.
       specialize H1 with (inr x) (inr z). unfold compR, sumF in H1.
-      apply H1; eauto.
+      apply H1; eauto with misc.
     -- right. exists z. split; auto. 
   - split; intro.
   -- right. exists z. split; auto. 
   -- repeat destruct H3.
      specialize H1 with (inl x) (inr z). unfold compR, sumF in H1.
-     apply H1; eauto.
+     apply H1; eauto with misc.
      specialize H1 with (inr x) (inr z). unfold compR, sumF in H1. 
-     apply H1; eauto.
+     apply H1; eauto with misc.
 Qed.
