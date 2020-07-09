@@ -63,23 +63,18 @@ Proof.
   apply xor_iff. tauto.
   apply Bin_bexpr.
 Qed.
+Global Opaque iin.
 
 (** Some random results about Qin *)
-
-
-(* TODO: check if this is enum + select? NO! *)
-Definition mk_low {X} P f :=
-  S { x: X & P (f x) } False
-      (fun ex => f (projT1 ex)) (False_rect _) Bot.
 
 (** FIX & RENAME *)
 Lemma xxx {X Y} {p} {h: X -> _} {f: set -> Prop} (g: Y -> _):
   respects eeq f ->
-    Qin (mk_low f (h ⨁ g)) h p <-> eval (map f (map h p)).
+    Qin (subsetA f (h ⨁ g)) h p <-> eval (map f (map h p)).
 Proof.
   intro. induction p; simpl map; simpl Qin; simpl eval.
   - tauto.
-  - unfold mk_low. rewrite iin_unfold. simpl. unfold Ain.
+  - unfold subsetA, enum. rewrite iin_unfold. simpl. unfold Ain.
     setoid_rewrite (ex_T_resp _ _ _ H).
     cut (exists x0, (h ⨁ g) x0 == h x). intro.
     unfold xor. tauto. exists (inl x). reflexivity.
@@ -89,11 +84,11 @@ Qed.
 
 Lemma xxx_r {X Y} {p} {h: X -> _} {f: set -> Prop} (g: Y -> _):
   respects eeq f ->
-  Qin (mk_low f (g ⨁ h)) h p <-> eval (map f (map h p)).
+  Qin (subsetA f (g ⨁ h)) h p <-> eval (map f (map h p)).
 Proof.
   intro. induction p; simpl; simpl map; simpl Qin; simpl eval.
   - tauto.
-  - unfold mk_low. rewrite iin_unfold. simpl. unfold Ain.
+  - unfold subsetA, enum. rewrite iin_unfold. simpl. unfold Ain.
     setoid_rewrite (ex_T_resp _ _ _ H).
     cut (exists x0, (g ⨁ h) x0 == h x). intro.
     unfold xor. tauto. exists (inr x). reflexivity.

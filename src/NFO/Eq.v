@@ -1,12 +1,15 @@
 (** * NFO.Eq : Equality of NFO sets *)
-
+(**
+    This module defines [eeq] (in symbols, [==]), the
+    equality relation between NFO sets.
+*)
 From Coq.Program Require Import Basics Combinators.
 Require Import Setoid Morphisms.
-(* begin hide *) Add LoadPath "src". (* end hide *)
+(* begin hide *)
+Add LoadPath "src".
+(* end hide *)
 From Internal Require Import Misc FunExt.
 From NFO Require Import BoolExpr Model Wf.
-
-(** TODO: rename to Eq *)
 
 (* begin hide *)
 Local Definition eeq' : set * set -> Prop.
@@ -36,13 +39,13 @@ Definition eeq : set -> set -> Prop.
 Defined.
 Infix "==" := eeq (at level 50) : type_scope.
 
-(** * "Aczel" equality: *)
+(** * Aczel part *)
 Definition Aeq {X Y} f g :=
-  (forall x: X, exists y, f x == g y) /\ forall y: Y, exists x, f x == g y.
+  (forall x: X, exists y, f x == g y) /\ (forall y: Y, exists x, f x == g y).
 
-(* Temporary unfolding lemma for eeq. 
+(** Temporary unfolding lemma for eeq. 
    It will be improved in eeq_unfold. *)
-Local Lemma eeq_def : forall x y,
+Lemma eeq_def : forall x y,
   eeq x y <-> match x, y with S X Y f g e, S X' Y' f' g' e' =>
     Aeq f f'
       /\
@@ -62,6 +65,7 @@ Proof.
     -- apply eeq_boolean_ext. unfold FunExt.extR. intros.
        destruct x, y; repeat rewrite H0; tauto.
 Qed.
+Global Opaque eeq.
 
 (** eeq is an equivalence relation: *)
 Lemma eeq_refl: forall x, eeq x x.

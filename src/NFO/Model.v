@@ -29,3 +29,10 @@ Admitted.
 Lemma le_g_rew : 
 forall X Y f g e x, g x < @S X Y f g e <-> True.
 Admitted. *)
+
+(** TODO: Axuliary INTRODUCE! *)
+Definition enum {X} f := S X False f (False_rect _) Bot.
+
+(* TODO: rename to subsetA *)
+Definition subsetA {X} P f :=
+  @enum { x: X & P (f x) } (fun ex => f (projT1 ex)).

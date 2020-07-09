@@ -11,9 +11,6 @@ From Internal Require Import Misc FunExt.
 From NFO Require Import Xor BoolExpr Model Eq In Morphism.
 (* end hide *)
 
-(** TODO: Axuliary INTRODUCE! *)
-Definition enum {X} f := S X False f (False_rect _) Bot.
-
 Lemma Ain_sum {X Y} (f: X + Y -> set) x:
   Ain x f <-> Ain x (compose f inl) \/ Ain x (compose f inr).
 Proof.

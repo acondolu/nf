@@ -44,6 +44,12 @@ End Unfold.
 
 (** In the following sections, we define notations and resolving lemmas
     for our well-founded orders on 2-tuples and 3-tuples.
+
+    The trivial lemmas are just named with sequences of letters, denoting
+    which elements of the tuple decrease to which positions.
+    These lemmas are registered in the [Wff] scope, so that obligations
+    coming from fixpoint definitions can be solved automatically using
+    [eauto with Wff].
 *)
 
 Section Two.
@@ -131,3 +137,5 @@ Proof. auto3. Qed.
 End Three.
 
 Hint Resolve AAA AAB AAC ABA ABB ABC ACA ACB ACC BAA BAB BAC BBA BBB BBC BCA BCB BCC CAA CAB CAC CBA CBB CBC CCA CCB CCC : Wff.
+
+Global Opaque le22 le33.
