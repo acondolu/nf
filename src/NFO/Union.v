@@ -4,7 +4,7 @@
 From Coq.Program Require Import Basics Combinators.
 Add LoadPath "src".
 From Internal Require Import Misc FunExt.
-From NFO Require Import Xor BoolExpr Model Eeq Iin Morphs Sets Ext.
+From NFO Require Import Xor BoolExpr Model Eq In Morphism Sets Ext.
 (* end hide *)
 
 (** The union of NFO sets is defined as follows:

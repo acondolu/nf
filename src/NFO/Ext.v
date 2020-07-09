@@ -6,7 +6,7 @@
 (* begin hide *)
 Add LoadPath "src".
 From Internal Require Import Misc FunExt.
-From NFO Require Import BoolExpr Model Wff Eeq Iin Sets Xor Morphs.
+From NFO Require Import BoolExpr Model Wf Eq In Sets Xor Morphism.
 (* end hide *)
 
 

@@ -8,7 +8,7 @@
 From Coq.Program Require Import Basics Combinators.
 Add LoadPath "src".
 From Internal Require Import Misc FunExt.
-From NFO Require Import Xor BoolExpr Model Eeq Iin Morphs.
+From NFO Require Import Xor BoolExpr Model Eq In Morphism.
 (* end hide *)
 
 (** TODO: Axuliary INTRODUCE! *)

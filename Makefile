@@ -16,7 +16,7 @@ coq: coq-common coq-nf2 coq-nfo
 
 coq-common: src/Internal/Misc.vos src/Internal/List.vos src/Internal/WfMult.vos src/Internal/WfMult2.vos src/Internal/WfTuples.vos src/Internal/FunExt.vos
 coq-nf2: src/NF2/Model.vos src/NF2/Ext.vos src/NF2/Sets.vos src/NF2/ZF.vos src/NF2/Classp.vos
-coq-nfo : src/NFO/Xor.vos src/NFO/BoolExpr.vos src/NFO/Model.vos src/NFO/Wff.vos src/NFO/Eeq.vos src/NFO/Iin.vos src/NFO/Morphs.vos src/NFO/Sets.vos src/NFO/Ext.vos src/NFO/Union.vos src/NFO/Main.vos
+coq-nfo : src/NFO/Xor.vos src/NFO/BoolExpr.vos src/NFO/Model.vos src/NFO/Wf.vos src/NFO/Eq.vos src/NFO/In.vos src/NFO/Morphism.vos src/NFO/Sets.vos src/NFO/Ext.vos src/NFO/Union.vos src/NFO/Main.vos
 
 src/Internal/%.vos: src/Internal/%.v
 	coqc -R src "" $<

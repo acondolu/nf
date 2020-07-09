@@ -3,7 +3,7 @@ Require Import Coq.Wellfounded.Lexicographic_Product.
 Require Import Relation_Operators.
 Add LoadPath "src".
 From Internal Require Import Misc FunExt.
-From NFO Require Import BoolExpr Model Eeq Xor Wff.
+From NFO Require Import BoolExpr Model Eq Xor Wf.
 (* end hide *)
 
 (** TODO: rename to In *)

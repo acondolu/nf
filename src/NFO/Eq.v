@@ -1,11 +1,10 @@
-(** * NFO.Eeq : Equality of NFO sets *)
-(* begin hide *)
+(** * NFO.Eq : Equality of NFO sets *)
+
 From Coq.Program Require Import Basics Combinators.
 Require Import Setoid Morphisms.
-Add LoadPath "src".
-From Internal Require Import List Misc FunExt WfMult2.
-From NFO Require Import BoolExpr Model Wff.
-(* end hide *)
+(* begin hide *) Add LoadPath "src". (* end hide *)
+From Internal Require Import Misc FunExt.
+From NFO Require Import BoolExpr Model Wf.
 
 (** TODO: rename to Eq *)
 

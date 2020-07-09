@@ -14,7 +14,7 @@ Require Export Setoid.
 
 Add LoadPath "src".
 From Internal Require Import Misc FunExt.
-From NFO Require Import BoolExpr Model Wff Eeq Iin Xor.
+From NFO Require Import BoolExpr Model Wf Eq In Xor.
 (* end hide *)
 
 (** * Proofs for Aeq and Ain *)

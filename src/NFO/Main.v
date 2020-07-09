@@ -2,7 +2,7 @@
 (* begin hide *)
 Require Import Setoid Morphisms.
 Add LoadPath "src".
-From NFO Require Eeq Model Iin Ext Union.
+From NFO Require Model Eq In Ext Union.
 (* end hide *)
 
 (** The type of NFO sets *)
@@ -13,32 +13,32 @@ Notation 𝓥 := set.
 
 (** Equality *)
 Definition eeq : 𝓥 -> 𝓥 -> Prop.
-  exact Eeq.eeq.
+  exact Eq.eeq.
 Defined.
 Infix "≡" := eeq (at level 50).
 
 Definition eeq_refl : forall x: 𝓥, x ≡ x.
-  exact @Eeq.eeq_refl.
+  exact @Eq.eeq_refl.
 Qed.
 Definition eeq_sym : forall x y: 𝓥, x ≡ y -> y ≡ x.
-  exact @Eeq.eeq_sym.
+  exact @Eq.eeq_sym.
 Qed.
 Definition eeq_trans : forall x y z: 𝓥, x ≡ y -> y ≡ z -> x ≡ z.
-  exact @Eeq.eeq_trans.
+  exact @Eq.eeq_trans.
 Qed.
 
 Instance nfo_setoid : Equivalence eeq.
-  exact Eeq.nfo_setoid.
+  exact Eq.nfo_setoid.
 Qed.
 
 (** Set membership *)
 Definition iin : 𝓥 -> 𝓥 -> Prop.
-  exact Iin.iin.
+  exact In.iin.
 Defined.
 Infix "∈" := iin (at level 85).
 
 Add Morphism iin with signature eeq ==> eeq ==> iff as iin_morphism.
-  exact Morphs.iin_mor.
+  exact Morphism.iin_mor.
 Qed.
 
 (** Extensionality *)
