@@ -25,7 +25,7 @@ Qed.
 Definition select {X Y} (f: X -> Y) (P: X -> Prop) : {x: X & P x} -> Y
   := fun x => f (projT1 x).
 
-(** Composition of a predicate with a function (in both its arguments): *)
+(** Composition of a predicate with a function (on both its arguments): *)
 Definition compR {X Y Z} (R: Y -> Y -> Z) (f: X -> Y) x x' := R (f x) (f x').
 Infix "⨀" := compR (at level 79).
 
