@@ -17,8 +17,9 @@ Variable A: Type.
 Variable R: A -> A -> Prop.
 Variable Rwf: well_founded R.
 Variable F: forall x, (forall y, R y x -> Prop) -> Prop.
-Variable F_ext: forall x (f g: forall y, R y x -> Prop),
-  (forall y (p:R y x), f y p <-> g y p) -> F x f <-> F x g.
+Variable F_ext:
+  forall x (f g: forall y, R y x -> Prop),
+    (forall y (p: R y x), f y p <-> g y p) -> F x f <-> F x g.
 
 (** Variant of [Coq.Init.Wf.Fix_F_inv] using [iff] instead of [eq].
     Necessary to prove [Fix_iff] below.
@@ -31,7 +32,7 @@ Proof.
   apply F_ext; auto.
 Qed.
 
-(** Variant of [Coq.Init.Wf.Fix_eq] *)
+(** Variant of [Coq.Init.Wf.Fix_eq]: *)
 Lemma Fix_iff x:
   Fix Rwf (fun _ => Prop) F x <-> F x (fun y _ => Fix Rwf (fun _ => Prop) F y).
 Proof.
@@ -41,8 +42,8 @@ Qed.
 
 End Unfold.
 
-(** In the following sections, we define notations and auxiliary lemmas
-    for our well-founded order on 2-tuples and 3-tuples.
+(** In the following sections, we define notations and resolving lemmas
+    for our well-founded orders on 2-tuples and 3-tuples.
 *)
 
 Section Two.
