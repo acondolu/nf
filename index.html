@@ -707,7 +707,11 @@
 <a href="NFO.Ext.html#weak_regularity">weak_regularity</a> [lemma, in <a href="NFO.Ext.html">NFO.Ext</a>]<br/>
 <a href="NF2.Ext.html#weak_regularity">weak_regularity</a> [lemma, in <a href="NF2.Ext.html">NF2.Ext</a>]<br/>
 <a href="NFO.Wf.html">Wf</a> [library]<br/>
+<a href="Internal.WfDecr.html#WfDecr">WfDecr</a> [section, in <a href="Internal.WfDecr.html">Internal.WfDecr</a>]<br/>
 <a href="Internal.WfDecr.html">WfDecr</a> [library]<br/>
+<a href="Internal.WfDecr.html#WfDecr.A">WfDecr.A</a> [variable, in <a href="Internal.WfDecr.html">Internal.WfDecr</a>]<br/>
+<a href="Internal.WfDecr.html#WfDecr.lt">WfDecr.lt</a> [variable, in <a href="Internal.WfDecr.html">Internal.WfDecr</a>]<br/>
+<a href="Internal.WfDecr.html#WfDecr.wf_lt">WfDecr.wf_lt</a> [variable, in <a href="Internal.WfDecr.html">Internal.WfDecr</a>]<br/>
 <a href="Internal.WfMult.html#WfMult">WfMult</a> [section, in <a href="Internal.WfMult.html">Internal.WfMult</a>]<br/>
 <a href="Internal.WfMult.html">WfMult</a> [library]<br/>
 <a href="Internal.WfMult.html#WfMult.A">WfMult.A</a> [variable, in <a href="Internal.WfMult.html">Internal.WfMult</a>]<br/>
@@ -715,10 +719,6 @@
 <a href="Internal.WfMult.html#WfMult.wf_lt">WfMult.wf_lt</a> [variable, in <a href="Internal.WfMult.html">Internal.WfMult</a>]<br/>
 <a href="Internal.WfMult.html#bf33f9a4b19f9562f2af10f25ac60e4e">_ <<< _</a> [notation, in <a href="Internal.WfMult.html">Internal.WfMult</a>]<br/>
 <a href="Internal.WfMult.html#9eae522055d9d507d320f7c001dfe4c7">_ << _</a> [notation, in <a href="Internal.WfMult.html">Internal.WfMult</a>]<br/>
-<a href="Internal.WfDecr.html#WfMult2">WfMult2</a> [section, in <a href="Internal.WfDecr.html">Internal.WfDecr</a>]<br/>
-<a href="Internal.WfDecr.html#WfMult2.A">WfMult2.A</a> [variable, in <a href="Internal.WfDecr.html">Internal.WfDecr</a>]<br/>
-<a href="Internal.WfDecr.html#WfMult2.lt">WfMult2.lt</a> [variable, in <a href="Internal.WfDecr.html">Internal.WfDecr</a>]<br/>
-<a href="Internal.WfDecr.html#WfMult2.wf_lt">WfMult2.wf_lt</a> [variable, in <a href="Internal.WfDecr.html">Internal.WfDecr</a>]<br/>
 <a href="Internal.WfTuples.html">WfTuples</a> [library]<br/>
 <a href="Internal.WfMult.html#wf_trans">wf_trans</a> [definition, in <a href="Internal.WfMult.html">Internal.WfMult</a>]<br/>
 <a href="Internal.WfMult.html#wf_perm">wf_perm</a> [lemma, in <a href="Internal.WfMult.html">Internal.WfMult</a>]<br/>
@@ -829,12 +829,12 @@
 <a href="NFO.Wf.html#Unfold.R">Unfold.R</a> [in <a href="NFO.Wf.html">NFO.Wf</a>]<br/>
 <a href="NFO.Wf.html#Unfold.Rwf">Unfold.Rwf</a> [in <a href="NFO.Wf.html">NFO.Wf</a>]<br/>
 <br/><br/><a name="variable_W"></a><h2>W </h2>
+<a href="Internal.WfDecr.html#WfDecr.A">WfDecr.A</a> [in <a href="Internal.WfDecr.html">Internal.WfDecr</a>]<br/>
+<a href="Internal.WfDecr.html#WfDecr.lt">WfDecr.lt</a> [in <a href="Internal.WfDecr.html">Internal.WfDecr</a>]<br/>
+<a href="Internal.WfDecr.html#WfDecr.wf_lt">WfDecr.wf_lt</a> [in <a href="Internal.WfDecr.html">Internal.WfDecr</a>]<br/>
 <a href="Internal.WfMult.html#WfMult.A">WfMult.A</a> [in <a href="Internal.WfMult.html">Internal.WfMult</a>]<br/>
 <a href="Internal.WfMult.html#WfMult.lt">WfMult.lt</a> [in <a href="Internal.WfMult.html">Internal.WfMult</a>]<br/>
 <a href="Internal.WfMult.html#WfMult.wf_lt">WfMult.wf_lt</a> [in <a href="Internal.WfMult.html">Internal.WfMult</a>]<br/>
-<a href="Internal.WfDecr.html#WfMult2.A">WfMult2.A</a> [in <a href="Internal.WfDecr.html">Internal.WfDecr</a>]<br/>
-<a href="Internal.WfDecr.html#WfMult2.lt">WfMult2.lt</a> [in <a href="Internal.WfDecr.html">Internal.WfDecr</a>]<br/>
-<a href="Internal.WfDecr.html#WfMult2.wf_lt">WfMult2.wf_lt</a> [in <a href="Internal.WfDecr.html">Internal.WfDecr</a>]<br/>
 <br/><br/><hr/>
 <h1>Library Index</h1>
 <a name="library_B"></a><h2>B </h2>
@@ -1128,8 +1128,8 @@
 <br/><br/><a name="section_U"></a><h2>U </h2>
 <a href="NFO.Wf.html#Unfold">Unfold</a> [in <a href="NFO.Wf.html">NFO.Wf</a>]<br/>
 <br/><br/><a name="section_W"></a><h2>W </h2>
+<a href="Internal.WfDecr.html#WfDecr">WfDecr</a> [in <a href="Internal.WfDecr.html">Internal.WfDecr</a>]<br/>
 <a href="Internal.WfMult.html#WfMult">WfMult</a> [in <a href="Internal.WfMult.html">Internal.WfMult</a>]<br/>
-<a href="Internal.WfDecr.html#WfMult2">WfMult2</a> [in <a href="Internal.WfDecr.html">Internal.WfDecr</a>]<br/>
 <br/><br/><hr/>
 <h1>Instance Index</h1>
 <a name="instance_N"></a><h2>N </h2>
