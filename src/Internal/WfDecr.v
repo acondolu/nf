@@ -8,17 +8,22 @@ From Coq.Wellfounded Require Import Inclusion Inverse_Image Transitive_Closure.
 Add LoadPath "src".
 From Internal Require Import Misc List WfMult.
 
-Section WfMult2.
+Section WfDecr.
 
 Variable A : Type.
 Variable lt : A -> A -> Prop.
 Variable wf_lt: well_founded lt.
 
-(* decr' *)
-
+(** We define the [decr] binary relation between lists, such that
+    [decr l l'] iff every element of [l] is smaller than some
+    element of [l'].
+*)
 Definition decr' l l': Type :=
   prod (l' <> nil) (allT (fun a => someT (lt a) l') l).
 
+(** [gather l l' a p] gathers all the elements of [l] that
+    are smaller than the first element of [l'].
+*)
 Definition gather: forall l l' a',
   allT (fun a => someT (lt a) (a' :: l')) l -> list A.
   induction l; simpl; intros.
@@ -28,6 +33,7 @@ Definition gather: forall l l' a',
     apply (IHl _ _ a0).
 Defined.
 
+(** Correctness of [gather]: *)
 Lemma gather_ok: forall {l l' a'},
   forall (p: allT (fun a => someT (lt a) (a' :: l')) l),
     allT (fun a => lt a a') (gather _ _ _ p).
@@ -39,6 +45,10 @@ Proof.
   - apply IHl.
 Qed.
 
+(** [drop l l' a p] drops all the elements from [l] that
+    are smaller than the first element of [l'].
+    (It is the dual of [gather]).
+*)
 Definition drop: forall l l' a',
   allT (fun a => someT (lt a) (a' :: l')) l -> list A.
   induction l; simpl; intros.
@@ -49,6 +59,7 @@ Definition drop: forall l l' a',
     apply (IHl _ _ a0).
 Defined.
 
+(** Correctness sof [drop]: *)
 Lemma drop_ok: forall {l l' a'},
   forall (p: allT (fun a => someT (lt a) (a' :: l')) l),
     allT (fun a => someT (lt a) l') (drop _ _ _ p).
@@ -60,6 +71,9 @@ Proof.
   - split. auto. apply IHl.
 Qed.
 
+(** We use [gather] and [drop] to permutate a list [l],
+    moving all the gathered elements to the head of the list:
+*)
 Lemma gather_drop_ok: forall l l' a a0,
  Permutation l (gather l l' a a0 ++ drop l l' a a0).
 Proof.
@@ -70,6 +84,13 @@ Proof.
   apply perm_skip. auto. apply Permutation_middle.
 Qed.
 
+(** An important result. We show that [decr] is contained in the
+    transitive closure of the permutation order between lists
+    defined in [Internal.WfMult].
+
+    To prove it, we proceed by induction on [l'], using [gather_drop_ok]
+    and concluding by i.h.
+*)
 Theorem decr'_ok: forall l l', decr' l l' -> lltlp lt l l'.
 Proof.
   unfold decr'. intros l l'. revert l. induction l'; intros; destruct X.
@@ -92,6 +113,9 @@ Qed.
 
 Definition decr (a b: list A) : Prop := ☐ (decr' a b).
 
+(** As a consequence, we easily obtain well-foundedness
+    of [decr] by the inclusion theorem.
+*)
 Theorem wf_decr: well_founded decr.
 Proof.
   apply (wf_incl _ _ (lltlp lt)).
@@ -115,6 +139,9 @@ Proof.
     apply all_PROP. auto.
 Qed.
 
+(** A nicer unfolding lemma for [decr], using [In]
+    instead of [all] and [some]. We won't use this version, thought.
+*)
 Lemma decr_unfold_2 : forall l l',
   decr l l'
     <-> l' <> nil /\ forall x, In x l -> exists y, In y l' /\ lt x y.
@@ -126,6 +153,6 @@ Proof.
   apply all_ext. intros. apply some_In.
 Qed.
 
-End WfMult2.
+End WfDecr.
 
 Arguments decr : default implicits.
