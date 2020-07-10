@@ -1,7 +1,7 @@
 (** * NFO.Sets : Set operators *)
 (** In this module we define the following set constructors:
     emptyset, complement, singleton, co-singleton, exclusive
-    disjunction. Union is defined separately, in NFO.Union.
+    disjunction. Union is defined separately, in [NFO.Union].
 *)
 
 (* begin hide *)
@@ -10,6 +10,51 @@ Add LoadPath "src".
 From Internal Require Import Misc FunExt.
 From NFO Require Import Xor BoolExpr Model Eq In Morphism.
 (* end hide *)
+
+(** Empty set *)
+Definition emptyset := enum (False_rect _).
+
+Theorem emptyset_ok: forall x, ~ iin x emptyset.
+Proof.
+  unfold emptyset, enum. intro x. rewrite iin_unfold.
+  unfold Ain, xor. setoid_rewrite ex_false. tauto.
+Qed.
+
+(** Set complement *)
+Definition compl x := match x with
+  S X Y f g e => S X Y f g (Not e)
+end.
+
+Theorem compl_ok: forall x y,
+  iin x (compl y) <-> (iin x y -> False).
+Proof.
+  intros. destruct y. unfold compl. repeat rewrite iin_unfold.
+  simpl Qin. setoid_rewrite xor_neg_commute. tauto.
+Qed.
+
+(** Singleton *)
+Definition sin x := enum (fun _: unit => x).
+
+Theorem sin_ok: forall x y, iin x (sin y) <-> eeq y x.
+Proof.
+  intros x y. unfold sin, enum. rewrite iin_unfold.
+  simpl Qin. unfold Ain. setoid_rewrite ex_unit.
+  apply xor_false_r.
+Qed.
+
+(** Co-singleton *)
+Definition cosin x := S False unit (False_rect _) (fun _ => x) (Atom tt).
+
+Theorem cosin_ok: forall x y, iin x (cosin y) <-> iin y x.
+Proof.
+  intros. unfold cosin. rewrite iin_unfold.
+  setoid_rewrite ex_false. simpl Qin. apply xor_false_l.
+Qed.
+
+(** Exclusive disjunction *)
+
+(** First, some auxiliary things *)
+
 
 Lemma Ain_sum {X Y} (f: X + Y -> set) x:
   Ain x f <-> Ain x (compose f inl) \/ Ain x (compose f inr).
@@ -52,47 +97,7 @@ Proof.
   - setoid_rewrite IHp1. setoid_rewrite IHp2. tauto.
 Qed.
 
-(** Empty set *)
-Definition emptyset := enum (False_rect _).
-
-Lemma emptyset_ok: forall x, ~ iin x emptyset.
-Proof.
-  unfold emptyset, enum. intro x. rewrite iin_unfold.
-  unfold Ain, xor. setoid_rewrite ex_false. tauto.
-Qed.
-
-(** Set complement *)
-Definition compl x := match x with
-  S X Y f g e => S X Y f g (Not e)
-end.
-
-Lemma compl_ok: forall x y,
-  iin x (compl y) <-> (iin x y -> False).
-Proof.
-  intros. destruct y. unfold compl. repeat rewrite iin_unfold.
-  simpl Qin. setoid_rewrite xor_neg_commute. tauto.
-Qed.
-
-(** Singleton *)
-Definition sin x := enum (fun _: unit => x).
-
-Lemma sin_ok: forall x y, iin x (sin y) <-> eeq y x.
-Proof.
-  intros x y. unfold sin, enum. rewrite iin_unfold.
-  simpl Qin. unfold Ain. setoid_rewrite ex_unit.
-  apply xor_false_r.
-Qed.
-
-(** Co-singleton *)
-Definition cosin x := S False unit (False_rect _) (fun _ => x) (Atom tt).
-
-Lemma cosin_ok: forall x y, iin x (cosin y) <-> iin y x.
-Proof.
-  intros. unfold cosin. rewrite iin_unfold.
-  setoid_rewrite ex_false. simpl Qin. apply xor_false_l.
-Qed.
-
-(** Exclusive disjunction *)
+(** Xor of A-sets: *)
 
 Definition AXor {X Y} (f: X -> set) (g: Y -> set)
   : sum {x & ~ exists y, eeq (g y) (f x)} {y & ~ exists x, eeq (f x) (g y)} -> set
@@ -105,7 +110,8 @@ Infix "^A^" := AXor (at level 50).
 Local Definition boolean_xor {A} (p p': @boolean A) :=
   Or (Not (Or p (Not p'))) (Not (Or (Not p) p')).
 
-(** Rename! *)
+(** TODO: Rename! *)
+(** Xor of B-sets: *)
 Definition QXor B C := 
   match B, C with S X Y f g e, S X' Y' f' g' e' =>
     S _ _
@@ -135,7 +141,7 @@ Proof.
   unfold xor. tauto.
 Qed.
 
-Lemma xor_ok: forall x y z,
+Theorem xor_ok: forall x y z,
   iin z (QXor x y) <-> iin z x ⊻ iin z y.
 Proof.
   intros. destruct x, y. unfold QXor. setoid_rewrite iin_unfold.
@@ -144,11 +150,11 @@ Proof.
 Qed.
 
 (** LOL *)
-Lemma xor_empty: forall x y, (x ^^^ y) == emptyset -> x == y.
+Theorem xor_empty: forall x y, (x ^^^ y) == emptyset -> x == y.
   destruct x, y. unfold QXor, emptyset. setoid_rewrite eeq_unfold.
   apply and_morph.
   - setoid_rewrite Aext. setoid_rewrite AXor_ok.
-    cut (forall x, Ain x (False_rect set) <-> False). intro.
+    cut (forall x, Ain x (False_rect _) <-> False). intro.
     setoid_rewrite H. split; intros. split; try tauto. apply xor_neg. auto.
     apply xor_neg. rewrite H0. tauto. 
     unfold Ain. firstorder.

@@ -75,10 +75,10 @@ Proof.
 Qed.
 
 Lemma Aeq_AXor_select {Y} (h: Y -> set) sig sig' :
-respects (eeq ⨀ h) sig
-  -> respects (eeq ⨀ h) sig'
-    -> Aeq
-        (select h sig ^A^ select h sig')
+  respects (eeq ⨀ h) sig
+    -> respects (eeq ⨀ h) sig'
+      -> Aeq
+          (select h sig ^A^ select h sig')
           (select h (sig' ^^ sig)).
 Proof.
   intros. apply Aext. intro. rewrite AXor_ok.

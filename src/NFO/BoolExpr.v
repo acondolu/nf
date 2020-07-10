@@ -62,7 +62,7 @@ Lemma map_compose_inr {X Y Z} {f: X -> Z} {g: Y -> Z} {e}:
   map ((f ⨁ g) ∘ inr) e = map g e.
 Proof. induction e; simpl; auto. Qed.
 
-(** * Semantics of boolean expressions *)
+(** * Semantics *)
 
 (** Two boolean expressions are equivalent iff 
     they evaluate to equivalent values with respect to every
@@ -81,7 +81,11 @@ Proof.
 Qed.
 
 
-(** Gosh: important. This shows that the initial approximation of eeq is correct. *)
+(** This lemma is quite important: it will show that our initial
+    definition of NFO equality is correct.
+    TODO: Because: we wanted to write the rhs, but we had to write
+    the lhs in order to be able to prove termination.
+*)
 Lemma eeq_boolean_simpl:
   forall {X Y Z R} {f: X -> Z} {g: Y -> Z} {e e'},
     Equivalence R ->

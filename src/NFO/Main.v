@@ -1,4 +1,8 @@
 (** * NFO.Main : NFO Interface *)
+(** This module gathers the important definitions
+    and theorems about NFO.
+*)
+
 (* begin hide *)
 Require Import Setoid Morphisms.
 Add LoadPath "src".
