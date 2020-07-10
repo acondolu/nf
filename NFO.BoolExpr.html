@@ -24,7 +24,7 @@
 </div>
 
 <div class="doc">
-A boolean expression with atoms of type X 
+A boolean expression with atoms of type <span class="inlinecode"><span class="id" title="var">X</span></span> 
 </div>
 <div class="code">
 <span class="id" title="keyword">Inductive</span> <a name="boolean"><span class="id" title="inductive">boolean</span></a> {<span class="id" title="var">X</span>} :=<br/>
@@ -38,7 +38,9 @@ A boolean expression with atoms of type X
 </div>
 
 <div class="doc">
-Evaluate a boolean expression of Props to a Prop 
+Evaluate a boolean expression to a <span class="inlinecode"><span class="id" title="keyword">Prop</span></span> 
+    when the atoms are of type <span class="inlinecode"><span class="id" title="keyword">Prop</span></span>:
+
 </div>
 <div class="code">
 <span class="id" title="keyword">Fixpoint</span> <a name="eval"><span class="id" title="definition">eval</span></a> (<span class="id" title="var">e</span>: <a class="idref" href="NFO.BoolExpr.html#boolean"><span class="id" title="inductive">boolean</span></a>) := <span class="id" title="keyword">match</span> <a class="idref" href="NFO.BoolExpr.html#e"><span class="id" title="variable">e</span></a> <span class="id" title="keyword">with</span><br/>
@@ -53,7 +55,7 @@ Evaluate a boolean expression of Props to a Prop
 </div>
 
 <div class="doc">
-Maps the atoms in a boolean expression 
+Map the atoms in a boolean expression: 
 </div>
 <div class="code">
 <span class="id" title="keyword">Fixpoint</span> <a name="map"><span class="id" title="definition">map</span></a> {<span class="id" title="var">X</span> <span class="id" title="var">Y</span>} (<span class="id" title="var">f</span>: <a class="idref" href="NFO.BoolExpr.html#X"><span class="id" title="variable">X</span></a> <a class="idref" href="http://coq.inria.fr/distrib/V8.11.2/stdlib//Coq.Init.Logic.html#1c93e43e07fbeaeb6a625cb6614beb5d"><span class="id" title="notation">→</span></a> <a class="idref" href="NFO.BoolExpr.html#Y"><span class="id" title="variable">Y</span></a>) (<span class="id" title="var">e</span>: <a class="idref" href="NFO.BoolExpr.html#boolean"><span class="id" title="inductive">boolean</span></a>) : <a class="idref" href="NFO.BoolExpr.html#boolean"><span class="id" title="inductive">boolean</span></a> :=<br/>
@@ -98,11 +100,11 @@ The usual property about compositions of maps:
 </div>
 
 <div class="doc">
-<a name="lab4"></a><h1 class="section">Extensional equality of boolean expressions</h1>
+<a name="lab4"></a><h1 class="section">Semantics of boolean expressions</h1>
 
 <div class="paragraph"> </div>
 
- Two boolean expressions are extensionally equal iff 
+ Two boolean expressions are equivalent iff 
     they evaluate to equivalent values with respect to every
     truth assignment P. However, not every assignment is allowed.
     Here we consider only P's that respect the binary relation
