@@ -71,7 +71,7 @@ Global Opaque eeq.
 Lemma eeq_refl: forall x, eeq x x.
 Proof.
   induction x. rewrite eeq_def. unfold Aeq. split.
-  split; intro; eauto. eauto with Bool.
+  split; intro; eauto. apply eeq_boolean_refl. auto.
 Qed.
 Hint Immediate eeq_refl : Eeq.
 

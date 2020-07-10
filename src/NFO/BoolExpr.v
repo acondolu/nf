@@ -5,7 +5,7 @@ Add LoadPath "src".
 From Internal Require Import Misc FunExt.
 (* end hide *)
 
-(** A boolean expression with atoms of type X *)
+(** A boolean expression with atoms of type [X] *)
 Inductive boolean {X} :=
   | Bot : boolean
   | Atom : X -> boolean
@@ -13,7 +13,9 @@ Inductive boolean {X} :=
   | Or : boolean -> boolean -> boolean
 .
 
-(** Evaluate a boolean expression of Props to a Prop *)
+(** Evaluate a boolean expression to a [Prop] 
+    when the atoms are of type [Prop]:
+*)
 Fixpoint eval (e: boolean) := match e with
   | Atom p => p
   | Bot => False
@@ -22,7 +24,7 @@ Fixpoint eval (e: boolean) := match e with
 end.
 Notation "⟦ e ⟧" := (eval e).
 
-(** Maps the atoms in a boolean expression *)
+(** Map the atoms in a boolean expression: *)
 Fixpoint map {X Y} (f: X -> Y) (e: boolean) : boolean :=
 match e with
   | Atom a => Atom (f a)
@@ -60,9 +62,9 @@ Lemma map_compose_inr {X Y Z} {f: X -> Z} {g: Y -> Z} {e}:
   map ((f ⨁ g) ∘ inr) e = map g e.
 Proof. induction e; simpl; auto. Qed.
 
-(** * Extensional equality of boolean expressions *)
+(** * Semantics of boolean expressions *)
 
-(** Two boolean expressions are extensionally equal iff 
+(** Two boolean expressions are equivalent iff 
     they evaluate to equivalent values with respect to every
     truth assignment P. However, not every assignment is allowed.
     Here we consider only P's that respect the binary relation
@@ -135,7 +137,6 @@ Proof.
   induction e; simpl; try tauto; eauto.
   apply H0. apply H.
 Qed.
-Hint Resolve eeq_boolean_refl : Bool.
 
 Lemma eeq_boolean_sym {X Y Z R} {f: X -> Z} {g: Y -> Z} {e e'} :
   eeq_boolean (R ⨀ (f ⨁ g)) (map inl e) (map inr e')
