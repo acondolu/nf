@@ -71,18 +71,24 @@ Admitted.
   9. WELL-ORDERING
   *)
 
-(* Definition pow X (f: X -> set) :=
-  @Pos (X -> Prop)
-    (fun s => @Pos { x : X & s x }
-      (fun ex => match ex with existT _ x _ => f x end) )
+  From Internal Require Import Misc.
+Definition pow {X} (f: X -> set) :=
+  Pos (fun P => Pos (select f P))
 .
-
 Definition subset x y := forall z, iin z x -> iin z y.
 
-Lemma subset_ex : forall x, isZF x -> exists y, forall z, iin z y <-> subset z x.
+Lemma subset_ex : forall x, pos x -> exists y, forall z, iin z y <-> subset z x.
 Proof.
   intros. destruct x; destruct H.
-  exists (pow X s). intros. split.
-  - unfold pow. simpl iin. intro. destruct H. unfold subset.
-  intros. simpl iin.
-  destruct z. destruct H0. destruct H. *)
+  exists (pow s). intros. unfold pow. simpl. split.
+  - intros. destruct H, z, H. unfold subset. simpl iin.
+  intros. destruct H1. destruct (H0 x0), x1. unfold select in H2. simpl in H2. exists x1. transitivity (s0 x0); auto. 
+  - destruct z.
+  -- intros. exists (fun x => exists x0, s x ≡ s0 x0).
+     unfold select. split; intros.
+     destruct x, e. exists x0. assumption.
+     cut (exists x : X0, s0 x ≡ s0 y). intro. destruct (H (s0 y) H0). rewrite (ex_T (fun x => exists y, _) (fun x => s x ≡ s0 y)).
+     firstorder.
+     exists y. reflexivity.
+  -- admit. (* requires similar to ext, but only one implication *)
+Admitted.
