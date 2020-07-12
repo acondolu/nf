@@ -1,8 +1,8 @@
-Require Import Coq.Logic.Classical_Prop.
-Require Import Coq.Logic.Classical_Pred_Type.
+From Coq.Logic Require Import Classical_Prop Classical_Pred_Type.
 
 Add LoadPath "src".
 Require Import NF2.Model.
+From Internal Require Import Misc.
 
 (* The universal set *)
 Definition 𝒰 : 𝓥 := Neg (fun x: False => match x with end).
@@ -28,7 +28,7 @@ Lemma neg_ok : forall x y, x ∈ neg y <-> (x ∈ y -> False).
 Proof.
   intros x y. destruct y; simpl neg; simpl iin; split.
   - intros. destruct H0. apply (H x0 H0).
-  - intros. apply H. exists x0. assumption.
+  - intros H x0 H'. apply H. exists x0. assumption.
   - intros. destruct H. apply (H0 x0). assumption.
   - apply not_all_not_ex.
 Qed.
@@ -45,17 +45,13 @@ Qed.
 
 (* Some auxiliary definitions: *)
 
-Definition minus {X Y} f g : { x : X & forall y : Y, ~ (f x ≡ g y) } -> 𝓥 :=
-    (fun ex => match ex with existT _ x _ => f x end)
-.
-Definition meet {X Y} f g : { x : X & exists y : Y, f x ≡ g y } -> 𝓥 :=
-    (fun ex => match ex with existT _ x _ => f x end)
-.
-Definition join {X Y} f g : X + Y -> 𝓥 :=
-  fun z => match z with
-  | inl x => f x
-  | inr y => g y
-  end.
+Definition minus {X Y} f g : { x : X & forall y : Y, ~ (g y ≡ f x) } -> 𝓥 :=
+  select f (fun x => forall y, ~ (g y ≡ f x)).
+
+Definition meet {X Y} f g : { x : X & exists y : Y, g y ≡ f x } -> 𝓥 :=
+  select f (fun x => exists y, g y ≡ f x).
+
+Definition join {X Y} f g : X + Y -> 𝓥 := f ⨁ g.
 
 (* Intersection *)
 Definition cap x y := match x, y with
@@ -68,36 +64,26 @@ Notation "A ⋂ B" := (cap A B) (at level 85).
 
 Lemma cap1: forall x y z, z ∈ cap x y -> (z ∈ x) /\ (z ∈ y).
 Proof.
-  destruct x; destruct y.
-  - simpl cap. unfold meet. simpl iin. intros. destruct H. destruct x. destruct e. split. exists x. exact H. exists x0. apply (fun X => eeq_trans X H). apply eeq_sym. assumption.
-  - simpl cap. unfold minus. simpl iin. intros. destruct H. destruct x.
-    split. exists x. assumption. intros. apply (n x0). apply (eeq_trans H). apply eeq_sym. assumption.
-  - simpl cap. unfold minus. simpl iin. intros. destruct H. destruct x. 
-    split. intros. apply (n x0). apply (eeq_trans H). apply eeq_sym. assumption.
-    exists x. assumption.
-  - simpl cap. unfold join. simpl iin. intros. split; intros.
-    apply (H (inl x)). assumption. apply (H (inr x)). assumption.
+  destruct x; destruct y; simpl; intro z.
+  - rewrite (ex_T (fun x => exists y, _) (fun x => s x ≡ z)). intros. destruct H, H, H. split. firstorder. rewrite<- H in H0. firstorder.
+  - rewrite (ex_T (fun x => forall y, ~ _) (fun x => s x ≡ z)).
+    intros. destruct H, H. firstorder. rewrite<- H0. apply H.
+  - rewrite (ex_T (fun x => forall y, ~ _) (fun x => s0 x ≡ z)).
+    intros. destruct H, H. setoid_rewrite H0 in H. firstorder.
+  - unfold join. firstorder. apply (H (inl x)). apply (H (inr x)). 
 Qed.
 
 Lemma cap2: forall x y z, (z ∈ x) /\ (z ∈ y) -> z ∈ cap x y.
 Proof.
-  destruct x; destruct y; intros; destruct H; simpl cap; simpl iin.
-  - unfold meet. simpl iin in *. destruct H. destruct H0.
-    pose proof (eeq_trans H (eeq_sym H0)).
-    exists (existT _ x (ex_intro _ x0 H1)). assumption.
-  - unfold minus. simpl iin in *. destruct H.
-    cut (forall x0 : X0, ~ (s x ≡ s0 x0)).
-    intro. exists (existT _ x H1). assumption.
-    intros x0 H1. apply (H0 x0). apply (fun X => eeq_trans X H).
-    apply eeq_sym. assumption.
-  - unfold minus. simpl iin in *. destruct H0 as [x0 H0].
-    cut (forall x : X, ~ (s0 x0 ≡ s x)).
-    intro. exists (existT _ x0 H1). assumption.
-    intros x H1. apply (H x). apply (fun X => eeq_trans X H0).
-    apply eeq_sym. assumption.
-  - unfold join. simpl iin in *. intros. destruct x.
-    -- apply (H x). assumption.
-    -- apply (H0 x). assumption.
+  destruct x; destruct y; simpl; unfold meet, minus, join, select; intros; destruct H.
+  - rewrite (ex_T (fun x => exists y, _) (fun x => s x ≡ z)).
+    destruct H, H0. exists x. firstorder. exists x0. transitivity z. auto. symmetry. auto.
+  - rewrite (ex_T (fun x => forall y, ~ _) (fun x => s x ≡ z)).
+    destruct H. exists x. firstorder. simpl in H0. setoid_rewrite<- H in H0. apply (H0 y).
+  - rewrite (ex_T (fun x => forall y, ~ _) (fun x => s0 x ≡ z)).
+    destruct H0. exists x. firstorder. setoid_rewrite H0.
+    apply (H y).
+  - destruct x. apply (H x). apply (H0 x).
 Qed.
 
 Lemma cap_ok : forall x y z, z ∈ (x ⋂ y) <-> (z ∈ x) /\ (z ∈ y).
@@ -109,9 +95,5 @@ Notation "A ∪ B" := (cup A B) (at level 85).
 
 Lemma cup_ok : forall x y z, z ∈ (x ∪ y) <-> (z ∈ x) \/ (z ∈ y).
 Proof.
-  intros. unfold cup. split; intros.
-  - rewrite neg_ok in H. rewrite cap_ok in H. rewrite neg_ok in H. rewrite neg_ok in H.
-    apply NNPP. intro. apply H. split; intro; apply H0. left. assumption. right. assumption.
-  - apply neg_ok. intro. rewrite cap_ok in H0. rewrite neg_ok in H0. rewrite neg_ok in H0. destruct H0.
-    destruct H. apply H0. assumption. apply H1. assumption.
+  intros. unfold cup. rewrite neg_ok. rewrite cap_ok. repeat rewrite neg_ok. tauto.
 Qed. 

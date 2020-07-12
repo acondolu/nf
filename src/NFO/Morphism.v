@@ -1,4 +1,4 @@
-(** * NFO.Morphs : Morphisms *)
+(** * NFO.Morphism : Morphisms *)
 (** In this module we prove that:
     - iin, Ain, Bin are eeq-morphisms.
     - Ain and Bin are respectively Aeq- and Beq-morphisms.

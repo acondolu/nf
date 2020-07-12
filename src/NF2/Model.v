@@ -10,6 +10,8 @@
   This model is inspired by the standard formalisation of
   ZF set theory in Coq. Visit https://github.com/coq-contribs/zfc.
 *)
+Require Import Setoid Morphisms.
+
 Inductive set :=
   | Pos : forall {X}, (X -> set) -> set
   | Neg : forall {X}, (X -> set) -> set
@@ -30,7 +32,7 @@ Notation "A ≡ B" := (eeq A B) (at level 85).
 (* Set membership *)
 Definition iin a b := match b with
   | Pos f => exists x, eeq (f x) a
-  | Neg f => forall x, eeq (f x) a -> False
+  | Neg f => forall x, ~ eeq (f x) a
 end.
 Notation "A ∈ B" := (iin A B) (at level 85).
 
@@ -67,6 +69,12 @@ Proof.
   -- destruct (H0 a). exists x. apply (H _ _ H2).
 Qed.
 
+(** Register (set, eeq) as a setoid: *)
+Instance nfo_setoid : Equivalence eeq.
+Proof.
+  constructor. exact @eeq_refl. exact @eeq_sym. exact @eeq_trans.
+Qed.
+
 (* Equality is sound w.r.t. membership *)
 
 Lemma in_sound_right:
@@ -74,7 +82,7 @@ Lemma in_sound_right:
 Proof.
   destruct x; destruct y; simpl eeq; intros e z; simpl iin; simpl eeq; intros; destruct e.
   - destruct H. destruct (H0 x). exists x0. pose proof (eeq_sym H2). apply (eeq_trans H3 H).
-  - destruct (H2 x). pose proof (eeq_trans H3 H0). apply (H _ H4).
+  - destruct (H1 x). intro. apply (H x0). transitivity (s0 x); auto.
 Qed.
 
 Lemma in_sound_left:
@@ -82,7 +90,7 @@ Lemma in_sound_left:
 Proof.
   destruct z; simpl iin; intros.
   - destruct H0. exists x0. apply (eeq_trans H0 H).
-  - apply (H0 x0). apply (eeq_trans H1 (eeq_sym H)).
+  - rewrite<- H. apply (H0 x0).
 Qed.
 
 (* We call 'low' the sets having a positive extension *)

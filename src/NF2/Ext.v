@@ -2,6 +2,7 @@ Require Import Coq.Logic.Classical_Prop.
 Require Import Coq.Logic.Classical_Pred_Type.
 Add LoadPath "src".
 Require Import NF2.Model.
+From Internal Require Import Misc.
 
 (*
   The axiom of regularity does not hold in this set theory.
@@ -34,28 +35,24 @@ Qed.
   contradiction.
 *)
 
-Definition f_sum {X Y} f g (z: X + Y): set := match z with
-  | inl x => f x
-  | inr y => g y
-end.
 
-Lemma pos_univ: forall X f Y g, (forall z, iin z (@Pos X f) <-> iin z (@Neg Y g)) -> (forall z, iin z (@Pos (X + Y) (f_sum f g))).
+Lemma pos_univ: forall X f Y g, (forall z, iin z (@Pos X f) <-> iin z (@Neg Y g)) -> (forall z, iin z (@Pos (X + Y) (f ⨁ g))).
 Proof.
   intros. simpl iin in *.
   pose proof (H z).
   destruct (classic (exists x : X, eeq (f x) z)).
-  - destruct H1. exists (inl x). simpl f_sum. assumption.
+  - destruct H1. exists (inl x). tauto.
   - cut (exists y : Y, eeq (g y) z). intro. destruct H2.
     exists (inr x). auto.
   destruct H0. pose proof (fun T => H1 (H2 T)).
-  apply NNPP. intro. apply H3. intros. apply H4. exists x. auto.
+  apply NNPP. intro. apply H3. intros x HH. apply H4. exists x. auto.
 Qed.
 
 Lemma pos_neg_ext_neq: forall X f Y g, (forall z, iin z (@Pos X f) <-> iin z (@Neg Y g)) -> False.
 Proof.
   intros.
   pose proof (pos_univ _ _ _ _ H).
-  apply (@weak_regularity (@Pos (X + Y) (f_sum f g)) I). apply H0.
+  apply (@weak_regularity (@Pos (X + Y) (f ⨁ g)) I). apply H0.
 Qed.
 
 Lemma ext_pos: forall X f Y g, (forall z, iin z (@Pos X f) <-> iin z (@Pos Y g)) -> eeq (@Pos X f) (@Pos Y g).
