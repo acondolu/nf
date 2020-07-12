@@ -1,26 +1,26 @@
 Add LoadPath "src".
 From NF2 Require Import Model Sets.
 
-(* When sets are low *)
-Lemma low_empty: low Ø.
-Proof. simpl low. auto. Qed.
+(* When sets are pos *)
+Lemma pos_empty: pos Ø.
+Proof. simpl pos. auto. Qed.
 
-Lemma low_sing : forall x, low (sing x).
-Proof. unfold sing; simpl low; tauto. Qed.
+Lemma pos_sing : forall x, pos (sing x).
+Proof. unfold sing; simpl pos; tauto. Qed.
 
-Lemma low_neg: forall x, low (neg x) <-> ~ low x.
+Lemma pos_neg: forall x, pos (neg x) <-> ~ pos x.
 Proof.
-  destruct x; unfold neg; simpl low; tauto.
+  destruct x; unfold neg; simpl pos; tauto.
 Qed.
 
-Lemma low_cap: forall x y, low (x ⋂ y) <-> (low x \/ low y).
+Lemma pos_cap: forall x y, pos (x ⋂ y) <-> (pos x \/ pos y).
 Proof.
-  destruct x; destruct y; simpl cap; simpl low; tauto.
+  destruct x; destruct y; simpl cap; simpl pos; tauto.
 Qed.
 
-Lemma low_cup: forall x y, low (x ∪ y) <-> (low x /\ low y).
+Lemma pos_cup: forall x y, pos (x ∪ y) <-> (pos x /\ pos y).
 Proof.
-  destruct x; destruct y; simpl cap; simpl low; tauto.
+  destruct x; destruct y; simpl cap; simpl pos; tauto.
 Qed.
 
 (* ZF axioms *)
@@ -36,15 +36,15 @@ Qed.
       Yes for positive sets and sound formulas.
 *)
 Definition pred_sound P := forall x y, x ≡ y -> (P x <-> P y).
-Definition compr: forall {x}, low x -> (set -> Prop) -> set.
+Definition compr: forall {x}, pos x -> (set -> Prop) -> set.
 Proof.
-  intros x low P.
-  destruct x; destruct low.
+  intros x pos P.
+  destruct x; destruct pos.
   apply (@Pos {x : X & P (s x)}).
   intro. destruct X0. exact (s x).
 Defined.
 
-Lemma compr_ok: forall {x} P (pos: low x) (pok: pred_sound P), forall z, iin z (compr pos P) <-> iin z x /\ P z.
+Lemma compr_ok: forall {x} P (pos: pos x) (pok: pred_sound P), forall z, iin z (compr pos P) <-> iin z x /\ P z.
 Proof.
   intros. destruct x; destruct pos.
   simpl iin. split; intros; destruct H.

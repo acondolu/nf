@@ -9,15 +9,13 @@ From Internal Require Import Misc.
   The weaker form of regularity holds, and its necessary to 
   prove extensionality: a positive set does cannot belong to itself.
 *)
-Theorem weak_regularity: forall {x}, low x -> iin x x -> False.
+Theorem weak_regularity: forall {x}, pos x -> iin x x -> False.
 Proof.
-  induction x; simpl low; auto; intros.
+  induction x; simpl pos; auto; intros.
   destruct H1. apply (H x).
   - destruct (s x); simpl; auto.
   - assert (H1' := H1). destruct (s x) in H1; destruct H1.
-    destruct (H2 x).
-    apply (in_sound_left (eeq_sym H1')).
-    apply (in_sound_right (eeq_sym H1')).
+    destruct (H2 x). rewrite H1'.
     exists x. assumption. 
 Qed.
 

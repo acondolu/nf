@@ -1,4 +1,4 @@
-(*
+(**
   There are two kinds of sets:
   - Sets with positive extension ("low"), which correspond to the
     usual understanding of sets as collections of 
@@ -69,13 +69,13 @@ Proof.
   -- destruct (H0 a). exists x. apply (H _ _ H2).
 Qed.
 
-(** Register (set, eeq) as a setoid: *)
+(** Register [set, eeq] as a setoid: *)
 Instance nfo_setoid : Equivalence eeq.
 Proof.
   constructor. exact @eeq_refl. exact @eeq_sym. exact @eeq_trans.
 Qed.
 
-(* Equality is sound w.r.t. membership *)
+(** Equality is sound w.r.t. membership *)
 
 Lemma in_sound_right:
   forall {x y}, x ≡ y -> forall z, z ∈ x -> z ∈ y.
@@ -93,8 +93,15 @@ Proof.
   - rewrite<- H. apply (H0 x0).
 Qed.
 
-(* We call 'low' the sets having a positive extension *)
-Definition low x := match x with
+Add Morphism iin with signature eeq ==> eeq ==> iff as iin_mor.
+Proof.
+  intros. split; intro.
+  - apply (in_sound_left H). apply (in_sound_right H0). auto.
+  - apply (in_sound_left (eeq_sym H)). apply (in_sound_right (eeq_sym H0)). auto.
+Qed.
+
+(** We call [pos] the sets having a positive extension *)
+Definition pos x := match x with
   | Pos _ => True
   | Neg _ => False
 end.
