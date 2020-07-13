@@ -1,5 +1,7 @@
 \documentclass[sigplan,10pt,anonymous,review]{acmart}\settopmatter{printfolios=true,printccs=false,printacmref=false}
 
+\input{macros.tex}
+
 %%
 %% \BibTeX command to typeset BibTeX logo in the docs
 \AtBeginDocument{%
@@ -51,7 +53,7 @@
 %%
 %% The "title" command has an optional parameter,
 %% allowing the author to define a "short title" to be used in page headers.
-\title{Formalising a Simple Set Theory with Universal Set}
+\title{Universal Sets in Coq}
 
 %%
 %% The "author" command and its associated commands are used to define
@@ -82,12 +84,7 @@
 %% The abstract is a short summary of the work to be presented in the
 %% article.
 \begin{abstract}
-  A clear and well-documented \LaTeX\ document is presented as an
-  article formatted for publication by ACM in a conference proceedings
-  or journal publication. Based on the ``acmart'' document class, this
-  article presents and explains many of the common variations, as well
-  as many of the formatting elements an author may use in the
-  preparation of the documentation of their work.
+  New Foundations (\NF) is \dots
 \end{abstract}
 
 % %%
@@ -136,11 +133,34 @@
 
 \section{Introduction}
 
-\section{New Foundations}
+\section{Roadmap}
+Dire:
+\begin{itemize}
+  \item 
+  weak fragments
+  \item shallow embedding
+\end{itemize}
 
-\section{Formalisation}
-\subsection{NF2}
-\subsection{NFO}
+\section{\NFTWO}
+\section{\NFO}
+
+Test:
+
+\begin{coqdoccode}
+  \coqdocnoindent
+  \Definition{} \coqdocdefinition{extP} \{\coqdocvar{X}\} \coqdocvar{P} \coqdocvar{Q} := \Math\forall \Var{x}: \Var{X}, \Var{P} \Var{x} \Math\leftrightarrow{} \Var{Q} \Var{x}.\coqdoceol
+  \coqdocemptyline
+\end{coqdoccode}
+% \coqdocindent{1.00em}
+
+\begin{figure}
+  \begin{itemize}
+    % \item Equality: $x \equiv y \to x \in z \to y \in z$
+    \item Extensionality: $x = y \leftrightarrow \forall z. \, z \in x \leftrightarrow z \in y$
+    \item Comprehension: $\exists x.\, \forall y.\, y \in x \leftrightarrow \varphi(y)$
+  \end{itemize}
+  \[ \varphi ::= \bot \mid x = y \mid x \in y \mid \neg \varphi \mid \varphi \lor \varphi \mid \exists x.\, \varphi\]
+\end{figure}
 
 \section{Discussion}
 \subsection{Related Work}
@@ -161,7 +181,7 @@
 %% The next two lines define the bibliography style to be used, and
 %% the bibliography file.
 \bibliographystyle{ACM-Reference-Format}
-% \bibliography{sample-base}
+\bibliography{main}
 
 %%
 %% If your work has an appendix, this is the place to put it.
