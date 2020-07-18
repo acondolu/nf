@@ -124,7 +124,7 @@
 %%
 %% Keywords. The author(s) should pick words that accurately describe
 %% the work being presented. Separate the keywords with commas.
-\keywords{datasets, neural networks, gaze detection, text tagging}
+\keywords{set theory, new foundations, universal set}
 
 %%
 %% This command processes the author and affiliation and title
@@ -133,6 +133,39 @@
 
 \section{Introduction}
 
+\TODO{history}
+
+\paragraph{Set theories.}
+A \emph{set theory} is a first-order theory including the usual logical connectives ($\neg$, $\land$, $\lor$, $\to$, $\leftrightarrow$) plus two relation symbols: \emph{equality} ($=$) and \emph{membership} ($\in$).
+\TODO{descrivere $\in$}
+%Formulas of set theory are thus described by the following grammar: 
+
+% \[\begin{array}{rrl}
+%   \varphi & \grameq & \bot \mid \neg \varphi \mid \varphi \land \varphi \mid \varphi \lor \varphi \\
+%   & & \mid \forall x.\, \varphi \mid \exists x.\, \varphi \\
+%   & & \mid x = y \mid x \in y .
+% % \TODO{Oh no, we need $\leftrightarrow$!!!}
+% \end{array}\]
+
+\TODO{dire che insiemi sono un container che non ha altra struttura interna se non gli insiemi che contiene}
+Sets are supposed to be uniquely identified by their \emph{extension}, meaning by the elements that they contain. The \emph{axiom of extensionality} formalizes this by requiring that two sets are equal if and only if they have the same extension, \ie{} they are extensionally equal:
+
+\[\forall x y.\, x = y \leftrightarrow \forall z. \, z \in x \leftrightarrow z \in y \quad \tag{\SetExt} \]
+
+\TODO{another point about extension is the identification between sets (citizens) and unary predicates over sets:}
+
+\[ \exists x.\, \forall y.\, y \in x \leftrightarrow \varphi  \quad \tag{\SetCompr} \]
+
+Where $x$ does not occur in $\varphi$.
+Set comprehension is actually an axiom schema: one adds an axiom for every $\varphi$. \TODO{but which $\varphi$s are allowed? NOT ALL!}
+When all $\varphi$s, unrestricted comprehension. \TODO{But Russel's paradox $\varphi \defeq y \not\in y$.}
+
+Problem is circularity.
+
+There are different ways to restrict \SetCompr{} so to avoid Russel's paradox. \ZF's way is to only allow comprehension of \emph{guarded} proposition, of the form $\varphi \defeq y \in z \land \varphi'$ for some $z\neq y$ and an arbitrary $\varphi'$ . No self-reference because carve only subsets of already existing sets, and other axioms of ZF force sets to be well-founded (\dots).
+
+NF's way is \dots to restrict the axiom of comprehension to only \emph{stratified} formulas \ldots In this way, the paradoxical formula 
+
 \section{Roadmap}
 Dire:
 \begin{itemize}
@@ -140,6 +173,17 @@ Dire:
   weak fragments
   \item shallow embedding
 \end{itemize}
+
+\begin{figure}
+  \begin{itemize}
+    \item \textsc{(EmptySet)} $z \not\in \emptyset $
+    \item \textsc{(Complement)} $z \in \bar x \leftrightarrow z \not\in x$
+    \item \textsc{(Union)} $z \in x \cup y \leftrightarrow z \in x \lor z \in y$
+    \item \textsc{(Singleton)} $z \in \{x\} \leftrightarrow x = z$
+    \item \textsc{(Essence)} $z \in \Essence{x} \leftrightarrow x \in z$
+  \end{itemize}
+  \caption{???}
+\end{figure}
 
 \section{\NFTWO}
 \section{\NFO}
@@ -153,14 +197,6 @@ Test:
 \end{coqdoccode}
 % \coqdocindent{1.00em}
 
-\begin{figure}
-  \begin{itemize}
-    % \item Equality: $x \equiv y \to x \in z \to y \in z$
-    \item Extensionality: $x = y \leftrightarrow \forall z. \, z \in x \leftrightarrow z \in y$
-    \item Comprehension: $\exists x.\, \forall y.\, y \in x \leftrightarrow \varphi(y)$
-  \end{itemize}
-  \[ \varphi ::= \bot \mid x = y \mid x \in y \mid \neg \varphi \mid \varphi \lor \varphi \mid \exists x.\, \varphi\]
-\end{figure}
 
 \section{Discussion}
 \subsection{Related Work}
