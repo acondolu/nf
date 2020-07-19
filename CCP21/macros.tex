@@ -1,13 +1,20 @@
+% !TEX root = main.tex
+
 \usepackage[color]{coqdoc}
 \usepackage{amsmath,amssymb}
+\usepackage{bbold}
+% \usepackage{fancyvrb}
 
 % AUX
 \newcommand\TODO[1]{\textcolor{red}{{\bf TODO} #1}}
+
+\newcommand\Placeholder{\textcolor{gray}{\bullet}}
 
 % LOGIC
 \newcommand\grameq{::=}
 \newcommand\defeq{:=}
 \newcommand\ie{\textit{i.e.}}
+\newcommand\fv[1]{\mathrm{fv}(#1)}
 
 % NF
 \newcommand\ZF{{\sf ZF}}
@@ -16,7 +23,21 @@
 \newcommand\NFO{{\tt NFO}}
 \newcommand\SetCompr{{\textsc{SetCompr}}}
 \newcommand\SetExt{{\textsc{SetExt}}}
-\newcommand\Essence[1]{\mathcal{B}(#1)}
+
+\newcommand\sctag[1]{\tag{\textsc{#1}}}
+
+\newcommand\Essence[1]{\Verb{Ess}\,#1}
+% \newcommand\Sing[1]{\Verb{\{}#1\Verb{\}}}
+% \newcommand\Sing[1]{\Verb{Sing}\,#1}
+\newcommand\Sing[1]{\Verb{\{} #1 \Verb{\}}}
+\newcommand\Complement[1]{\overline{#1}}
+% \newcommand\Complement[1]{\Verb{Compl}\,#1}
+\newcommand\Char[1]{\Verb{Char}_{#1}} % \mathbb{1}
+\newcommand\Compr[2]{\Verb{\{} #1 ~\Verb{|}~ #2 \Verb{\}}}
+\newcommand\Universe{U}
+\newcommand\Verb[1]{\text{\texttt{#1}}}
+% \newcommand\Union[2]{#1 \mathrel{\Verb{U}} #2}
+\newcommand\Union[2]{#1 \cup #2}
 
 % COQ DOC
 \newcommand\Definition{\coqdockw{Definition}}

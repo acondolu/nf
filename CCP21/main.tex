@@ -136,8 +136,8 @@
 \TODO{history}
 
 \paragraph{Set theories.}
-A \emph{set theory} is a first-order theory including the usual logical connectives ($\neg$, $\land$, $\lor$, $\to$, $\leftrightarrow$) plus two relation symbols: \emph{equality} ($=$) and \emph{membership} ($\in$).
-\TODO{descrivere $\in$}
+A \emph{set theory} is a first-order theory having the usual logical connectives ($\neg$, $\land$, $\lor$, $\to$, $\leftrightarrow$, $\exists$, $\forall$) plus two relation symbols: \emph{equality} ($=$) and \emph{membership} ($\in$). Variables (like $x,y,z,\ldots$) range over sets, and a set is meant to be a collection of sets itself: $x \in y$ means that $x$ is a \emph{member} or an \emph{element} of $y$.
+
 %Formulas of set theory are thus described by the following grammar: 
 
 % \[\begin{array}{rrl}
@@ -147,24 +147,72 @@ A \emph{set theory} is a first-order theory including the usual logical connecti
 % % \TODO{Oh no, we need $\leftrightarrow$!!!}
 % \end{array}\]
 
-\TODO{dire che insiemi sono un container che non ha altra struttura interna se non gli insiemi che contiene}
-Sets are supposed to be uniquely identified by their \emph{extension}, meaning by the elements that they contain. The \emph{axiom of extensionality} formalizes this by requiring that two sets are equal if and only if they have the same extension, \ie{} they are extensionally equal:
+Sets do not posses any internal structure other than their \emph{extension}, \ie{} the elements they contain. The \emph{axiom of extensionality} formalizes this fact by requiring that sets having the same extension are equal:
 
 \[\forall x y.\, x = y \leftrightarrow \forall z. \, z \in x \leftrightarrow z \in y \quad \tag{\SetExt} \]
 
+A natural way to express a collection of sets is by taking all sets that satisfy a given predicate; this collection is expressed in symbols by $\Compr x \varphi$, reading ``the collection of all $x$'s such that $\varphi$ holds''. \TODO{for instance, ordinals, \dots} A very desirable ??? would be that collections specified in this way are sets themselves, as the \emph{axiom of comprehension} requires:
+
+\[ \exists y.\, \forall x.\, x \in y \leftrightarrow \varphi  \quad \tag{\SetCompr} \]
+
 \TODO{another point about extension is the identification between sets (citizens) and unary predicates over sets:}
 
-\[ \exists x.\, \forall y.\, y \in x \leftrightarrow \varphi  \quad \tag{\SetCompr} \]
-
-Where $x$ does not occur in $\varphi$.
+Where $y$ does not occur in $\varphi$. \TODO{denote with $\Compr x \varphi$ the set which witnesses the existential $\exists y\ldots$, which is then unique by extensionality \dots }
 Set comprehension is actually an axiom schema: one adds an axiom for every $\varphi$. \TODO{but which $\varphi$s are allowed? NOT ALL!}
-When all $\varphi$s, unrestricted comprehension. \TODO{But Russel's paradox $\varphi \defeq y \not\in y$.}
+When all $\varphi$s, unrestricted comprehension. \TODO{But Russel's paradox $\varphi \defeq x \not\in x$.\footnotemark{}}
+
+\footnotetext{By $x\not\in x$ we mean $\neg {(x \in x)}$. }
 
 Problem is circularity.
 
-There are different ways to restrict \SetCompr{} so to avoid Russel's paradox. \ZF's way is to only allow comprehension of \emph{guarded} proposition, of the form $\varphi \defeq y \in z \land \varphi'$ for some $z\neq y$ and an arbitrary $\varphi'$ . No self-reference because carve only subsets of already existing sets, and other axioms of ZF force sets to be well-founded (\dots).
+There are different ways to restrict \SetCompr{} so to avoid Russel's paradox. \ZF's way is to only allow comprehension of \emph{guarded} proposition, of the form $x \in y \land \varphi$ for some $y\neq x$ and an arbitrary $\varphi$. \TODO{$\Compr {x \in y} \varphi$} No self-reference because carve only subsets of already existing sets, and other axioms of ZF force sets to be well-founded (\dots).
 
-NF's way is \dots to restrict the axiom of comprehension to only \emph{stratified} formulas \ldots In this way, the paradoxical formula 
+NF's way is \dots to restrict the axiom of comprehension to only \emph{stratified} formulas \ldots
+The axiom of stratified comprehension does not force the collection $\Compr x {x \not\in x}$ to be a set, because the formula $x \not\in x$ is not stratified. As a consequence, Russel's paradox is avoided.
+
+\subsection{Quantifier-free Comprehension}
+
+In this paper we consider a weaker variant of full-fledged \NF{}, obtained by restricting the axiom of stratified comprehension to only quantifier-free formulas. By a rapid inspection, we note that when $\varphi$ is quantifier-free, $\varphi$ is stratified if and only if it does not contain ``$x \in x$'' as a subformula.
+\TODO{This means that we can drop the definition of stratified, and use a much simplier syntactic restriction on $\varphi$'s}
+
+To understand what operations on sets are necessary to , we 
+We show that $\Compr x \varphi$ for $\varphi$ stratified and quantifier-free can . We blah by cases on the structure of $\varphi$:
+
+\[\begin{array}{lcll}
+  \Compr x {x = x} & = & \Universe \\
+  \Compr x {x = y} & = & \Sing y \\
+  \Compr x {y = x} & = & \Sing y \\
+  \Compr x {y = z} & = &
+    \begin{cases}
+      \Universe & \text{if } y = z\\
+      \Complement \Universe & \text{otherwise}
+    \end{cases}\\
+  \Compr x {x \in y} & = & y \\
+  \Compr x {y \in x} & = & \Essence y \\
+  \Compr x {y \in z} & = &
+    \begin{cases}
+      \Universe & \text{if } y \in z\\
+      \Complement \Universe & \text{otherwise}
+    \end{cases}\\
+  \Compr x {\neg\varphi} & = & \Complement {\Compr x \varphi} \\
+  \Compr x {\varphi \lor \varphi'} & = & \Union {\Compr x \varphi} {\Compr x {\varphi'}} \\
+\end{array}\]
+
+where $x\neq y$ and $x \neq z$ above.
+
+where
+\begin{itemize} \renewcommand\labelitemi{--}
+  \item $\Universe$ is the universal set, \ie{} the set containing all sets:
+    \[ \forall z.\, z \in \Universe \sctag{Universe} \]
+  \item $\Complement \Placeholder$ is the set complement:
+    \[ \forall z.\, z \in \Complement x \leftrightarrow \neg (z \in x) \sctag{Complement}\]
+  \item $\Union \Placeholder \Placeholder$ is the set union:
+    \[ \forall z.\, z \in \Union x y \leftrightarrow z \in x \lor z \in y \sctag{Union} \]
+  \item $\Sing\Placeholder$ is singleton:
+    \[ \forall z.\, z \in \Sing x \leftrightarrow x = z \sctag{Singleton} \]
+  \item $\Essence\Placeholder$ is the essence:
+    \[ \forall z.\, z \in \Essence{x} \leftrightarrow x \in z \sctag{Essence} \]
+\end{itemize}
 
 \section{Roadmap}
 Dire:
@@ -173,17 +221,6 @@ Dire:
   weak fragments
   \item shallow embedding
 \end{itemize}
-
-\begin{figure}
-  \begin{itemize}
-    \item \textsc{(EmptySet)} $z \not\in \emptyset $
-    \item \textsc{(Complement)} $z \in \bar x \leftrightarrow z \not\in x$
-    \item \textsc{(Union)} $z \in x \cup y \leftrightarrow z \in x \lor z \in y$
-    \item \textsc{(Singleton)} $z \in \{x\} \leftrightarrow x = z$
-    \item \textsc{(Essence)} $z \in \Essence{x} \leftrightarrow x \in z$
-  \end{itemize}
-  \caption{???}
-\end{figure}
 
 \section{\NFTWO}
 \section{\NFO}
