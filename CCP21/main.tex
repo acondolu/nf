@@ -172,7 +172,11 @@ The axiom of stratified comprehension does not force the collection $\Compr x {x
 
 \subsection{Quantifier-free Comprehension}
 
-In this paper we consider a weaker variant of full-fledged \NF{}, obtained by restricting the axiom of stratified comprehension to only quantifier-free formulas. By a rapid inspection, we note that when $\varphi$ is quantifier-free, $\varphi$ is stratified if and only if it does not contain ``$x \in x$'' as a subformula.
+In this paper we consider a weaker fragment of full-fledged \NF{}, obtained by restricting the axiom of stratified comprehension to only quantifier-free formulas.
+
+\TODO{dire che: in this sub-case, we can actually replace stratified comprehension with an equivalent axiomatization with a few set operators ($\Universe, \Complement \Placeholder, \Union \Placeholder \Placeholder, \Sing\Placeholder, \Essence\Placeholder$) and charachterizing axioms.}
+
+By a rapid inspection, we note that when $\varphi$ is quantifier-free, $\varphi$ is stratified if and only if it does not contain ``$x \in x$'' as a subformula.
 \TODO{This means that we can drop the definition of stratified, and use a much simplier syntactic restriction on $\varphi$'s}
 
 To understand what operations on sets are necessary to , we 
@@ -201,7 +205,7 @@ We show that $\Compr x \varphi$ for $\varphi$ stratified and quantifier-free can
 where $x\neq y$ and $x \neq z$ above.
 
 where
-\begin{itemize} \renewcommand\labelitemi{--}
+\begin{enumerate} \renewcommand\labelitemi{--}
   \item $\Universe$ is the universal set, \ie{} the set containing all sets:
     \[ \forall z.\, z \in \Universe \sctag{Universe} \]
   \item $\Complement \Placeholder$ is the set complement:
@@ -212,14 +216,18 @@ where
     \[ \forall z.\, z \in \Sing x \leftrightarrow x = z \sctag{Singleton} \]
   \item $\Essence\Placeholder$ is the essence:
     \[ \forall z.\, z \in \Essence{x} \leftrightarrow x \in z \sctag{Essence} \]
-\end{itemize}
+\end{enumerate}
+
+\subsection{Sets in Coq}
+\TODO{Descrivere Coq e la formalizzazione di ZF in Coq.}
+
+\TODO{shallow embedding}
 
 \section{Roadmap}
 Dire:
 \begin{itemize}
-  \item 
-  weak fragments
-  \item shallow embedding
+  \item Come si fara' in ogni sezione: prima definire il dominio, poi l'uguaglianza, poi membership, poi morphism, poi extensionality e set operators independently.
+  \item Contenuto delle sezioni sotto
 \end{itemize}
 
 \section{\NFTWO}
