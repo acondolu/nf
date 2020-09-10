@@ -36,6 +36,10 @@ coq-doc: coq
 	mkdir doc
 	coqdoc --light --lib-subtitles -d doc -R "src" "" --verbose --utf8 src/**/*.v
 
+coq-tex:
+	# mkdir doc-tex
+	coqdoc --light --lib-subtitles --latex -d doc-tex -R "src" "" --verbose --utf8 src/**/*.v
+
 coq-stats:
 	find src -name '*.v' | xargs wc -l
 

@@ -84,7 +84,10 @@
 %% The abstract is a short summary of the work to be presented in the
 %% article.
 \begin{abstract}
-  New Foundations (\NF) is \dots
+  New Foundations (\NF) is an exotic alternative to mainstream set theories like Zermelo–Fraenkel (\ZF). The distinguishing feature of \NF{} is permitting the construction of a \emph{universal set}, \ie{} a set that contains all sets (even itself). \TODO{\NF{} is perfectly cabable to caryy out usual mathematics; however, it did not take off because, more than 80 years after its introduction, its consistency is still unclear.}
+  
+  In this paper, we consider two weak sub-theories of \NF{} whose consistency has already been established: \NFTWO{} and \NFO{}.
+  \dots
 \end{abstract}
 
 % %%
@@ -133,7 +136,7 @@
 
 \section{Introduction}
 
-\TODO{history}
+\TODO{The history of the foundations of mathematics has been \dots}
 
 \paragraph{Set theories.}
 A \emph{set theory} is a first-order theory having the usual logical connectives ($\neg$, $\land$, $\lor$, $\to$, $\leftrightarrow$, $\exists$, $\forall$) plus two relation symbols: \emph{equality} ($=$) and \emph{membership} ($\in$). Variables (like $x,y,z,\ldots$) range over sets, and a set is meant to be a collection of sets itself: $x \in y$ means that $x$ is a \emph{member} or an \emph{element} of $y$.
@@ -175,6 +178,8 @@ The axiom of stratified comprehension does not force the collection $\Compr x {x
 In this paper we consider a weaker fragment of full-fledged \NF{}, obtained by restricting the axiom of stratified comprehension to only quantifier-free formulas.
 
 \TODO{dire che: in this sub-case, we can actually replace stratified comprehension with an equivalent axiomatization with a few set operators ($\Universe, \Complement \Placeholder, \Union \Placeholder \Placeholder, \Sing\Placeholder, \Essence\Placeholder$) and charachterizing axioms.}
+
+\TODO{Dire che si puo' fare per Skolemization/ some Skolem theorem?}
 
 By a rapid inspection, we note that when $\varphi$ is quantifier-free, $\varphi$ is stratified if and only if it does not contain ``$x \in x$'' as a subformula.
 \TODO{This means that we can drop the definition of stratified, and use a much simplier syntactic restriction on $\varphi$'s}
@@ -231,6 +236,8 @@ Dire:
 \end{itemize}
 
 \section{\NFTWO}
+\input{NF2.tex}
+
 \section{\NFO}
 
 Test:

@@ -5,13 +5,13 @@ Require Import NF2.Model.
 From Internal Require Import Misc.
 
 (* The universal set *)
-Definition 𝒰 : 𝓥 := Neg (fun x: False => match x with end).
+Definition 𝒰 : 𝓥 := High (fun x: False => match x with end).
 
 Lemma univ_ok : forall x, x ∈ 𝒰.
 Proof. intros x H. destruct H. Qed.
 
 (* The empty set *)
-Definition Ø : 𝓥 := Pos (fun x: False => match x with end).
+Definition Ø : 𝓥 := Low (fun x: False => match x with end).
 
 Lemma empty_ok : forall x, ~ (x ∈ Ø).
 Proof. intros x H. apply H. Qed.
@@ -19,8 +19,8 @@ Proof. intros x H. apply H. Qed.
 (* Complement *)
 Definition neg : 𝓥 -> 𝓥 :=
   fun x => match x with
-  | Pos f => Neg f
-  | Neg f => Pos f
+  | Low f => High f
+  | High f => Low f
   end
 .
 
@@ -35,7 +35,7 @@ Qed.
 
 (* Singleton *)
 Definition sing : 𝓥 -> 𝓥 :=
-  fun x => @Pos unit (fun _ => x).
+  fun x => @Low unit (fun _ => x).
 
 Definition sing_ok : forall x y, x ∈ sing y <-> x ≡ y.
 Proof.
@@ -55,10 +55,10 @@ Definition join {X Y} f g : X + Y -> 𝓥 := f ⨁ g.
 
 (* Intersection *)
 Definition cap x y := match x, y with
-  | Pos f, Neg g => Pos (minus f g)
-  | Neg f, Pos g => Pos (minus g f)
-  | Pos f, Pos g => Pos (meet f g)
-  | Neg f, Neg g => Neg (join f g)
+  | Low f, High g => Low (minus f g)
+  | High f, Low g => Low (minus g f)
+  | Low f, Low g => Low (meet f g)
+  | High f, High g => High (join f g)
 end.
 Notation "A ⋂ B" := (cap A B) (at level 85).
 

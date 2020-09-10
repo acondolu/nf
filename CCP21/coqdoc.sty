@@ -80,7 +80,7 @@
 \newcommand{\coqdocabbreviation}[1]{\coqdoccst{#1}}
 \newcommand{\coqdocrecord}[1]{\coqdocind{#1}}
 \newcommand{\coqdocprojection}[1]{\coqdoccst{#1}}
-\newcommand{\coqdocnotation}[1]{\coqdockw{#1}}
+\newcommand{\coqdocnotation}[1]{\coqdockwX{#1}}
 \newcommand{\coqdocsection}[1]{\coqdoccst{#1}}
 \newcommand{\coqdocaxiom}[1]{\coqdocax{#1}}
 \newcommand{\coqdocmodule}[1]{\coqdocmod{#1}}
@@ -147,6 +147,8 @@
 \definecolor{indblue}{rgb}{0,0,0.8}
 \definecolor{kwred}{rgb}{0.8,0.1,0.1}
 
+\definecolor{mylightblue}{HTML}{416DFF}
+
 \def\coqdocvarcolor{varpurple}
 \def\coqdockwcolor{kwred}
 \def\coqdoccstcolor{defgreen}
@@ -156,6 +158,7 @@
 \def\coqdocaxcolor{varpurple}
 \def\coqdoctaccolor{black}
 
+\def\coqdockwX#1{{\color{mylightblue}{\texttt{#1}}}}
 \def\coqdockw#1{{\color{\coqdockwcolor}{\texttt{#1}}}}
 \def\coqdocvar#1{{\color{\coqdocvarcolor}{\textit{#1}}}}
 \def\coqdoccst#1{{\color{\coqdoccstcolor}{\textrm{#1}}}}

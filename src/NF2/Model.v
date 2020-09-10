@@ -13,26 +13,26 @@
 Require Import Setoid Morphisms.
 
 Inductive set :=
-  | Pos : forall {X}, (X -> set) -> set
-  | Neg : forall {X}, (X -> set) -> set
+  | Low : forall {X}, (X -> set) -> set
+  | High : forall {X}, (X -> set) -> set
 .
 Notation 𝓥 := set.
 
 (* Set equality *)
 Fixpoint eeq a b := match a,b with
-  | Pos _, Neg _ => False
-  | Neg _, Pos _ => False
-  | Pos f, Pos g =>
+  | Low _, High _ => False
+  | High _, Low _ => False
+  | Low f, Low g =>
       (forall x, exists y, eeq (f x) (g y)) /\ (forall y, exists x, eeq (f x) (g y))
-  | Neg f, Neg g =>
+  | High f, High g =>
       (forall x, exists y, eeq (f x) (g y)) /\ (forall y, exists x, eeq (f x) (g y))
 end.
 Notation "A ≡ B" := (eeq A B) (at level 85).
 
 (* Set membership *)
 Definition iin a b := match b with
-  | Pos f => exists x, eeq (f x) a
-  | Neg f => forall x, ~ eeq (f x) a
+  | Low f => exists x, eeq (f x) a
+  | High f => forall x, ~ eeq (f x) a
 end.
 Notation "A ∈ B" := (iin A B) (at level 85).
 
@@ -102,6 +102,6 @@ Qed.
 
 (** We call [pos] the sets having a positive extension *)
 Definition pos x := match x with
-  | Pos _ => True
-  | Neg _ => False
+  | Low _ => True
+  | High _ => False
 end.

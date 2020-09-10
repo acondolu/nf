@@ -40,7 +40,7 @@ Definition compr: forall {x}, pos x -> (set -> Prop) -> set.
 Proof.
   intros x pos P.
   destruct x; destruct pos.
-  apply (@Pos {x : X & P (s x)}).
+  apply (@Low {x : X & P (s x)}).
   intro. destruct X0. exact (s x).
 Defined.
 
@@ -73,7 +73,7 @@ Admitted.
 
   From Internal Require Import Misc.
 Definition pow {X} (f: X -> set) :=
-  Pos (fun P => Pos (select f P))
+  Low (fun P => Low (select f P))
 .
 Definition subset x y := forall z, iin z x -> iin z y.
 
