@@ -5,19 +5,19 @@ Require Import NF2.Model.
 From Internal Require Import Misc.
 
 (* The universal set *)
-Definition 𝒰 : 𝓥 := High (fun x: False => match x with end).
+Definition 𝒰 := High (fun x: False => match x with end).
 
 Lemma univ_ok : forall x, x ∈ 𝒰.
 Proof. intros x H. destruct H. Qed.
 
 (* The empty set *)
-Definition Ø : 𝓥 := Low (fun x: False => match x with end).
+Definition Ø := Low (fun x: False => match x with end).
 
 Lemma empty_ok : forall x, ~ (x ∈ Ø).
 Proof. intros x H. apply H. Qed.
 
 (* Complement *)
-Definition neg : 𝓥 -> 𝓥 :=
+Definition neg : set -> set :=
   fun x => match x with
   | Low f => High f
   | High f => Low f
@@ -26,32 +26,28 @@ Definition neg : 𝓥 -> 𝓥 :=
 
 Lemma neg_ok : forall x y, x ∈ neg y <-> (x ∈ y -> False).
 Proof.
-  intros x y. destruct y; simpl neg; simpl iin; split.
-  - intros. destruct H0. apply (H x0 H0).
-  - intros H x0 H'. apply H. exists x0. assumption.
-  - intros. destruct H. apply (H0 x0). assumption.
-  - apply not_all_not_ex.
+  intros x y. destruct y; simpl neg; simpl IN; split; firstorder.
+  apply not_all_not_ex. assumption.
 Qed.
 
 (* Singleton *)
-Definition sing : 𝓥 -> 𝓥 :=
+Definition sing : set -> set :=
   fun x => @Low unit (fun _ => x).
 
 Definition sing_ok : forall x y, x ∈ sing y <-> x ≡ y.
 Proof.
-  intros. simpl. split; intros. destruct H. apply eeq_sym.
-  assumption. exists tt. apply eeq_sym. assumption.
+  intros. simpl. split; intros. destruct H; firstorder. apply ex_unit. symmetry. auto.
 Qed.
 
 (* Some auxiliary definitions: *)
 
-Definition minus {X Y} f g : { x : X & forall y : Y, ~ (g y ≡ f x) } -> 𝓥 :=
+Definition minus {X Y} f g : { x : X & forall y : Y, ~ (g y ≡ f x) } -> set :=
   select f (fun x => forall y, ~ (g y ≡ f x)).
 
-Definition meet {X Y} f g : { x : X & exists y : Y, g y ≡ f x } -> 𝓥 :=
+Definition meet {X Y} f g : { x : X & exists y : Y, g y ≡ f x } -> set :=
   select f (fun x => exists y, g y ≡ f x).
 
-Definition join {X Y} f g : X + Y -> 𝓥 := f ⨁ g.
+Definition join {X Y} f g : X + Y -> set := f ⨁ g.
 
 (* Intersection *)
 Definition cap x y := match x, y with
@@ -65,11 +61,12 @@ Notation "A ⋂ B" := (cap A B) (at level 85).
 Lemma cap1: forall x y z, z ∈ cap x y -> (z ∈ x) /\ (z ∈ y).
 Proof.
   destruct x; destruct y; simpl; intro z.
-  - rewrite (ex_T (fun x => exists y, _) (fun x => s x ≡ z)). intros. destruct H, H, H. split. firstorder. rewrite<- H in H0. firstorder.
+  - rewrite (ex_T (fun x => exists y, _) (fun x => s x ≡ z)).
+    firstorder. rewrite<- H in H0. firstorder.
   - rewrite (ex_T (fun x => forall y, ~ _) (fun x => s x ≡ z)).
-    intros. destruct H, H. firstorder. rewrite<- H0. apply H.
+    firstorder. rewrite<- H0. apply H.
   - rewrite (ex_T (fun x => forall y, ~ _) (fun x => s0 x ≡ z)).
-    intros. destruct H, H. setoid_rewrite H0 in H. firstorder.
+    firstorder. setoid_rewrite H0 in H. firstorder.
   - unfold join. firstorder. apply (H (inl x)). apply (H (inr x)). 
 Qed.
 

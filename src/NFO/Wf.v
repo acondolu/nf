@@ -56,7 +56,7 @@ Section Two.
 
 Infix "<<" := (le22 lt) (at level 50).
 
-Variables a a' b b': set.
+Variables a a' b b': SET.
 
 Ltac auto2 := unfold le22; unfold le12; tauto.
 Lemma AA : a < a' -> b < a' -> (a, b) << (a', b').
@@ -76,7 +76,7 @@ Section Three.
 
 Infix "<<<" := (le33 lt) (at level 50).
 
-Variables a a' b b' c c': set.
+Variables a a' b b' c c': SET.
 
 Ltac auto3 := unfold le33; unfold le13; tauto.
 Lemma AAA : a < a' -> b < a' -> c < a' -> (a, b, c) <<< (a', b', c').

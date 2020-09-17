@@ -14,18 +14,18 @@ From NFO Require Import Xor BoolExpr Model Eq In Morphism Sets Ext.
 *)
 
 (** TODO: clean up and explain *)
-Definition aux {X Y Z: Type} (f': X -> set) (g: Y -> set) (g': Z -> set) e e' z := 
+Definition aux {X Y Z: Type} (f': X -> SET) (g: Y -> SET) (g': Z -> SET) e e' z := 
   (Qin z g' e' -> Qin z g e) /\ (Qin z g e -> (Ain z f' <-> Qin z g' e'))
 .
 (* (a -> b) /\ (b -> (c <-> a)) *)
 (* (a && b && c) || (! a && ! b) || (! a && ! c) *)
 
-Local Lemma aux_respects {X Y Z: Type} (f': X -> set) (g: Y -> set) (g': Z -> set) e e':
-  respects eeq (aux f' g g' e e').
+Local Lemma aux_respects {X Y Z: Type} (f': X -> SET) (g: Y -> SET) (g': Z -> SET) e e':
+  respects EQ (aux f' g g' e e').
 Proof.
   unfold respects. intros. unfold aux.
-  setoid_rewrite (eeq_Qin H).
-  setoid_rewrite (eeq_Ain H).
+  setoid_rewrite (EQ_Qin H).
+  setoid_rewrite (EQ_Ain H).
   apply iff_refl.
 Qed.
 
@@ -36,13 +36,13 @@ Definition cup x y :=
         (g ⨁ g') (Or (map inl e) (map inr e'))
   end.
 
-Theorem cup_ok x y z: iin z (cup x y) <-> iin z x \/ iin z y.
+Theorem cup_ok x y z: IN z (cup x y) <-> IN z x \/ IN z y.
 Proof.
-  destruct x, y. unfold cup. rewrite iin_unfold.
+  destruct x, y. unfold cup. rewrite IN_unfold.
   rewrite Ain_sums. simpl Qin.
   setoid_rewrite Qin_sum_inl.
   setoid_rewrite Qin_sum_inr.
-  setoid_rewrite iin_unfold.
+  setoid_rewrite IN_unfold.
   unfold Ain, select, compose.
   setoid_rewrite (ex_T_resp (aux f0 g g0 e e0)).
   setoid_rewrite (ex_T_resp (aux f g0 g e0 e)).

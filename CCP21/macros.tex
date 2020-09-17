@@ -3,7 +3,18 @@
 \usepackage[color]{coqdoc}
 \usepackage{amsmath,amssymb}
 \usepackage{bbold}
+\usepackage{hyperref}
+\usepackage{marginnote}
+\usepackage{xcolor}
+\usepackage{stmaryrd}
+\usepackage{graphicx}
+\usepackage{ulem}
+\normalem
 % \usepackage{fancyvrb}
+
+\newcommand\margincoq[1]{\marginpar{\rotatebox{270}{\footnotesize $\star$ [\coqid{#1}]}}}
+\newcommand{\coqdefRef}[3]{\margincoq{#1}\coqdef{#1}{#2}{#3}}
+\newcommand{\coqid}[1]{\texttt{#1}}
 
 % AUX
 \newcommand\TODO[1]{\textcolor{red}{{\bf TODO} #1}}
@@ -12,6 +23,11 @@
 
 \DeclareUnicodeCharacter{1D4E5}{\ensuremath{\mathcal{V}}}
 \DeclareUnicodeCharacter{2261}{\ensuremath{\equiv}}
+\DeclareUnicodeCharacter{27E6}{\ensuremath{\llbracket}}
+\DeclareUnicodeCharacter{27E7}{\ensuremath{\rrbracket}}
+\DeclareUnicodeCharacter{2218}{\ensuremath{\circ}}
+\DeclareUnicodeCharacter{2A01}{\ensuremath{\oplus}}
+\DeclareUnicodeCharacter{2A00}{\ensuremath{\odot}}
 
 % LOGIC
 \newcommand\grameq{::=}
@@ -24,6 +40,7 @@
 \newcommand\NF{{\sf NF}}
 \newcommand\NFTWO{{\tt NF2}}
 \newcommand\NFO{{\tt NFO}}
+\newcommand\Coq{{\tt Coq}}
 \newcommand\SetCompr{{\textsc{SetCompr}}}
 \newcommand\SetExt{{\textsc{SetExt}}}
 

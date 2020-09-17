@@ -1,6 +1,6 @@
 (** * NFO.Eq : Equality of NFO sets *)
 (**
-    This module defines [eeq] (in symbols, [==]), the
+    This module defines [EQ] (in symbols, [==]), the
     equality relation between NFO sets.
 *)
 From Coq.Program Require Import Basics Combinators.
@@ -11,8 +11,7 @@ Add LoadPath "src".
 From Internal Require Import Misc FunExt.
 From NFO Require Import BoolExpr Model Wf.
 
-(* begin hide *)
-Local Definition eeq' : set * set -> Prop.
+Local Definition EQ' : SET * SET -> Prop.
 refine ( Fix (wf_two wf_lt) (fun _ => Prop) (
   fun x rec => (
     match x as x0 return (x = x0 -> Prop) with
@@ -25,88 +24,87 @@ refine ( Fix (wf_two wf_lt) (fun _ => Prop) (
             | inr y, inl y' => rec (g' y, g y') _
             | inr y, inr y' => rec (g' y, g' y') _
             end in 
-            eeq_boolean w (map inl e) (map inr e')
+            eq_bexpr w (map inl e) (map inr e')
     end) eq_refl
  ))
  ; rewrite eqx; eauto with Wff.
 Defined.
-(* end hide *)
 
 (* rewrite eqx; unfold le22'; rewrite decr_unfold; unfold list2, all, List.some, WfMult.all; setoid_rewrite cons_not_nil; clear; try setoid_rewrite le_f_rew; try setoid_rewrite le_g_rew; clear; tauto. *)
 
-Definition eeq : set -> set -> Prop.
-  intros x y. exact (eeq' (x, y)).
+Definition EQ : SET -> SET -> Prop.
+  intros x y. exact (EQ' (x, y)).
 Defined.
-Infix "==" := eeq (at level 50) : type_scope.
+Infix "==" := EQ (at level 50) : type_scope.
 
 (** * Aczel part *)
 Definition Aeq {X Y} f g :=
   (forall x: X, exists y, f x == g y) /\ (forall y: Y, exists x, f x == g y).
 
-(** Temporary unfolding lemma for eeq. 
-   It will be improved in eeq_unfold. *)
-Lemma eeq_def : forall x y,
-  eeq x y <-> match x, y with S X Y f g e, S X' Y' f' g' e' =>
+(** Temporary unfolding lemma for EQ. 
+   It will be improved in EQ_unfold. *)
+Lemma EQ_def : forall x y,
+  EQ x y <-> match x, y with S X Y f g e, S X' Y' f' g' e' =>
     Aeq f f'
       /\
-        eeq_boolean (eeq ⨀ (g ⨁ g')) (map inl e) (map inr e')
+        eq_bexpr (EQ ⨀ (g ⨁ g')) (map inl e) (map inr e')
 end.
 Proof.
   apply (wf_two_ind wf_lt).
   destruct x1, x2. intros.
-  unfold eeq at 1. unfold eeq' at 1. rewrite Fix_iff. fold eeq'.
-  - apply and_morph. apply iff_refl. apply eeq_boolean_ext.
+  unfold EQ at 1. unfold EQ' at 1. rewrite Fix_iff. fold EQ'.
+  - apply and_morph. apply iff_refl. apply eq_bexpr_ext.
     unfold compR, sumF, extR. intros. destruct x, y; apply iff_refl.
   - intros. destruct x, s, s0. apply and_morph. apply and_morph.
     -- split; intros. destruct (H1 x). exists x0. rewrite<- H0. assumption.
         destruct (H1 x). exists x0. rewrite H0. assumption.
     -- split; intros. destruct (H1 x'). exists x. rewrite<- H0. assumption.
     destruct (H1 x'). exists x. rewrite H0. assumption.
-    -- apply eeq_boolean_ext. unfold FunExt.extR. intros.
+    -- apply eq_bexpr_ext. unfold FunExt.extR. intros.
        destruct x, y; repeat rewrite H0; tauto.
 Qed.
-Global Opaque eeq.
+Global Opaque EQ.
 
-(** eeq is an equivalence relation: *)
-Lemma eeq_refl: forall x, eeq x x.
+(** EQ is an equivalence relation: *)
+Lemma EQ_refl: forall x, EQ x x.
 Proof.
-  induction x. rewrite eeq_def. unfold Aeq. split.
-  split; intro; eauto. apply eeq_boolean_refl. auto.
+  induction x. rewrite EQ_def. unfold Aeq. split.
+  split; intro; eauto. apply eq_bexpr_refl. auto.
 Qed.
-Hint Immediate eeq_refl : Eeq.
+Hint Immediate EQ_refl : Eeq.
 
-Lemma eeq_sym: forall x y, eeq x y -> eeq y x.
+Lemma EQ_sym: forall x y, EQ x y -> EQ y x.
 Proof.
-  apply (wf_two_ind wf_lt (fun x y => eeq x y -> eeq y x)).
+  apply (wf_two_ind wf_lt (fun x y => EQ x y -> EQ y x)).
   destruct x1, x2.
-  repeat rewrite eeq_def. intros. repeat destruct H0.
+  repeat rewrite EQ_def. intros. repeat destruct H0.
   split. split.
   - intro x0. destruct (H2 x0). eauto with Wff.
   - intro x. destruct (H0 x). eauto with Wff.
-  - revert H1. exact eeq_boolean_sym.
+  - revert H1. exact eq_bexpr_sym.
 Qed.
-Hint Resolve eeq_sym : Eeq.
+Hint Resolve EQ_sym : Eeq.
 
-Lemma eeq_trans : forall x y z, eeq x y -> eeq y z -> eeq x z.
+Lemma EQ_trans : forall x y z, EQ x y -> EQ y z -> EQ x z.
 Proof.
-  apply (wf_three_ind wf_lt (fun x y z => eeq x y -> eeq y z -> eeq x z)).
+  apply (wf_three_ind wf_lt (fun x y z => EQ x y -> EQ y z -> EQ x z)).
   destruct x1, x2, x3. 
-  repeat rewrite eeq_def. unfold Aeq in *. intros.
+  repeat rewrite EQ_def. unfold Aeq in *. intros.
   repeat destruct H0. repeat destruct H1.
   split. split.
   - intro x. destruct (H0 x). destruct (H1 x0).
     eauto with Wff.
   - intro y. destruct (H5 y). destruct (H3 x).
     eauto with Wff.
-  - apply (fun X => eeq_boolean_trans eeq_sym X H2 H4).
+  - apply (fun X => eq_bexpr_trans EQ_sym X H2 H4).
     intros. repeat destruct H6; destruct H7; repeat destruct H6; destruct H8; repeat destruct H6; apply (fun X => H _ _ _ X H9 H10); eauto with Wff.
 Qed.
-Hint Resolve eeq_trans : Eeq.
+Hint Resolve EQ_trans : Eeq.
 
-(** Register (set, eeq) as a setoid: *)
-Instance nfo_setoid : Equivalence eeq.
+(** Register (SET, EQ) as a setoid: *)
+Instance nfo_setoid : Equivalence EQ.
 Proof.
-  constructor. exact @eeq_refl. exact @eeq_sym. exact @eeq_trans.
+  constructor. exact @EQ_refl. exact @EQ_sym. exact @EQ_trans.
 Qed.
 
 (** Aeq is an equivalence *)
@@ -129,14 +127,13 @@ Qed.
 
 (** "Quine" equality *)
 (** TODO: rename in Beq *)
-Definition Qeq := eeq_boolean eeq.
+Definition Qeq := eq_bexpr EQ.
 
-(** The good unfolding lemma for eeq: *)
-Lemma eeq_unfold {X' Y' f' g' e' X Y f g e}:
-  eeq (S X Y f g e) (S X' Y' f' g' e')
+(** The good unfolding lemma for EQ: *)
+Lemma EQ_unfold {X' Y' f' g' e' X Y f g e}:
+  EQ (S X Y f g e) (S X' Y' f' g' e')
     <-> Aeq f f' /\ Qeq (map g e) (map g' e').
 Proof.
-  unfold Qeq. rewrite<- (eeq_boolean_simpl nfo_setoid).
-  rewrite eeq_def.
-  tauto.
+  unfold Qeq. rewrite (eq_bexpr_simpl nfo_setoid).
+  rewrite EQ_def. apply iff_refl.
 Qed.

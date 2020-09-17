@@ -84,10 +84,9 @@
 %% The abstract is a short summary of the work to be presented in the
 %% article.
 \begin{abstract}
-  New Foundations (\NF) is an exotic alternative to mainstream set theories like Zermelo–Fraenkel (\ZF). The distinguishing feature of \NF{} is permitting the construction of a \emph{universal set}, \ie{} a set that contains all sets (even itself). \TODO{\NF{} is perfectly cabable to caryy out usual mathematics; however, it did not take off because, more than 80 years after its introduction, its consistency is still unclear.}
+New Foundations (\NF) is a somewhat bizarre alternative to mainstream set theories like Zermelo–Fraenkel (\ZF). The distinguishing feature of \NF{} is permitting the construction of a \emph{universal set}, \ie{} a set that contains all sets (itself, too). Though counterintuitive, \NF{} is capable of expressing ordinary mathematical concepts like well-orders, ordinals, cardinals, natural numbers, and so on. Its adoption, however, is hampered by the fact that after more than 80 years from its introduction, the community has not yet agreed upon its logical consistency.
   
-  In this paper, we consider two weak sub-theories of \NF{} whose consistency has already been established: \NFTWO{} and \NFO{}.
-  \dots
+In this paper, we consider two weak sub-theories of \NF{} whose consistency has already been established: \NFTWO{} and \NFO. These theories are obtained from \NF{} by restricting the axiom of comprehension to quantifier-free formulas only. We provide an encoding of \NFTWO{} and \NFO{} in the Coq proof assistant, adapting the classic encoding of \ZF{} in Coq by Benjamin Werner. To our knowledge, this is the first mechanized consistency proof concerning New Foundations.
 \end{abstract}
 
 % %%
@@ -150,11 +149,11 @@ A \emph{set theory} is a first-order theory having the usual logical connectives
 % % \TODO{Oh no, we need $\leftrightarrow$!!!}
 % \end{array}\]
 
-Sets do not posses any internal structure other than their \emph{extension}, \ie{} the elements they contain. The \emph{axiom of extensionality} formalizes this fact by requiring that sets having the same extension are equal:
+Sets do not posses any internal structure other than their \emph{extension}, \ie{} the elements they contain. The \emph{axiom of extensionality} formalizes this fact by requiring that sets having the same extension are the same set:
 
 \[\forall x y.\, x = y \leftrightarrow \forall z. \, z \in x \leftrightarrow z \in y \quad \tag{\SetExt} \]
 
-A natural way to express a collection of sets is by taking all sets that satisfy a given predicate; this collection is expressed in symbols by $\Compr x \varphi$, reading ``the collection of all $x$'s such that $\varphi$ holds''. \TODO{for instance, ordinals, \dots} A very desirable ??? would be that collections specified in this way are sets themselves, as the \emph{axiom of comprehension} requires:
+A natural way to form a collection of sets is by gathering all sets that satisfy a given predicate; this collection is expressed in symbols by $\Compr x \varphi$, reading ``the collection of all $x$'s such that $\varphi$ holds''. \TODO{this is called comprehension, and very powerful. for instance, ordinals, \dots} A very desirable ??? would be that collections specified by comprehension are sets themselves, as the \emph{axiom of comprehension} requires:
 
 \[ \exists y.\, \forall x.\, x \in y \leftrightarrow \varphi  \quad \tag{\SetCompr} \]
 
@@ -168,7 +167,7 @@ When all $\varphi$s, unrestricted comprehension. \TODO{But Russel's paradox $\va
 
 Problem is circularity.
 
-There are different ways to restrict \SetCompr{} so to avoid Russel's paradox. \ZF's way is to only allow comprehension of \emph{guarded} proposition, of the form $x \in y \land \varphi$ for some $y\neq x$ and an arbitrary $\varphi$. \TODO{$\Compr {x \in y} \varphi$} No self-reference because carve only subsets of already existing sets, and other axioms of ZF force sets to be well-founded (\dots).
+There are different ways to restrict \SetCompr{} so to avoid Russel's paradox. \ZF's way is to only allow comprehension of \emph{guarded} propositions, of the form $x \in y \land \varphi$ for some $y\neq x$ and an arbitrary $\varphi$. \TODO{$\Compr {x \in y} \varphi$} No self-reference because carve only subsets of already existing sets, and other axioms of ZF force sets to be well-founded (\dots).
 
 NF's way is \dots to restrict the axiom of comprehension to only \emph{stratified} formulas \ldots
 The axiom of stratified comprehension does not force the collection $\Compr x {x \not\in x}$ to be a set, because the formula $x \not\in x$ is not stratified. As a consequence, Russel's paradox is avoided.
@@ -226,7 +225,7 @@ where
 \subsection{Sets in Coq}
 \TODO{Descrivere Coq e la formalizzazione di ZF in Coq.}
 
-\TODO{shallow embedding}
+\TODO{We use a \emph{shallow embedding} of \NF{} in the Calculus of Constructions: the logic formulas of \NF{} are interpreted in \Coq{} in such a way that quantifiers and logical connectives of \NF{} are mapped to the corresponding ones in \Coq{}}
 
 \section{Roadmap}
 Dire:
@@ -235,20 +234,14 @@ Dire:
   \item Contenuto delle sezioni sotto
 \end{itemize}
 
+\section{\ZF}
+\input{ZF.tex}
+
 \section{\NFTWO}
 \input{NF2.tex}
 
 \section{\NFO}
-
-Test:
-
-\begin{coqdoccode}
-  \coqdocnoindent
-  \Definition{} \coqdocdefinition{extP} \{\coqdocvar{X}\} \coqdocvar{P} \coqdocvar{Q} := \Math\forall \Var{x}: \Var{X}, \Var{P} \Var{x} \Math\leftrightarrow{} \Var{Q} \Var{x}.\coqdoceol
-  \coqdocemptyline
-\end{coqdoccode}
-% \coqdocindent{1.00em}
-
+\input{NFO.tex}
 
 \section{Discussion}
 \subsection{Related Work}

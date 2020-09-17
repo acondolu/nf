@@ -6,17 +6,17 @@ From Internal Require Import Misc FunExt.
 (* end hide *)
 
 (** A boolean expression with atoms of type [X] *)
-Inductive boolean {X} :=
-  | Bot : boolean
-  | Atom : X -> boolean
-  | Not : boolean -> boolean
-  | Or : boolean -> boolean -> boolean
+Inductive BExpr {X} :=
+  | Bot : BExpr
+  | Atom : X -> BExpr
+  | Not : BExpr -> BExpr
+  | Or : BExpr -> BExpr -> BExpr
 .
 
 (** Evaluate a boolean expression to a [Prop] 
     when the atoms are of type [Prop]:
 *)
-Fixpoint eval (e: boolean) := match e with
+Fixpoint eval (e: BExpr) := match e with
   | Atom p => p
   | Bot => False
   | Not e => ~ eval e
@@ -25,7 +25,7 @@ end.
 Notation "⟦ e ⟧" := (eval e).
 
 (** Map the atoms in a boolean expression: *)
-Fixpoint map {X Y} (f: X -> Y) (e: boolean) : boolean :=
+Fixpoint map {X Y} (f: X -> Y) (e: BExpr) : BExpr :=
 match e with
   | Atom a => Atom (f a)
   | Bot => Bot
@@ -36,7 +36,7 @@ end.
 (** Evaluating a boolean expression with respect to equivalent predicates
     yields equivalent results.
 *)
-Lemma map_extP {X} {e: @boolean X} P Q:
+Lemma map_extP {X} {e: @BExpr X} P Q:
   extP P Q -> ⟦map P e⟧ <-> ⟦map Q e⟧.
 Proof.
   unfold extP. intro E. induction e; simpl; eauto. tauto.
@@ -70,13 +70,13 @@ Proof. induction e; simpl; auto. Qed.
     Here we consider only P's that respect the binary relation
     R in input. R is supposed to characterize the equality on atoms of 
     type X. *)
-Definition eeq_boolean {X} (R: X -> X -> Prop) e e' : Prop :=
+Definition eq_bexpr {X} (R: X -> X -> Prop) e e' : Prop :=
   forall P, respects R P -> ⟦map P e⟧ <-> ⟦map P e'⟧.
 
-Lemma eeq_boolean_ext {X} {R R': X -> X -> Prop} :
-  extR R R' -> extR (eeq_boolean R) (eeq_boolean R').
+Lemma eq_bexpr_ext {X} {R R': X -> X -> Prop} :
+  extR R R' -> extR (eq_bexpr R) (eq_bexpr R').
 Proof.
-  unfold eeq_boolean. split; intros; apply H0;
+  unfold eq_bexpr; split; intros; apply H0;
   apply (respects_ext _ _ H); assumption.
 Qed.
 
@@ -86,14 +86,23 @@ Qed.
     TODO: Because: we wanted to write the rhs, but we had to write
     the lhs in order to be able to prove termination.
 *)
-Lemma eeq_boolean_simpl:
-  forall {X Y Z R} {f: X -> Z} {g: Y -> Z} {e e'},
-    Equivalence R ->
-      eeq_boolean (R ⨀ (f ⨁ g)) (map inl e) (map inr e')
-        <-> eeq_boolean R (map f e) (map g e').
+Lemma eq_bexpr_simpl {X Y Z R} {f: X -> Z} {g: Y -> Z} {e e'}:
+  Equivalence R ->
+    eq_bexpr R (map f e) (map g e')
+    <->
+    eq_bexpr (R ⨀ (f ⨁ g)) (map inl e) (map inr e').
 Proof.
-  intros. rename H into EE. pose EE as EE'. destruct EE.
-  unfold eeq_boolean. split; intros.
+  intro EE.
+  unfold eq_bexpr. split; intros.
+  - pose (fun z => exists u, P u /\ R z ((f ⨁ g) u)) as K.
+    specialize H with K.
+    repeat rewrite map_compose.
+    rewrite (map_extP (compose P inl) (compose K f)).
+    rewrite (map_extP (compose P inr) (compose K g)).
+    repeat rewrite<- map_compose.
+    apply (H (invert_sum_respects (f ⨁ g) R P EE)).
+    apply invert_sum_respects_g; auto.
+    apply invert_sum_respects_f; auto.
   - specialize H with (P ∘ (f ⨁ g)).
     repeat rewrite map_compose in H.
     repeat rewrite compose_assoc in H.
@@ -103,50 +112,30 @@ Proof.
     rewrite map_compose_inr in H.
     apply H. unfold respects in *. intros.
     destruct x, x'; unfold compose, sumF; apply H0; apply H1.
-  - pose (invert_sum P (R ∘ f) (R ∘ g)) as K.
-    specialize H with K.
-    cut (respects R K).
-  -- intro. repeat rewrite map_compose.
-    rewrite (map_extP (compose P inl) (compose K f)).
-    rewrite (map_extP (compose P inr) (compose K g)).
-    repeat rewrite<- map_compose. apply (H H1).
-    --- unfold FunExt.extP. unfold compose.
-        intros. unfold K. split; intro.
-        right. exists x. split; auto.
-        repeat destruct H2.
-        apply (H0 (inl x0)); auto.
-        apply (H0 (inr x0)); auto.
-    --- unfold FunExt.extP. unfold compose.
-        intros. unfold K. split; intro.
-        left. exists x. split; auto.
-        repeat destruct H2.
-        apply (H0 (inl x0)); auto.
-        apply (H0 (inr x0)); auto.
-  -- revert H0. apply (invert_sum_respects EE').
 Qed.
 
 (** * Equivalence
 
-    In this section, we prove that eeq_boolean is an equivalence relation.
+    In this section, we prove that eq_bexpr is an equivalence relation.
     Actually, we prove variations of the usual reflexivity, symmetry and
     trasitivity. These variants are exactly what is needed to prove
     that equality of NFO sets is an equivalence relation (see NFO.Eeq).
 *)
 
-Lemma eeq_boolean_refl {X Y} {f: X -> Y} {R: Y -> Y -> Prop} {e}:
+Lemma eq_bexpr_refl {X Y} {f: X -> Y} {R: Y -> Y -> Prop} {e}:
     (forall x, R (f x) (f x))
-      -> eeq_boolean (R ⨀ (f ⨁ f)) (map inl e) (map inr e).
+      -> eq_bexpr (R ⨀ (f ⨁ f)) (map inl e) (map inr e).
 Proof.
-  unfold eeq_boolean. intros.
+  unfold eq_bexpr. intros.
   induction e; simpl; try tauto; eauto.
   apply H0. apply H.
 Qed.
 
-Lemma eeq_boolean_sym {X Y Z R} {f: X -> Z} {g: Y -> Z} {e e'} :
-  eeq_boolean (R ⨀ (f ⨁ g)) (map inl e) (map inr e')
-    -> eeq_boolean (R ⨀ (g ⨁ f)) (map inl e') (map inr e).
+Lemma eq_bexpr_sym {X Y Z R} {f: X -> Z} {g: Y -> Z} {e e'} :
+  eq_bexpr (R ⨀ (f ⨁ g)) (map inl e) (map inr e')
+    -> eq_bexpr (R ⨀ (g ⨁ f)) (map inl e') (map inr e).
 Proof.
-  intros. unfold eeq_boolean in *. intros.
+  intros. unfold eq_bexpr in *. intros.
   specialize H with (P ∘ swap).
   repeat rewrite map_compose in H.
   repeat rewrite compose_assoc in H.
@@ -159,17 +148,17 @@ Proof.
 Qed.
 
 (** TODO: This needs some love... *)
-Lemma eeq_boolean_trans {X Y Z W} {R : W -> W -> Prop} {f1 f2 f3}
-  {e1 : @boolean X} {e2 : @boolean Y} {e3 : @boolean Z}
+Lemma eq_bexpr_trans {X Y Z W} {R : W -> W -> Prop} {f1 f2 f3}
+  {e1 : @BExpr X} {e2 : @BExpr Y} {e3 : @BExpr Z}
   :  (forall a b, R a b -> R b a)
   -> (forall a b c, inv3 f1 f2 f3 a -> inv3 f1 f2 f3 b -> inv3 f1 f2 f3 c -> R a b -> R b c -> R a c)
-  -> eeq_boolean (R ⨀ (f1 ⨁ f2)) (map inl e1) (map inr e2)
-  -> eeq_boolean (R ⨀ (f2 ⨁ f3)) (map inl e2) (map inr e3)
-  -> eeq_boolean (R ⨀ (f1 ⨁ f3)) (map inl e1) (map inr e3).
+  -> eq_bexpr (R ⨀ (f1 ⨁ f2)) (map inl e1) (map inr e2)
+  -> eq_bexpr (R ⨀ (f2 ⨁ f3)) (map inl e2) (map inr e3)
+  -> eq_bexpr (R ⨀ (f1 ⨁ f3)) (map inl e1) (map inr e3).
 Proof.
   Ltac lr H3 x :=
     repeat destruct H3; [left | right]; exists x; split; eauto with misc.
-  intros sym trans. unfold eeq_boolean. intros.
+  intros sym trans. unfold eq_bexpr. intros.
   pose (invert_sum P (fun a b => R (f1 a) (f2 b)) (fun a b => R (f2 b) (f3 a))) as g.
   specialize H with (P ∘ inl ⨁ g).
   specialize H0 with (g ⨁ P ∘ inr).

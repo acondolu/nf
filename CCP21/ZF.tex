@@ -1,0 +1,44 @@
+%!TEX root = main.tex
+
+\url{https://github.com/coq-contribs/zfc/}
+
+\TODO{Set, eq, in: RESPECTIVELY, a kind, the usual equality, and a reserved keyword.}
+
+The type representing sets
+
+\begin{coqdoccode}
+\coqdocnoindent
+\coqdockw{Inductive} \coqdocinductive{SET} : \coqdockw{Type} :=\coqdoceol
+\coqdocindent{2.00em}
+\coqdocconstructor{Sup} : \coqdockw{\ensuremath{\forall}} \coqdocvar{X} : \coqdockw{Type}, (\coqdocvar{X} \ensuremath{\rightarrow} \coqdocinductive{SET}) \ensuremath{\rightarrow} \coqdocinductive{SET}.\coqdoceol
+\coqdocemptyline
+\end{coqdoccode}
+
+Recursive Definition of the extentional equality on sets
+
+\begin{coqdoccode}
+  \coqdockw{Fixpoint} \coqdocdefinition{EQ} \coqdocvar{a} \coqdocvar{b} : \coqdockw{Prop} :=\coqdoceol
+  \coqdocindent{2.00em}
+  \coqdockw{match} \coqdocvar{a}, \coqdocvar{b} \coqdockw{with}\coqdoceol
+  \coqdocindent{2.00em}
+  \ensuremath{|} \coqdocconstructor{Sup} \coqdocvar{X} \coqdocvar{f}, \coqdocconstructor{Sup} \coqdocvar{Y} \coqdocvar{g} \ensuremath{\Rightarrow}\coqdoceol
+  \coqdocindent{4.00em}
+  (\coqdockw{\ensuremath{\forall}} \coqdocvar{x}, \coqdoctac{\ensuremath{\exists}} \coqdocvar{y}, \coqdocvar{EQ} (\coqdocvar{f} \coqdocvar{x}) (\coqdocvar{g} \coqdocvar{y})) \ensuremath{\land} (\coqdockw{\ensuremath{\forall}} \coqdocvar{y}, \coqdoctac{\ensuremath{\exists}} \coqdocvar{x}, \coqdocvar{EQ} (\coqdocvar{f} \coqdocvar{x}) (\coqdocvar{g} \coqdocvar{y}))\coqdoceol
+  \coqdocindent{2.00em}
+  \coqdockw{end}.\coqdoceol
+  \coqdocemptyline
+\end{coqdoccode}
+
+Membership on sets
+
+\begin{coqdoccode}
+  \coqdocnoindent
+\coqdockw{Definition} \coqdocdefinition{IN} \coqdocvar{a} \coqdocvar{b} : \coqdockw{Prop} :=\coqdoceol
+\coqdocindent{1.00em}
+\coqdockw{match} \coqdocvar{b} \coqdockw{with}\coqdoceol
+\coqdocindent{1.00em}
+\ensuremath{|} \coqdocconstructor{Sup} \coqdocvar{X} \coqdocvar{f} \ensuremath{\Rightarrow} \coqdoctac{\ensuremath{\exists}} \coqdocvar{x}, \coqdocvar{EQ} \coqdocvar{a} (\coqdocvar{f} \coqdocvar{x})\coqdoceol
+\coqdocindent{1.00em}
+\coqdockw{end}.\coqdoceol
+\coqdocemptyline
+\end{coqdoccode}

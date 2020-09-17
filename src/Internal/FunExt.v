@@ -37,12 +37,39 @@ Qed.
 
 (*  *)
 
-Lemma invert_sum_respects {X Y Z f g} {R: Z -> Z -> Prop} {P: X + Y -> Prop}:
+(* Lemma invert_sum_respects {X Y Z} f g (R: Z -> Z -> Prop) (P: X + Y -> Prop):
   Equivalence R ->
-    respects (R ⨀ (f ⨁ g)) P -> respects R (invert_sum P (R ∘ f) (R ∘ g)).
+    respects R (invert_sum P (R ∘ f) (R ∘ g)).
 Proof.
-  unfold respects in *. intros. intros. destruct H.
+  unfold respects in *. intros. destruct H.
   split; intros; repeat destruct H; firstorder.
+Qed. *)
+
+Lemma invert_sum_respects {X Y Z} h (R: Z -> Z -> Prop) (P: X + Y -> Prop):
+  Equivalence R ->
+    respects R (fun z => exists u, P u /\ R z (h u)).
+Proof.
+  unfold respects, compR, compose. firstorder.
+Qed.
+
+Lemma invert_sum_respects_f {X Y Z f g} {R: Z -> Z -> Prop} {P: X + Y -> Prop}:
+  Equivalence R ->
+  respects (R ⨀ (f ⨁ g)) P ->
+  let K := (fun z => exists u, P u /\ R z ((f ⨁ g) u)) in
+  FunExt.extP (P ∘ inl) (K ∘ f).
+Proof.
+  unfold FunExt.extP. intros. unfold compose.
+  split; firstorder.
+Qed.
+
+Lemma invert_sum_respects_g {X Y Z f g} {R: Z -> Z -> Prop} {P: X + Y -> Prop}:
+  Equivalence R ->
+  respects (R ⨀ (f ⨁ g)) P ->
+  let K := (fun z => exists u, P u /\ R z ((f ⨁ g) u)) in
+  FunExt.extP (P ∘ inr) (K ∘ g).
+Proof.
+  unfold FunExt.extP. intros. unfold compose.
+  split; firstorder.
 Qed.
 
 (*  *)

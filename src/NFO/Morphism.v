@@ -1,9 +1,9 @@
 (** * NFO.Morphism : Morphisms *)
 (** In this module we prove that:
-    - iin, Ain, Bin are eeq-morphisms.
+    - IN, Ain, Bin are EQ-morphisms.
     - Ain and Bin are respectively Aeq- and Beq-morphisms.
     - The axiom of extensionality for Aeq and Beq.
-      Extensionality for iin and eeq will be proved in NFO.Ext.
+      Extensionality for IN and EQ will be proved in NFO.Ext.
 *)
 
 (* begin hide *)
@@ -41,38 +41,38 @@ Theorem Aext {X Y} {f: X -> _} {g: Y -> _} :
 Proof. split. apply Aeq_Ain. apply Ain_Aeq. Qed.
 
 (** TODO: Vale anche nell'altra direzione, ma non ci serve. Lo stesso per Bin. *)
-Lemma eeq_Ain: forall {x y X} {f: X -> _},
+Lemma EQ_Ain: forall {x y X} {f: X -> _},
   x == y -> Ain x f <-> Ain y f.
 Proof.
   intros. unfold Ain. split; intro; destruct H0; exists x0; eauto with Eeq.
 Qed.
 
-(** * Proofs for eeq and iin *)
+(** * Proofs for EQ and IN *)
 
-(* respects eeq (iin z)
-/\ respecs eeq (fun x => iin x z) *)
+(* respects EQ (IN z)
+/\ respecs EQ (fun x => IN x z) *)
 (** TODO: pose g is suspiciously similar to invert_sum
-  and then simply prove cut (respects eeq g)
+  and then simply prove cut (respects EQ g)
   with invert_sum_respects.
 *)
-Lemma iin_respects_eeq: forall z x y, eeq x y ->
-  (iin z x <-> iin z y)
-  /\ (iin x z <-> iin y z).
+Lemma IN_respects_EQ: forall z x y, EQ x y ->
+  (IN z x <-> IN z y)
+  /\ (IN x z <-> IN y z).
 Proof.
   induction z.
-  apply (wf_two_ind wf_lt (fun x y => eeq x y -> _: Prop)).
-  destruct x1, x2. intros. repeat rewrite iin_unfold. split; apply xor_iff.
-  - apply Aeq_Ain. rewrite eeq_unfold in H2; destruct H2. assumption.
-  - rewrite eeq_unfold in H2; destruct H2. 
-    pose (fun s : set =>
-      (exists a0, s == g0 a0 /\ iin (g0 a0) (S X Y f g e))
-      \/ (exists a1, s == g1 a1 /\ iin (g1 a1) (S X Y f g e))
+  apply (wf_two_ind wf_lt (fun x y => EQ x y -> _: Prop)).
+  destruct x1, x2. intros. repeat rewrite IN_unfold. split; apply xor_iff.
+  - apply Aeq_Ain. rewrite EQ_unfold in H2; destruct H2. assumption.
+  - rewrite EQ_unfold in H2; destruct H2. 
+    pose (fun s : SET =>
+      (exists a0, s == g0 a0 /\ IN (g0 a0) (S X Y f g e))
+      \/ (exists a1, s == g1 a1 /\ IN (g1 a1) (S X Y f g e))
     ) as K.
     repeat rewrite map_compose in H3. setoid_rewrite<- Bin_bexpr.
-    cut (eval (map (Basics.compose K g0) e0) <-> (let w := fun a => iin (g0 a) (S X Y f g e) in eval (map w e0))). intro.
-    cut (eval (map (Basics.compose K g1) e1) <-> (let w := fun a => iin (g1 a) (S X Y f g e) in eval (map w e1))). intro.
+    cut (eval (map (Basics.compose K g0) e0) <-> (let w := fun a => IN (g0 a) (S X Y f g e) in eval (map w e0))). intro.
+    cut (eval (map (Basics.compose K g1) e1) <-> (let w := fun a => IN (g1 a) (S X Y f g e) in eval (map w e1))). intro.
     rewrite<- H4. rewrite<- H5. 
-    cut (respects eeq K). 
+    cut (respects EQ K). 
     -- repeat rewrite<- map_compose. apply H3.
     -- unfold respects. intros. unfold K. split; intro; repeat destruct H7.
       left. exists x0. split; eauto with Eeq.
@@ -81,9 +81,9 @@ Proof.
       right. exists x0. split; eauto with Eeq.
     -- apply map_extP. unfold FunExt.extP. intro a1.
        unfold Basics.compose. unfold K. split; intro. repeat destruct H5; auto.
-       apply (fun K => proj2 (H1 (g0 x) (g1 a1) K (eeq_sym _ _ H5))).
+       apply (fun K => proj2 (H1 (g0 x) (g1 a1) K (EQ_sym _ _ H5))).
        auto with Wff. assumption.
-       apply (fun K => proj2 (H1 (g1 x) (g1 a1) K (eeq_sym _ _ H5))).
+       apply (fun K => proj2 (H1 (g1 x) (g1 a1) K (EQ_sym _ _ H5))).
        auto with Wff. assumption.
        right. exists a1. split; eauto with Eeq.
     -- apply map_extP. unfold FunExt.extP. intro a1.
@@ -93,16 +93,16 @@ Proof.
        apply (fun K => proj2 (H1 (g0 a1) (g1 x) K H4)).
        auto with Wff. assumption.
        left. exists a1. split; eauto with Eeq.
-  - apply (eeq_Ain H2).
+  - apply (EQ_Ain H2).
   - setoid_rewrite<- Bin_bexpr. apply map_extP. unfold FunExt.extP. intro a.
     apply (proj1 (H0 a (S X0 Y0 f0 g0 e0) (S X1 Y1 f1 g1 e1) H2)).
 Qed.
 
-(** Register iin as a eeq-morphism: *)
-Add Morphism iin with signature eeq ==> eeq ==> iff as iin_mor.
+(** Register IN as a EQ-morphism: *)
+Add Morphism IN with signature EQ ==> EQ ==> iff as IN_mor.
 Proof.
-  intros. destruct (iin_respects_eeq x x0 y0 H0).
-  destruct (iin_respects_eeq y0 x y H). tauto.
+  intros. destruct (IN_respects_EQ x x0 y0 H0).
+  destruct (IN_respects_EQ y0 x y H). tauto.
 Qed.
 
 (** * Proofs for Beq and Bin *)
@@ -111,20 +111,20 @@ Lemma Qeq_Qin: forall {X Y} {p p'} {h: X -> _} {h': Y -> _},
   Qeq (map h p) (map h' p')
   -> forall x, Qin x h p <-> Qin x h' p'.
 Proof.
-  intros. unfold eeq_boolean in H.
-  pose proof (H (fun s => iin s x)).
+  intros. unfold eq_bexpr in H.
+  pose proof (H (fun s => IN s x)).
   repeat rewrite map_compose in H0.
   unfold Basics.compose in H0.
   repeat rewrite<- Bin_bexpr. apply H0.
   unfold respects. intros.
-  apply iin_respects_eeq. assumption.
+  apply IN_respects_EQ. assumption.
 Qed.
 
 Lemma Qin_Qeq: forall {X Y} {p p'} {h: X -> _} {h': Y -> _},
   (forall x, Qin x h p <-> Qin x h' p')
     -> Qeq (map h p) (map h' p').
 Proof.
-  intros. unfold Qeq, eeq_boolean. intros.
+  intros. unfold Qeq, eq_bexpr. intros.
   rewrite<- (xxx_r h' H0). rewrite<- (xxx h H0). apply H.
 Qed.
 
@@ -133,12 +133,12 @@ Theorem Qext {X Y} {p p'} {h: X -> _} {h': Y -> _} :
   <-> forall x, Qin x h p <-> Qin x h' p'.
 Proof. split. apply Qeq_Qin. apply Qin_Qeq. Qed.
 
-Lemma eeq_Qin: forall {x y A p} {h: A -> _},
+Lemma EQ_Qin: forall {x y A p} {h: A -> _},
   x == y -> Qin x h p <-> Qin y h p.
 Proof.
   intros x y A p. induction p; simpl Qin. 
   - tauto.
-  - intro. apply iin_respects_eeq.
+  - intro. apply IN_respects_EQ.
   - intro. specialize IHp with h. tauto.
   - intro h. specialize IHp1 with h. specialize IHp2 with h. tauto.
 Qed.

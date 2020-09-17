@@ -10,39 +10,39 @@ From NFO Require Model Eq In Ext Union.
 (* end hide *)
 
 (** The type of NFO sets *)
-Definition set : Type.
-  exact Model.set.
+Definition SET : Type.
+  exact Model.SET.
 Defined.
-Notation 𝓥 := set.
+Notation 𝓥 := SET.
 
 (** Equality *)
-Definition eeq : 𝓥 -> 𝓥 -> Prop.
-  exact Eq.eeq.
+Definition EQ : 𝓥 -> 𝓥 -> Prop.
+  exact Eq.EQ.
 Defined.
-Infix "≡" := eeq (at level 50).
+Infix "≡" := EQ (at level 50).
 
-Definition eeq_refl : forall x: 𝓥, x ≡ x.
-  exact @Eq.eeq_refl.
+Definition EQ_refl : forall x: 𝓥, x ≡ x.
+  exact @Eq.EQ_refl.
 Qed.
-Definition eeq_sym : forall x y: 𝓥, x ≡ y -> y ≡ x.
-  exact @Eq.eeq_sym.
+Definition EQ_sym : forall x y: 𝓥, x ≡ y -> y ≡ x.
+  exact @Eq.EQ_sym.
 Qed.
-Definition eeq_trans : forall x y z: 𝓥, x ≡ y -> y ≡ z -> x ≡ z.
-  exact @Eq.eeq_trans.
+Definition EQ_trans : forall x y z: 𝓥, x ≡ y -> y ≡ z -> x ≡ z.
+  exact @Eq.EQ_trans.
 Qed.
 
-Instance nfo_setoid : Equivalence eeq.
+Instance nfo_setoid : Equivalence EQ.
   exact Eq.nfo_setoid.
 Qed.
 
 (** Set membership *)
-Definition iin : 𝓥 -> 𝓥 -> Prop.
-  exact In.iin.
+Definition IN : 𝓥 -> 𝓥 -> Prop.
+  exact In.IN.
 Defined.
-Infix "∈" := iin (at level 85).
+Infix "∈" := IN (at level 85).
 
-Add Morphism iin with signature eeq ==> eeq ==> iff as iin_morphism.
-  exact Morphism.iin_mor.
+Add Morphism IN with signature EQ ==> EQ ==> iff as IN_morphism.
+  exact Morphism.IN_mor.
 Qed.
 
 (** Extensionality *)

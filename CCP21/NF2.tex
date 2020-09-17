@@ -1,0 +1,36 @@
+%!TEX root = main.tex
+
+\begin{coqdoccode}
+  \coqdocnoindent
+  \coqdockw{Inductive} \coqdefRef{NF2.Model.set}{set}{\coqdocinductive{set}} :=\coqdoceol
+  \coqdocindent{1.00em}
+  \ensuremath{|} \coqdef{NF2.Model.Low}{Low}{\coqdocconstructor{Low}} : \coqdocnotation{\ensuremath{\forall}} \{\coqdocvar{X}\}, \coqexternalref{::type scope:x '->' x}{http://coq.inria.fr/distrib/V8.11.0/stdlib//Coq.Init.Logic}{\coqdocnotation{(}}\coqdocvariable{X} \coqexternalref{::type scope:x '->' x}{http://coq.inria.fr/distrib/V8.11.0/stdlib//Coq.Init.Logic}{\coqdocnotation{\ensuremath{\rightarrow}}} \coqref{NF2.Model.set}{\coqdocinductive{set}}\coqexternalref{::type scope:x '->' x}{http://coq.inria.fr/distrib/V8.11.0/stdlib//Coq.Init.Logic}{\coqdocnotation{)}} \coqexternalref{::type scope:x '->' x}{http://coq.inria.fr/distrib/V8.11.0/stdlib//Coq.Init.Logic}{\coqdocnotation{\ensuremath{\rightarrow}}} \coqref{NF2.Model.set}{\coqdocinductive{set}}\coqdoceol
+  \coqdocindent{1.00em}
+  \ensuremath{|} \coqdef{NF2.Model.High}{High}{\coqdocconstructor{High}} : \coqdocnotation{\ensuremath{\forall}} \{\coqdocvar{X}\}, \coqexternalref{::type scope:x '->' x}{http://coq.inria.fr/distrib/V8.11.0/stdlib//Coq.Init.Logic}{\coqdocnotation{(}}\coqdocvariable{X} \coqexternalref{::type scope:x '->' x}{http://coq.inria.fr/distrib/V8.11.0/stdlib//Coq.Init.Logic}{\coqdocnotation{\ensuremath{\rightarrow}}} \coqref{NF2.Model.set}{\coqdocinductive{set}}\coqexternalref{::type scope:x '->' x}{http://coq.inria.fr/distrib/V8.11.0/stdlib//Coq.Init.Logic}{\coqdocnotation{)}} \coqexternalref{::type scope:x '->' x}{http://coq.inria.fr/distrib/V8.11.0/stdlib//Coq.Init.Logic}{\coqdocnotation{\ensuremath{\rightarrow}}} \coqref{NF2.Model.set}{\coqdocinductive{set}}
+  .\coqdoceol
+  \coqdocemptyline
+\end{coqdoccode}
+
+a
+
+\begin{coqdoccode}
+  \coqdocnoindent
+\coqdockw{Fixpoint} \coqdefRef{NF2.Model.EQ}{EQ}{\coqdocdefinition{EQ}} \coqdocvar{a} \coqdocvar{b} := \coqdockw{match} \coqdocvariable{a},\coqdocvariable{b} \coqdockw{with}\coqdoceol
+\coqdocindent{1.00em}
+\ensuremath{|} \coqref{NF2.Model.Low}{\coqdocconstructor{Low}} \coqdocvar{\_}, \coqref{NF2.Model.High}{\coqdocconstructor{High}} \coqdocvar{\_} \ensuremath{\Rightarrow} \coqexternalref{False}{http://coq.inria.fr/distrib/V8.11.0/stdlib//Coq.Init.Logic}{\coqdocinductive{False}}\coqdoceol
+\coqdocindent{1.00em}
+\ensuremath{|} \coqref{NF2.Model.High}{\coqdocconstructor{High}} \coqdocvar{\_}, \coqref{NF2.Model.Low}{\coqdocconstructor{Low}} \coqdocvar{\_} \ensuremath{\Rightarrow} \coqexternalref{False}{http://coq.inria.fr/distrib/V8.11.0/stdlib//Coq.Init.Logic}{\coqdocinductive{False}}\coqdoceol
+\coqdocindent{1.00em}
+\ensuremath{|} \coqref{NF2.Model.Low}{\coqdocconstructor{Low}} \coqdocvar{f}, \coqref{NF2.Model.Low}{\coqdocconstructor{Low}} \coqdocvar{g} \ensuremath{\Rightarrow}\coqdoceol
+\coqdocindent{2.00em}
+\coqexternalref{::type scope:x '/x5C' x}{http://coq.inria.fr/distrib/V8.11.0/stdlib//Coq.Init.Logic}{\coqdocnotation{(}}\coqdocnotation{\ensuremath{\forall}} \coqdocvar{x}, \coqexternalref{::type scope:'exists' x '..' x ',' x}{http://coq.inria.fr/distrib/V8.11.0/stdlib//Coq.Init.Logic}{\coqdocnotation{\ensuremath{\exists}}} \coqdocvar{y}\coqexternalref{::type scope:'exists' x '..' x ',' x}{http://coq.inria.fr/distrib/V8.11.0/stdlib//Coq.Init.Logic}{\coqdocnotation{,}} \coqref{NF2.Model.EQ}{\coqdocdefinition{EQ}} (\coqdocvar{f} \coqdocvariable{x}) (\coqdocvar{g} \coqdocvariable{y})\coqexternalref{::type scope:x '/x5C' x}{http://coq.inria.fr/distrib/V8.11.0/stdlib//Coq.Init.Logic}{\coqdocnotation{)}} \coqexternalref{::type scope:x '/x5C' x}{http://coq.inria.fr/distrib/V8.11.0/stdlib//Coq.Init.Logic}{\coqdocnotation{\ensuremath{\land}}} \coqexternalref{::type scope:x '/x5C' x}{http://coq.inria.fr/distrib/V8.11.0/stdlib//Coq.Init.Logic}{\coqdocnotation{(}}\coqdocnotation{\ensuremath{\forall}} \coqdocvar{y}, \coqexternalref{::type scope:'exists' x '..' x ',' x}{http://coq.inria.fr/distrib/V8.11.0/stdlib//Coq.Init.Logic}{\coqdocnotation{\ensuremath{\exists}}} \coqdocvar{x}\coqexternalref{::type scope:'exists' x '..' x ',' x}{http://coq.inria.fr/distrib/V8.11.0/stdlib//Coq.Init.Logic}{\coqdocnotation{,}} \coqref{NF2.Model.EQ}{\coqdocdefinition{EQ}} (\coqdocvar{f} \coqdocvariable{x}) (\coqdocvar{g} \coqdocvariable{y})\coqexternalref{::type scope:x '/x5C' x}{http://coq.inria.fr/distrib/V8.11.0/stdlib//Coq.Init.Logic}{\coqdocnotation{)}}\coqdoceol
+\coqdocindent{1.00em}
+\ensuremath{|} \coqref{NF2.Model.High}{\coqdocconstructor{High}} \coqdocvar{f}, \coqref{NF2.Model.High}{\coqdocconstructor{High}} \coqdocvar{g} \ensuremath{\Rightarrow}\coqdoceol
+\coqdocindent{2.00em}
+\coqexternalref{::type scope:x '/x5C' x}{http://coq.inria.fr/distrib/V8.11.0/stdlib//Coq.Init.Logic}{\coqdocnotation{(}}\coqdocnotation{\ensuremath{\forall}} \coqdocvar{x}, \coqexternalref{::type scope:'exists' x '..' x ',' x}{http://coq.inria.fr/distrib/V8.11.0/stdlib//Coq.Init.Logic}{\coqdocnotation{\ensuremath{\exists}}} \coqdocvar{y}\coqexternalref{::type scope:'exists' x '..' x ',' x}{http://coq.inria.fr/distrib/V8.11.0/stdlib//Coq.Init.Logic}{\coqdocnotation{,}} \coqref{NF2.Model.EQ}{\coqdocdefinition{EQ}} (\coqdocvar{f} \coqdocvariable{x}) (\coqdocvar{g} \coqdocvariable{y})\coqexternalref{::type scope:x '/x5C' x}{http://coq.inria.fr/distrib/V8.11.0/stdlib//Coq.Init.Logic}{\coqdocnotation{)}} \coqexternalref{::type scope:x '/x5C' x}{http://coq.inria.fr/distrib/V8.11.0/stdlib//Coq.Init.Logic}{\coqdocnotation{\ensuremath{\land}}} \coqexternalref{::type scope:x '/x5C' x}{http://coq.inria.fr/distrib/V8.11.0/stdlib//Coq.Init.Logic}{\coqdocnotation{(}}\coqdocnotation{\ensuremath{\forall}} \coqdocvar{y}, \coqexternalref{::type scope:'exists' x '..' x ',' x}{http://coq.inria.fr/distrib/V8.11.0/stdlib//Coq.Init.Logic}{\coqdocnotation{\ensuremath{\exists}}} \coqdocvar{x}\coqexternalref{::type scope:'exists' x '..' x ',' x}{http://coq.inria.fr/distrib/V8.11.0/stdlib//Coq.Init.Logic}{\coqdocnotation{,}} \coqref{NF2.Model.EQ}{\coqdocdefinition{EQ}} (\coqdocvar{f} \coqdocvariable{x}) (\coqdocvar{g} \coqdocvariable{y})\coqexternalref{::type scope:x '/x5C' x}{http://coq.inria.fr/distrib/V8.11.0/stdlib//Coq.Init.Logic}{\coqdocnotation{)}}\coqdoceol
+\coqdocnoindent
+\coqdockw{end}.\coqdoceol
+\coqdocnoindent
+\coqdockw{Notation} \coqdef{NF2.Model.:::x 'xE2x89xA1' x}{"}{"}A ≡ B" := (\coqref{NF2.Model.EQ}{\coqdocdefinition{EQ}} \coqdocvar{A} \coqdocvar{B}).\coqdoceol
+\coqdocemptyline
+\end{coqdoccode}

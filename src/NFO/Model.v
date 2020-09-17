@@ -4,10 +4,10 @@ Add LoadPath "src".
 From NFO Require Import BoolExpr.
 (* end hide *)
 
-Inductive set :=
-  S : forall X Y (f: X -> set) (g: Y -> set) (e: @boolean Y), set.
+Inductive SET :=
+  S : forall X Y (f: X -> SET) (g: Y -> SET) (e: @BExpr Y), SET.
 
-Inductive lt : set -> set -> Prop :=
+Inductive lt : SET -> SET -> Prop :=
   | lt_f : forall X Y f g e x, lt (f x) (S X Y f g e)
   | lt_h : forall X Y f g e y, lt (g y) (S X Y f g e)
 .
