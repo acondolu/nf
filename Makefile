@@ -14,7 +14,7 @@ remake: clean all
 
 coq: coq-common coq-nf2 coq-nfo
 
-coq-common: src/Internal/Misc.vos src/Internal/List.vos src/Internal/WfMult.vos src/Internal/WfDecr.vos src/Internal/WfTuples.vos src/Internal/FunExt.vos
+coq-common: src/Internal/Misc.vos src/Internal/List.vos src/Internal/WfMult.vos src/Internal/WfDecr.vos src/Internal/WfTuples.vos src/Internal/FunExt.vos src/Internal/Common.vos
 coq-nf2: src/NF2/Model.vos src/NF2/Ext.vos src/NF2/Sets.vos src/NF2/ZF.vos
 coq-nfo : src/NFO/Xor.vos src/NFO/BoolExpr.vos src/NFO/Model.vos src/NFO/Wf.vos src/NFO/Eq.vos src/NFO/In.vos src/NFO/Morphism.vos src/NFO/Sets.vos src/NFO/Ext.vos src/NFO/Union.vos src/NFO/Main.vos
 coq-zfc : src/zfc/Sets.vos

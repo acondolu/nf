@@ -4,7 +4,7 @@ Require Import Setoid Morphisms.
 
 (* begin hide *)
 Add LoadPath "src".
-From Internal Require Import FunExt.
+From Internal Require Import Misc FunExt.
 (* end hide *)
 
 (** This module defines exclusive disjunction (xor), noted
@@ -74,3 +74,8 @@ Proof.
   unfold respects. intros. unfold xorP. apply xor_iff.
   apply H; auto. apply H0; auto.
 Qed.
+
+(* An auxiliary tactic to prove stuff by cases: *)
+Ltac classic P := 
+destruct (classic P) as [H | H];
+[setoid_rewrite (rewr_true H) | setoid_rewrite (rewr_false H)]; clear H.

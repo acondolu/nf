@@ -73,7 +73,7 @@ Admitted.
 
   From Internal Require Import Misc.
 Definition pow {X} (f: X -> set) :=
-  Low (fun P => Low (select f P))
+  Low _ (fun P => Low _ (select f P))
 .
 Definition subset x y := forall z, IN z x -> IN z y.
 

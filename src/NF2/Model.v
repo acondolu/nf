@@ -13,25 +13,25 @@
 Require Import Setoid Morphisms.
 
 Inductive set :=
-  | Low : forall {X}, (X -> set) -> set
-  | High : forall {X}, (X -> set) -> set
+  | Low  : forall X, (X -> set) -> set
+  | High : forall X, (X -> set) -> set
 .
 
 (* Set equality *)
 Fixpoint EQ a b := match a,b with
-  | Low _, High _ => False
-  | High _, Low _ => False
-  | Low f, Low g =>
+  | Low _ _, High _ _ => False
+  | High _ _, Low _ _ => False
+  | Low _ f, Low _ g => 
       (forall x, exists y, EQ (f x) (g y)) /\ (forall y, exists x, EQ (f x) (g y))
-  | High f, High g =>
+  | High _ f, High _ g =>
       (forall x, exists y, EQ (f x) (g y)) /\ (forall y, exists x, EQ (f x) (g y))
 end.
 Notation "A ≡ B" := (EQ A B) (at level 85).
 
 (* Set membership *)
 Definition IN a b := match b with
-  | Low f => exists x, EQ (f x) a
-  | High f => forall x, ~ EQ (f x) a
+  | Low _ f => exists x, EQ (f x) a
+  | High _ f => forall x, ~ EQ (f x) a
 end.
 Notation "A ∈ B" := (IN A B) (at level 85).
 
@@ -92,6 +92,6 @@ Proof.
 Qed.
 
 Definition low x := match x with
-  | Low _ => True
-  | High _ => False
+  | Low _ _ => True
+  | High _ _ => False
 end.

@@ -122,16 +122,16 @@ Qed.
     that equality of NFO sets is an equivalence relation (see NFO.Eeq).
 *)
 
-Lemma eq_bexpr_refl {X Y} {f: X -> Y} {R: Y -> Y -> Prop} {e}:
-    (forall x, R (f x) (f x))
-      -> eq_bexpr (R ⨀ (f ⨁ f)) (map inl e) (map inr e).
+Lemma eq_bexpr_refl X Y e (f: X -> Y) (R: Y -> Y -> Prop)
+  (Hrefl: forall x, R (f x) (f x)) :
+    eq_bexpr (R ⨀ (f ⨁ f)) (map inl e) (map inr e).
 Proof.
   unfold eq_bexpr. intros.
   induction e; simpl; try tauto; eauto.
-  apply H0. apply H.
+  apply H. apply Hrefl.
 Qed.
 
-Lemma eq_bexpr_sym {X Y Z R} {f: X -> Z} {g: Y -> Z} {e e'} :
+Lemma eq_bexpr_sym X Y Z R e e' (f: X -> Z) (g: Y -> Z):
   eq_bexpr (R ⨀ (f ⨁ g)) (map inl e) (map inr e')
     -> eq_bexpr (R ⨀ (g ⨁ f)) (map inl e') (map inr e).
 Proof.
@@ -141,24 +141,56 @@ Proof.
   repeat rewrite compose_assoc in H.
   rewrite comp_swap_inl in H.
   rewrite comp_swap_inr in H.
-  repeat rewrite<- compose_assoc in H.
   repeat rewrite<- map_compose in H.
   apply iff_sym. apply H.
   apply respects_swap. assumption.
 Qed.
 
+Lemma aux_inl X Y Z W f1 f2 f3 P (R : W -> W -> Prop)
+  (sym: forall a b, R a b -> R b a)
+  (trans: forall a b c, inv3 f1 f2 f3 a -> inv3 f1 f2 f3 b -> inv3 f1 f2 f3 c -> R a b -> R b c -> R a c):
+  let g := invert_sum P (fun (a : X) (b : Y) => R (f1 a) (f2 b))
+  (fun (a : Z) (b : Y) => R (f2 b) (f3 a)) in
+  respects (R ⨀ (f1 ⨁ f3)) P
+  -> respects (R ⨀ (f1 ⨁ f2)) (P ∘ inl ⨁ g).
+Proof.
+  intros.
+  unfold compR, sumF in H.
+  unfold respects; intros; destruct x, x'; firstorder;
+  unfold sumF, compose; unfold sumF, compR in H.
+  - apply (H (inl x0) (inl x)). firstorder. auto.
+  - apply (H (inl x) (inr x0)). firstorder. auto.
+  - apply (H (inl x0) (inl x)). firstorder. auto.
+  - apply (H (inr x0) (inl x)). firstorder. auto.
+Qed.
+
+Lemma aux_inr X Y Z W f1 f2 f3 P (R : W -> W -> Prop)
+  (sym: forall a b, R a b -> R b a)
+  (trans: forall a b c, inv3 f1 f2 f3 a -> inv3 f1 f2 f3 b -> inv3 f1 f2 f3 c -> R a b -> R b c -> R a c):
+  let g := invert_sum P (fun (a : X) (b : Y) => R (f1 a) (f2 b))
+  (fun (a : Z) (b : Y) => R (f2 b) (f3 a)) in
+  respects (R ⨀ (f1 ⨁ f3)) P
+  -> respects (R ⨀ (f2 ⨁ f3)) (g ⨁ P ∘ inr).
+Proof.
+  intros. unfold compR, sumF in H.
+  unfold respects; intros; destruct x, x'; firstorder;
+  unfold sumF, compose; unfold sumF, compR in H.
+  - apply (H (inl x) (inr z)). firstorder. auto.
+  - apply (H (inr x) (inr z)). firstorder. auto.
+  - apply (H (inl x) (inr z)). firstorder. auto.
+  - apply (H (inr x) (inr z)). firstorder. auto.
+Qed.
+
 (** TODO: This needs some love... *)
 Lemma eq_bexpr_trans {X Y Z W} {R : W -> W -> Prop} {f1 f2 f3}
   {e1 : @BExpr X} {e2 : @BExpr Y} {e3 : @BExpr Z}
-  :  (forall a b, R a b -> R b a)
-  -> (forall a b c, inv3 f1 f2 f3 a -> inv3 f1 f2 f3 b -> inv3 f1 f2 f3 c -> R a b -> R b c -> R a c)
-  -> eq_bexpr (R ⨀ (f1 ⨁ f2)) (map inl e1) (map inr e2)
+  (sym: forall a b, R a b -> R b a)
+  (trans: forall a b c, inv3 f1 f2 f3 a -> inv3 f1 f2 f3 b -> inv3 f1 f2 f3 c -> R a b -> R b c -> R a c)
+  : eq_bexpr (R ⨀ (f1 ⨁ f2)) (map inl e1) (map inr e2)
   -> eq_bexpr (R ⨀ (f2 ⨁ f3)) (map inl e2) (map inr e3)
   -> eq_bexpr (R ⨀ (f1 ⨁ f3)) (map inl e1) (map inr e3).
 Proof.
-  Ltac lr H3 x :=
-    repeat destruct H3; [left | right]; exists x; split; eauto with misc.
-  intros sym trans. unfold eq_bexpr. intros.
+  unfold eq_bexpr. intros.
   pose (invert_sum P (fun a b => R (f1 a) (f2 b)) (fun a b => R (f2 b) (f3 a))) as g.
   specialize H with (P ∘ inl ⨁ g).
   specialize H0 with (g ⨁ P ∘ inr).
@@ -167,37 +199,7 @@ Proof.
   repeat rewrite map_compose_inl.
   repeat rewrite map_compose_inr.
   intros.
-  apply (fun A B => iff_trans (H A) (H0 B)); unfold respects; intros; destruct x, x'; simpl sumF; unfold respects in H1; simpl; unfold g; unfold compose; auto; unfold compR, sumF.
-  - split; intro.
-  -- left. exists x. auto.
-  -- repeat destruct H3; unfold compR, sumF in H1.
-      specialize H1 with (inl x) (inl x0). 
-      unfold sumF in H2.
-      apply (fun X Y Z => H1 (trans _ _ _ X Y Z H2 (sym _ _ H4))); eauto with misc.
-      specialize H1 with (inl x) (inr x0).
-      unfold sumF in H2.
-      apply (fun X Y Z => H1 (trans _ _ _ X Y Z H2 H4)); eauto with misc.
-  - split; intro.
-    -- repeat destruct H3; unfold compR, sumF in H2.
-      specialize H1 with (inl x) (inl x0).
-      apply (fun X Y Z => H1 (trans _ _ _ X Y Z (sym _ _ H2) (sym _ _ H4))); eauto with misc.
-      specialize H1 with (inl x) (inr x0).
-      apply (fun X Y Z => H1 (trans _ _ _ X Y Z (sym _ _ H2) H4)); eauto with misc.
-    -- left. exists x. auto.
-  - split; intro; lr H3 x.
-  - split; intro; lr H3 x.
-  - split; intro.
-    -- repeat destruct H3.
-      specialize H1 with (inl x) (inr z). unfold compR, sumF in H1.
-      apply H1; eauto with misc.
-      specialize H1 with (inr x) (inr z). unfold compR, sumF in H1.
-      apply H1; eauto with misc.
-    -- right. exists z. split; auto. 
-  - split; intro.
-  -- right. exists z. split; auto. 
-  -- repeat destruct H3.
-     specialize H1 with (inl x) (inr z). unfold compR, sumF in H1.
-     apply H1; eauto with misc.
-     specialize H1 with (inr x) (inr z). unfold compR, sumF in H1. 
-     apply H1; eauto with misc.
+  apply (fun A B => iff_trans (H A) (H0 B)).
+  apply aux_inl; assumption.
+  apply aux_inr; assumption.
 Qed.

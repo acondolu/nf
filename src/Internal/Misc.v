@@ -66,12 +66,6 @@ Definition invert_sum {X Y Z} P R S (z : Z) :=
   (exists x : X, P (inl x) /\ R x z)
   \/ exists y : Y, P (inr y) /\ S y z.
 
-(* An auxiliary tactic to prove stuff by cases: *)
-From Coq.Logic Require Import Classical_Prop.
-Ltac classic P := 
-destruct (classic P) as [H | H];
-[setoid_rewrite (rewr_true H) | setoid_rewrite (rewr_false H)]; clear H.
-
 (** Inverting function for orders TODO: *)
 Definition invF {X Y} (f: X -> Y) (y: Y) := exists x, f x = y.
 

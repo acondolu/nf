@@ -5,13 +5,13 @@ Require Import NF2.Model.
 From Internal Require Import Misc.
 
 (* The universal set *)
-Definition 𝒰 := High (fun x: False => match x with end).
+Definition 𝒰 := High False (fun x => match x with end).
 
 Lemma univ_ok : forall x, x ∈ 𝒰.
 Proof. intros x H. destruct H. Qed.
 
 (* The empty set *)
-Definition Ø := Low (fun x: False => match x with end).
+Definition Ø := Low False (fun x => match x with end).
 
 Lemma empty_ok : forall x, ~ (x ∈ Ø).
 Proof. intros x H. apply H. Qed.
@@ -19,8 +19,8 @@ Proof. intros x H. apply H. Qed.
 (* Complement *)
 Definition neg : set -> set :=
   fun x => match x with
-  | Low f => High f
-  | High f => Low f
+  | Low _ f => High _ f
+  | High _ f => Low _ f
   end
 .
 
@@ -51,10 +51,10 @@ Definition join {X Y} f g : X + Y -> set := f ⨁ g.
 
 (* Intersection *)
 Definition cap x y := match x, y with
-  | Low f, High g => Low (minus f g)
-  | High f, Low g => Low (minus g f)
-  | Low f, Low g => Low (meet f g)
-  | High f, High g => High (join f g)
+  | Low _ f, High _ g => Low _ (minus f g)
+  | High _ f, Low _ g => Low _ (minus g f)
+  | Low _ f, Low _ g => Low _ (meet f g)
+  | High _ f, High _ g => High _ (join f g)
 end.
 Notation "A ⋂ B" := (cap A B) (at level 85).
 

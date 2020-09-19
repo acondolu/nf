@@ -8,7 +8,7 @@ Require Import Setoid Morphisms.
 (* begin hide *)
 Add LoadPath "src".
 (* end hide *)
-From Internal Require Import Misc FunExt.
+From Internal Require Import Misc FunExt Common.
 From NFO Require Import BoolExpr Model Wf.
 
 Local Definition EQ' : SET * SET -> Prop.
@@ -38,8 +38,8 @@ Defined.
 Infix "==" := EQ (at level 50) : type_scope.
 
 (** * Aczel part *)
-Definition Aeq {X Y} f g :=
-  (forall x: X, exists y, f x == g y) /\ (forall y: Y, exists x, f x == g y).
+Notation Aeq f g := (eq_aczel EQ f g).
+(** printing Aeq %\ensuremath{\equiv_A}% *)
 
 (** Temporary unfolding lemma for EQ. 
    It will be improved in EQ_unfold. *)
@@ -81,7 +81,7 @@ Proof.
   split. split.
   - intro x0. destruct (H2 x0). eauto with Wff.
   - intro x. destruct (H0 x). eauto with Wff.
-  - revert H1. exact eq_bexpr_sym.
+  - revert H1. apply eq_bexpr_sym.
 Qed.
 Hint Resolve EQ_sym : Eeq.
 
@@ -108,17 +108,19 @@ Proof.
 Qed.
 
 (** Aeq is an equivalence *)
-Lemma Aeq_refl: forall {X} f, @Aeq X X f f.
+Lemma Aeq_refl: forall {X} (f: X -> _), Aeq f f.
 Proof. intros. unfold Aeq. eauto with Eeq. Qed.
 
-Lemma Aeq_sym: forall {X Y} f g, @Aeq X Y f g -> Aeq g f.
+Lemma Aeq_sym: forall {X Y} (f: X -> _) (g: Y -> _),
+  Aeq f g -> Aeq g f.
 Proof.
   unfold Aeq. intros. destruct H. split; intro z.
   destruct (H0 z). eauto with Eeq.
   destruct (H z). eauto with Eeq.
 Qed.
 
-Lemma Aeq_trans: forall {X Y Z} f g h, @Aeq X Y f g -> @Aeq Y Z g h -> Aeq f h.
+Lemma Aeq_trans: forall {X Y Z} (f: X -> _) (g: Y -> _) (h: Z -> _),
+  Aeq f g -> Aeq g h -> Aeq f h.
 Proof.
   unfold Aeq. intros. destruct H, H0. split; intro z.
   destruct (H z).  destruct (H0 x). eauto with Eeq.
@@ -127,13 +129,13 @@ Qed.
 
 (** "Quine" equality *)
 (** TODO: rename in Beq *)
-Definition Qeq := eq_bexpr EQ.
+Notation Qeq := (eq_bexpr EQ).
 
 (** The good unfolding lemma for EQ: *)
 Lemma EQ_unfold {X' Y' f' g' e' X Y f g e}:
   EQ (S X Y f g e) (S X' Y' f' g' e')
     <-> Aeq f f' /\ Qeq (map g e) (map g' e').
 Proof.
-  unfold Qeq. rewrite (eq_bexpr_simpl nfo_setoid).
+  rewrite (eq_bexpr_simpl nfo_setoid).
   rewrite EQ_def. apply iff_refl.
 Qed.
