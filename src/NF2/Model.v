@@ -11,6 +11,10 @@
   ZF set theory in Coq. Visit https://github.com/coq-contribs/zfc.
 *)
 Require Import Setoid Morphisms.
+(* begin hide *)
+Add LoadPath "src".
+(* end hide *)
+From Internal Require Import Common.
 
 Inductive set :=
   | Low  : forall X, (X -> set) -> set
@@ -28,12 +32,18 @@ Fixpoint EQ a b := match a,b with
 end.
 Notation "A ≡ B" := (EQ A B) (at level 85).
 
+Infix "AEQ" := (eq_aczel EQ) (at level 85).
+(** printing AEQ %\ensuremath{\AEQ}% *)
+
 (* Set membership *)
 Definition IN a b := match b with
   | Low _ f => exists x, EQ (f x) a
   | High _ f => forall x, ~ EQ (f x) a
 end.
 Notation "A ∈ B" := (IN A B) (at level 85).
+
+Infix "AIN" := (in_aczel EQ) (at level 85).
+(** printing AIN %\ensuremath{\AIN}% *)
 
 (* Equality is an equivalence relation *)
 

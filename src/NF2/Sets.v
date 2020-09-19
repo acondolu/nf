@@ -32,7 +32,7 @@ Qed.
 
 (* Singleton *)
 Definition sing : set -> set :=
-  fun x => @Low unit (fun _ => x).
+  fun x => Low unit (fun _ => x).
 
 Definition sing_ok : forall x y, x ∈ sing y <-> x ≡ y.
 Proof.

@@ -4,8 +4,8 @@ Require Import Setoid Morphisms.
 
 (* begin hide *)
 Add LoadPath "src".
-From Internal Require Import Misc FunExt.
 (* end hide *)
+From Internal Require Import Misc FunExt.
 
 (** This module defines exclusive disjunction (xor), noted
     by ⊻. Note: xor is a fundamentally classical operator, and

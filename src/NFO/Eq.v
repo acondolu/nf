@@ -39,7 +39,7 @@ Infix "==" := EQ (at level 50) : type_scope.
 
 (** * Aczel part *)
 Notation Aeq f g := (eq_aczel EQ f g).
-(** printing Aeq %\ensuremath{\equiv_A}% *)
+(** printing Aeq %\ensuremath{\AEQ}% *)
 
 (** Temporary unfolding lemma for EQ. 
    It will be improved in EQ_unfold. *)

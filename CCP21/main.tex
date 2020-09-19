@@ -1,4 +1,6 @@
-\documentclass[sigplan,10pt,anonymous,review]{acmart}\settopmatter{printfolios=true,printccs=false,printacmref=false}
+\documentclass[sigplan,10pt,anonymous,review]{acmart}%
+%\settopmatter{printfolios=true,printccs=false,printacmref=false}
+% ??? Commented out?
 
 \input{macros.tex}
 
@@ -84,7 +86,7 @@
 %% The abstract is a short summary of the work to be presented in the
 %% article.
 \begin{abstract}
-New Foundations (\NF) is a somewhat bizarre alternative to mainstream set theories like Zermelo–Fraenkel (\ZF). The distinguishing feature of \NF{} is permitting the construction of a \emph{universal set}, \ie{} a set that contains all sets (itself, too). Though counterintuitive, \NF{} is capable of expressing ordinary mathematical concepts like well-orders, ordinals, cardinals, natural numbers, and so on. Its adoption, however, is hampered by the fact that after more than 80 years from its introduction, the community has not yet agreed upon its logical consistency.
+New Foundations (\NF) is a somewhat bizarre alternative to mainstream set theories like Zermelo–Fraenkel (\ZF). The distinguishing feature of \NF{} is permitting the construction of a \emph{universal set}, \ie{} a set that contains all sets (itself, too). Though counterintuitive, \NF{} is capable of expressing ordinary mathematical concepts like well-orders, ordinals, cardinals, natural numbers, and so on. Its adoption, however, is hampered by the fact that after more than 80 years since its introduction, the community has not yet agreed upon its logical consistency.
   
 In this paper, we consider two weak sub-theories of \NF{} whose consistency has already been established: \NFTWO{} and \NFO. These theories are obtained from \NF{} by restricting the axiom of comprehension to quantifier-free formulas only. We provide an encoding of \NFTWO{} and \NFO{} in the Coq proof assistant, adapting the classic encoding of \ZF{} in Coq by Benjamin Werner. To our knowledge, this is the first mechanized consistency proof concerning New Foundations.
 \end{abstract}
@@ -126,7 +128,7 @@ In this paper, we consider two weak sub-theories of \NF{} whose consistency has 
 %%
 %% Keywords. The author(s) should pick words that accurately describe
 %% the work being presented. Separate the keywords with commas.
-\keywords{set theory, new foundations, universal set}
+\keywords{set theory, New Foundations, universal set}
 
 %%
 %% This command processes the author and affiliation and title
@@ -138,7 +140,7 @@ In this paper, we consider two weak sub-theories of \NF{} whose consistency has 
 \TODO{The history of the foundations of mathematics has been \dots}
 
 \paragraph{Set theories.}
-A \emph{set theory} is a first-order theory having the usual logical connectives ($\neg$, $\land$, $\lor$, $\to$, $\leftrightarrow$, $\exists$, $\forall$) plus two relation symbols: \emph{equality} ($=$) and \emph{membership} ($\in$). Variables (like $x,y,z,\ldots$) range over sets, and a set is meant to be a collection of sets itself: $x \in y$ means that $x$ is a \emph{member} or an \emph{element} of $y$.
+A \emph{set theory} is a first-order theory having the usual logical connectives ($\neg$, $\land$, $\lor$, $\to$, $\leftrightarrow$, $\exists$, $\forall$) plus two relation symbols: \emph{equality} ($=$) and \emph{membership} ($\in$). Variables (like $x,y,z,\ldots$) range over sets, and a set is meant to represent a collection of sets: $x \in y$ means that $x$ is a \emph{member} or an \emph{element} of $y$.
 
 %Formulas of set theory are thus described by the following grammar: 
 
