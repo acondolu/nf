@@ -15,7 +15,7 @@ From NFO Require Import Xor BoolExpr Model Eq In Morphism Sets Ext.
 
 (** TODO: clean up and explain *)
 Definition aux {X Y Z: Type} (f': X -> SET) (g: Y -> SET) (g': Z -> SET) e e' z := 
-  (Qin z g' e' -> Qin z g e) /\ (Qin z g e -> (Ain z f' <-> Qin z g' e'))
+  (BIN z (map g' e') -> BIN z (map g e)) /\ (BIN z (map g e) -> (AIN z f' <-> BIN z (map g' e')))
 .
 (* (a -> b) /\ (b -> (c <-> a)) *)
 (* (a && b && c) || (! a && ! b) || (! a && ! c) *)
@@ -24,8 +24,8 @@ Local Lemma aux_respects {X Y Z: Type} (f': X -> SET) (g: Y -> SET) (g': Z -> SE
   respects EQ (aux f' g g' e e').
 Proof.
   unfold respects. intros. unfold aux.
-  setoid_rewrite (EQ_Qin H).
-  setoid_rewrite (EQ_Ain H).
+  setoid_rewrite (EQ_BIN H).
+  setoid_rewrite (EQ_AIN H).
   apply iff_refl.
 Qed.
 
@@ -39,18 +39,19 @@ Definition cup x y :=
 Theorem cup_ok x y z: IN z (cup x y) <-> IN z x \/ IN z y.
 Proof.
   destruct x, y. unfold cup. rewrite IN_unfold.
-  rewrite Ain_sums. simpl Qin.
-  setoid_rewrite Qin_sum_inl.
-  setoid_rewrite Qin_sum_inr.
+  rewrite AIN_sums. simpl BIN.
+  setoid_rewrite map_compose.
+  setoid_rewrite (@map_compose_inl _ _ _ g g0).
+  setoid_rewrite (@map_compose_inr _ _ _ g g0).
   setoid_rewrite IN_unfold.
-  unfold Ain, select, compose.
+  unfold AIN, select, compose.
   setoid_rewrite (ex_T_resp (aux f0 g g0 e e0)).
   setoid_rewrite (ex_T_resp (aux f g0 g e0 e)).
   - unfold aux.
       classic (exists x, f x == z);
         classic (exists x, f0 x == z);
-          classic (Qin z g e);
-            classic (Qin z g0 e0);
+          classic (BIN z (map g e));
+            classic (BIN z (map g0 e0));
               clear; unfold xor; tauto.
   - apply aux_respects.
   - apply aux_respects.

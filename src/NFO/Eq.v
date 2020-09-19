@@ -38,14 +38,14 @@ Defined.
 Infix "==" := EQ (at level 50) : type_scope.
 
 (** * Aczel part *)
-Notation Aeq f g := (eq_aczel EQ f g).
-(** printing Aeq %\ensuremath{\AEQ}% *)
+Notation AEQ f g := (eq_aczel EQ f g).
+(** printing AEQ %\ensuremath{\AEQ}% *)
 
 (** Temporary unfolding lemma for EQ. 
    It will be improved in EQ_unfold. *)
 Lemma EQ_def : forall x y,
   EQ x y <-> match x, y with S X Y f g e, S X' Y' f' g' e' =>
-    Aeq f f'
+    AEQ f f'
       /\
         eq_bexpr (EQ ⨀ (g ⨁ g')) (map inl e) (map inr e')
 end.
@@ -68,7 +68,7 @@ Global Opaque EQ.
 (** EQ is an equivalence relation: *)
 Lemma EQ_refl: forall x, EQ x x.
 Proof.
-  induction x. rewrite EQ_def. unfold Aeq. split.
+  induction x. rewrite EQ_def. unfold AEQ. split.
   split; intro; eauto. apply eq_bexpr_refl. auto.
 Qed.
 Hint Immediate EQ_refl : Eeq.
@@ -89,7 +89,7 @@ Lemma EQ_trans : forall x y z, EQ x y -> EQ y z -> EQ x z.
 Proof.
   apply (wf_three_ind wf_lt (fun x y z => EQ x y -> EQ y z -> EQ x z)).
   destruct x1, x2, x3. 
-  repeat rewrite EQ_def. unfold Aeq in *. intros.
+  repeat rewrite EQ_def. unfold AEQ in *. intros.
   repeat destruct H0. repeat destruct H1.
   split. split.
   - intro x. destruct (H0 x). destruct (H1 x0).
@@ -107,34 +107,32 @@ Proof.
   constructor. exact @EQ_refl. exact @EQ_sym. exact @EQ_trans.
 Qed.
 
-(** Aeq is an equivalence *)
-Lemma Aeq_refl: forall {X} (f: X -> _), Aeq f f.
-Proof. intros. unfold Aeq. eauto with Eeq. Qed.
+(** AEQ is an equivalence *)
+Lemma AEQ_refl: forall {X} (f: X -> _), AEQ f f.
+Proof. intros. unfold AEQ. eauto with Eeq. Qed.
 
-Lemma Aeq_sym: forall {X Y} (f: X -> _) (g: Y -> _),
-  Aeq f g -> Aeq g f.
+Lemma AEQ_sym: forall {X Y} (f: X -> _) (g: Y -> _),
+  AEQ f g -> AEQ g f.
 Proof.
-  unfold Aeq. intros. destruct H. split; intro z.
+  unfold AEQ. intros. destruct H. split; intro z.
   destruct (H0 z). eauto with Eeq.
   destruct (H z). eauto with Eeq.
 Qed.
 
-Lemma Aeq_trans: forall {X Y Z} (f: X -> _) (g: Y -> _) (h: Z -> _),
-  Aeq f g -> Aeq g h -> Aeq f h.
+Lemma AEQ_trans: forall {X Y Z} (f: X -> _) (g: Y -> _) (h: Z -> _),
+  AEQ f g -> AEQ g h -> AEQ f h.
 Proof.
-  unfold Aeq. intros. destruct H, H0. split; intro z.
+  unfold AEQ. intros. destruct H, H0. split; intro z.
   destruct (H z).  destruct (H0 x). eauto with Eeq.
   destruct (H2 z). destruct (H1 x). eauto with Eeq.
 Qed.
 
-(** "Quine" equality *)
-(** TODO: rename in Beq *)
-Notation Qeq := (eq_bexpr EQ).
+Notation BEQ := (eq_bexpr EQ).
 
 (** The good unfolding lemma for EQ: *)
 Lemma EQ_unfold {X' Y' f' g' e' X Y f g e}:
   EQ (S X Y f g e) (S X' Y' f' g' e')
-    <-> Aeq f f' /\ Qeq (map g e) (map g' e').
+    <-> AEQ f f' /\ BEQ (map g e) (map g' e').
 Proof.
   rewrite (eq_bexpr_simpl nfo_setoid).
   rewrite EQ_def. apply iff_refl.

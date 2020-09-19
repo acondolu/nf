@@ -17,7 +17,7 @@ Definition emptyset := enum (False_rect _).
 Theorem emptyset_ok: forall x, ~ IN x emptyset.
 Proof.
   unfold emptyset, enum. intro x. rewrite IN_unfold.
-  unfold Ain, xor. setoid_rewrite ex_false. tauto.
+  unfold AIN, xor. setoid_rewrite ex_false. tauto.
 Qed.
 
 (** Set complement *)
@@ -29,7 +29,7 @@ Theorem compl_ok: forall x y,
   IN x (compl y) <-> (IN x y -> False).
 Proof.
   intros. destruct y. unfold compl. repeat rewrite IN_unfold.
-  simpl Qin. setoid_rewrite xor_neg_commute. tauto.
+  simpl BIN. setoid_rewrite xor_neg_commute. tauto.
 Qed.
 
 (** Singleton *)
@@ -38,7 +38,7 @@ Definition sin x := enum (fun _: unit => x).
 Theorem sin_ok: forall x y, IN x (sin y) <-> EQ y x.
 Proof.
   intros x y. unfold sin, enum. rewrite IN_unfold.
-  simpl Qin. unfold Ain. setoid_rewrite ex_unit.
+  simpl BIN. unfold AIN. setoid_rewrite ex_unit.
   apply xor_false_r.
 Qed.
 
@@ -48,7 +48,7 @@ Definition cosin x := S False unit (False_rect _) (fun _ => x) (Atom tt).
 Theorem cosin_ok: forall x y, IN x (cosin y) <-> IN y x.
 Proof.
   intros. unfold cosin. rewrite IN_unfold.
-  setoid_rewrite ex_false. simpl Qin. apply xor_false_l.
+  setoid_rewrite ex_false. simpl BIN. apply xor_false_l.
 Qed.
 
 (** Exclusive disjunction *)
@@ -56,45 +56,25 @@ Qed.
 (** First, some auxiliary things *)
 
 
-Lemma Ain_sum {X Y} (f: X + Y -> SET) x:
-  Ain x f <-> Ain x (compose f inl) \/ Ain x (compose f inr).
+Lemma AIN_sum {X Y} (f: X + Y -> SET) x:
+  AIN x f <-> AIN x (compose f inl) \/ AIN x (compose f inr).
 Proof.
-  unfold Ain, compose. split; intros.
+  unfold AIN, compose. split; intros.
   - destruct H, x0. left. eauto. right. eauto.
   - destruct H, H; eauto.
 Qed.
 
-Lemma Ain_sums {X X'} {f: X -> SET} {f': X' -> SET} {x}:
-  Ain x (f ⨁ f') <-> (Ain x f) \/ (Ain x f').
+Lemma AIN_sums {X X'} {f: X -> SET} {f': X' -> SET} {x}:
+  AIN x (f ⨁ f') <-> (AIN x f) \/ (AIN x f').
 Proof.
-  setoid_rewrite Ain_sum. unfold compose, sumF. tauto.
+  setoid_rewrite AIN_sum. unfold compose, sumF. tauto.
 Qed.
 
-Lemma Ain_select {X} (f: X -> SET) (P: SET -> Prop) a:
+Lemma AIN_select {X} (f: X -> SET) (P: SET -> Prop) a:
   respects EQ P ->
-    Ain a (select f (P ∘ f)) <-> P a /\ exists x, f x == a.
+    AIN a (select f (P ∘ f)) <-> P a /\ exists x, f x == a.
 Proof.
-  unfold Ain. intro H. setoid_rewrite (ex_T_resp P f a H). apply iff_refl.
-Qed.
-
-Lemma Qin_sum_inl: forall X Y z (f: X -> SET) (g: Y -> SET) p,
-  Qin z (f ⨁ g) (map inl p) <-> Qin z f p.
-Proof.
-  induction p; simpl.
-  - tauto.
-  - tauto.
-  - setoid_rewrite IHp. tauto.
-  - setoid_rewrite IHp1. setoid_rewrite IHp2. tauto.
-Qed.
-
-Lemma Qin_sum_inr: forall X Y z (f: X -> SET) (g: Y -> SET) p,
-  Qin z (f ⨁ g) (map inr p) <-> Qin z g p.
-Proof.
-  induction p; simpl.
-  - tauto.
-  - tauto.
-  - setoid_rewrite IHp. tauto.
-  - setoid_rewrite IHp1. setoid_rewrite IHp2. tauto.
+  unfold AIN. intro H. setoid_rewrite (ex_T_resp P f a H). apply iff_refl.
 Qed.
 
 (** Xor of A-sets: *)
@@ -121,23 +101,24 @@ Definition QXor B C :=
 Infix "^^^" := QXor (at level 50).
 
 Lemma AXor_ok {X X'} {f: X -> SET} {f': X' -> SET} {x}:
-  Ain x (AXor f f') <-> Ain x f ⊻ Ain x f'.
+  AIN x (AXor f f') <-> AIN x f ⊻ AIN x f'.
 Proof.
-  unfold AXor. setoid_rewrite Ain_sum. unfold compose; simpl.
-  setoid_rewrite (Ain_select f (fun X => ~ exists y, f' y == X)).
-  setoid_rewrite (Ain_select f' (fun X => ~ exists x, f x == X)).
-  unfold xor, Ain. tauto.
+  unfold AXor. setoid_rewrite AIN_sum. unfold compose; simpl.
+  setoid_rewrite (AIN_select f (fun X => ~ exists y, f' y == X)).
+  setoid_rewrite (AIN_select f' (fun X => ~ exists x, f x == X)).
+  unfold xor, AIN. tauto.
   unfold respects. intros. setoid_rewrite H. tauto.
   unfold respects. intros. setoid_rewrite H. tauto.
 Qed.
 
 Lemma QXor_ok {X Y} {f: X -> SET} {g: Y -> SET} {z p q}:
-  Qin z (f ⨁ g)
-    (bexpr_xor (map inl p) (map inr q))
-  <-> Qin z f p ⊻ Qin z g q.
+  BIN z (map (f ⨁ g)
+    (bexpr_xor (map inl p) (map inr q)))
+  <-> BIN z (map f p) ⊻ BIN z (map g q).
 Proof.
-  unfold bexpr_xor. simpl Qin.
-  setoid_rewrite Qin_sum_inl. setoid_rewrite Qin_sum_inr.
+  unfold bexpr_xor. simpl BIN.
+  setoid_rewrite map_compose.
+  setoid_rewrite (@map_compose_inl _ _ _ f g).
   unfold xor. tauto.
 Qed.
 
@@ -154,11 +135,11 @@ Theorem xor_empty: forall x y, (x ^^^ y) == emptyset -> x == y.
   destruct x, y. unfold QXor, emptyset. setoid_rewrite EQ_unfold.
   apply and_morph.
   - setoid_rewrite Aext. setoid_rewrite AXor_ok.
-    cut (forall x, Ain x (False_rect _) <-> False). intro.
+    cut (forall x, AIN x (False_rect _) <-> False). intro.
     setoid_rewrite H. split; intros. split; try tauto. apply xor_neg. auto.
     apply xor_neg. rewrite H0. tauto. 
-    unfold Ain. firstorder.
-  - setoid_rewrite Qext. setoid_rewrite QXor_ok. simpl.
+    unfold AIN. firstorder.
+  - setoid_rewrite Bext. setoid_rewrite QXor_ok. simpl.
     split; intros. split. apply xor_neg. auto. tauto.
     apply xor_neg. rewrite H. tauto. 
 Qed.

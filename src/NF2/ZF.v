@@ -8,9 +8,9 @@ Proof. simpl low. auto. Qed.
 Lemma low_sing : forall x, low (sing x).
 Proof. unfold sing; simpl low; tauto. Qed.
 
-Lemma low_neg: forall x, low (neg x) <-> ~ low x.
+Lemma low_compl: forall x, low (compl x) <-> ~ low x.
 Proof.
-  destruct x; unfold neg; simpl low; tauto.
+  destruct x; unfold compl; simpl low; tauto.
 Qed.
 
 Lemma low_cap: forall x y, low (x ⋂ y) <-> (low x \/ low y).
@@ -36,7 +36,7 @@ Qed.
       Yes for positive sets and sound formulas.
 *)
 Definition pred_sound P := forall x y, x ≡ y -> (P x <-> P y).
-Definition compr: forall {x}, low x -> (set -> Prop) -> set.
+Definition compr: forall {x}, low x -> (SET -> Prop) -> SET.
 Proof.
   intros x low P.
   destruct x; destruct low.
@@ -72,7 +72,7 @@ Admitted.
   *)
 
   From Internal Require Import Misc.
-Definition pow {X} (f: X -> set) :=
+Definition pow {X} (f: X -> SET) :=
   Low _ (fun P => Low _ (select f P))
 .
 Definition subset x y := forall z, IN z x -> IN z y.

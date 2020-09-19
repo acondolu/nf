@@ -11,43 +11,44 @@ Lemma univ_ok : forall x, x ∈ 𝒰.
 Proof. intros x H. destruct H. Qed.
 
 (* The empty set *)
-Definition Ø := Low False (fun x => match x with end).
+Definition emptyset := Low False (fun x => match x with end).
+Notation Ø := emptyset.
 
-Lemma empty_ok : forall x, ~ (x ∈ Ø).
+Lemma emptyset_ok : forall x, ~ (x ∈ Ø).
 Proof. intros x H. apply H. Qed.
 
 (* Complement *)
-Definition neg : set -> set :=
+Definition compl : SET -> SET :=
   fun x => match x with
   | Low _ f => High _ f
   | High _ f => Low _ f
   end
 .
 
-Lemma neg_ok : forall x y, x ∈ neg y <-> (x ∈ y -> False).
+Lemma compl_ok : forall x y, x ∈ compl y <-> (x ∈ y -> False).
 Proof.
-  intros x y. destruct y; simpl neg; simpl IN; split; firstorder.
+  intros x y. destruct y; simpl compl; simpl IN; split; firstorder.
   apply not_all_not_ex. assumption.
 Qed.
 
 (* Singleton *)
-Definition sing : set -> set :=
+Definition sing : SET -> SET :=
   fun x => Low unit (fun _ => x).
 
-Definition sing_ok : forall x y, x ∈ sing y <-> x ≡ y.
+Definition sing_ok : forall x y, x ∈ sing y <-> y ≡ x.
 Proof.
-  intros. simpl. split; intros. destruct H; firstorder. apply ex_unit. symmetry. auto.
+  intros. simpl. split; intros. destruct H; firstorder. apply ex_unit. auto.
 Qed.
 
 (* Some auxiliary definitions: *)
 
-Definition minus {X Y} f g : { x : X & forall y : Y, ~ (g y ≡ f x) } -> set :=
+Definition minus {X Y} f g : { x : X & forall y : Y, ~ (g y ≡ f x) } -> SET :=
   select f (fun x => forall y, ~ (g y ≡ f x)).
 
-Definition meet {X Y} f g : { x : X & exists y : Y, g y ≡ f x } -> set :=
+Definition meet {X Y} f g : { x : X & exists y : Y, g y ≡ f x } -> SET :=
   select f (fun x => exists y, g y ≡ f x).
 
-Definition join {X Y} f g : X + Y -> set := f ⨁ g.
+Definition join {X Y} f g : X + Y -> SET := f ⨁ g.
 
 (* Intersection *)
 Definition cap x y := match x, y with
@@ -87,10 +88,10 @@ Lemma cap_ok : forall x y z, z ∈ (x ⋂ y) <-> (z ∈ x) /\ (z ∈ y).
 Proof. intros. split. apply cap1. apply cap2. Qed.
 
 (* Union *)
-Definition cup x y := neg (cap (neg x) (neg y)).
+Definition cup x y := compl (cap (compl x) (compl y)).
 Notation "A ∪ B" := (cup A B) (at level 85).
 
 Lemma cup_ok : forall x y z, z ∈ (x ∪ y) <-> (z ∈ x) \/ (z ∈ y).
 Proof.
-  intros. unfold cup. rewrite neg_ok. rewrite cap_ok. repeat rewrite neg_ok. tauto.
+  intros. unfold cup. rewrite compl_ok. rewrite cap_ok. repeat rewrite compl_ok. tauto.
 Qed. 

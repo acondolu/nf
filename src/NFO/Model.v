@@ -1,34 +1,10 @@
 (* begin hide *)
-From Coq.Program Require Import Tactics Wf Equality.
 Add LoadPath "src".
-From NFO Require Import BoolExpr.
 (* end hide *)
+From NFO Require Import BoolExpr.
 
 Inductive SET :=
   S : forall X Y (f: X -> SET) (g: Y -> SET) (e: @BExpr Y), SET.
-
-Inductive lt : SET -> SET -> Prop :=
-  | lt_f : forall X Y f g e x, lt (f x) (S X Y f g e)
-  | lt_h : forall X Y f g e y, lt (g y) (S X Y f g e)
-.
-Infix "<" := lt.
-Hint Constructors lt : Wff.
-
-Lemma wf_lt : well_founded lt.
-Proof. 
-  unfold well_founded.
-  induction a.
-  apply Acc_intro. intros.
-  dependent destruction H1; eauto.
-Defined.
-(* 
-Lemma le_f_rew : 
-forall X Y f g e x, f x < @S X Y f g e <-> True.
-Admitted.
-
-Lemma le_g_rew : 
-forall X Y f g e x, g x < @S X Y f g e <-> True.
-Admitted. *)
 
 (** TODO: Axuliary INTRODUCE! *)
 Definition enum {X} f := S X False f (False_rect _) Bot.

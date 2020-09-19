@@ -16,9 +16,9 @@ Add LoadPath "src".
 (* end hide *)
 From Internal Require Import Common.
 
-Inductive set :=
-  | Low  : forall X, (X -> set) -> set
-  | High : forall X, (X -> set) -> set
+Inductive SET :=
+  | Low  : forall X, (X -> SET) -> SET
+  | High : forall X, (X -> SET) -> SET
 .
 
 (* Set equality *)
@@ -70,8 +70,8 @@ Proof.
   destruct (H0 y). exists x. apply (H _ _ H2).
 Qed.
 
-(** Register [set, EQ] as a setoid: *)
-Instance nfo_setoid : Equivalence EQ.
+(** Register [SET, EQ] as a setoid: *)
+Instance nf2_setoid : Equivalence EQ.
 Proof.
   constructor. exact @EQ_refl. exact @EQ_sym. exact @EQ_trans.
 Qed.

@@ -34,7 +34,7 @@ Qed.
 *)
 
 
-Lemma pos_univ: forall X f Y g, (forall z, IN z (@Low X f) <-> IN z (@High Y g)) -> (forall z, IN z (@Low (X + Y) (f ⨁ g))).
+Lemma pos_univ: forall X f Y g, (forall z, IN z (Low X f) <-> IN z (High Y g)) -> (forall z, IN z (Low (X + Y) (f ⨁ g))).
 Proof.
   intros. simpl IN in *.
   pose proof (H z).
@@ -46,14 +46,14 @@ Proof.
   apply NNPP. intro. apply H3. intros x HH. apply H4. exists x. auto.
 Qed.
 
-Lemma pos_neg_ext_neq: forall X f Y g, (forall z, IN z (@Low X f) <-> IN z (@High Y g)) -> False.
+Lemma pos_neg_ext_neq: forall X f Y g, (forall z, IN z (Low X f) <-> IN z (High Y g)) -> False.
 Proof.
   intros.
   pose proof (pos_univ _ _ _ _ H).
-  apply (@weak_regularity (@Low (X + Y) (f ⨁ g)) I). apply H0.
+  apply (@weak_regularity (Low (X + Y) (f ⨁ g)) I). apply H0.
 Qed.
 
-Lemma ext_pos: forall X f Y g, (forall z, IN z (@Low X f) <-> IN z (@Low Y g)) -> EQ (@Low X f) (@Low Y g).
+Lemma ext_pos: forall X f Y g, (forall z, IN z (Low X f) <-> IN z (Low Y g)) -> EQ (Low X f) (Low Y g).
 Proof.
   intros. simpl; split; intro.
   - destruct (H (f x)). simpl IN in H0.
@@ -62,7 +62,7 @@ Proof.
   cut (exists x : Y, EQ (g x) (g y)). intro. destruct (H1 H2). exists x. assumption. exists y. apply EQ_refl.
 Qed.
 
-Lemma ext_neg: forall X f Y g, (forall z, IN z (@High X f) <-> IN z (@High Y g)) -> EQ (@Low X f) (@Low Y g).
+Lemma ext_neg: forall X f Y g, (forall z, IN z (High X f) <-> IN z (High Y g)) -> EQ (Low X f) (Low Y g).
 Proof.
   intros. simpl; split; intro.
   - destruct (H (f x)). simpl IN in H1.
@@ -78,13 +78,13 @@ Proof.
   apply not_ex_all_not. assumption.
 Qed.
 
-Theorem extensionality: forall x y, x ≡ y <-> forall z, z ∈ x <-> z ∈ y.
+Theorem ext: forall x y, x ≡ y <-> forall z, z ∈ x <-> z ∈ y.
 Proof.
   intros. split. intros. split; apply in_sound_right; auto. apply EQ_sym. assumption.
   destruct x; destruct y.
   - apply ext_pos.
   - intros. destruct (pos_neg_ext_neq _ _ _ _ H).
-  - intros. cut (forall z : set, IN z (@Low X0 s0) <-> IN z (@High X s)).
+  - intros. cut (forall z : SET, IN z (Low X0 s0) <-> IN z (High X s)).
     intro. destruct (pos_neg_ext_neq _ _ _ _ H0).
     intro z. apply iff_sym. apply (H z). 
   - apply ext_neg.

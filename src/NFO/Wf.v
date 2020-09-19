@@ -4,6 +4,7 @@
 *)
 
 Add LoadPath "src".
+From Coq.Program Require Import Tactics Equality.
 From Internal Require Export WfTuples.
 From NFO Require Import Model.
 
@@ -51,9 +52,28 @@ End Unfold.
     coming from fixpoint definitions can be solved automatically using
     [eauto with Wff].
 *)
+From Coq.Program Require Import Tactics Wf Equality.
+
+Section One.
+
+Inductive lt : SET -> SET -> Prop :=
+  | lt_f : forall X Y f g e x, lt (f x) (S X Y f g e)
+  | lt_h : forall X Y f g e y, lt (g y) (S X Y f g e)
+.
+
+Lemma wf_lt : well_founded lt.
+Proof. 
+  unfold well_founded.
+  induction a.
+  apply Acc_intro. intros.
+  dependent destruction H1; eauto.
+Defined.
+
+End One.
+Hint Constructors lt : Wff.
 
 Section Two.
-
+Infix "<" := lt.
 Infix "<<" := (le22 lt) (at level 50).
 
 Variables a a' b b': SET.
@@ -73,7 +93,7 @@ End Two.
 Hint Resolve AA AB BA BB: Wff.
 
 Section Three.
-
+Infix "<" := lt.
 Infix "<<<" := (le33 lt) (at level 50).
 
 Variables a a' b b' c c': SET.
