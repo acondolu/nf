@@ -20,9 +20,7 @@ rewrite eqx. apply sp_swap. apply right_sym. eauto with Wff.
 Defined.
 
 (* Set membership *)
-Definition IN: SET -> SET -> Prop.
-  intros x y. exact (IN' (x, y)).
-Defined.
+Definition IN s s' := IN' (s, s').
 
 (* Temporary unfolding lemma for IN. 
    It will be improved in IN_unfold. *)
@@ -41,20 +39,20 @@ Proof.
 Qed.
 
 (** TODO: Important, comment *)
-Fixpoint BIN y (p: BExpr) := match p with
+Fixpoint IN_bexpr {Z} (R: Z -> Z -> Prop) y (p: BExpr) := match p with
   | Bot => False
-  | Atom x => IN x y
-  | Not p' => ~ BIN y p'
-  | Or p1 p2 => BIN y p1 \/ BIN y p2
+  | Atom x => R x y
+  | Not p' => ~ IN_bexpr R y p'
+  | Or p1 p2 => IN_bexpr R y p1 \/ IN_bexpr R y p2
 end.
+Notation BIN := (IN_bexpr IN).
 
-
-Lemma BIN_bexpr x e:
-  ⟦ map (fun i => IN i x) e ⟧ <-> BIN x e.
+Lemma IN_bexpr_map Z (R: Z -> Z -> Prop) x e:
+  ⟦ map (fun i => R i x) e ⟧ <-> IN_bexpr R x e.
 Proof. induction e; simpl; tauto. Qed.
 
-Lemma BIN_bexpr_map {I x f} {e: @BExpr I}:
-  ⟦ map (fun i => IN (f i) x) e ⟧ <-> BIN x (map f e).
+Lemma IN_bexpr_map2 {Z} (R: Z -> Z -> Prop) I f x (e: @BExpr I):
+  ⟦ map (fun i => R (f i) x) e ⟧ <-> IN_bexpr R x (map f e).
 Proof. induction e; simpl; tauto. Qed.
 
 Lemma IN_unfold {x Y e g X f} :
@@ -62,11 +60,11 @@ Lemma IN_unfold {x Y e g X f} :
 Proof.
   unfold IN. rewrite IN_def.
   apply xor_iff. tauto.
-  apply BIN_bexpr_map.
+  apply (IN_bexpr_map2 IN).
 Qed.
 Global Opaque IN.
 
-(** Some random results about BIN *)
+(** Some random results about BIN. Not random. Used to prove extensionality of BIn. Move there? Explain *)
 
 (** FIX & RENAME *)
 Lemma xxx {X Y} {p} {h: X -> _} {f: SET -> Prop} (g: Y -> _):

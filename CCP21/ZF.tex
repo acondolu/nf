@@ -85,7 +85,7 @@ Recursive Definition of the extentional equality on sets
   \coqdocindent{1.00em}
   \coqdockw{end}.\coqdoceol
   \coqdocnoindent
-\coqdockw{Notation} ``A ≡ B'' := (\coqref{NF2.Model.EQ}{\coqdocdefinition{EQ}} \coqdocvar{A} \coqdocvar{B}).\coqdoceol
+\coqdockw{Notation} ``X ≡ Y'' := (\coqref{NF2.Model.EQ}{\coqdocdefinition{EQ}} \coqdocvar{X} \coqdocvar{Y}).\coqdoceol
 \coqdocemptyline
 \end{coqdoccode}
 
@@ -96,7 +96,7 @@ Aczel's equality
 
 \begin{coqdoccode}
 \coqdocnoindent
-\coqdockw{Definition} \coqdef{Internal.Misc.eq aczel}{eq\_aczel}{\coqdocdefinition{eq\_aczel}} \{\coqdocvar{X} \coqdocvar{Y} \coqdocvar{Z}\} (\coqdocvar{R}: \coqdocvariable{Z} \coqexternalref{::type scope:x '->' x}{http://coq.inria.fr/distrib/V8.11.0/stdlib//Coq.Init.Logic}{\coqdocnotation{\ensuremath{\rightarrow}}} \coqdocvariable{Z} \coqexternalref{::type scope:x '->' x}{http://coq.inria.fr/distrib/V8.11.0/stdlib//Coq.Init.Logic}{\coqdocnotation{\ensuremath{\rightarrow}}} \coqdockw{Prop}) \coqdocvar{f} \coqdocvar{g} :=\coqdoceol
+\coqdockw{Definition} \coqdefRef{Internal.Misc.eq aczel}{eq\_aczel}{\coqdocdefinition{eq\_aczel}} \{\coqdocvar{X} \coqdocvar{Y} \coqdocvar{Z}\} (\coqdocvar{R}: \coqdocvariable{Z} \coqexternalref{::type scope:x '->' x}{http://coq.inria.fr/distrib/V8.11.0/stdlib//Coq.Init.Logic}{\coqdocnotation{\ensuremath{\rightarrow}}} \coqdocvariable{Z} \coqexternalref{::type scope:x '->' x}{http://coq.inria.fr/distrib/V8.11.0/stdlib//Coq.Init.Logic}{\coqdocnotation{\ensuremath{\rightarrow}}} \coqdockw{Prop}) \coqdocvar{f} \coqdocvar{g} :=\coqdoceol
 \coqdocindent{1.00em}
 \coqexternalref{::type scope:x '/x5C' x}{http://coq.inria.fr/distrib/V8.11.0/stdlib//Coq.Init.Logic}{\coqdocnotation{(}}\coqdockw{\ensuremath{\forall}} \coqdocvar{x}: \coqdocvariable{X}, \coqexternalref{::type scope:'exists' x '..' x ',' x}{http://coq.inria.fr/distrib/V8.11.0/stdlib//Coq.Init.Logic}{\coqdocnotation{\ensuremath{\exists}}} \coqdocvar{y}\coqexternalref{::type scope:'exists' x '..' x ',' x}{http://coq.inria.fr/distrib/V8.11.0/stdlib//Coq.Init.Logic}{\coqdocnotation{,}} \coqdocvariable{R} (\coqdocvariable{f} \coqdocvariable{x}) (\coqdocvariable{g} \coqdocvariable{y})\coqexternalref{::type scope:x '/x5C' x}{http://coq.inria.fr/distrib/V8.11.0/stdlib//Coq.Init.Logic}{\coqdocnotation{)}}\coqdoceol
 \coqdocindent{1.00em}
@@ -104,11 +104,11 @@ Aczel's equality
 \coqdocemptyline
 \end{coqdoccode}
 
-\coqdocconstructor{Sup} \coqdocvar{X} \coqdocvar{f} $\equiv$ \coqdocconstructor{Sup} \coqdocvar{Y} \coqdocvar{g} $~\Leftrightarrow$ \coqdocvar{eq\_aczel} \coqdocvar{EQ} \coqdocvar{f} \coqdocvar{g}
+\coqdocconstructor{Sup} \coqdocvar{X} \coqdocvar{f} $\equiv$ \coqdocconstructor{Sup} \coqdocvar{Y} \coqdocvar{g} $~\Leftrightarrow$ \coqdocdefinition{eq\_aczel} \coqdocvar{EQ} \coqdocvar{f} \coqdocvar{g}
 
 \begin{coqdoccode}
   \coqdocnoindent
-  \coqdockw{Infix} ``\ensuremath{\AEQ}'' := (\coqdocvar{eq\_aczel} \coqdocvar{EQ}).\coqdoceol
+  \coqdockw{Infix} ``\ensuremath{\AEQ}'' := (\coqdocdefinition{eq\_aczel} \coqdocvar{EQ}).\coqdoceol
 \end{coqdoccode}
 
 \coqdocconstructor{Sup} \coqdocvar{X} \coqdocvar{f} $\equiv$ \coqdocconstructor{Sup} \coqdocvar{Y} \coqdocvar{g} $~\Leftrightarrow$ \coqdocvar{f} $\AEQ$ \coqdocvar{g}
@@ -119,12 +119,23 @@ Aczel's equality
 
 \begin{coqdoccode}
   \coqdocnoindent
-\coqdockw{Definition} \coqdocdefinition{IN} \coqdocvar{a} \coqdocvar{b} : \coqdockw{Prop} :=\coqdoceol
-\coqdocindent{1.00em}
+\coqdockw{Definition} \coqdocdefinition{IN} \coqdocvar{a} \coqdocvar{b} : \coqdockw{Prop} :=
 \coqdockw{match} \coqdocvar{b} \coqdockw{with}\coqdoceol
 \coqdocindent{1.00em}
 \ensuremath{|} \coqdocconstructor{Sup} \coqdocvar{X} \coqdocvar{f} \ensuremath{\Rightarrow} \coqdoctac{\ensuremath{\exists}} \coqdocvar{x}, \coqdocvar{EQ} \coqdocvar{a} (\coqdocvar{f} \coqdocvar{x})\coqdoceol
+\coqdocindent{0.00em}\coqdockw{end}.\coqdoceol
+\coqdocnoindent
+\coqdockw{Infix} ``X ∈ Y'' := (\coqdocdefinition{IN} \coqdocvar{X} \coqdocvar{Y}).\coqdoceol
+\coqdocemptyline
+\end{coqdoccode}
+
+
+\begin{coqdoccode}
+  \coqdocnoindent
+\coqdockw{Definition} \coqdefRef{Internal.Common.in aczel}{in\_aczel}{\coqdocdefinition{in\_aczel}} \{\coqdocvar{X} \coqdocvar{Z}\} (\coqdocvar{R}: \coqdocvariable{Z} \coqexternalref{::type scope:x '->' x}{http://coq.inria.fr/distrib/V8.11.0/stdlib//Coq.Init.Logic}{\coqdocnotation{\ensuremath{\rightarrow}}} \coqdocvariable{Z} \coqexternalref{::type scope:x '->' x}{http://coq.inria.fr/distrib/V8.11.0/stdlib//Coq.Init.Logic}{\coqdocnotation{\ensuremath{\rightarrow}}} \coqdockw{Prop}) \coqdocvar{z} \coqdocvar{f} :=\coqdoceol
 \coqdocindent{1.00em}
-\coqdockw{end}.\coqdoceol
+\coqexternalref{::type scope:'exists' x '..' x ',' x}{http://coq.inria.fr/distrib/V8.11.0/stdlib//Coq.Init.Logic}{\coqdocnotation{\ensuremath{\exists}}} \coqdocvar{x}: \coqdocvariable{X}\coqexternalref{::type scope:'exists' x '..' x ',' x}{http://coq.inria.fr/distrib/V8.11.0/stdlib//Coq.Init.Logic}{\coqdocnotation{,}} \coqdocvariable{R} (\coqdocvariable{f} \coqdocvariable{x}) \coqdocvariable{z}.\coqdoceol
+\coqdocindent{0.00em}
+\coqdockw{Infix} ``\AIN'' := (\coqdocdefinition{in\_aczel} \coqdocdefinition{IN}).\coqdoceol
 \coqdocemptyline
 \end{coqdoccode}

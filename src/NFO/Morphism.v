@@ -68,7 +68,7 @@ Proof.
       (exists a0, s == g0 a0 /\ IN (g0 a0) (S X Y f g e))
       \/ (exists a1, s == g1 a1 /\ IN (g1 a1) (S X Y f g e))
     ) as K.
-    repeat rewrite map_compose in H3. setoid_rewrite<- BIN_bexpr_map.
+    repeat rewrite map_compose in H3. setoid_rewrite<- IN_bexpr_map2.
     cut (eval (map (Basics.compose K g0) e0) <-> (let w := fun a => IN (g0 a) (S X Y f g e) in eval (map w e0))). intro.
     cut (eval (map (Basics.compose K g1) e1) <-> (let w := fun a => IN (g1 a) (S X Y f g e) in eval (map w e1))). intro.
     rewrite<- H4. rewrite<- H5. 
@@ -94,7 +94,7 @@ Proof.
        auto with Wff. assumption.
        left. exists a1. split; eauto with Eeq.
   - apply (EQ_AIN H2).
-  - setoid_rewrite<- BIN_bexpr_map. apply map_extP. unfold FunExt.extP. intro a.
+  - setoid_rewrite<- IN_bexpr_map2. apply map_extP. unfold FunExt.extP. intro a.
     apply (proj1 (H0 a (S X0 Y0 f0 g0 e0) (S X1 Y1 f1 g1 e1) H2)).
 Qed.
 
@@ -112,7 +112,7 @@ Lemma BEQ_BIN {e e'}:
 Proof.
   intros. unfold eq_bexpr in H.
   pose proof (H (fun s => IN s x)).
-  repeat rewrite<- BIN_bexpr. apply H0.
+  repeat rewrite<- IN_bexpr_map. apply H0.
   unfold respects. intros.
   apply IN_respects_EQ. assumption.
 Qed.

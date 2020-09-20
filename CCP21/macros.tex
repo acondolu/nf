@@ -12,11 +12,33 @@
 \normalem
 % \usepackage{fancyvrb}
 
+% \renewcommand*{\proofname}{Proof sketch}
+\makeatletter
+\renewenvironment{proof}[1][Proof sketch]{\par
+  % \vspace{-.1\topsep}% remove the space after the theorem
+  \pushQED{\qed}%
+  \normalfont
+  \topsep0pt \partopsep0pt % no space before
+  \trivlist
+  \item[\hskip\labelsep
+        \itshape
+    #1\@addpunct{.}]\ignorespaces
+}{%
+  \popQED\endtrivlist\@endpefalse
+  \addvspace{6pt plus 6pt} % some space after
+}
+\makeatother
+
 \newcommand\margincoq[1]{\marginpar{\rotatebox{270}{\footnotesize $\star$ [\coqid{#1}]}}}
 \newcommand{\coqdefRef}[3]{\margincoq{#1}\coqdef{#1}{#2}{#3}}
 \newcommand{\coqid}[1]{\texttt{#1}}
 
 \newcommand\AEQ{\ensuremath{\equiv_A}}
+\newcommand\BEQ{\ensuremath{\equiv_B}}
+\newcommand\AIN{\ensuremath{\in_A}}
+\newcommand\BIN{\ensuremath{\in_B}}
+\newcommand\IN{\ensuremath{\in}}
+
 
 % AUX
 \newcommand\TODO[1]{\textcolor{red}{{\bf TODO} #1}}
@@ -30,6 +52,8 @@
 \DeclareUnicodeCharacter{2218}{\ensuremath{\circ}}
 \DeclareUnicodeCharacter{2A01}{\ensuremath{\oplus}}
 \DeclareUnicodeCharacter{2A00}{\ensuremath{\odot}}
+\DeclareUnicodeCharacter{2208}{\ensuremath{\in}}
+\DeclareUnicodeCharacter{22BB}{\ensuremath{\veebar}}
 
 % LOGIC
 \newcommand\grameq{::=}

@@ -15,8 +15,12 @@ From NFO Require Import BoolExpr Model Wf Eq In Sets Xor Morphism.
 
 (** * ? *)
 
+(** Extensionally empty sets: *)
 Definition ext_empty x := forall z, ~ IN z x.
 
+(** Two sets are extensionally equal iff their XOR is
+    extensionally empty:
+*)
 Lemma xor_ext: forall {x y},
   (forall z, IN z x <-> IN z y) <-> ext_empty (x ^^^ y).
 Proof.

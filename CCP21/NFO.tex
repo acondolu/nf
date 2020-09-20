@@ -136,29 +136,6 @@ XXX
 
 XXX
 
-\TODO{copied here property of EQ boolean:}
-
-This lemma is quite important: it will show that our initial
-definition of NFO equality is correct.
-TODO: Because: we wanted to write the rhs, but we had to write
-the lhs in order to be able to prove termination.
-
-\begin{coqdoccode}
-\coqdocnoindent
-\coqdockw{Lemma} \coqdef{NFO.BoolExpr.eq bexpr simpl}{eq\_bexpr\_simpl}{\coqdoclemma{eq\_bexpr\_simpl}}:\coqdoceol
-\coqdocindent{1.00em}
-\coqdockw{\ensuremath{\forall}} \{\coqdocvar{X} \coqdocvar{Y} \coqdocvar{Z} \coqdocvar{R}\} \{\coqdocvar{f}: \coqdocvariable{X} \coqexternalref{::type scope:x '->' x}{http://coq.inria.fr/distrib/V8.11.0/stdlib//Coq.Init.Logic}{\coqdocnotation{\ensuremath{\rightarrow}}} \coqdocvariable{Z}\} \{\coqdocvar{g}: \coqdocvariable{Y} \coqexternalref{::type scope:x '->' x}{http://coq.inria.fr/distrib/V8.11.0/stdlib//Coq.Init.Logic}{\coqdocnotation{\ensuremath{\rightarrow}}} \coqdocvariable{Z}\} \{\coqdocvar{e} \coqdocvar{e'}\},\coqdoceol
-\coqdocindent{2.00em}
-\coqexternalref{Equivalence}{http://coq.inria.fr/distrib/V8.11.0/stdlib//Coq.Classes.RelationClasses}{\coqdocclass{Equivalence}} \coqdocvariable{R} \coqexternalref{::type scope:x '->' x}{http://coq.inria.fr/distrib/V8.11.0/stdlib//Coq.Init.Logic}{\coqdocnotation{\ensuremath{\rightarrow}}}\coqdoceol
-\coqdocindent{3.00em}
-\coqref{NFO.BoolExpr.eq bexpr}{\coqdocdefinition{eq\_bexpr}} (\coqdocvariable{R} \coqref{Internal.Misc.:::x 'xE2xA8x80' x}{\coqdocnotation{⨀}} \coqref{Internal.Misc.:::x 'xE2xA8x80' x}{\coqdocnotation{(}}\coqdocvariable{f} \coqref{Internal.Misc.:::x 'xE2xA8x81' x}{\coqdocnotation{⨁}} \coqdocvariable{g}\coqref{Internal.Misc.:::x 'xE2xA8x80' x}{\coqdocnotation{)}}) (\coqref{NFO.BoolExpr.map}{\coqdocdefinition{map}} \coqexternalref{inl}{http://coq.inria.fr/distrib/V8.11.0/stdlib//Coq.Init.Datatypes}{\coqdocconstructor{inl}} \coqdocvariable{e}) (\coqref{NFO.BoolExpr.map}{\coqdocdefinition{map}} \coqexternalref{inr}{http://coq.inria.fr/distrib/V8.11.0/stdlib//Coq.Init.Datatypes}{\coqdocconstructor{inr}} \coqdocvariable{e'})\coqdoceol
-\coqdocindent{4.00em}
-\coqexternalref{::type scope:x '<->' x}{http://coq.inria.fr/distrib/V8.11.0/stdlib//Coq.Init.Logic}{\coqdocnotation{\ensuremath{\leftrightarrow}}} \coqref{NFO.BoolExpr.eq bexpr}{\coqdocdefinition{eq\_bexpr}} \coqdocvariable{R} (\coqref{NFO.BoolExpr.map}{\coqdocdefinition{map}} \coqdocvariable{f} \coqdocvariable{e}) (\coqref{NFO.BoolExpr.map}{\coqdocdefinition{map}} \coqdocvariable{g} \coqdocvariable{e'}).\coqdoceol
-\coqdocemptyline
-\end{coqdoccode}
-
-XXX
-
 \begin{coqdoccode}
 \coqdocnoindent
 \coqdockw{Local} \coqdockw{Definition} \coqdefRef{NFO.Eq.EQ'}{EQ'}{\coqdocdefinition{EQ'}} : \coqref{NFO.Model.SET}{\coqdocinductive{SET}} \coqexternalref{::type scope:x '*' x}{http://coq.inria.fr/distrib/V8.11.0/stdlib//Coq.Init.Datatypes}{\coqdocnotation{\ensuremath{\times}}} \coqref{NFO.Model.SET}{\coqdocinductive{SET}} \coqexternalref{::type scope:x '->' x}{http://coq.inria.fr/distrib/V8.11.0/stdlib//Coq.Init.Logic}{\coqdocnotation{\ensuremath{\rightarrow}}} \coqdockw{Prop}.\coqdoceol
@@ -196,6 +173,31 @@ XXX
 ; \coqdoctac{rewrite} \coqdocvar{eqx}; \coqdoctac{eauto} \coqdockw{with} \coqdocvar{Wff}.\coqdoceol
 \coqdocnoindent
 \coqdockw{Defined}.\coqdoceol
+\coqdocnoindent
+\coqdockw{Definition} \coqdef{NFO.Eq.EQ}{EQ}{\coqdocdefinition{EQ}} \coqdocvar{s} \coqdocvar{s'} := \coqref{NFO.Eq.EQ'}{\coqdocdefinition{EQ'}} \coqexternalref{::core scope:'(' x ',' x ',' '..' ',' x ')'}{http://coq.inria.fr/distrib/V8.11.0/stdlib//Coq.Init.Datatypes}{\coqdocnotation{(}}\coqdocvariable{s}\coqexternalref{::core scope:'(' x ',' x ',' '..' ',' x ')'}{http://coq.inria.fr/distrib/V8.11.0/stdlib//Coq.Init.Datatypes}{\coqdocnotation{,}} \coqdocvariable{s'}\coqexternalref{::core scope:'(' x ',' x ',' '..' ',' x ')'}{http://coq.inria.fr/distrib/V8.11.0/stdlib//Coq.Init.Datatypes}{\coqdocnotation{)}}.\coqdoceol
+\end{coqdoccode}
+
+XXX
+
+\TODO{copied here property of EQ boolean:}
+
+This lemma is quite important: it will show that our initial
+definition of NFO equality is correct.
+TODO: Because: we wanted to write the rhs, but we had to write
+the lhs in order to be able to prove termination.
+
+\begin{coqdoccode}
+\coqdocnoindent
+\coqdockw{Lemma} \coqdef{NFO.BoolExpr.eq bexpr simpl}{eq\_bexpr\_simpl}{\coqdoclemma{eq\_bexpr\_simpl}}:\coqdoceol
+\coqdocindent{1.00em}
+\coqdockw{\ensuremath{\forall}} \{\coqdocvar{Y} \coqdocvar{Y'} \coqdocvar{Z} \coqdocvar{R}\} \{\coqdocvar{g}: \coqdocvariable{Y} \coqexternalref{::type scope:x '->' x}{http://coq.inria.fr/distrib/V8.11.0/stdlib//Coq.Init.Logic}{\coqdocnotation{\ensuremath{\rightarrow}}} \coqdocvariable{Z}\} \{\coqdocvar{g'}: \coqdocvariable{Y'} \coqexternalref{::type scope:x '->' x}{http://coq.inria.fr/distrib/V8.11.0/stdlib//Coq.Init.Logic}{\coqdocnotation{\ensuremath{\rightarrow}}} \coqdocvariable{Z}\} \{\coqdocvar{e} \coqdocvar{e'}\},\coqdoceol
+\coqdocindent{2.00em}
+\coqexternalref{Equivalence}{http://coq.inria.fr/distrib/V8.11.0/stdlib//Coq.Classes.RelationClasses}{\coqdocclass{Equivalence}} \coqdocvariable{R} \coqexternalref{::type scope:x '->' x}{http://coq.inria.fr/distrib/V8.11.0/stdlib//Coq.Init.Logic}{\coqdocnotation{\ensuremath{\rightarrow}}}\coqdoceol
+\coqdocindent{3.00em}
+\coqref{NFO.BoolExpr.eq bexpr}{\coqdocdefinition{eq\_bexpr}} (\coqdocvariable{R} \coqref{Internal.Misc.:::x 'xE2xA8x80' x}{\coqdocnotation{⨀}} \coqref{Internal.Misc.:::x 'xE2xA8x80' x}{\coqdocnotation{(}}\coqdocvariable{g} \coqref{Internal.Misc.:::x 'xE2xA8x81' x}{\coqdocnotation{⨁}} \coqdocvariable{g'}\coqref{Internal.Misc.:::x 'xE2xA8x80' x}{\coqdocnotation{)}}) (\coqref{NFO.BoolExpr.map}{\coqdocdefinition{map}} \coqexternalref{inl}{http://coq.inria.fr/distrib/V8.11.0/stdlib//Coq.Init.Datatypes}{\coqdocconstructor{inl}} \coqdocvariable{e}) (\coqref{NFO.BoolExpr.map}{\coqdocdefinition{map}} \coqexternalref{inr}{http://coq.inria.fr/distrib/V8.11.0/stdlib//Coq.Init.Datatypes}{\coqdocconstructor{inr}} \coqdocvariable{e'})\coqdoceol
+\coqdocindent{4.00em}
+\coqexternalref{::type scope:x '<->' x}{http://coq.inria.fr/distrib/V8.11.0/stdlib//Coq.Init.Logic}{\coqdocnotation{\ensuremath{\leftrightarrow}}} \coqref{NFO.BoolExpr.eq bexpr}{\coqdocdefinition{eq\_bexpr}} \coqdocvariable{R} (\coqref{NFO.BoolExpr.map}{\coqdocdefinition{map}} \coqdocvariable{g} \coqdocvariable{e}) (\coqref{NFO.BoolExpr.map}{\coqdocdefinition{map}} \coqdocvariable{g'} \coqdocvariable{e'}).\coqdoceol
+\coqdocemptyline
 \end{coqdoccode}
 
 \subsubsection{Detour: Well-founded Orders}
@@ -245,3 +247,90 @@ TODO: This needs some love... \begin{coqdoccode}
 \coqdocindent{1.00em}
 \coqexternalref{::type scope:x '->' x}{http://coq.inria.fr/distrib/V8.11.0/stdlib//Coq.Init.Logic}{\coqdocnotation{\ensuremath{\rightarrow}}} \coqref{NFO.BoolExpr.eq bexpr}{\coqdocdefinition{eq\_bexpr}} (\coqdocvariable{R} \coqref{Internal.Misc.:::x 'xE2xA8x80' x}{\coqdocnotation{⨀}} \coqref{Internal.Misc.:::x 'xE2xA8x80' x}{\coqdocnotation{(}}\coqdocvariable{f1} \coqref{Internal.Misc.:::x 'xE2xA8x81' x}{\coqdocnotation{⨁}} \coqdocvariable{f3}\coqref{Internal.Misc.:::x 'xE2xA8x80' x}{\coqdocnotation{)}}) (\coqref{NFO.BoolExpr.map}{\coqdocdefinition{map}} \coqexternalref{inl}{http://coq.inria.fr/distrib/V8.11.0/stdlib//Coq.Init.Datatypes}{\coqdocconstructor{inl}} \coqdocvariable{e1}) (\coqref{NFO.BoolExpr.map}{\coqdocdefinition{map}} \coqexternalref{inr}{http://coq.inria.fr/distrib/V8.11.0/stdlib//Coq.Init.Datatypes}{\coqdocconstructor{inr}} \coqdocvariable{e3}).\coqdoceol
 \end{coqdoccode}
+
+\subsection{Membership}
+
+\begin{coqdoccode}
+  \coqdocemptyline
+  \coqdocnoindent
+  \coqdockw{Definition} \coqdef{NFO.Xor.xor}{xor}{\coqdocdefinition{xor}} \coqdocvar{p} \coqdocvar{q} := \coqexternalref{::type scope:x 'x5C/' x}{http://coq.inria.fr/distrib/V8.11.0/stdlib//Coq.Init.Logic}{\coqdocnotation{(}}\coqdocvariable{p} \coqexternalref{::type scope:x '/x5C' x}{http://coq.inria.fr/distrib/V8.11.0/stdlib//Coq.Init.Logic}{\coqdocnotation{\ensuremath{\land}}} \coqexternalref{::type scope:'x7E' x}{http://coq.inria.fr/distrib/V8.11.0/stdlib//Coq.Init.Logic}{\coqdocnotation{\ensuremath{\lnot}}}\coqdocvariable{q}\coqexternalref{::type scope:x 'x5C/' x}{http://coq.inria.fr/distrib/V8.11.0/stdlib//Coq.Init.Logic}{\coqdocnotation{)}} \coqexternalref{::type scope:x 'x5C/' x}{http://coq.inria.fr/distrib/V8.11.0/stdlib//Coq.Init.Logic}{\coqdocnotation{\ensuremath{\lor}}} \coqexternalref{::type scope:x 'x5C/' x}{http://coq.inria.fr/distrib/V8.11.0/stdlib//Coq.Init.Logic}{\coqdocnotation{(}}\coqexternalref{::type scope:'x7E' x}{http://coq.inria.fr/distrib/V8.11.0/stdlib//Coq.Init.Logic}{\coqdocnotation{\ensuremath{\lnot}}}\coqdocvariable{p} \coqexternalref{::type scope:x '/x5C' x}{http://coq.inria.fr/distrib/V8.11.0/stdlib//Coq.Init.Logic}{\coqdocnotation{\ensuremath{\land}}} \coqdocvariable{q}\coqexternalref{::type scope:x 'x5C/' x}{http://coq.inria.fr/distrib/V8.11.0/stdlib//Coq.Init.Logic}{\coqdocnotation{)}}.\coqdoceol
+  \coqdocnoindent
+  \coqdockw{Infix} \coqdef{NFO.Xor.:::x 'xE2x8AxBB' x}{"}{"}⊻" := \coqref{NFO.Xor.xor}{\coqdocdefinition{xor}} (\coqdoctac{at} \coqdockw{level} 80, \coqdoctac{right} \coqdockw{associativity}).\coqdoceol
+  \coqdocemptyline
+\end{coqdoccode}
+
+\begin{coqdoccode}
+  \coqdocnoindent
+  \coqdockw{Fixpoint} \coqdef{NFO.In.IN bexpr}{IN\_bexpr}{\coqdocdefinition{IN\_bexpr}} \{\coqdocvar{Z}\} (\coqdocvar{R}: \coqdocvariable{Z} \coqexternalref{::type scope:x '->' x}{http://coq.inria.fr/distrib/V8.11.0/stdlib//Coq.Init.Logic}{\coqdocnotation{\ensuremath{\rightarrow}}} \coqdocvariable{Z} \coqexternalref{::type scope:x '->' x}{http://coq.inria.fr/distrib/V8.11.0/stdlib//Coq.Init.Logic}{\coqdocnotation{\ensuremath{\rightarrow}}} \coqdockw{Prop}) \coqdocvar{y} (\coqdocvar{p}: \coqref{NFO.BoolExpr.BExpr}{\coqdocinductive{BExpr}}) := \coqdockw{match} \coqdocvariable{p} \coqdockw{with}\coqdoceol
+  \coqdocindent{1.00em}
+  \ensuremath{|} \coqref{NFO.BoolExpr.Bot}{\coqdocconstructor{Bot}} \ensuremath{\Rightarrow} \coqexternalref{False}{http://coq.inria.fr/distrib/V8.11.0/stdlib//Coq.Init.Logic}{\coqdocinductive{False}}\coqdoceol
+  \coqdocindent{1.00em}
+  \ensuremath{|} \coqref{NFO.BoolExpr.Atom}{\coqdocconstructor{Atom}} \coqdocvar{x} \ensuremath{\Rightarrow} \coqdocvariable{R} \coqdocvar{x} \coqdocvariable{y}\coqdoceol
+  \coqdocindent{1.00em}
+  \ensuremath{|} \coqref{NFO.BoolExpr.Not}{\coqdocconstructor{Not}} \coqdocvar{p'} \ensuremath{\Rightarrow} \coqexternalref{::type scope:'x7E' x}{http://coq.inria.fr/distrib/V8.11.0/stdlib//Coq.Init.Logic}{\coqdocnotation{\ensuremath{\lnot}}} \coqref{NFO.In.IN bexpr}{\coqdocdefinition{IN\_bexpr}} \coqdocvariable{R} \coqdocvariable{y} \coqdocvar{p'}\coqdoceol
+  \coqdocindent{1.00em}
+  \ensuremath{|} \coqref{NFO.BoolExpr.Or}{\coqdocconstructor{Or}} \coqdocvar{p1} \coqdocvar{p2} \ensuremath{\Rightarrow} \coqref{NFO.In.IN bexpr}{\coqdocdefinition{IN\_bexpr}} \coqdocvariable{R} \coqdocvariable{y} \coqdocvar{p1} \coqexternalref{::type scope:x 'x5C/' x}{http://coq.inria.fr/distrib/V8.11.0/stdlib//Coq.Init.Logic}{\coqdocnotation{\ensuremath{\lor}}} \coqref{NFO.In.IN bexpr}{\coqdocdefinition{IN\_bexpr}} \coqdocvariable{R} \coqdocvariable{y} \coqdocvar{p2}\coqdoceol
+  \coqdocnoindent
+  \coqdockw{end}.\coqdoceol
+\end{coqdoccode}
+
+aaa
+
+\begin{coqdoccode}
+  \coqdocnoindent
+  \sout{\coqdockw{Definition}} \coqdoclemma{IN} \coqdocvar{s} \coqdocvar{s'} := \coqdockw{match} \coqdocvariable{s'} \coqdockw{with}\coqdoceol
+  \coqdocindent{2.00em}
+  \ensuremath{|} \coqref{NFO.Model.S}{\coqdocconstructor{S}} \coqdocvar{X} \coqdocvar{Y} \coqdocvar{f} \coqdocvar{g} \coqdocvar{e} \ensuremath{\Rightarrow} \coqdocvar{s} \coqref{NFO.In.AIN}{\AIN} \coqdocvar{f}
+  ⊻ \coqref{NFO.In.IN bexpr}{\coqdocdefinition{IN\_bexpr}} \coqref{NFO.In.IN}{\coqdocdefinition{IN}} \coqdocvar{s} (\coqref{NFO.BoolExpr.map}{\coqdocdefinition{map}} \coqdocvariable{g} \coqdocvariable{e})\coqdoceol
+  \coqdocnoindent \coqdockw{end}.
+\end{coqdoccode}
+
+bbb
+
+\begin{coqdoccode}
+  \coqdocnoindent
+  \coqdockw{Lemma} \coqdef{NFO.In.IN bexpr map2}{IN\_bexpr\_map2}{\coqdoclemma{IN\_bexpr\_map2}} \{\coqdocvar{Z}\} (\coqdocvar{R}: \coqdocvariable{Z} \coqexternalref{::type scope:x '->' x}{http://coq.inria.fr/distrib/V8.11.0/stdlib//Coq.Init.Logic}{\coqdocnotation{\ensuremath{\rightarrow}}} \coqdocvariable{Z} \coqexternalref{::type scope:x '->' x}{http://coq.inria.fr/distrib/V8.11.0/stdlib//Coq.Init.Logic}{\coqdocnotation{\ensuremath{\rightarrow}}} \coqdockw{Prop}) \coqdocvar{I} \coqdocvar{f} \coqdocvar{x} (\coqdocvar{e}: @\coqref{NFO.BoolExpr.BExpr}{\coqdocinductive{BExpr}} \coqdocvariable{I}):\coqdoceol
+  \coqdocindent{1.00em}
+  \coqref{NFO.BoolExpr.:::'xE2x9FxA6' x 'xE2x9FxA7'}{\coqdocnotation{⟦}} \coqref{NFO.BoolExpr.map}{\coqdocdefinition{map}} (\coqdockw{fun} \coqdocvar{i} \ensuremath{\Rightarrow} \coqdocvariable{R} (\coqdocvariable{f} \coqdocvariable{i}) \coqdocvariable{x}) \coqdocvariable{e} \coqref{NFO.BoolExpr.:::'xE2x9FxA6' x 'xE2x9FxA7'}{\coqdocnotation{⟧}} \coqexternalref{::type scope:x '<->' x}{http://coq.inria.fr/distrib/V8.11.0/stdlib//Coq.Init.Logic}{\coqdocnotation{\ensuremath{\leftrightarrow}}} \coqref{NFO.In.IN bexpr}{\coqdocdefinition{IN\_bexpr}} \coqdocvariable{R} \coqdocvariable{x} (\coqref{NFO.BoolExpr.map}{\coqdocdefinition{map}} \coqdocvariable{f} \coqdocvariable{e}).\coqdoceol
+\end{coqdoccode}
+
+ccc
+
+\begin{coqdoccode}
+  \coqdocemptyline
+  \coqdocnoindent
+  \coqdockw{Local} \coqdockw{Definition} \coqdef{NFO.In.IN'}{IN'}{\coqdocdefinition{IN'}} : \coqref{NFO.Model.SET}{\coqdocinductive{SET}} \coqexternalref{::type scope:x '*' x}{http://coq.inria.fr/distrib/V8.11.0/stdlib//Coq.Init.Datatypes}{\coqdocnotation{\ensuremath{\times}}} \coqref{NFO.Model.SET}{\coqdocinductive{SET}} \coqexternalref{::type scope:x '->' x}{http://coq.inria.fr/distrib/V8.11.0/stdlib//Coq.Init.Logic}{\coqdocnotation{\ensuremath{\rightarrow}}} \coqdockw{Prop}.\coqdoceol
+  \coqdocindent{0.50em}
+  \coqdoctac{refine} ( \coqexternalref{Fix}{http://coq.inria.fr/distrib/V8.11.0/stdlib//Coq.Init.Wf}{\coqdocdefinition{Fix}} (\coqexternalref{wf swapprod}{http://coq.inria.fr/distrib/V8.11.0/stdlib//Coq.Wellfounded.Lexicographic\_Product}{\coqdoclemma{wf\_swapprod}} \coqdocvar{\_} \coqref{NFO.Wf.lt}{\coqdocinductive{lt}} \coqref{NFO.Wf.wf lt}{\coqdoclemma{wf\_lt}}) (\coqdockw{fun} \coqdocvar{\_} \ensuremath{\Rightarrow} \coqdockw{Prop}) \coqdoceol
+  \coqdocindent{1.00em}
+  (\coqdockw{fun} \coqdocvar{i} \coqdockw{rec} \ensuremath{\Rightarrow} \coqdoceol
+  \coqdocindent{2.00em}
+  (\coqdockw{match} \coqdocvariable{i} \coqdockw{as} \coqdocvar{i0} \coqdockw{return} (\coqdocvariable{i} \coqexternalref{::type scope:x '=' x}{http://coq.inria.fr/distrib/V8.11.0/stdlib//Coq.Init.Logic}{\coqdocnotation{=}} \coqdocvariable{i0} \coqexternalref{::type scope:x '->' x}{http://coq.inria.fr/distrib/V8.11.0/stdlib//Coq.Init.Logic}{\coqdocnotation{\ensuremath{\rightarrow}}} \coqdockw{Prop}) \coqdockw{with} \coqdoceol
+  \coqdocindent{3.00em}
+  \coqexternalref{::core scope:'(' x ',' x ',' '..' ',' x ')'}{http://coq.inria.fr/distrib/V8.11.0/stdlib//Coq.Init.Datatypes}{\coqdocnotation{(}}\coqdocvar{z}\coqexternalref{::core scope:'(' x ',' x ',' '..' ',' x ')'}{http://coq.inria.fr/distrib/V8.11.0/stdlib//Coq.Init.Datatypes}{\coqdocnotation{,}} \coqref{NFO.Model.S}{\coqdocconstructor{S}} \coqdocvar{X} \coqdocvar{Y} \coqdocvar{f} \coqdocvar{g} \coqdocvar{e}\coqexternalref{::core scope:'(' x ',' x ',' '..' ',' x ')'}{http://coq.inria.fr/distrib/V8.11.0/stdlib//Coq.Init.Datatypes}{\coqdocnotation{)}}
+  % \coqdoceol
+  % 
+  \ensuremath{\Rightarrow} \coqdockw{fun} \coqdocvar{eqx}   \ensuremath{\Rightarrow} \coqdoceol
+  \coqdocindent{4.00em}
+  \coqdocvar{z} \AIN ~\coqdocvar{f} \coqref{NFO.Xor.:::x 'xE2x8AxBB' x}{\coqdocnotation{⊻}} \coqref{NFO.BoolExpr.:::'xE2x9FxA6' x 'xE2x9FxA7'}{\coqdocnotation{⟦}} \coqref{NFO.BoolExpr.map}{\coqdocdefinition{map}} (\coqdockw{fun} \coqdocvar{y} \ensuremath{\Rightarrow} \coqdocvariable{rec} \coqexternalref{::core scope:'(' x ',' x ',' '..' ',' x ')'}{http://coq.inria.fr/distrib/V8.11.0/stdlib//Coq.Init.Datatypes}{\coqdocnotation{(}}\coqdocvar{g} \coqdocvariable{y}\coqexternalref{::core scope:'(' x ',' x ',' '..' ',' x ')'}{http://coq.inria.fr/distrib/V8.11.0/stdlib//Coq.Init.Datatypes}{\coqdocnotation{,}} \coqdocvar{z}\coqexternalref{::core scope:'(' x ',' x ',' '..' ',' x ')'}{http://coq.inria.fr/distrib/V8.11.0/stdlib//Coq.Init.Datatypes}{\coqdocnotation{)}} \coqdocvar{\_}) \coqdocvar{e} \coqref{NFO.BoolExpr.:::'xE2x9FxA6' x 'xE2x9FxA7'}{\coqdocnotation{⟧}} \coqdoceol
+  \coqdocindent{2.00em}
+  \coqdockw{end}) \coqexternalref{eq refl}{http://coq.inria.fr/distrib/V8.11.0/stdlib//Coq.Init.Logic}{\coqdocconstructor{eq\_refl}} 
+  )).\coqdoceol
+  \coqdocnoindent
+  [...] \coqdockw{Defined}.\coqdoceol
+  \coqdocnoindent
+  \coqdockw{Definition} \coqdef{NFO.In.IN}{IN}{\coqdocdefinition{IN}} \coqdocvar{s} \coqdocvar{s'} := \coqref{NFO.In.IN'}{\coqdocdefinition{IN'}} \coqexternalref{::core scope:'(' x ',' x ',' '..' ',' x ')'}{http://coq.inria.fr/distrib/V8.11.0/stdlib//Coq.Init.Datatypes}{\coqdocnotation{(}}\coqdocvariable{s}\coqexternalref{::core scope:'(' x ',' x ',' '..' ',' x ')'}{http://coq.inria.fr/distrib/V8.11.0/stdlib//Coq.Init.Datatypes}{\coqdocnotation{,}} \coqdocvariable{s'}\coqexternalref{::core scope:'(' x ',' x ',' '..' ',' x ')'}{http://coq.inria.fr/distrib/V8.11.0/stdlib//Coq.Init.Datatypes}{\coqdocnotation{)}}.\coqdoceol
+\coqdocemptyline
+\end{coqdoccode}
+
+\begin{coqdoccode}
+  \coqdocnoindent
+  \coqdockw{Infix} ``\BIN'' := (\coqdocdefinition{in\_bexpr} \coqdocdefinition{IN}).\coqdoceol
+  \coqdocnoindent
+  \coqdockw{Lemma} \coqdefRef{NFO.In.IN unfold}{IN\_unfold}{\coqdoclemma{IN\_unfold}} \{\coqdocvar{X} \coqdocvar{Y} \coqdocvar{f} \coqdocvar{g} \coqdocvar{e} \coqdocvar{s}\} :\coqdoceol
+  \coqdocindent{1.00em}
+  \coqdocvariable{s} \coqref{NFO.In.IN}{\IN} (\coqref{NFO.Model.S}{\coqdocconstructor{S}} \coqdocvariable{X} \coqdocvariable{Y} \coqdocvariable{f} \coqdocvariable{g} \coqdocvariable{e}) \coqexternalref{::type scope:x '<->' x}{http://coq.inria.fr/distrib/V8.11.0/stdlib//Coq.Init.Logic}{\coqdocnotation{\ensuremath{\leftrightarrow}}} \coqdocvariable{s} \coqref{NFO.In.AIN}{\AIN} \coqdocvariable{f} \coqref{NFO.Xor.:::x 'xE2x8AxBB' x}{\coqdocnotation{⊻}} \coqdocvariable{s} \coqref{NFO.In.BIN}{\BIN} (\coqref{NFO.BoolExpr.map}{\coqdocdefinition{map}} \coqdocvariable{g} \coqdocvariable{e}).\coqdoceol
+\end{coqdoccode}
+\begin{proof}
+  By \coqref{NFO.In.IN bexpr map2}{\coqdoclemma{IN\_bexpr\_map2}}.
+\end{proof}

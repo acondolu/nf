@@ -60,3 +60,16 @@ a
 \end{coqdoccode}
 
 \TODO{Dire che la notazione $\AEQ$ nasconde la dipendenza, ma che espandendo e' tutto ancora safe}
+
+\subsection{Membership}
+
+\begin{coqdoccode}
+  \coqdocnoindent
+\coqdockw{Definition} \coqdef{NF2.Model.IN}{IN}{\coqdocdefinition{IN}} \coqdocvar{a} \coqdocvar{b} := \coqdockw{match} \coqdocvariable{b} \coqdockw{with}\coqdoceol
+\coqdocindent{1.00em}
+\ensuremath{|} \coqref{NF2.Model.Low}{\coqdocconstructor{Low}} \coqdocvar{\_} \coqdocvar{f} \ensuremath{\Rightarrow} \coqdocvariable{a} \coqref{Internal.Common.in aczel}{\AIN} \coqdocvariable{f} \coqdoceol
+\coqdocindent{1.00em}
+\ensuremath{|} \coqref{NF2.Model.High}{\coqdocconstructor{High}} \coqdocvar{\_} \coqdocvar{f} \ensuremath{\Rightarrow} \coqdocvariable{a} \coqref{Internal.Common.in aczel}{$\not\AIN$} \coqdocvariable{f} \coqdoceol
+\coqdocnoindent
+\coqdockw{end}.\coqdoceol
+\end{coqdoccode}
