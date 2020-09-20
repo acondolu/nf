@@ -1,0 +1,308 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<link href="coqdoc.css" rel="stylesheet" type="text/css" />
+<title>Main</title>
+</head>
+
+<body>
+
+<div id="page">
+
+<div id="header">
+</div>
+
+<div id="main">
+
+<h1 class="libtitle">Library Main</h1>
+
+<div class="code">
+</div>
+
+<div class="doc">
+<a name="lab1"></a><h1 class="section">NFO.Main : NFO Interface</h1>
+ This module gathers the important definitions
+    and theorems about NFO.
+
+</div>
+<div class="code">
+
+<br/>
+
+<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="http://coq.inria.fr/distrib/V8.11.2/stdlib//Coq.Setoids.Setoid.html#"><span class="id" title="library">Setoid</span></a> <a class="idref" href="http://coq.inria.fr/distrib/V8.11.2/stdlib//Coq.Classes.Morphisms.html#"><span class="id" title="library">Morphisms</span></a>.<br/>
+
+<br/>
+<span class="id" title="keyword">From</span> <span class="id" title="var">NF2</span> <span class="id" title="keyword">Require</span> <a class="idref" href="NF2.Model.html#"><span class="id" title="library">Model</span></a> <a class="idref" href="NF2.Ext.html#"><span class="id" title="library">Ext</span></a> <a class="idref" href="NF2.Sets.html#"><span class="id" title="library">Sets</span></a>.<br/>
+<span class="id" title="keyword">Module</span> <a name="NF2"><span class="id" title="module">NF2</span></a>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+The type of NF2 sets 
+</div>
+<div class="code">
+<span class="id" title="keyword">Definition</span> <a name="NF2.SET"><span class="id" title="definition">SET</span></a> : <span class="id" title="keyword">Type</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">exact</span> <a class="idref" href="NF2.Model.html#SET"><span class="id" title="inductive">Model.SET</span></a>.<br/>
+<span class="id" title="keyword">Defined</span>.<br/>
+<span class="id" title="keyword">Notation</span> <a name="f0a1dd4303431419eae1c5ef6bb3fecd"><span class="id" title="abbreviation">𝓥</span></a> := <a class="idref" href="Main.html#NF2.SET"><span class="id" title="definition">SET</span></a>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+Equality 
+</div>
+<div class="code">
+<span class="id" title="keyword">Definition</span> <a name="NF2.EQ"><span class="id" title="definition">EQ</span></a> : <a class="idref" href="Main.html#f0a1dd4303431419eae1c5ef6bb3fecd"><span class="id" title="abbreviation">𝓥</span></a> <a class="idref" href="http://coq.inria.fr/distrib/V8.11.2/stdlib//Coq.Init.Logic.html#1c93e43e07fbeaeb6a625cb6614beb5d"><span class="id" title="notation">→</span></a> <a class="idref" href="Main.html#f0a1dd4303431419eae1c5ef6bb3fecd"><span class="id" title="abbreviation">𝓥</span></a> <a class="idref" href="http://coq.inria.fr/distrib/V8.11.2/stdlib//Coq.Init.Logic.html#1c93e43e07fbeaeb6a625cb6614beb5d"><span class="id" title="notation">→</span></a> <span class="id" title="keyword">Prop</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">exact</span> <a class="idref" href="NF2.Model.html#EQ"><span class="id" title="definition">Model.EQ</span></a>.<br/>
+<span class="id" title="keyword">Defined</span>.<br/>
+<span class="id" title="keyword">Infix</span> <a name="4705d5a3e06f90517ce84bc0397c88d8"><span class="id" title="notation">&quot;</span></a>≡" := <a class="idref" href="Main.html#NF2.EQ"><span class="id" title="definition">EQ</span></a> (<span class="id" title="tactic">at</span> <span class="id" title="keyword">level</span> 50).<br/>
+
+<br/>
+<span class="id" title="keyword">Instance</span> <a name="NF2.nf2_setoid"><span class="id" title="instance">nf2_setoid</span></a> : <a class="idref" href="http://coq.inria.fr/distrib/V8.11.2/stdlib//Coq.Classes.RelationClasses.html#Equivalence"><span class="id" title="class">Equivalence</span></a> <a class="idref" href="Main.html#NF2.EQ"><span class="id" title="definition">EQ</span></a>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">exact</span> <a class="idref" href="NF2.Model.html#nf2_setoid"><span class="id" title="instance">Model.nf2_setoid</span></a>.<br/>
+<span class="id" title="keyword">Qed</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+Set membership 
+</div>
+<div class="code">
+<span class="id" title="keyword">Definition</span> <a name="NF2.IN"><span class="id" title="definition">IN</span></a> : <a class="idref" href="Main.html#f0a1dd4303431419eae1c5ef6bb3fecd"><span class="id" title="abbreviation">𝓥</span></a> <a class="idref" href="http://coq.inria.fr/distrib/V8.11.2/stdlib//Coq.Init.Logic.html#1c93e43e07fbeaeb6a625cb6614beb5d"><span class="id" title="notation">→</span></a> <a class="idref" href="Main.html#f0a1dd4303431419eae1c5ef6bb3fecd"><span class="id" title="abbreviation">𝓥</span></a> <a class="idref" href="http://coq.inria.fr/distrib/V8.11.2/stdlib//Coq.Init.Logic.html#1c93e43e07fbeaeb6a625cb6614beb5d"><span class="id" title="notation">→</span></a> <span class="id" title="keyword">Prop</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">exact</span> <a class="idref" href="NF2.Model.html#IN"><span class="id" title="definition">Model.IN</span></a>.<br/>
+<span class="id" title="keyword">Defined</span>.<br/>
+<span class="id" title="keyword">Infix</span> <a name="2e5d5a0c811482669976b0821916e1ac"><span class="id" title="notation">&quot;</span></a>∈" := <a class="idref" href="Main.html#NF2.IN"><span class="id" title="definition">IN</span></a> (<span class="id" title="tactic">at</span> <span class="id" title="keyword">level</span> 85).<br/>
+
+<br/>
+<span class="id" title="keyword">Add</span> <span class="id" title="var">Morphism</span> <a class="idref" href="Main.html#NF2.IN"><span class="id" title="definition">IN</span></a> <span class="id" title="keyword">with</span> <span class="id" title="var">signature</span> <a class="idref" href="Main.html#NF2.EQ"><span class="id" title="definition">EQ</span></a> <a class="idref" href="http://coq.inria.fr/distrib/V8.11.2/stdlib//Coq.Classes.Morphisms.html#8dc5652698a6e16f72dd37bd17d3b973"><span class="id" title="notation">==&gt;</span></a> <a class="idref" href="Main.html#NF2.EQ"><span class="id" title="definition">EQ</span></a> <a class="idref" href="http://coq.inria.fr/distrib/V8.11.2/stdlib//Coq.Classes.Morphisms.html#8dc5652698a6e16f72dd37bd17d3b973"><span class="id" title="notation">==&gt;</span></a> <a class="idref" href="http://coq.inria.fr/distrib/V8.11.2/stdlib//Coq.Init.Logic.html#iff"><span class="id" title="definition">iff</span></a> <span class="id" title="keyword">as</span> <span class="id" title="var">IN_morphism</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">exact</span> <a class="idref" href="NF2.Model.html#IN_mor"><span class="id" title="definition">Model.IN_mor</span></a>.<br/>
+<span class="id" title="keyword">Qed</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+Extensionality 
+</div>
+<div class="code">
+<span class="id" title="keyword">Definition</span> <a name="NF2.ext"><span class="id" title="definition">ext</span></a> : <span class="id" title="keyword">∀</span> <span class="id" title="var">x</span> <span class="id" title="var">y</span>: <a class="idref" href="Main.html#f0a1dd4303431419eae1c5ef6bb3fecd"><span class="id" title="abbreviation">𝓥</span></a>, <a class="idref" href="Main.html#x"><span class="id" title="variable">x</span></a> <a class="idref" href="Main.html#4705d5a3e06f90517ce84bc0397c88d8"><span class="id" title="notation">≡</span></a> <a class="idref" href="Main.html#y"><span class="id" title="variable">y</span></a> <a class="idref" href="http://coq.inria.fr/distrib/V8.11.2/stdlib//Coq.Init.Logic.html#4bfb4f2d0721ba668e3a802ab1b745a1"><span class="id" title="notation">↔</span></a> <span class="id" title="keyword">∀</span> <span class="id" title="var">z</span>: <a class="idref" href="Main.html#f0a1dd4303431419eae1c5ef6bb3fecd"><span class="id" title="abbreviation">𝓥</span></a>, <a class="idref" href="Main.html#z"><span class="id" title="variable">z</span></a> <a class="idref" href="Main.html#2e5d5a0c811482669976b0821916e1ac"><span class="id" title="notation">∈</span></a> <a class="idref" href="Main.html#x"><span class="id" title="variable">x</span></a> <a class="idref" href="http://coq.inria.fr/distrib/V8.11.2/stdlib//Coq.Init.Logic.html#4bfb4f2d0721ba668e3a802ab1b745a1"><span class="id" title="notation">↔</span></a> <a class="idref" href="Main.html#z"><span class="id" title="variable">z</span></a> <a class="idref" href="Main.html#2e5d5a0c811482669976b0821916e1ac"><span class="id" title="notation">∈</span></a> <a class="idref" href="Main.html#y"><span class="id" title="variable">y</span></a>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">exact</span> @<a class="idref" href="NF2.Ext.html#ext"><span class="id" title="lemma">Ext.ext</span></a>.<br/>
+<span class="id" title="keyword">Qed</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+<a name="lab2"></a><h1 class="section">Set operators</h1>
+
+<div class="paragraph"> </div>
+
+ Empty set 
+</div>
+<div class="code">
+<span class="id" title="keyword">Definition</span> <a name="400759a2921ba2ed99bb71787b1f6ad8"><span class="id" title="definition">Ø</span></a> : <a class="idref" href="Main.html#f0a1dd4303431419eae1c5ef6bb3fecd"><span class="id" title="abbreviation">𝓥</span></a>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">exact</span> <a class="idref" href="NF2.Sets.html#emptyset"><span class="id" title="definition">Sets.emptyset</span></a>.<br/>
+<span class="id" title="keyword">Defined</span>.<br/>
+<span class="id" title="keyword">Definition</span> <a name="NF2.emptyset_ok"><span class="id" title="definition">emptyset_ok</span></a> : <span class="id" title="keyword">∀</span> <span class="id" title="var">x</span>: <a class="idref" href="Main.html#f0a1dd4303431419eae1c5ef6bb3fecd"><span class="id" title="abbreviation">𝓥</span></a>, <a class="idref" href="http://coq.inria.fr/distrib/V8.11.2/stdlib//Coq.Init.Logic.html#63a68285c81db8f9bc456233bb9ed181"><span class="id" title="notation">¬</span></a> <a class="idref" href="http://coq.inria.fr/distrib/V8.11.2/stdlib//Coq.Init.Logic.html#63a68285c81db8f9bc456233bb9ed181"><span class="id" title="notation">(</span></a><a class="idref" href="Main.html#x"><span class="id" title="variable">x</span></a> <a class="idref" href="Main.html#2e5d5a0c811482669976b0821916e1ac"><span class="id" title="notation">∈</span></a> <a class="idref" href="Main.html#400759a2921ba2ed99bb71787b1f6ad8"><span class="id" title="definition">Ø</span></a><a class="idref" href="http://coq.inria.fr/distrib/V8.11.2/stdlib//Coq.Init.Logic.html#63a68285c81db8f9bc456233bb9ed181"><span class="id" title="notation">)</span></a>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">exact</span> <a class="idref" href="NF2.Sets.html#emptyset_ok"><span class="id" title="lemma">Sets.emptyset_ok</span></a>.<br/>
+<span class="id" title="keyword">Qed</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+Complement 
+</div>
+<div class="code">
+<span class="id" title="keyword">Definition</span> <a name="NF2.compl"><span class="id" title="definition">compl</span></a> : <a class="idref" href="Main.html#f0a1dd4303431419eae1c5ef6bb3fecd"><span class="id" title="abbreviation">𝓥</span></a> <a class="idref" href="http://coq.inria.fr/distrib/V8.11.2/stdlib//Coq.Init.Logic.html#1c93e43e07fbeaeb6a625cb6614beb5d"><span class="id" title="notation">→</span></a> <a class="idref" href="Main.html#f0a1dd4303431419eae1c5ef6bb3fecd"><span class="id" title="abbreviation">𝓥</span></a>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">exact</span> <a class="idref" href="NF2.Sets.html#compl"><span class="id" title="definition">Sets.compl</span></a>.<br/>
+<span class="id" title="keyword">Defined</span>.<br/>
+<span class="id" title="keyword">Definition</span> <a name="NF2.compl_ok"><span class="id" title="definition">compl_ok</span></a> : <span class="id" title="keyword">∀</span> <span class="id" title="var">x</span> <span class="id" title="var">y</span>: <a class="idref" href="Main.html#f0a1dd4303431419eae1c5ef6bb3fecd"><span class="id" title="abbreviation">𝓥</span></a>, <a class="idref" href="Main.html#x"><span class="id" title="variable">x</span></a> <a class="idref" href="Main.html#2e5d5a0c811482669976b0821916e1ac"><span class="id" title="notation">∈</span></a> <a class="idref" href="Main.html#2e5d5a0c811482669976b0821916e1ac"><span class="id" title="notation">(</span></a><a class="idref" href="Main.html#NF2.compl"><span class="id" title="definition">compl</span></a> <a class="idref" href="Main.html#y"><span class="id" title="variable">y</span></a><a class="idref" href="Main.html#2e5d5a0c811482669976b0821916e1ac"><span class="id" title="notation">)</span></a> <a class="idref" href="http://coq.inria.fr/distrib/V8.11.2/stdlib//Coq.Init.Logic.html#4bfb4f2d0721ba668e3a802ab1b745a1"><span class="id" title="notation">↔</span></a> <a class="idref" href="http://coq.inria.fr/distrib/V8.11.2/stdlib//Coq.Init.Logic.html#63a68285c81db8f9bc456233bb9ed181"><span class="id" title="notation">¬</span></a> <a class="idref" href="http://coq.inria.fr/distrib/V8.11.2/stdlib//Coq.Init.Logic.html#63a68285c81db8f9bc456233bb9ed181"><span class="id" title="notation">(</span></a><a class="idref" href="Main.html#x"><span class="id" title="variable">x</span></a> <a class="idref" href="Main.html#2e5d5a0c811482669976b0821916e1ac"><span class="id" title="notation">∈</span></a> <a class="idref" href="Main.html#y"><span class="id" title="variable">y</span></a><a class="idref" href="http://coq.inria.fr/distrib/V8.11.2/stdlib//Coq.Init.Logic.html#63a68285c81db8f9bc456233bb9ed181"><span class="id" title="notation">)</span></a>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">exact</span> @<a class="idref" href="NF2.Sets.html#compl_ok"><span class="id" title="lemma">Sets.compl_ok</span></a>.<br/>
+<span class="id" title="keyword">Qed</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+Singleton 
+</div>
+<div class="code">
+<span class="id" title="keyword">Definition</span> <a name="NF2.sin"><span class="id" title="definition">sin</span></a> : <a class="idref" href="Main.html#f0a1dd4303431419eae1c5ef6bb3fecd"><span class="id" title="abbreviation">𝓥</span></a> <a class="idref" href="http://coq.inria.fr/distrib/V8.11.2/stdlib//Coq.Init.Logic.html#1c93e43e07fbeaeb6a625cb6614beb5d"><span class="id" title="notation">→</span></a> <a class="idref" href="Main.html#f0a1dd4303431419eae1c5ef6bb3fecd"><span class="id" title="abbreviation">𝓥</span></a>.<br/>
+&nbsp;<span class="id" title="tactic">exact</span> <a class="idref" href="NF2.Sets.html#sing"><span class="id" title="definition">Sets.sing</span></a>.<br/>
+<span class="id" title="keyword">Defined</span>.<br/>
+<span class="id" title="keyword">Definition</span> <a name="NF2.sin_ok"><span class="id" title="definition">sin_ok</span></a> : <span class="id" title="keyword">∀</span> <span class="id" title="var">x</span> <span class="id" title="var">y</span>: <a class="idref" href="Main.html#f0a1dd4303431419eae1c5ef6bb3fecd"><span class="id" title="abbreviation">𝓥</span></a>, <a class="idref" href="Main.html#x"><span class="id" title="variable">x</span></a> <a class="idref" href="Main.html#2e5d5a0c811482669976b0821916e1ac"><span class="id" title="notation">∈</span></a> <a class="idref" href="Main.html#2e5d5a0c811482669976b0821916e1ac"><span class="id" title="notation">(</span></a><a class="idref" href="Main.html#NF2.sin"><span class="id" title="definition">sin</span></a> <a class="idref" href="Main.html#y"><span class="id" title="variable">y</span></a><a class="idref" href="Main.html#2e5d5a0c811482669976b0821916e1ac"><span class="id" title="notation">)</span></a> <a class="idref" href="http://coq.inria.fr/distrib/V8.11.2/stdlib//Coq.Init.Logic.html#4bfb4f2d0721ba668e3a802ab1b745a1"><span class="id" title="notation">↔</span></a> <a class="idref" href="Main.html#y"><span class="id" title="variable">y</span></a> <a class="idref" href="Main.html#4705d5a3e06f90517ce84bc0397c88d8"><span class="id" title="notation">≡</span></a> <a class="idref" href="Main.html#x"><span class="id" title="variable">x</span></a>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">exact</span> @<a class="idref" href="NF2.Sets.html#sing_ok"><span class="id" title="definition">Sets.sing_ok</span></a>.<br/>
+<span class="id" title="keyword">Qed</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+Union 
+</div>
+<div class="code">
+<span class="id" title="keyword">Definition</span> <a name="NF2.union"><span class="id" title="definition">union</span></a> : <a class="idref" href="Main.html#f0a1dd4303431419eae1c5ef6bb3fecd"><span class="id" title="abbreviation">𝓥</span></a> <a class="idref" href="http://coq.inria.fr/distrib/V8.11.2/stdlib//Coq.Init.Logic.html#1c93e43e07fbeaeb6a625cb6614beb5d"><span class="id" title="notation">→</span></a> <a class="idref" href="Main.html#f0a1dd4303431419eae1c5ef6bb3fecd"><span class="id" title="abbreviation">𝓥</span></a> <a class="idref" href="http://coq.inria.fr/distrib/V8.11.2/stdlib//Coq.Init.Logic.html#1c93e43e07fbeaeb6a625cb6614beb5d"><span class="id" title="notation">→</span></a> <a class="idref" href="Main.html#f0a1dd4303431419eae1c5ef6bb3fecd"><span class="id" title="abbreviation">𝓥</span></a>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">exact</span> @<a class="idref" href="NF2.Sets.html#cup"><span class="id" title="definition">Sets.cup</span></a>.<br/>
+<span class="id" title="keyword">Defined</span>.<br/>
+<span class="id" title="keyword">Definition</span> <a name="NF2.union_ok"><span class="id" title="definition">union_ok</span></a> : <span class="id" title="keyword">∀</span> <span class="id" title="var">x</span> <span class="id" title="var">y</span> <span class="id" title="var">z</span>: <a class="idref" href="Main.html#f0a1dd4303431419eae1c5ef6bb3fecd"><span class="id" title="abbreviation">𝓥</span></a>, <a class="idref" href="Main.html#z"><span class="id" title="variable">z</span></a> <a class="idref" href="Main.html#2e5d5a0c811482669976b0821916e1ac"><span class="id" title="notation">∈</span></a> <a class="idref" href="Main.html#2e5d5a0c811482669976b0821916e1ac"><span class="id" title="notation">(</span></a><a class="idref" href="Main.html#NF2.union"><span class="id" title="definition">union</span></a> <a class="idref" href="Main.html#x"><span class="id" title="variable">x</span></a> <a class="idref" href="Main.html#y"><span class="id" title="variable">y</span></a><a class="idref" href="Main.html#2e5d5a0c811482669976b0821916e1ac"><span class="id" title="notation">)</span></a> <a class="idref" href="http://coq.inria.fr/distrib/V8.11.2/stdlib//Coq.Init.Logic.html#4bfb4f2d0721ba668e3a802ab1b745a1"><span class="id" title="notation">↔</span></a> <a class="idref" href="Main.html#z"><span class="id" title="variable">z</span></a> <a class="idref" href="Main.html#2e5d5a0c811482669976b0821916e1ac"><span class="id" title="notation">∈</span></a> <a class="idref" href="Main.html#x"><span class="id" title="variable">x</span></a> <a class="idref" href="http://coq.inria.fr/distrib/V8.11.2/stdlib//Coq.Init.Logic.html#f031fe1957c4a4a8e217aa46af2b4e25"><span class="id" title="notation">∨</span></a> <a class="idref" href="Main.html#z"><span class="id" title="variable">z</span></a> <a class="idref" href="Main.html#2e5d5a0c811482669976b0821916e1ac"><span class="id" title="notation">∈</span></a> <a class="idref" href="Main.html#y"><span class="id" title="variable">y</span></a>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">exact</span> @<a class="idref" href="NF2.Sets.html#cup_ok"><span class="id" title="lemma">Sets.cup_ok</span></a>.<br/>
+<span class="id" title="keyword">Qed</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">End</span> <a class="idref" href="Main.html#NF2"><span class="id" title="module">NF2</span></a>.<br/>
+
+<br/>
+<span class="id" title="keyword">From</span> <span class="id" title="var">NFO</span> <span class="id" title="keyword">Require</span> <a class="idref" href="NFO.Model.html#"><span class="id" title="library">Model</span></a> <a class="idref" href="NFO.Eq.html#"><span class="id" title="library">Eq</span></a> <a class="idref" href="NFO.In.html#"><span class="id" title="library">In</span></a> <a class="idref" href="NFO.Ext.html#"><span class="id" title="library">Ext</span></a> <a class="idref" href="NFO.Union.html#"><span class="id" title="library">Union</span></a>.<br/>
+<span class="id" title="keyword">Section</span> <a name="NFO"><span class="id" title="section">NFO</span></a>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+The type of NFO sets 
+</div>
+<div class="code">
+<span class="id" title="keyword">Definition</span> <a name="SET"><span class="id" title="definition">SET</span></a> : <span class="id" title="keyword">Type</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">exact</span> <a class="idref" href="NFO.Model.html#SET"><span class="id" title="inductive">Model.SET</span></a>.<br/>
+<span class="id" title="keyword">Defined</span>.<br/>
+<span class="id" title="keyword">Notation</span> <a name="3a5262a92dca9cfbda39d8e1177437ea"><span class="id" title="abbreviation">𝓥</span></a> := <a class="idref" href="Main.html#SET"><span class="id" title="definition">SET</span></a>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+Equality 
+</div>
+<div class="code">
+<span class="id" title="keyword">Definition</span> <a name="EQ"><span class="id" title="definition">EQ</span></a> : <a class="idref" href="Main.html#3a5262a92dca9cfbda39d8e1177437ea"><span class="id" title="abbreviation">𝓥</span></a> <a class="idref" href="http://coq.inria.fr/distrib/V8.11.2/stdlib//Coq.Init.Logic.html#1c93e43e07fbeaeb6a625cb6614beb5d"><span class="id" title="notation">→</span></a> <a class="idref" href="Main.html#3a5262a92dca9cfbda39d8e1177437ea"><span class="id" title="abbreviation">𝓥</span></a> <a class="idref" href="http://coq.inria.fr/distrib/V8.11.2/stdlib//Coq.Init.Logic.html#1c93e43e07fbeaeb6a625cb6614beb5d"><span class="id" title="notation">→</span></a> <span class="id" title="keyword">Prop</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">exact</span> <a class="idref" href="NFO.Eq.html#EQ"><span class="id" title="definition">Eq.EQ</span></a>.<br/>
+<span class="id" title="keyword">Defined</span>.<br/>
+<span class="id" title="keyword">Infix</span> <a name="51984863522259ee1a86ac3705413684"><span class="id" title="notation">&quot;</span></a>≡" := <a class="idref" href="Main.html#EQ"><span class="id" title="definition">EQ</span></a> (<span class="id" title="tactic">at</span> <span class="id" title="keyword">level</span> 50).<br/>
+
+<br/>
+<span class="id" title="keyword">Instance</span> <a name="nfo_setoid"><span class="id" title="instance">nfo_setoid</span></a> : <a class="idref" href="http://coq.inria.fr/distrib/V8.11.2/stdlib//Coq.Classes.RelationClasses.html#Equivalence"><span class="id" title="class">Equivalence</span></a> <a class="idref" href="Main.html#EQ"><span class="id" title="definition">EQ</span></a>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">exact</span> <a class="idref" href="NFO.Eq.html#nfo_setoid"><span class="id" title="instance">Eq.nfo_setoid</span></a>.<br/>
+<span class="id" title="keyword">Qed</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+Set membership 
+</div>
+<div class="code">
+<span class="id" title="keyword">Definition</span> <a name="IN"><span class="id" title="definition">IN</span></a> : <a class="idref" href="Main.html#3a5262a92dca9cfbda39d8e1177437ea"><span class="id" title="abbreviation">𝓥</span></a> <a class="idref" href="http://coq.inria.fr/distrib/V8.11.2/stdlib//Coq.Init.Logic.html#1c93e43e07fbeaeb6a625cb6614beb5d"><span class="id" title="notation">→</span></a> <a class="idref" href="Main.html#3a5262a92dca9cfbda39d8e1177437ea"><span class="id" title="abbreviation">𝓥</span></a> <a class="idref" href="http://coq.inria.fr/distrib/V8.11.2/stdlib//Coq.Init.Logic.html#1c93e43e07fbeaeb6a625cb6614beb5d"><span class="id" title="notation">→</span></a> <span class="id" title="keyword">Prop</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">exact</span> <a class="idref" href="NFO.In.html#IN"><span class="id" title="definition">In.IN</span></a>.<br/>
+<span class="id" title="keyword">Defined</span>.<br/>
+<span class="id" title="keyword">Infix</span> <a name="8e47925a77b6af2bb81c4a0bb6a5168b"><span class="id" title="notation">&quot;</span></a>∈" := <a class="idref" href="Main.html#IN"><span class="id" title="definition">IN</span></a> (<span class="id" title="tactic">at</span> <span class="id" title="keyword">level</span> 85).<br/>
+
+<br/>
+<span class="id" title="keyword">Add</span> <span class="id" title="var">Morphism</span> <a class="idref" href="Main.html#IN"><span class="id" title="definition">IN</span></a> <span class="id" title="keyword">with</span> <span class="id" title="var">signature</span> <a class="idref" href="Main.html#EQ"><span class="id" title="definition">EQ</span></a> <a class="idref" href="http://coq.inria.fr/distrib/V8.11.2/stdlib//Coq.Classes.Morphisms.html#8dc5652698a6e16f72dd37bd17d3b973"><span class="id" title="notation">==&gt;</span></a> <a class="idref" href="Main.html#EQ"><span class="id" title="definition">EQ</span></a> <a class="idref" href="http://coq.inria.fr/distrib/V8.11.2/stdlib//Coq.Classes.Morphisms.html#8dc5652698a6e16f72dd37bd17d3b973"><span class="id" title="notation">==&gt;</span></a> <a class="idref" href="http://coq.inria.fr/distrib/V8.11.2/stdlib//Coq.Init.Logic.html#iff"><span class="id" title="definition">iff</span></a> <span class="id" title="keyword">as</span> <span class="id" title="var">IN_morphism</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">exact</span> <a class="idref" href="NFO.Morphism.html#IN_mor"><span class="id" title="definition">Morphism.IN_mor</span></a>.<br/>
+<span class="id" title="keyword">Qed</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+Extensionality 
+</div>
+<div class="code">
+<span class="id" title="keyword">Definition</span> <a name="ext"><span class="id" title="definition">ext</span></a> : <span class="id" title="keyword">∀</span> <span class="id" title="var">x</span> <span class="id" title="var">y</span>: <a class="idref" href="Main.html#3a5262a92dca9cfbda39d8e1177437ea"><span class="id" title="abbreviation">𝓥</span></a>, <a class="idref" href="Main.html#x"><span class="id" title="variable">x</span></a> <a class="idref" href="Main.html#51984863522259ee1a86ac3705413684"><span class="id" title="notation">≡</span></a> <a class="idref" href="Main.html#y"><span class="id" title="variable">y</span></a> <a class="idref" href="http://coq.inria.fr/distrib/V8.11.2/stdlib//Coq.Init.Logic.html#4bfb4f2d0721ba668e3a802ab1b745a1"><span class="id" title="notation">↔</span></a> <span class="id" title="keyword">∀</span> <span class="id" title="var">z</span>: <a class="idref" href="Main.html#3a5262a92dca9cfbda39d8e1177437ea"><span class="id" title="abbreviation">𝓥</span></a>, <a class="idref" href="Main.html#z"><span class="id" title="variable">z</span></a> <a class="idref" href="Main.html#8e47925a77b6af2bb81c4a0bb6a5168b"><span class="id" title="notation">∈</span></a> <a class="idref" href="Main.html#x"><span class="id" title="variable">x</span></a> <a class="idref" href="http://coq.inria.fr/distrib/V8.11.2/stdlib//Coq.Init.Logic.html#4bfb4f2d0721ba668e3a802ab1b745a1"><span class="id" title="notation">↔</span></a> <a class="idref" href="Main.html#z"><span class="id" title="variable">z</span></a> <a class="idref" href="Main.html#8e47925a77b6af2bb81c4a0bb6a5168b"><span class="id" title="notation">∈</span></a> <a class="idref" href="Main.html#y"><span class="id" title="variable">y</span></a>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">exact</span> @<a class="idref" href="NFO.Ext.html#ext"><span class="id" title="lemma">Ext.ext</span></a>.<br/>
+<span class="id" title="keyword">Qed</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+<a name="lab3"></a><h1 class="section">Set operators</h1>
+
+<div class="paragraph"> </div>
+
+ Empty set 
+</div>
+<div class="code">
+<span class="id" title="keyword">Definition</span> <a name="dd3d5eb0013c3bde1e0dc0f80a071555"><span class="id" title="definition">Ø</span></a> : <a class="idref" href="Main.html#3a5262a92dca9cfbda39d8e1177437ea"><span class="id" title="abbreviation">𝓥</span></a>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">exact</span> <a class="idref" href="NFO.Sets.html#emptyset"><span class="id" title="definition">Sets.emptyset</span></a>.<br/>
+<span class="id" title="keyword">Defined</span>.<br/>
+<span class="id" title="keyword">Definition</span> <a name="emptyset_ok"><span class="id" title="definition">emptyset_ok</span></a> : <span class="id" title="keyword">∀</span> <span class="id" title="var">x</span>: <a class="idref" href="Main.html#3a5262a92dca9cfbda39d8e1177437ea"><span class="id" title="abbreviation">𝓥</span></a>, <a class="idref" href="http://coq.inria.fr/distrib/V8.11.2/stdlib//Coq.Init.Logic.html#63a68285c81db8f9bc456233bb9ed181"><span class="id" title="notation">¬</span></a> <a class="idref" href="http://coq.inria.fr/distrib/V8.11.2/stdlib//Coq.Init.Logic.html#63a68285c81db8f9bc456233bb9ed181"><span class="id" title="notation">(</span></a><a class="idref" href="Main.html#x"><span class="id" title="variable">x</span></a> <a class="idref" href="Main.html#8e47925a77b6af2bb81c4a0bb6a5168b"><span class="id" title="notation">∈</span></a> <a class="idref" href="Main.html#dd3d5eb0013c3bde1e0dc0f80a071555"><span class="id" title="definition">Ø</span></a><a class="idref" href="http://coq.inria.fr/distrib/V8.11.2/stdlib//Coq.Init.Logic.html#63a68285c81db8f9bc456233bb9ed181"><span class="id" title="notation">)</span></a>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">exact</span> <a class="idref" href="NFO.Sets.html#emptyset_ok"><span class="id" title="lemma">Sets.emptyset_ok</span></a>.<br/>
+<span class="id" title="keyword">Qed</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+Complement 
+</div>
+<div class="code">
+<span class="id" title="keyword">Definition</span> <a name="compl"><span class="id" title="definition">compl</span></a> : <a class="idref" href="Main.html#3a5262a92dca9cfbda39d8e1177437ea"><span class="id" title="abbreviation">𝓥</span></a> <a class="idref" href="http://coq.inria.fr/distrib/V8.11.2/stdlib//Coq.Init.Logic.html#1c93e43e07fbeaeb6a625cb6614beb5d"><span class="id" title="notation">→</span></a> <a class="idref" href="Main.html#3a5262a92dca9cfbda39d8e1177437ea"><span class="id" title="abbreviation">𝓥</span></a>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">exact</span> <a class="idref" href="NFO.Sets.html#compl"><span class="id" title="definition">Sets.compl</span></a>.<br/>
+<span class="id" title="keyword">Defined</span>.<br/>
+<span class="id" title="keyword">Definition</span> <a name="compl_ok"><span class="id" title="definition">compl_ok</span></a> : <span class="id" title="keyword">∀</span> <span class="id" title="var">x</span> <span class="id" title="var">y</span>: <a class="idref" href="Main.html#3a5262a92dca9cfbda39d8e1177437ea"><span class="id" title="abbreviation">𝓥</span></a>, <a class="idref" href="Main.html#x"><span class="id" title="variable">x</span></a> <a class="idref" href="Main.html#8e47925a77b6af2bb81c4a0bb6a5168b"><span class="id" title="notation">∈</span></a> <a class="idref" href="Main.html#8e47925a77b6af2bb81c4a0bb6a5168b"><span class="id" title="notation">(</span></a><a class="idref" href="Main.html#compl"><span class="id" title="definition">compl</span></a> <a class="idref" href="Main.html#y"><span class="id" title="variable">y</span></a><a class="idref" href="Main.html#8e47925a77b6af2bb81c4a0bb6a5168b"><span class="id" title="notation">)</span></a> <a class="idref" href="http://coq.inria.fr/distrib/V8.11.2/stdlib//Coq.Init.Logic.html#4bfb4f2d0721ba668e3a802ab1b745a1"><span class="id" title="notation">↔</span></a> <a class="idref" href="http://coq.inria.fr/distrib/V8.11.2/stdlib//Coq.Init.Logic.html#63a68285c81db8f9bc456233bb9ed181"><span class="id" title="notation">¬</span></a> <a class="idref" href="http://coq.inria.fr/distrib/V8.11.2/stdlib//Coq.Init.Logic.html#63a68285c81db8f9bc456233bb9ed181"><span class="id" title="notation">(</span></a><a class="idref" href="Main.html#x"><span class="id" title="variable">x</span></a> <a class="idref" href="Main.html#8e47925a77b6af2bb81c4a0bb6a5168b"><span class="id" title="notation">∈</span></a> <a class="idref" href="Main.html#y"><span class="id" title="variable">y</span></a><a class="idref" href="http://coq.inria.fr/distrib/V8.11.2/stdlib//Coq.Init.Logic.html#63a68285c81db8f9bc456233bb9ed181"><span class="id" title="notation">)</span></a>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">exact</span> @<a class="idref" href="NFO.Sets.html#compl_ok"><span class="id" title="lemma">Sets.compl_ok</span></a>.<br/>
+<span class="id" title="keyword">Qed</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+Singleton 
+</div>
+<div class="code">
+<span class="id" title="keyword">Definition</span> <a name="sin"><span class="id" title="definition">sin</span></a> : <a class="idref" href="Main.html#3a5262a92dca9cfbda39d8e1177437ea"><span class="id" title="abbreviation">𝓥</span></a> <a class="idref" href="http://coq.inria.fr/distrib/V8.11.2/stdlib//Coq.Init.Logic.html#1c93e43e07fbeaeb6a625cb6614beb5d"><span class="id" title="notation">→</span></a> <a class="idref" href="Main.html#3a5262a92dca9cfbda39d8e1177437ea"><span class="id" title="abbreviation">𝓥</span></a>.<br/>
+&nbsp;<span class="id" title="tactic">exact</span> <a class="idref" href="NFO.Sets.html#sin"><span class="id" title="definition">Sets.sin</span></a>.<br/>
+<span class="id" title="keyword">Defined</span>.<br/>
+<span class="id" title="keyword">Definition</span> <a name="sin_ok"><span class="id" title="definition">sin_ok</span></a> : <span class="id" title="keyword">∀</span> <span class="id" title="var">x</span> <span class="id" title="var">y</span>: <a class="idref" href="Main.html#3a5262a92dca9cfbda39d8e1177437ea"><span class="id" title="abbreviation">𝓥</span></a>, <a class="idref" href="Main.html#x"><span class="id" title="variable">x</span></a> <a class="idref" href="Main.html#8e47925a77b6af2bb81c4a0bb6a5168b"><span class="id" title="notation">∈</span></a> <a class="idref" href="Main.html#8e47925a77b6af2bb81c4a0bb6a5168b"><span class="id" title="notation">(</span></a><a class="idref" href="Main.html#sin"><span class="id" title="definition">sin</span></a> <a class="idref" href="Main.html#y"><span class="id" title="variable">y</span></a><a class="idref" href="Main.html#8e47925a77b6af2bb81c4a0bb6a5168b"><span class="id" title="notation">)</span></a> <a class="idref" href="http://coq.inria.fr/distrib/V8.11.2/stdlib//Coq.Init.Logic.html#4bfb4f2d0721ba668e3a802ab1b745a1"><span class="id" title="notation">↔</span></a> <a class="idref" href="Main.html#y"><span class="id" title="variable">y</span></a> <a class="idref" href="Main.html#51984863522259ee1a86ac3705413684"><span class="id" title="notation">≡</span></a> <a class="idref" href="Main.html#x"><span class="id" title="variable">x</span></a>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">exact</span> @<a class="idref" href="NFO.Sets.html#sin_ok"><span class="id" title="lemma">Sets.sin_ok</span></a>.<br/>
+<span class="id" title="keyword">Qed</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+Co-singleton 
+</div>
+<div class="code">
+<span class="id" title="keyword">Definition</span> <a name="cosin"><span class="id" title="definition">cosin</span></a> : <a class="idref" href="Main.html#3a5262a92dca9cfbda39d8e1177437ea"><span class="id" title="abbreviation">𝓥</span></a> <a class="idref" href="http://coq.inria.fr/distrib/V8.11.2/stdlib//Coq.Init.Logic.html#1c93e43e07fbeaeb6a625cb6614beb5d"><span class="id" title="notation">→</span></a> <a class="idref" href="Main.html#3a5262a92dca9cfbda39d8e1177437ea"><span class="id" title="abbreviation">𝓥</span></a>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">exact</span> <a class="idref" href="NFO.Sets.html#cosin"><span class="id" title="definition">Sets.cosin</span></a>.<br/>
+<span class="id" title="keyword">Defined</span>.<br/>
+<span class="id" title="keyword">Definition</span> <a name="cosin_ok"><span class="id" title="definition">cosin_ok</span></a> : <span class="id" title="keyword">∀</span> <span class="id" title="var">x</span> <span class="id" title="var">y</span>: <a class="idref" href="Main.html#3a5262a92dca9cfbda39d8e1177437ea"><span class="id" title="abbreviation">𝓥</span></a>, <a class="idref" href="Main.html#x"><span class="id" title="variable">x</span></a> <a class="idref" href="Main.html#8e47925a77b6af2bb81c4a0bb6a5168b"><span class="id" title="notation">∈</span></a> <a class="idref" href="Main.html#8e47925a77b6af2bb81c4a0bb6a5168b"><span class="id" title="notation">(</span></a><a class="idref" href="Main.html#cosin"><span class="id" title="definition">cosin</span></a> <a class="idref" href="Main.html#y"><span class="id" title="variable">y</span></a><a class="idref" href="Main.html#8e47925a77b6af2bb81c4a0bb6a5168b"><span class="id" title="notation">)</span></a> <a class="idref" href="http://coq.inria.fr/distrib/V8.11.2/stdlib//Coq.Init.Logic.html#4bfb4f2d0721ba668e3a802ab1b745a1"><span class="id" title="notation">↔</span></a> <a class="idref" href="Main.html#y"><span class="id" title="variable">y</span></a> <a class="idref" href="Main.html#8e47925a77b6af2bb81c4a0bb6a5168b"><span class="id" title="notation">∈</span></a> <a class="idref" href="Main.html#x"><span class="id" title="variable">x</span></a>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">exact</span> @<a class="idref" href="NFO.Sets.html#cosin_ok"><span class="id" title="lemma">Sets.cosin_ok</span></a>.<br/>
+<span class="id" title="keyword">Qed</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+Union 
+</div>
+<div class="code">
+<span class="id" title="keyword">Definition</span> <a name="union"><span class="id" title="definition">union</span></a> : <a class="idref" href="Main.html#3a5262a92dca9cfbda39d8e1177437ea"><span class="id" title="abbreviation">𝓥</span></a> <a class="idref" href="http://coq.inria.fr/distrib/V8.11.2/stdlib//Coq.Init.Logic.html#1c93e43e07fbeaeb6a625cb6614beb5d"><span class="id" title="notation">→</span></a> <a class="idref" href="Main.html#3a5262a92dca9cfbda39d8e1177437ea"><span class="id" title="abbreviation">𝓥</span></a> <a class="idref" href="http://coq.inria.fr/distrib/V8.11.2/stdlib//Coq.Init.Logic.html#1c93e43e07fbeaeb6a625cb6614beb5d"><span class="id" title="notation">→</span></a> <a class="idref" href="Main.html#3a5262a92dca9cfbda39d8e1177437ea"><span class="id" title="abbreviation">𝓥</span></a>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">exact</span> @<a class="idref" href="NFO.Union.html#cup"><span class="id" title="definition">Union.cup</span></a>.<br/>
+<span class="id" title="keyword">Defined</span>.<br/>
+<span class="id" title="keyword">Definition</span> <a name="union_ok"><span class="id" title="definition">union_ok</span></a> : <span class="id" title="keyword">∀</span> <span class="id" title="var">x</span> <span class="id" title="var">y</span> <span class="id" title="var">z</span>: <a class="idref" href="Main.html#3a5262a92dca9cfbda39d8e1177437ea"><span class="id" title="abbreviation">𝓥</span></a>, <a class="idref" href="Main.html#z"><span class="id" title="variable">z</span></a> <a class="idref" href="Main.html#8e47925a77b6af2bb81c4a0bb6a5168b"><span class="id" title="notation">∈</span></a> <a class="idref" href="Main.html#8e47925a77b6af2bb81c4a0bb6a5168b"><span class="id" title="notation">(</span></a><a class="idref" href="Main.html#union"><span class="id" title="definition">union</span></a> <a class="idref" href="Main.html#x"><span class="id" title="variable">x</span></a> <a class="idref" href="Main.html#y"><span class="id" title="variable">y</span></a><a class="idref" href="Main.html#8e47925a77b6af2bb81c4a0bb6a5168b"><span class="id" title="notation">)</span></a> <a class="idref" href="http://coq.inria.fr/distrib/V8.11.2/stdlib//Coq.Init.Logic.html#4bfb4f2d0721ba668e3a802ab1b745a1"><span class="id" title="notation">↔</span></a> <a class="idref" href="Main.html#z"><span class="id" title="variable">z</span></a> <a class="idref" href="Main.html#8e47925a77b6af2bb81c4a0bb6a5168b"><span class="id" title="notation">∈</span></a> <a class="idref" href="Main.html#x"><span class="id" title="variable">x</span></a> <a class="idref" href="http://coq.inria.fr/distrib/V8.11.2/stdlib//Coq.Init.Logic.html#f031fe1957c4a4a8e217aa46af2b4e25"><span class="id" title="notation">∨</span></a> <a class="idref" href="Main.html#z"><span class="id" title="variable">z</span></a> <a class="idref" href="Main.html#8e47925a77b6af2bb81c4a0bb6a5168b"><span class="id" title="notation">∈</span></a> <a class="idref" href="Main.html#y"><span class="id" title="variable">y</span></a>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">exact</span> @<a class="idref" href="NFO.Union.html#cup_ok"><span class="id" title="lemma">Union.cup_ok</span></a>.<br/>
+<span class="id" title="keyword">Qed</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">End</span> <a class="idref" href="Main.html#NFO"><span class="id" title="section">NFO</span></a>.<br/>
+</div>
+</div>
+
+<div id="footer">
+<hr/><a href="index.html">Index</a><hr/>This page has been generated by <a href="http://coq.inria.fr/">coqdoc</a>
+</div>
+
+</div>
+
+</body>
+</html>
