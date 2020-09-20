@@ -36,17 +36,17 @@ src/%.vos: src/%.v
 	coqc -R src "" $<
 
 coq-clean:
-	rm -f src/**/*.glob src/**/*.vo src/**/*.vok src/**/*.vos src/**/.*.aux
+	rm -f src/{,**/}*.glob src/{,**/}*.vo src/{,**/}*.vok src/{,**/}*.vos src/{,**/}.*.aux
 	rm -rf doc
 
 coq-doc: coq
 	rm -rf doc
 	mkdir doc
-	coqdoc --lib-subtitles -d doc -R "src" "" --verbose --utf8 src/**/*.v
+	coqdoc --lib-subtitles -d doc -R "src" "" --verbose --utf8 src/{,**/}*.v
 
 coq-tex:
 	# mkdir doc-tex
-	coqdoc --lib-subtitles --latex -d doc-tex -R "src" "" --verbose --utf8 src/**/*.v
+	coqdoc --lib-subtitles --latex -d doc-tex -R "src" "" --verbose --utf8 src/{,**/}*.v
 
 coq-stats:
 	find src -name '*.v' | xargs wc -l
