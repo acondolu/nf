@@ -16,13 +16,13 @@ From NFO Require Import BoolExpr Model Wf Eq In Sets Xor Morphism.
 (** * ? *)
 
 (** Extensionally empty sets: *)
-Definition ext_empty x := forall z, ~ IN z x.
+Definition ext_empty s := forall t, ~ IN t s.
 
 (** Two sets are extensionally equal iff their XOR is
     extensionally empty:
 *)
-Lemma xor_ext: forall {x y},
-  (forall z, IN z x <-> IN z y) <-> ext_empty (x ^^^ y).
+Lemma xor_ext: forall {s s'},
+  (forall t, IN t s <-> IN t s') <-> ext_empty (s ^^^ s').
 Proof.
   intros.
   unfold ext_empty.
@@ -31,10 +31,12 @@ Proof.
   apply iff_refl.
 Qed.
 
-Lemma weak_regularity x :
-  match x with S _ _ f _ _ => AIN x f -> False end.
+(** TODO: define "paradoxical set := urelement" in the article (a set where the A-part has the same extension as the B-part, i.e. it's extensionally empty, but it's different from the empty set, i.e. has non-empty (and with same extension) parts ) *)
+
+Lemma weak_regularity s :
+  match s with S _ _ f _ _ => AIN s f -> False end.
 Proof.
-  induction x. intros. unfold AIN in H1. destruct H1.
+  induction s. intros. unfold AIN in H1. destruct H1.
   pose proof (H x). assert (H1' := H1). destruct (f x) in H1, H2.
   apply H2. unfold AIN. assert (H1'' := H1).
   rewrite EQ_unfold in H1. destruct H1, H1.
@@ -43,33 +45,35 @@ Qed.
 
 (** * ? *)
 
-(** B-sets have the following property: if two sets agree (or not) on the sets enumerated by 'h', then the B-set agrees on them. *)
-Lemma sloppy_Bext {J} {b: J -> SET} {p : BExpr} {x y} :
-  (forall i, IN (b i) y <-> IN (b i) x)
-    -> BIN x (map b p) -> BIN y (map b p).
+(** B-sets have the following property: if two sets agree (or not) on the sets enumerated by 'g', then the B-set agrees on them. *)
+Lemma sloppy_Bext {Y} {g: Y -> SET} {e : BExpr} {s s'} :
+  (forall y, IN (g y) s' <-> IN (g y) s)
+    -> BIN s (map g e) -> BIN s' (map g e).
 Proof.
-  revert x y. induction p; simpl; intros.
+  revert s s'. induction e; simpl; intros.
   - destruct H0.
   - specialize H with x. tauto.
-  - intro. apply H0. apply (fun X => IHp y x X H1). intro i.
-    specialize H with i. tauto.
+  - intro. apply H0. apply (fun X => IHe s' s X H1). intro y.
+    specialize H with y. tauto.
   - destruct H0.
-  -- left. apply (IHp1 x y H H0).
-  -- right. apply (IHp2 x y H H0).
+  -- left. apply (IHe1 s s' H H0).
+  -- right. apply (IHe2 s s' H H0).
 Qed.
 
 (** In case a A-set is extensionally equal to a B-set, the
     same holds for the A-set: it cannot distinguish between
-    sets that agree on the image of 'h'. *)
-Lemma sloppy_Aext {J X} {f: X -> SET} {h: J -> SET} {p x y}:
-  (forall x, AIN x f <-> BIN x (map h p))
-  -> (forall i, IN (h i) y <-> IN (h i) x) -> AIN x f -> AIN y f.
+    sets that agree on the image of 'g'. *)
+Lemma sloppy_Aext {X Y} {f: X -> SET} {g: Y -> SET} {e s s'}:
+  (forall t, AIN t f <-> BIN t (map g e))
+  -> (forall y, IN (g y) s' <-> IN (g y) s)
+  -> AIN s f -> AIN s' f.
 Proof.
   intros H. repeat setoid_rewrite H. apply sloppy_Bext.
 Qed.
 
-Lemma AEQ_AXor_assoc {X Y Z} {f: X -> SET} {g: Y -> SET} {h: Z -> SET}:
-  AEQ (AXor f g) h <-> AEQ f (AXor g h).
+Lemma AEQ_AXor_assoc {X Y Z}
+  {f: X -> SET} {g: Y -> SET} {h: Z -> SET}
+  : AEQ (AXor f g) h <-> AEQ f (AXor g h).
 Proof.
   repeat setoid_rewrite Aext.
   repeat setoid_rewrite AXor_ok.
@@ -79,18 +83,19 @@ Proof.
   apply iff_refl.
 Qed.
 
-Lemma AEQ_AXor_select {Y} (h: Y -> SET) sig sig' :
-  respects (EQ ⨀ h) sig
-    -> respects (EQ ⨀ h) sig'
+Lemma AEQ_AXor_select {Y}
+  (f: Y -> SET) (P Q: Y -> Prop)
+  : respects (EQ ⨀ f) P
+    -> respects (EQ ⨀ f) Q
       -> AEQ
-          (select h sig ^A^ select h sig')
-          (select h (sig' ^^ sig)).
+          (select f P ^A^ select f Q)
+          (select f (Q ^^ P)).
 Proof.
   intros. apply Aext. intro. rewrite AXor_ok.
   unfold AEQ, AXor, select. unfold xorP. unfold AIN.
-  setoid_rewrite (ex_T sig (fun X => h X == x)).
-  setoid_rewrite (ex_T sig' (fun X => h X == x)).
-  setoid_rewrite (ex_T (sig' ^^ sig) (fun X => h X == x)).
+  setoid_rewrite (ex_T P (fun X => f X == x)).
+  setoid_rewrite (ex_T Q (fun X => f X == x)).
+  setoid_rewrite (ex_T (Q ^^ P) (fun X => f X == x)).
   split; intros. 
   - destruct H1, H1. clear H H0.
   -- destruct H1. exists x0. unfold xorP. firstorder.
@@ -100,32 +105,29 @@ Proof.
   -- left. split. firstorder. intro. destruct H4, H4. firstorder.
 Qed.
 
-Definition completion A {B} (h: B -> SET) :=
-  prod A { sig : B -> Prop & respects (EQ ⨀ h) sig }.
+Definition completion {X} A (f: X -> SET) :=
+  prod A { P: X -> Prop & respects (EQ ⨀ f) P }.
 
 (* Enumerates all sets, under the hypothesis that there exists a paradoxical set *)
-Definition All {X Y} (f: X -> SET) (h: Y -> SET)
-  : completion X h -> SET :=
-  fun c =>
-    let (x, resp) := c in
-    let (sig, _) := resp in
+Definition All {X Y} (f: X -> SET) (g: Y -> SET)
+  : completion X g -> SET :=
+  fun c => match c with (x, (existT _ P _)) =>
     match f x with
-    | S X Y f g e =>  S _ Y (AXor f (select h sig)) g e
-    end.
+    | S _ _ f' g' e' =>  S _ _ (AXor f' (select g P)) g' e'
+    end
+  end.
 
-Lemma inv_sig {X X' J} {f: X -> SET} {f': X' -> SET} h {sig sig': J -> Prop}:
-  respects (EQ ⨀ h) sig -> respects (EQ ⨀ h) sig'
-  -> AEQ f (AXor (AXor f' (select h sig)) (select h sig'))
-  -> AEQ (AXor f (select h (sig' ^^ sig))) f'.
+Lemma inv_sig {X X' Y}
+  {f: X -> SET} {f': X' -> SET} {P Q: Y -> Prop} g
+  : respects (EQ ⨀ g) P
+  -> respects (EQ ⨀ g) Q
+  -> AEQ f (AXor (AXor f' (select g P)) (select g Q))
+  -> AEQ (AXor f (select g (Q ^^ P))) f'.
 Proof.
   repeat rewrite AEQ_AXor_assoc.
   intros A B. intro. apply (fun X => AEQ_trans _ _ _ H X).
-  (* apply (ing_sig_aux_2 A B). *)
-  (* intros A B. *)
   setoid_rewrite Aext. intro x.
   repeat setoid_rewrite AXor_ok.
-  (* setoid_rewrite<- xor_assoc.
-  setoid_rewrite xor_comm. *)
   refine (iff_trans _ _).
   setoid_rewrite xor_iff.
   apply iff_refl.
@@ -158,51 +160,51 @@ Proof.
   apply xor_comm.
 Qed.
 
-Lemma universal_low {J X} {f: X -> SET} (h: J -> SET) (p: BExpr):
-  (forall x, AIN x f <-> BIN x (map h p))
-  -> (exists x, AIN x f)
-  -> forall x, AIN x (All f h).
+Lemma universal_low {X Y} {f: X -> SET} (g: Y -> SET) (e: BExpr):
+  (forall s, AIN s f <-> BIN s (map g e))
+  -> (exists s, AIN s f)
+  -> forall s, AIN s (All f g).
 Proof.
-  intros. destruct H0.
-  pose (fun j => IN (h j) x0) as sig_x0 (* the good signature *) .
-  pose (fun j => IN (h j) x) as sig_x (* the current signature *) .
-  cut (respects (EQ ⨀ h) sig_x0). cut (respects (EQ ⨀ h) sig_x). intros R1 R2.
+  intros. destruct H0 as [t H0].
+  pose (fun y => IN (g y) t) as sig_t (* the good signature *) .
+  pose (fun y => IN (g y) s) as sig_s (* the current signature *) .
+  cut (respects (EQ ⨀ g) sig_t).
+  cut (respects (EQ ⨀ g) sig_s). intros R1 R2.
 
-  destruct x.
-  pose (S _ Y (AXor (AXor f0 (select h sig_x)) (select h (sig_x0))) g e) as x_signed.
-  pose proof (fun X => @sloppy_Aext _ _ f h p _ x_signed H X H0).
-  cut ((forall i : J, IN (h i) x_signed <-> IN (h i) x0)). intro.
-  destruct (H1 H2). clear H1 H2.
-  pose (sig_x0 ^^ sig_x) as sig_xor.
-  cut (respects (EQ ⨀ h) sig_xor). intro xr.
+  destruct s.
+  pose (S _ _ (AXor (AXor f0 (select g sig_s)) (select g sig_t)) g0 e0) as s_signed.
+  cut (forall y, IN (g y) s_signed <-> IN (g y) t). intro H1.
+  destruct (@sloppy_Aext _ _ f g e _ s_signed H H1 H0).
+  pose (sig_t ^^ sig_s) as sig_xor.
+  cut (respects (EQ ⨀ g) sig_xor). intro xr.
   exists (x, existT _ sig_xor xr).
 
   unfold All. unfold AIN. simpl.
-  destruct (f x). unfold x_signed in H3. rewrite EQ_unfold in H3. destruct H3.
+  destruct (f x). unfold s_signed in H2. rewrite EQ_unfold in H2. destruct H2.
   rewrite EQ_unfold. split.
-  - revert H1. apply (inv_sig h R1 R2).
-  - exact H2.
+  - revert H2. apply (inv_sig g R1 R2).
+  - assumption.
   - apply xorP_respects; assumption.
-  - intros. destruct x0.
-    unfold x_signed, sig_x0, sig_x, select.
+  - intros. destruct t.
+    unfold s_signed, sig_t, sig_s, select.
     repeat rewrite IN_unfold.
     (* Deep rewrites *)
     repeat setoid_rewrite AXor_ok.
-    setoid_rewrite (AIN_select h (fun X => IN X (S X0 Y f0 g e))).
-    setoid_rewrite (AIN_select h (fun X => IN X (S X1 Y0 f1 g0 e0))).
+    setoid_rewrite (AIN_select g (fun X => IN X (S _ _ f0 g0 e0))).
+    setoid_rewrite (AIN_select g (fun X => IN X (S _ _ f1 g1 e1))).
     setoid_rewrite IN_unfold.
-    cut (forall i, (exists x : J, h x == h i) <-> True). intro.
-     setoid_rewrite H2.
+    cut (forall y, (exists y', g y' == g y) <-> True). intro.
+     setoid_rewrite H1.
      setoid_rewrite and_true.
      apply trivial_xor_lemma.
-     intro. split; intros; auto. exists i0. reflexivity.
-   unfold sig_x, respects. intros.
-    apply (IN_respects_EQ _ _ _ H2).
-   unfold sig_x, respects. intros.
-    apply (IN_respects_EQ _ _ _ H2).
-  -unfold sig_x, respects. intros.
+     intro. split; intros; auto. exists y0. reflexivity.
+   unfold sig_s, respects. intros.
+    apply (IN_respects_EQ _ _ _ H1).
+   unfold sig_s, respects. intros.
+    apply (IN_respects_EQ _ _ _ H1).
+  - unfold sig_s, respects. intros.
   apply (IN_respects_EQ _ _ _ H1).
-  -unfold sig_x, respects. intros.
+  -unfold sig_s, respects. intros.
   apply (IN_respects_EQ _ _ _ H1). 
 Qed.
 
