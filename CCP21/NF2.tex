@@ -64,6 +64,13 @@ a
 
 \TODO{Dire che la notazione $\AEQ$ nasconde la dipendenza, ma che espandendo e' tutto ancora safe}
 
+\TODO{equivalence goes smoothly, like for \ZF{}, only the cases are doubled because of the two constructors.}
+
+\begin{coqdoccode}
+  \coqdocnoindent
+  \coqdockw{Instance} \coqdefRef{NF2.Model.nf2 setoid}{nf2\_setoid}{\coqdocinstance{nf2\_setoid}} : \coqexternalref{Equivalence}{http://coq.inria.fr/distrib/V8.11.0/stdlib//Coq.Classes.RelationClasses}{\coqdocclass{Equivalence}} \coqref{NF2.Model.EQ}{\coqdocdefinition{EQ}}.
+\end{coqdoccode}
+
 \subsection{Set Membership}
 
 \begin{coqdoccode}
@@ -77,21 +84,114 @@ a
 \coqdockw{end}.\coqdoceol
 \end{coqdoccode}
 
-\TODO{capire morfismo}
+\TODO{morfismo uguale a ZF}
+
+\begin{coqdoccode}
+  \coqdocnoindent
+\coqdockw{Add} \coqdockw{Morphism} \coqref{NF2.Model.IN}{\coqdocdefinition{IN}} \coqdockw{with} \coqdockw{signature} \coqref{NF2.Model.EQ}{\coqdocdefinition{EQ}} \coqexternalref{ProperNotations.::signature scope:x '==>' x}{http://coq.inria.fr/distrib/V8.11.0/stdlib//Coq.Classes.Morphisms}{\coqdocnotation{==>}} \coqref{NF2.Model.EQ}{\coqdocdefinition{EQ}} \coqexternalref{ProperNotations.::signature scope:x '==>' x}{http://coq.inria.fr/distrib/V8.11.0/stdlib//Coq.Classes.Morphisms}{\coqdocnotation{==>}} \coqexternalref{iff}{http://coq.inria.fr/distrib/V8.11.0/stdlib//Coq.Init.Logic}{\coqdocdefinition{iff}} \coqdockw{as} \coqdocvar{IN\_mor}.\coqdoceol
+\coqdocnoindent
+\end{coqdoccode}
 
 \subsection{Set Operators}
 
+\begin{coqdoccode}
+  \coqdockw{Definition} \coqdef{NF2.Sets.compl}{compl}{\coqdocdefinition{compl}} : \coqref{NF2.Model.SET}{\coqdocinductive{SET}} \coqexternalref{::type scope:x '->' x}{http://coq.inria.fr/distrib/V8.11.0/stdlib//Coq.Init.Logic}{\coqdocnotation{\ensuremath{\rightarrow}}} \coqref{NF2.Model.SET}{\coqdocinductive{SET}} :=\coqdoceol
+\coqdocindent{1.00em}
+\coqdockw{fun} \coqdocvar{s} \ensuremath{\Rightarrow} \coqdockw{match} \coqdocvariable{s} \coqdockw{with}\coqdoceol
+\coqdocindent{1.00em}
+\ensuremath{|} \coqref{NF2.Model.Low}{\coqdocconstructor{Low}} \coqdocvar{\_} \coqdocvar{f} \ensuremath{\Rightarrow} \coqref{NF2.Model.High}{\coqdocconstructor{High}} \coqdocvar{\_} \coqdocvar{f}\coqdoceol
+\coqdocindent{1.00em}
+\ensuremath{|} \coqref{NF2.Model.High}{\coqdocconstructor{High}} \coqdocvar{\_} \coqdocvar{f} \ensuremath{\Rightarrow} \coqref{NF2.Model.Low}{\coqdocconstructor{Low}} \coqdocvar{\_} \coqdocvar{f}\coqdoceol
+\coqdocindent{1.00em}
+\coqdockw{end}\coqdoceol
+\coqdocnoindent
+.\coqdoceol
+\coqdocemptyline
+\coqdocnoindent
+\coqdockw{Lemma} \coqdef{NF2.Sets.compl ok}{compl\_ok}{\coqdoclemma{compl\_ok}} : \coqdockw{\ensuremath{\forall}} \coqdocvar{s} \coqdocvar{t}, \coqdocvariable{s} \coqref{NF2.Model.:::x 'xE2x88x88' x}{\coqdocnotation{∈}} \coqref{NF2.Sets.compl}{\coqdocdefinition{compl}} \coqdocvariable{t} \coqexternalref{::type scope:x '<->' x}{http://coq.inria.fr/distrib/V8.11.0/stdlib//Coq.Init.Logic}{\coqdocnotation{\ensuremath{\leftrightarrow}}} \coqexternalref{::type scope:x '<->' x}{http://coq.inria.fr/distrib/V8.11.0/stdlib//Coq.Init.Logic}{\coqdocnotation{(}}\coqdocvariable{s} \coqref{NF2.Model.:::x 'xE2x88x88' x}{\coqdocnotation{∈}} \coqdocvariable{t} \coqexternalref{::type scope:x '->' x}{http://coq.inria.fr/distrib/V8.11.0/stdlib//Coq.Init.Logic}{\coqdocnotation{\ensuremath{\rightarrow}}} \coqexternalref{False}{http://coq.inria.fr/distrib/V8.11.0/stdlib//Coq.Init.Logic}{\coqdocinductive{False}}\coqexternalref{::type scope:x '<->' x}{http://coq.inria.fr/distrib/V8.11.0/stdlib//Coq.Init.Logic}{\coqdocnotation{)}}.\coqdoceol
+\coqdocnoindent
+\coqdockw{Proof}.\coqdoceol
+\coqdocindent{1.00em}
+\coqdoctac{intros} \coqdocvar{s} \coqdocvar{t}. \coqdoctac{destruct} \coqdocvar{t}; \coqdoctac{simpl} \coqdocvar{compl}; \coqdoctac{simpl} \coqdocvar{IN}; \coqdoctac{split}; \coqdoctac{firstorder}.\coqdoceol
+\coqdocindent{1.00em}
+\coqdoctac{apply} \coqexternalref{not all not ex}{http://coq.inria.fr/distrib/V8.11.0/stdlib//Coq.Logic.Classical\_Pred\_Type}{\coqdoclemma{not\_all\_not\_ex}}. \coqdoctac{assumption}.\coqdoceol
+\coqdocnoindent
+\coqdockw{Qed}.\coqdoceol
+\end{coqdoccode}
+
+\begin{coqdoccode}
+  \coqdocnoindent
+\coqdockw{Definition} \coqdef{NF2.Sets.sing}{sing}{\coqdocdefinition{sing}} : \coqref{NF2.Model.SET}{\coqdocinductive{SET}} \coqexternalref{::type scope:x '->' x}{http://coq.inria.fr/distrib/V8.11.0/stdlib//Coq.Init.Logic}{\coqdocnotation{\ensuremath{\rightarrow}}} \coqref{NF2.Model.SET}{\coqdocinductive{SET}} :=\coqdoceol
+\coqdocindent{1.00em}
+\coqdockw{fun} \coqdocvar{s} \ensuremath{\Rightarrow} \coqref{NF2.Model.Low}{\coqdocconstructor{Low}} \coqexternalref{unit}{http://coq.inria.fr/distrib/V8.11.0/stdlib//Coq.Init.Datatypes}{\coqdocinductive{unit}} (\coqdockw{fun} \coqdocvar{\_} \ensuremath{\Rightarrow} \coqdocvariable{s}).\coqdoceol
+\coqdocemptyline
+\coqdocnoindent
+\coqdockw{Definition} \coqdef{NF2.Sets.sing ok}{sing\_ok}{\coqdocdefinition{sing\_ok}} : \coqdockw{\ensuremath{\forall}} \coqdocvar{s} \coqdocvar{t}, \coqdocvariable{s} \coqref{NF2.Model.:::x 'xE2x88x88' x}{\coqdocnotation{∈}} \coqref{NF2.Sets.sing}{\coqdocdefinition{sing}} \coqdocvariable{t} \coqexternalref{::type scope:x '<->' x}{http://coq.inria.fr/distrib/V8.11.0/stdlib//Coq.Init.Logic}{\coqdocnotation{\ensuremath{\leftrightarrow}}} \coqdocvariable{t} \coqref{NF2.Model.:::x 'xE2x89xA1' x}{\coqdocnotation{≡}} \coqdocvariable{s}.\coqdoceol
+\coqdocnoindent
+\coqdockw{Proof}.\coqdoceol
+\coqdocindent{1.00em}
+\coqdoctac{intros}. \coqdoctac{simpl}. \coqdoctac{split}; \coqdoctac{intros}. \coqdoctac{destruct} \coqdocvar{H}; \coqdoctac{firstorder}. \coqdoctac{apply} \coqref{Internal.Misc.ex unit}{\coqdoclemma{ex\_unit}}. \coqdoctac{auto}.\coqdoceol
+\coqdocnoindent
+\coqdockw{Qed}.\coqdoceol
+\end{coqdoccode}
+
 \TODO{complement, union, singleton}
+
+\begin{coqdoccode}
+  \coqdockw{Definition} \coqdef{NF2.Sets.cup}{cup}{\coqdocdefinition{cup}} \coqdocvar{s} \coqdocvar{s'} := \coqdockw{match} \coqdocvariable{s}, \coqdocvariable{s'} \coqdockw{with}\coqdoceol
+\coqdocindent{1.00em}
+\ensuremath{|} \coqref{NF2.Model.Low}{\coqdocconstructor{Low}} \coqdocvar{\_} \coqdocvar{f}, \coqref{NF2.Model.High}{\coqdocconstructor{High}} \coqdocvar{\_} \coqdocvar{g} \ensuremath{\Rightarrow} \coqref{NF2.Model.High}{\coqdocconstructor{High}} \coqdocvar{\_} (\coqref{NF2.Sets.minus}{\coqdocdefinition{minus}} \coqdocvar{g} \coqdocvar{f})\coqdoceol
+\coqdocindent{1.00em}
+\ensuremath{|} \coqref{NF2.Model.High}{\coqdocconstructor{High}} \coqdocvar{\_} \coqdocvar{f}, \coqref{NF2.Model.Low}{\coqdocconstructor{Low}} \coqdocvar{\_} \coqdocvar{g} \ensuremath{\Rightarrow} \coqref{NF2.Model.High}{\coqdocconstructor{High}} \coqdocvar{\_} (\coqref{NF2.Sets.minus}{\coqdocdefinition{minus}} \coqdocvar{f} \coqdocvar{g})\coqdoceol
+\coqdocindent{1.00em}
+\ensuremath{|} \coqref{NF2.Model.Low}{\coqdocconstructor{Low}} \coqdocvar{\_} \coqdocvar{f}, \coqref{NF2.Model.Low}{\coqdocconstructor{Low}} \coqdocvar{\_} \coqdocvar{g} \ensuremath{\Rightarrow} \coqref{NF2.Model.Low}{\coqdocconstructor{Low}} \coqdocvar{\_} (\coqref{NF2.Sets.join}{\coqdocdefinition{join}} \coqdocvar{f} \coqdocvar{g})\coqdoceol
+\coqdocindent{1.00em}
+\ensuremath{|} \coqref{NF2.Model.High}{\coqdocconstructor{High}} \coqdocvar{\_} \coqdocvar{f}, \coqref{NF2.Model.High}{\coqdocconstructor{High}} \coqdocvar{\_} \coqdocvar{g} \ensuremath{\Rightarrow} \coqref{NF2.Model.Low}{\coqdocconstructor{Low}} \coqdocvar{\_} (\coqref{NF2.Sets.meet}{\coqdocdefinition{meet}} \coqdocvar{f} \coqdocvar{g})\coqdoceol
+\coqdocnoindent
+\coqdockw{end}.\coqdoceol
+\coqdocnoindent
+\coqdockw{Notation} \coqdef{NF2.Sets.:::x 'xE2x88xAA' x}{"}{"}A ∪ B" := (\coqref{NF2.Sets.cup}{\coqdocdefinition{cup}} \coqdocvar{A} \coqdocvar{B}) (\coqdoctac{at} \coqdockw{level} 85).\coqdoceol
+\coqdocemptyline
+\end{coqdoccode}
+
+\TODO{define minus, meet, join??? For instace, minus is:}
+
+\begin{coqdoccode}
+  \coqdocnoindent
+  \coqdockw{Definition} \coqdef{NF2.Sets.minus}{minus}{\coqdocdefinition{minus}} \{\coqdocvar{X} \coqdocvar{Y}\} \coqdocvar{f} \coqdocvar{g} \coqdoceol
+  \coqdocindent{1.00em}
+  : \coqexternalref{::type scope:'x7B' x ':' x 'x26' x 'x7D'}{http://coq.inria.fr/distrib/V8.11.0/stdlib//Coq.Init.Specif}{\coqdocnotation{\{}} \coqdocvar{x} \coqexternalref{::type scope:'x7B' x ':' x 'x26' x 'x7D'}{http://coq.inria.fr/distrib/V8.11.0/stdlib//Coq.Init.Specif}{\coqdocnotation{:}} \coqdocvariable{X} \coqexternalref{::type scope:'x7B' x ':' x 'x26' x 'x7D'}{http://coq.inria.fr/distrib/V8.11.0/stdlib//Coq.Init.Specif}{\coqdocnotation{\&}} \coqdockw{\ensuremath{\forall}} \coqdocvar{y} : \coqdocvariable{Y}, \coqexternalref{::type scope:'x7E' x}{http://coq.inria.fr/distrib/V8.11.0/stdlib//Coq.Init.Logic}{\coqdocnotation{\ensuremath{\lnot}}} \coqexternalref{::type scope:'x7E' x}{http://coq.inria.fr/distrib/V8.11.0/stdlib//Coq.Init.Logic}{\coqdocnotation{(}}\coqdocvariable{g} \coqdocvariable{y} \coqref{NF2.Model.:::x 'xE2x89xA1' x}{\coqdocnotation{≡}} \coqdocvariable{f} \coqdocvariable{x}\coqexternalref{::type scope:'x7E' x}{http://coq.inria.fr/distrib/V8.11.0/stdlib//Coq.Init.Logic}{\coqdocnotation{)}} \coqexternalref{::type scope:'x7B' x ':' x 'x26' x 'x7D'}{http://coq.inria.fr/distrib/V8.11.0/stdlib//Coq.Init.Specif}{\coqdocnotation{\}}} \coqexternalref{::type scope:x '->' x}{http://coq.inria.fr/distrib/V8.11.0/stdlib//Coq.Init.Logic}{\coqdocnotation{\ensuremath{\rightarrow}}} \coqref{NF2.Model.SET}{\coqdocinductive{SET}} \coqdoceol
+\coqdocindent{1.00em}:=
+\coqref{Internal.Misc.select}{\coqdocdefinition{select}} \coqdocvariable{f} (\coqdockw{fun} \coqdocvar{x} \ensuremath{\Rightarrow} \coqdockw{\ensuremath{\forall}} \coqdocvar{y}, \coqexternalref{::type scope:'x7E' x}{http://coq.inria.fr/distrib/V8.11.0/stdlib//Coq.Init.Logic}{\coqdocnotation{\ensuremath{\lnot}}} \coqexternalref{::type scope:'x7E' x}{http://coq.inria.fr/distrib/V8.11.0/stdlib//Coq.Init.Logic}{\coqdocnotation{(}}\coqdocvariable{g} \coqdocvariable{y} \coqref{NF2.Model.:::x 'xE2x89xA1' x}{\coqdocnotation{≡}} \coqdocvariable{f} \coqdocvariable{x}\coqexternalref{::type scope:'x7E' x}{http://coq.inria.fr/distrib/V8.11.0/stdlib//Coq.Init.Logic}{\coqdocnotation{)}}).\coqdoceol
+\coqdocemptyline
+\end{coqdoccode}
+
+where selects:
+'select f P' restricts the domain of a function f according to a predicate P:
+
+\begin{coqdoccode}
+  \coqdocnoindent
+  \coqdockw{Definition} \coqdef{Internal.Misc.select}{select}{\coqdocdefinition{select}} \{\coqdocvar{X} \coqdocvar{Y}\} (\coqdocvar{f}: \coqdocvariable{X} \coqexternalref{::type scope:x '->' x}{http://coq.inria.fr/distrib/V8.11.0/stdlib//Coq.Init.Logic}{\coqdocnotation{\ensuremath{\rightarrow}}} \coqdocvariable{Y}) (\coqdocvar{P}: \coqdocvariable{X} \coqexternalref{::type scope:x '->' x}{http://coq.inria.fr/distrib/V8.11.0/stdlib//Coq.Init.Logic}{\coqdocnotation{\ensuremath{\rightarrow}}} \coqdockw{Prop}) \coqdoceol
+  \coqdocindent{1.00em} : \coqexternalref{::type scope:'x7B' x ':' x 'x26' x 'x7D'}{http://coq.inria.fr/distrib/V8.11.0/stdlib//Coq.Init.Specif}{\coqdocnotation{\{}}\coqdocvar{x}\coqexternalref{::type scope:'x7B' x ':' x 'x26' x 'x7D'}{http://coq.inria.fr/distrib/V8.11.0/stdlib//Coq.Init.Specif}{\coqdocnotation{:}} \coqdocvariable{X} \coqexternalref{::type scope:'x7B' x ':' x 'x26' x 'x7D'}{http://coq.inria.fr/distrib/V8.11.0/stdlib//Coq.Init.Specif}{\coqdocnotation{\&}} \coqdocvariable{P} \coqdocvariable{x}\coqexternalref{::type scope:'x7B' x ':' x 'x26' x 'x7D'}{http://coq.inria.fr/distrib/V8.11.0/stdlib//Coq.Init.Specif}{\coqdocnotation{\}}} \coqexternalref{::type scope:x '->' x}{http://coq.inria.fr/distrib/V8.11.0/stdlib//Coq.Init.Logic}{\coqdocnotation{\ensuremath{\rightarrow}}} \coqdocvariable{Y}\coqdoceol
+  \coqdocindent{1.00em}
+  := \coqdockw{fun} \coqdocvar{x} \ensuremath{\Rightarrow} \coqdocvariable{f} (\coqexternalref{projT1}{http://coq.inria.fr/distrib/V8.11.0/stdlib//Coq.Init.Specif}{\coqdocdefinition{projT1}} \coqdocvariable{x}).\coqdoceol
+  \coqdocemptyline
+\end{coqdoccode}
+
+\begin{coqdoccode}
+\coqdocnoindent
+\coqdockw{Lemma} \coqdef{NF2.Sets.cup ok}{cup\_ok}{\coqdoclemma{cup\_ok}} : \coqdockw{\ensuremath{\forall}} \coqdocvar{s} \coqdocvar{s'} \coqdocvar{t}, \coqdocvariable{t} \coqref{NF2.Model.:::x 'xE2x88x88' x}{\coqdocnotation{∈}} \coqref{NF2.Model.:::x 'xE2x88x88' x}{\coqdocnotation{(}}\coqdocvariable{s} \coqref{NF2.Sets.:::x 'xE2x88xAA' x}{\coqdocnotation{∪}} \coqdocvariable{s'}\coqref{NF2.Model.:::x 'xE2x88x88' x}{\coqdocnotation{)}} \coqexternalref{::type scope:x '<->' x}{http://coq.inria.fr/distrib/V8.11.0/stdlib//Coq.Init.Logic}{\coqdocnotation{\ensuremath{\leftrightarrow}}} \coqexternalref{::type scope:x 'x5C/' x}{http://coq.inria.fr/distrib/V8.11.0/stdlib//Coq.Init.Logic}{\coqdocnotation{(}}\coqdocvariable{t} \coqref{NF2.Model.:::x 'xE2x88x88' x}{\coqdocnotation{∈}} \coqdocvariable{s}\coqexternalref{::type scope:x 'x5C/' x}{http://coq.inria.fr/distrib/V8.11.0/stdlib//Coq.Init.Logic}{\coqdocnotation{)}} \coqexternalref{::type scope:x 'x5C/' x}{http://coq.inria.fr/distrib/V8.11.0/stdlib//Coq.Init.Logic}{\coqdocnotation{\ensuremath{\lor}}} \coqexternalref{::type scope:x 'x5C/' x}{http://coq.inria.fr/distrib/V8.11.0/stdlib//Coq.Init.Logic}{\coqdocnotation{(}}\coqdocvariable{t} \coqref{NF2.Model.:::x 'xE2x88x88' x}{\coqdocnotation{∈}} \coqdocvariable{s'}\coqexternalref{::type scope:x 'x5C/' x}{http://coq.inria.fr/distrib/V8.11.0/stdlib//Coq.Init.Logic}{\coqdocnotation{)}}.\coqdoceol
+\end{coqdoccode}
 
 \subsection{Extensionality}
 
 \begin{itemize}
-  \item One direction is is easy (?) (follows from in\_sound\_right)
+  \item One direction is is easy (?) (follows from \coqdocdefinition{in\_sound\_right})
   \item The other, we proceed by cases over $a, b$. When their constructor matches, the proof proceeds in like for ZF (the case high - high is completely specular). The cases high vs low are impossible, and we need to show that it is never the case that a low set and a high set cannot have the same extension.
 \end{itemize}
 aaa
 
-Informally, if $L_1 = \Complement{L_2}$ for some low sets $L_1$ and $L_2$, then $L_1 \cup L_2 = \Universe$.
+Informally, if $p \approx \Complement{q}$ for booleans $p,q$, then $p \lor q \approx \top$.
 
 \begin{coqdoccode}
   \coqdocnoindent

@@ -88,6 +88,16 @@ As a consequence, we parametrize the $\coqdocdefinition{eq\_bexpr}$ on a binary 
 \coqdocemptyline
 \end{coqdoccode}
 
+\TODO{}
+
+\begin{coqdoccode}
+  \coqdocnoindent
+\coqdockw{Definition} \coqdef{Internal.FunExt.respects}{respects}{\coqdocdefinition{respects}} \{\coqdocvar{X}\} (\coqdocvar{R}: \coqdocvariable{X} \coqexternalref{::type scope:x '->' x}{http://coq.inria.fr/distrib/V8.11.0/stdlib//Coq.Init.Logic}{\coqdocnotation{\ensuremath{\rightarrow}}} \coqdocvariable{X} \coqexternalref{::type scope:x '->' x}{http://coq.inria.fr/distrib/V8.11.0/stdlib//Coq.Init.Logic}{\coqdocnotation{\ensuremath{\rightarrow}}} \coqdockw{Prop}) (\coqdocvar{P}: \coqdocvariable{X} \coqexternalref{::type scope:x '->' x}{http://coq.inria.fr/distrib/V8.11.0/stdlib//Coq.Init.Logic}{\coqdocnotation{\ensuremath{\rightarrow}}} \coqdockw{Prop}) :=\coqdoceol
+\coqdocindent{1.00em}
+\coqdockw{\ensuremath{\forall}} \coqdocvar{x} \coqdocvar{x'}, \coqdocvariable{R} \coqdocvariable{x} \coqdocvariable{x'} \coqexternalref{::type scope:x '->' x}{http://coq.inria.fr/distrib/V8.11.0/stdlib//Coq.Init.Logic}{\coqdocnotation{\ensuremath{\rightarrow}}} \coqexternalref{::type scope:x '->' x}{http://coq.inria.fr/distrib/V8.11.0/stdlib//Coq.Init.Logic}{\coqdocnotation{(}}\coqdocvariable{P} \coqdocvariable{x} \coqexternalref{::type scope:x '<->' x}{http://coq.inria.fr/distrib/V8.11.0/stdlib//Coq.Init.Logic}{\coqdocnotation{\ensuremath{\leftrightarrow}}} \coqdocvariable{P} \coqdocvariable{x'}\coqexternalref{::type scope:x '->' x}{http://coq.inria.fr/distrib/V8.11.0/stdlib//Coq.Init.Logic}{\coqdocnotation{)}}.\coqdoceol
+\coqdocemptyline
+\end{coqdoccode}
+
 \subsection{The Type \texorpdfstring{\coqdocinductive{SET}}{SET}}
 
 \begin{coqdoccode}
@@ -171,6 +181,22 @@ XXX
 
 XXX
 
+
+\TODO{AAA}
+
+Composition of a predicate with a function (on both its arguments):
+
+\begin{coqdoccode}
+  \coqdocnoindent
+  \coqdockw{Definition} \coqdef{Internal.Misc.compR}{compR}{\coqdocdefinition{compR}} \{\coqdocvar{X} \coqdocvar{Y} \coqdocvar{Z}\}\coqdoceol
+  \coqdocindent{1.00em}
+  (\coqdocvar{R}: \coqdocvariable{Y} \coqexternalref{::type scope:x '->' x}{http://coq.inria.fr/distrib/V8.11.0/stdlib//Coq.Init.Logic}{\coqdocnotation{\ensuremath{\rightarrow}}} \coqdocvariable{Y} \coqexternalref{::type scope:x '->' x}{http://coq.inria.fr/distrib/V8.11.0/stdlib//Coq.Init.Logic}{\coqdocnotation{\ensuremath{\rightarrow}}} \coqdocvariable{Z}) (\coqdocvar{f}: \coqdocvariable{X} \coqexternalref{::type scope:x '->' x}{http://coq.inria.fr/distrib/V8.11.0/stdlib//Coq.Init.Logic}{\coqdocnotation{\ensuremath{\rightarrow}}} \coqdocvariable{Y}) \coqdocvar{x} \coqdocvar{x'} \coqdoceol
+  := \coqdocvariable{R} (\coqdocvariable{f} \coqdocvariable{x}) (\coqdocvariable{f} \coqdocvariable{x'}).\coqdoceol
+  \coqdocnoindent
+  \coqdockw{Infix} \coqdef{Internal.Misc.:::x 'xE2xA8x80' x}{"}{"}⨀" := \coqref{Internal.Misc.compR}{\coqdocdefinition{compR}} (\coqdoctac{at} \coqdockw{level} 79).\coqdoceol
+  \coqdocemptyline
+\end{coqdoccode}
+
 \TODO{copied here property of EQ boolean:}
 
 This lemma is quite important: it will show that our initial
@@ -240,7 +266,25 @@ TODO: This needs some love... \begin{coqdoccode}
 \coqexternalref{::type scope:x '->' x}{http://coq.inria.fr/distrib/V8.11.0/stdlib//Coq.Init.Logic}{\coqdocnotation{\ensuremath{\rightarrow}}} \coqref{NFO.BoolExpr.eq bexpr}{\coqdocdefinition{eq\_bexpr}} (\coqdocvariable{R} \coqref{Internal.Misc.:::x 'xE2xA8x80' x}{\coqdocnotation{⨀}} \coqref{Internal.Misc.:::x 'xE2xA8x80' x}{\coqdocnotation{(}}\coqdocvariable{f1} \coqref{Internal.Misc.:::x 'xE2xA8x81' x}{\coqdocnotation{⨁}} \coqdocvariable{f3}\coqref{Internal.Misc.:::x 'xE2xA8x80' x}{\coqdocnotation{)}}) (\coqref{NFO.BoolExpr.map}{\coqdocdefinition{map}} \coqexternalref{inl}{http://coq.inria.fr/distrib/V8.11.0/stdlib//Coq.Init.Datatypes}{\coqdocconstructor{inl}} \coqdocvariable{e1}) (\coqref{NFO.BoolExpr.map}{\coqdocdefinition{map}} \coqexternalref{inr}{http://coq.inria.fr/distrib/V8.11.0/stdlib//Coq.Init.Datatypes}{\coqdocconstructor{inr}} \coqdocvariable{e3}).\coqdoceol
 \end{coqdoccode}
 
-\TODO{Missing how to lift to EQ, and then SETOID definition}
+Inverting function for orders TODO: \begin{coqdoccode}
+  \coqdocnoindent
+  \coqdockw{Definition} \coqdef{Internal.Misc.invF}{invF}{\coqdocdefinition{invF}} \{\coqdocvar{X} \coqdocvar{Y}\} (\coqdocvar{f}: \coqdocvariable{X} \coqexternalref{::type scope:x '->' x}{http://coq.inria.fr/distrib/V8.11.0/stdlib//Coq.Init.Logic}{\coqdocnotation{\ensuremath{\rightarrow}}} \coqdocvariable{Y}) (\coqdocvar{y}: \coqdocvariable{Y}) := \coqexternalref{::type scope:'exists' x '..' x ',' x}{http://coq.inria.fr/distrib/V8.11.0/stdlib//Coq.Init.Logic}{\coqdocnotation{\ensuremath{\exists}}} \coqdocvar{x}\coqexternalref{::type scope:'exists' x '..' x ',' x}{http://coq.inria.fr/distrib/V8.11.0/stdlib//Coq.Init.Logic}{\coqdocnotation{,}} \coqdocvariable{f} \coqdocvariable{x} \coqexternalref{::type scope:x '=' x}{http://coq.inria.fr/distrib/V8.11.0/stdlib//Coq.Init.Logic}{\coqdocnotation{=}} \coqdocvariable{y}.\coqdoceol
+  \coqdocemptyline
+  \coqdocnoindent
+  \coqdockw{Definition} \coqdef{Internal.Misc.inv3}{inv3}{\coqdocdefinition{inv3}} \{\coqdocvar{X} \coqdocvar{Y} \coqdocvar{Z} \coqdocvar{W}\} (\coqdocvar{f}: \coqdocvariable{X} \coqexternalref{::type scope:x '->' x}{http://coq.inria.fr/distrib/V8.11.0/stdlib//Coq.Init.Logic}{\coqdocnotation{\ensuremath{\rightarrow}}} \coqdocvariable{W}) (\coqdocvar{g} : \coqdocvariable{Y} \coqexternalref{::type scope:x '->' x}{http://coq.inria.fr/distrib/V8.11.0/stdlib//Coq.Init.Logic}{\coqdocnotation{\ensuremath{\rightarrow}}} \coqdocvariable{W}) (\coqdocvar{h} : \coqdocvariable{Z} \coqexternalref{::type scope:x '->' x}{http://coq.inria.fr/distrib/V8.11.0/stdlib//Coq.Init.Logic}{\coqdocnotation{\ensuremath{\rightarrow}}} \coqdocvariable{W}) \coqdocvar{w} :=\coqdoceol
+  \coqdocindent{1.00em}
+  \coqref{Internal.Misc.invF}{\coqdocdefinition{invF}} \coqdocvariable{f} \coqdocvariable{w} \coqexternalref{::type scope:x 'x5C/' x}{http://coq.inria.fr/distrib/V8.11.0/stdlib//Coq.Init.Logic}{\coqdocnotation{\ensuremath{\lor}}} \coqref{Internal.Misc.invF}{\coqdocdefinition{invF}} \coqdocvariable{g} \coqdocvariable{w} \coqexternalref{::type scope:x 'x5C/' x}{http://coq.inria.fr/distrib/V8.11.0/stdlib//Coq.Init.Logic}{\coqdocnotation{\ensuremath{\lor}}} \coqref{Internal.Misc.invF}{\coqdocdefinition{invF}} \coqdocvariable{h} \coqdocvariable{w}.\coqdoceol
+  \coqdocemptyline
+\end{coqdoccode}
+
+\TODO{Missing how to lift to EQ (note! SYMM requires 2-order, TRANS 3-order)}
+
+
+\begin{coqdoccode}
+  \coqdocnoindent
+  \coqdockw{Instance} \coqdef{NFO.Eq.nfo setoid}{nfo\_setoid}{\coqdocinstance{nfo\_setoid}} : \coqexternalref{Equivalence}{http://coq.inria.fr/distrib/V8.11.0/stdlib//Coq.Classes.RelationClasses}{\coqdocclass{Equivalence}} \coqref{NFO.Eq.EQ}{\coqdocdefinition{EQ}}.\coqdoceol
+  \coqdocemptyline
+\end{coqdoccode}
 
 \subsection{Set Membership}
 
@@ -335,6 +379,14 @@ ccc
 
 \TODO{Missing: morphism, respects (depends on Ain and Bin morphisms, etc.)}
 
+\begin{coqdoccode}
+  \coqdocnoindent
+  \coqdockw{Add} \coqdocvar{Morphism} \coqref{NFO.In.IN}{\coqdocdefinition{IN}} \coqdockw{with} \coqdocvar{signature} \coqref{NFO.Eq.EQ}{\coqdocdefinition{EQ}} \coqexternalref{ProperNotations.::signature scope:x '==>' x}{http://coq.inria.fr/distrib/V8.11.0/stdlib//Coq.Classes.Morphisms}{\coqdocnotation{==>}} \coqref{NFO.Eq.EQ}{\coqdocdefinition{EQ}} \coqexternalref{ProperNotations.::signature scope:x '==>' x}{http://coq.inria.fr/distrib/V8.11.0/stdlib//Coq.Classes.Morphisms}{\coqdocnotation{==>}} \coqexternalref{iff}{http://coq.inria.fr/distrib/V8.11.0/stdlib//Coq.Init.Logic}{\coqdocdefinition{iff}} \coqdockw{as} \coqdocvar{IN\_mor}.\coqdoceol
+\end{coqdoccode}
+\begin{proof}
+  TODO ARGH DIFFICILE!
+\end{proof}
+
 \subsection{Set Operators}
 \TODO{universo gia' definito in ex?, and correctness is trivial.}
 \TODO{Dire che precedenti (a parte unione) sono facili.}
@@ -365,12 +417,12 @@ AAA
 
 \begin{coqdoccode}
   \coqdocnoindent
-  \coqdockw{Definition} \coqdef{NFO.Sets.sin}{sin}{\coqdocdefinition{sin}} \coqdocvar{x} := \coqdoceol
+  \coqdockw{Definition} \coqdef{NFO.Sets.sin}{sin}{\coqdocdefinition{sin}} \coqdocvar{s} := \coqdoceol
   \coqdocindent{1.00em}
-  \coqref{NFO.Model.S}{\coqdocconstructor{S}} \coqexternalref{unit}{http://coq.inria.fr/distrib/V8.11.0/stdlib//Coq.Init.Datatypes}{\coqdocinductive{unit}} \coqexternalref{False}{http://coq.inria.fr/distrib/V8.11.0/stdlib//Coq.Init.Logic}{\coqdocinductive{False}} (\coqdockw{fun} \coqdocvar{\_} \ensuremath{\Rightarrow} \coqdocvariable{x}) (\coqexternalref{False rect}{http://coq.inria.fr/distrib/V8.11.0/stdlib//Coq.Init.Logic}{\coqdocdefinition{False\_rect}} \coqdocvar{\_}) \coqref{NFO.BoolExpr.Bot}{\coqdocconstructor{Bot}}.\coqdoceol
+  \coqref{NFO.Model.S}{\coqdocconstructor{S}} \coqexternalref{unit}{http://coq.inria.fr/distrib/V8.11.0/stdlib//Coq.Init.Datatypes}{\coqdocinductive{unit}} \coqexternalref{False}{http://coq.inria.fr/distrib/V8.11.0/stdlib//Coq.Init.Logic}{\coqdocinductive{False}} (\coqdockw{fun} \coqdocvar{\_} \ensuremath{\Rightarrow} \coqdocvariable{s}) (\coqexternalref{False rect}{http://coq.inria.fr/distrib/V8.11.0/stdlib//Coq.Init.Logic}{\coqdocdefinition{False\_rect}} \coqdocvar{\_}) \coqref{NFO.BoolExpr.Bot}{\coqdocconstructor{Bot}}.\coqdoceol
   \coqdocemptyline
   \coqdocnoindent
-  \coqdockw{Theorem} \coqdef{NFO.Sets.sin ok}{sin\_ok}{\coqdoclemma{sin\_ok}}: \coqdockw{\ensuremath{\forall}} \coqdocvar{x} \coqdocvar{y}, \coqdocvariable{x} \INX (\coqref{NFO.Sets.sin}{\coqdocdefinition{sin}} \coqdocvariable{y}) \coqexternalref{::type scope:x '<->' x}{http://coq.inria.fr/distrib/V8.11.0/stdlib//Coq.Init.Logic}{\coqdocnotation{\ensuremath{\leftrightarrow}}} \coqdocvariable{y} \EQX \coqdocvariable{x}.\coqdoceol
+  \coqdockw{Theorem} \coqdef{NFO.Sets.sin ok}{sin\_ok}{\coqdoclemma{sin\_ok}}: \coqdockw{\ensuremath{\forall}} \coqdocvar{s} \coqdocvar{t}, \coqdocvariable{s} \INX (\coqref{NFO.Sets.sin}{\coqdocdefinition{sin}} \coqdocvariable{t}) \coqexternalref{::type scope:x '<->' x}{http://coq.inria.fr/distrib/V8.11.0/stdlib//Coq.Init.Logic}{\coqdocnotation{\ensuremath{\leftrightarrow}}} \coqdocvariable{t} \EQX \coqdocvariable{s}.\coqdoceol
 \end{coqdoccode}
 \begin{proof}
   After basic simplifications, the statement becomes
