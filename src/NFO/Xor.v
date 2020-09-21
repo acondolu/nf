@@ -19,7 +19,7 @@ Infix "⊻" := xor (at level 80, right associativity).
 (** Self-inverse: *)
 Lemma xor_absorb : forall p, p ⊻ p <-> False.
 Proof. unfold xor. tauto. Qed.
-Hint Resolve xor_absorb : xor.
+Hint Rewrite xor_absorb : xor.
 
 (** Commutativity: *)
 Lemma xor_comm: forall p q, p ⊻ q <-> q ⊻ p.
@@ -32,11 +32,19 @@ Proof. intros. unfold xor. tauto. Qed.
 (** Left and right identity: *)
 Lemma xor_false_l: forall p, False ⊻ p <-> p.
 Proof. unfold xor. tauto. Qed.
-Hint Resolve xor_false_l : xor.
+Hint Rewrite xor_false_l : xor.
 
 Lemma xor_false_r: forall p, p ⊻ False <-> p.
 Proof. unfold xor. tauto. Qed.
-Hint Resolve xor_false_l : xor.
+Hint Rewrite xor_false_r : xor.
+
+Lemma xor_true_l: forall p, True ⊻ p <-> ~p.
+Proof. unfold xor. tauto. Qed.
+Hint Rewrite xor_true_l : xor.
+
+Lemma xor_true_r: forall p, p ⊻ True <-> ~p.
+Proof. unfold xor. tauto. Qed.
+Hint Rewrite xor_true_r : xor.
 
 (** xor is a morphism: *)
 Lemma xor_iff: forall p p' q q', (p <-> p') -> (q <-> q') -> p ⊻ q <-> p' ⊻ q'.

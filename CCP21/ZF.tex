@@ -15,7 +15,7 @@ The steps are the following:
 
 \footnotetext{We use the uppercase identifiers \coqdocinductive{SET}, \coqdocdefinition{EQ}, and \coqdocdefinition{IN} in order to avoid shadowing, respectively, the kind \coqdocdefinition{Set}, the standard (intensional) equality \coqdocdefinition{eq}, and the reserved keyword \coqdockw{in}.}
 
-\subsection{Type of sets}
+\subsection{The Type \texorpdfstring{\coqdocinductive{SET}}{SET}}
 The type representing sets
 
 \begin{coqdoccode}
@@ -28,14 +28,16 @@ The type representing sets
 
 \TODO{index type $X$ plus an indexing function}
 
+\noindent\paragraph{Notation.} From now on, we will use the variables $s, t, a, b, c$ to denote elements of type \coqdocinductive{SET}. We reserve the variable names $x,y,z$ for elements of types $X,Y,Z$ respectively.
+
 \begin{example}[Empty set]aaa
 
   \begin{coqdoccode}
     \coqdocnoindent
-    \coqdockw{Definition} \coqdocdefinition{Ø} := \coqdocconstructor{Sup} \coqexternalref{False}{http://coq.inria.fr/distrib/V8.11.0/stdlib//Coq.Init.Logic}{\coqdocinductive{False}} (\coqdockw{fun} \coqdocvar{x} \ensuremath{\Rightarrow} \coqdockw{match} \coqdocvariable{x} \coqdockw{with} \coqdockw{end}).\coqdoceol
+    \coqdockw{Definition} \coqdocdefinition{Ø} := \coqdocconstructor{Sup} \coqexternalref{False}{http://coq.inria.fr/distrib/V8.11.0/stdlib//Coq.Init.Logic}{\coqdocinductive{False}} (\coqdockw{fun} \coqdocvar{k} \ensuremath{\Rightarrow} \coqdockw{match} \coqdocvariable{k} \coqdockw{with} \coqdockw{end}).\coqdoceol
     \coqdocemptyline
   \end{coqdoccode}
-  \TODO{False is just a type with no inhabitants, explain empty pattern matching}
+  \TODO{False is just a type with no inhabitants, explain empty pattern matching, dire anche \coqexternalref{False rect}{http://coq.inria.fr/distrib/V8.11.0/stdlib//Coq.Init.Logic}{\coqdocdefinition{False\_rect}} \coqdocvar{\_}}
 \end{example}
 
 \begin{example}[Set union]
@@ -54,7 +56,7 @@ The type representing sets
 
   \begin{coqdoccode}
     \coqdocnoindent
-    \coqdockw{Definition} \coqdef{Internal.Misc.sumF}{sumF}{\coqdocdefinition{sumF}} \{\coqdocvar{X} \coqdocvar{Y} \coqdocvar{Z}\} \coqdoceol
+    \coqdockw{Definition} \coqdefRef{Internal.Misc.sumF}{sumF}{\coqdocdefinition{sumF}} \{\coqdocvar{X} \coqdocvar{Y} \coqdocvar{Z}\} \coqdoceol
     \coqdocindent{1.00em}: \coqexternalref{::type scope:x '->' x}{http://coq.inria.fr/distrib/V8.11.0/stdlib//Coq.Init.Logic}{\coqdocnotation{(}}\coqdocvariable{X} \coqexternalref{::type scope:x '->' x}{http://coq.inria.fr/distrib/V8.11.0/stdlib//Coq.Init.Logic}{\coqdocnotation{\ensuremath{\rightarrow}}} \coqdocvariable{Z}\coqexternalref{::type scope:x '->' x}{http://coq.inria.fr/distrib/V8.11.0/stdlib//Coq.Init.Logic}{\coqdocnotation{)}} \coqexternalref{::type scope:x '->' x}{http://coq.inria.fr/distrib/V8.11.0/stdlib//Coq.Init.Logic}{\coqdocnotation{\ensuremath{\rightarrow}}} \coqexternalref{::type scope:x '->' x}{http://coq.inria.fr/distrib/V8.11.0/stdlib//Coq.Init.Logic}{\coqdocnotation{(}}\coqdocvariable{Y} \coqexternalref{::type scope:x '->' x}{http://coq.inria.fr/distrib/V8.11.0/stdlib//Coq.Init.Logic}{\coqdocnotation{\ensuremath{\rightarrow}}} \coqdocvariable{Z}\coqexternalref{::type scope:x '->' x}{http://coq.inria.fr/distrib/V8.11.0/stdlib//Coq.Init.Logic}{\coqdocnotation{)}} \coqexternalref{::type scope:x '->' x}{http://coq.inria.fr/distrib/V8.11.0/stdlib//Coq.Init.Logic}{\coqdocnotation{\ensuremath{\rightarrow}}} \coqdocvariable{X} \coqexternalref{::type scope:x '+' x}{http://coq.inria.fr/distrib/V8.11.0/stdlib//Coq.Init.Datatypes}{\coqdocnotation{+}} \coqdocvariable{Y} \coqexternalref{::type scope:x '->' x}{http://coq.inria.fr/distrib/V8.11.0/stdlib//Coq.Init.Logic}{\coqdocnotation{\ensuremath{\rightarrow}}} \coqdocvariable{Z} \coqdoceol
     \coqdocindent{1.00em} := \coqdockw{fun} \coqdocvar{f} \coqdocvar{g} \coqdocvar{xy} \ensuremath{\Rightarrow} \coqdockw{match} \coqdocvariable{xy} \coqdockw{with}\coqdoceol
     \coqdocindent{8.00em}
@@ -69,15 +71,15 @@ The type representing sets
     \end{coqdoccode}
 \end{example}
 
-\subsection{Equality}
+\subsection{Set Equality}
 
 Recursive Definition of the extentional equality on sets
 
 \begin{coqdoccode}
   \coqdocnoindent
-  \coqdockw{Fixpoint} \coqdocdefinition{EQ} \coqdocvar{a} \coqdocvar{b} : \coqdockw{Prop} :=\coqdoceol
+  \coqdockw{Fixpoint} \coqdocdefinition{EQ} \coqdocvar{s} \coqdocvar{t} : \coqdockw{Prop} :=\coqdoceol
   \coqdocindent{1.00em}
-  \coqdockw{match} \coqdocvar{a}, \coqdocvar{b} \coqdockw{with}\coqdoceol
+  \coqdockw{match} \coqdocvar{s}, \coqdocvar{t} \coqdockw{with}\coqdoceol
   \coqdocindent{1.00em}
   \ensuremath{|} \coqdocconstructor{Sup} \coqdocvar{X} \coqdocvar{f}, \coqdocconstructor{Sup} \coqdocvar{Y} \coqdocvar{g} \ensuremath{\Rightarrow}\coqdoceol
   \coqdocindent{2.00em}
@@ -85,7 +87,7 @@ Recursive Definition of the extentional equality on sets
   \coqdocindent{1.00em}
   \coqdockw{end}.\coqdoceol
   \coqdocnoindent
-\coqdockw{Notation} ``X ≡ Y'' := (\coqref{NF2.Model.EQ}{\coqdocdefinition{EQ}} \coqdocvar{X} \coqdocvar{Y}).\coqdoceol
+\coqdockw{Infix} ``≡'' := \coqref{NF2.Model.EQ}{\coqdocdefinition{EQ}}.\coqdoceol
 \coqdocemptyline
 \end{coqdoccode}
 
@@ -113,7 +115,13 @@ Aczel's equality
 
 \coqdocconstructor{Sup} \coqdocvar{X} \coqdocvar{f} $\equiv$ \coqdocconstructor{Sup} \coqdocvar{Y} \coqdocvar{g} $~\Leftrightarrow$ \coqdocvar{f} $\AEQ$ \coqdocvar{g}
 
-\TODO{symmetry and transitivity proved by an easy induction on the first variable.}
+\begin{coqdoccode}
+  \coqdocnoindent
+  \coqdockw{Instance} \coqdefRef{NF2.Model.nf2 setoid}{nf2\_setoid}{\coqdocinstance{nf2\_setoid}} : \coqexternalref{Equivalence}{http://coq.inria.fr/distrib/V8.11.0/stdlib//Coq.Classes.RelationClasses}{\coqdocclass{Equivalence}} \coqref{NF2.Model.EQ}{\coqdocdefinition{EQ}}.
+\end{coqdoccode}
+\begin{proof}
+  All required statements (reflexivity, symmetry, and transitivity) are proven by an easy structural induction on the first quantified variable.
+\end{proof}
 
 \subsection{Set Membership}
 
@@ -125,7 +133,7 @@ Aczel's equality
 \ensuremath{|} \coqdocconstructor{Sup} \coqdocvar{X} \coqdocvar{f} \ensuremath{\Rightarrow} \coqdoctac{\ensuremath{\exists}} \coqdocvar{x}, \coqdocvar{EQ} \coqdocvar{a} (\coqdocvar{f} \coqdocvar{x})\coqdoceol
 \coqdocindent{0.00em}\coqdockw{end}.\coqdoceol
 \coqdocnoindent
-\coqdockw{Infix} ``X ∈ Y'' := (\coqdocdefinition{IN} \coqdocvar{X} \coqdocvar{Y}).\coqdoceol
+\coqdockw{Infix} ``∈'' := \coqdocdefinition{IN}.\coqdoceol
 \coqdocemptyline
 \end{coqdoccode}
 
@@ -139,3 +147,39 @@ Aczel's equality
 \coqdockw{Infix} ``\AIN'' := (\coqdocdefinition{in\_aczel} \coqdocdefinition{IN}).\coqdoceol
 \coqdocemptyline
 \end{coqdoccode}
+
+So that:
+
+s $\in$ \coqdocconstructor{Sup} \coqdocvar{X} \coqdocvar{f} $~\Leftrightarrow$ \coqdocvar{s} $\AIN$ \coqdocvar{f}
+
+\TODO{Ops morphism, predates one direction of extensionality}
+
+\begin{coqdoccode}
+  \coqdocnoindent
+\coqdockw{Add} \coqdockw{Morphism} \coqref{NF2.Model.IN}{\coqdocdefinition{IN}} \coqdockw{with} \coqdockw{signature} \coqref{NF2.Model.EQ}{\coqdocdefinition{EQ}} \coqexternalref{ProperNotations.::signature scope:x '==>' x}{http://coq.inria.fr/distrib/V8.11.0/stdlib//Coq.Classes.Morphisms}{\coqdocnotation{$\Rightarrow$}} \coqref{NF2.Model.EQ}{\coqdocdefinition{EQ}} \coqexternalref{ProperNotations.::signature scope:x '==>' x}{http://coq.inria.fr/distrib/V8.11.0/stdlib//Coq.Classes.Morphisms}{\coqdocnotation{$\Rightarrow$}} \coqexternalref{iff}{http://coq.inria.fr/distrib/V8.11.0/stdlib//Coq.Init.Logic}{\coqdocdefinition{iff}} \coqdockw{as} \coqdefRef{NF2.Model.IN mor}{IN\_mor}{\coqdocinstance{IN\_mor}}.\coqdoceol
+\end{coqdoccode}
+\begin{proof}
+  \TODO{}
+\end{proof}
+
+\subsection{Extensionality}
+\TODO{}
+
+
+\begin{coqdoccode}
+  \coqdocnoindent
+  \coqdockw{Theorem} \coqdoclemma{ext}: \coqdockw{\ensuremath{\forall}} \coqdocvar{a} \coqdocvar{b}, \coqdocvariable{a} \coqdocnotation{≡} \coqdocvariable{b} \coqexternalref{::type scope:x '<->' x}{http://coq.inria.fr/distrib/V8.11.0/stdlib//Coq.Init.Logic}{\coqdocnotation{\ensuremath{\leftrightarrow}}} \coqdockw{\ensuremath{\forall}} \coqdocvar{c}, \coqdocvariable{c} \coqdocnotation{∈} \coqdocvariable{a} \coqexternalref{::type scope:x '<->' x}{http://coq.inria.fr/distrib/V8.11.0/stdlib//Coq.Init.Logic}{\coqdocnotation{\ensuremath{\leftrightarrow}}} \coqdocvariable{c} \coqdocnotation{∈} \coqdocvariable{b}.\coqdoceol
+\end{coqdoccode}
+\begin{proof}
+  Let $a = \coqdocconstructor{Sup}~X~f$ and $b = \coqdocconstructor{Sup}~Y~g$ by destruction.
+  We prove the two directions of the double implication separately:
+  \begin{itemize}
+    \item[$(\Rightarrow)$]
+      Let's assume $a \equiv b$ and, without loss of generality, $c \in a$; we need to show that $c \in b$. From $c \in a$ it follows that there exists $x\colon X$ such that $c \equiv f~x$. From the left conjunct in the unfolding of $a \equiv b$, we obtain a $y\colon Y$ such that $f~x \equiv g~y$. By transitivity of $\equiv$, it follows that $c \equiv g~y$, and we thus conclude with $c \in b$.
+    \item[$(\Leftarrow)$] Let's assume $\forall c, c\in a \leftrightarrow c \in b$ to prove $a \equiv b$. Without loss of generality, we prove only the first conjunct in the unfolding of $a \equiv b$, \ie{} $\forall x, \exists y, f~x \equiv g~y$. Assume $x\colon X$: it follows from the hypothesis that $f~x\in a \leftrightarrow f~x \in b$. It is easy to see that $f~x\in a$ holds, hence it follows that $f~x \in b$, \ie{} there exists $y$ such that $f~x \equiv g~y$.
+    \qedhere
+  \end{itemize}
+\end{proof}
+
+\subsection{Other \ZF{} Axioms}
+\TODO{}

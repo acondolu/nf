@@ -12,11 +12,9 @@ From Internal Require Import Misc.
 Theorem weak_regularity: forall {x}, low x -> IN x x -> False.
 Proof.
   induction x; simpl low; auto; intros.
-  destruct H1. apply (H x).
+  assert (H1' := H1). destruct H1. apply (H x).
   - destruct (s x); simpl; auto.
-  - assert (H1' := H1). destruct (s x) in H1; destruct H1.
-    destruct (H2 x). rewrite H1'.
-    exists x. assumption. 
+  - setoid_rewrite H1. assumption.
 Qed.
 
 (* 
@@ -34,7 +32,9 @@ Qed.
 *)
 
 
-Lemma pos_univ: forall X f Y g, (forall z, IN z (Low X f) <-> IN z (High Y g)) -> (forall z, IN z (Low (X + Y) (f ⨁ g))).
+Lemma pos_univ: forall X f Y g,
+  (forall z, IN z (Low X f) <-> IN z (High Y g))
+  -> forall z, IN z (Low (X + Y) (f ⨁ g)).
 Proof.
   intros. simpl IN in *.
   pose proof (H z).
@@ -46,14 +46,17 @@ Proof.
   apply NNPP. intro. apply H3. intros x HH. apply H4. exists x. auto.
 Qed.
 
-Lemma pos_neg_ext_neq: forall X f Y g, (forall z, IN z (Low X f) <-> IN z (High Y g)) -> False.
+Lemma pos_neg_ext_neq: forall X f Y g,
+  (forall z, IN z (Low X f) <-> IN z (High Y g)) -> False.
 Proof.
   intros.
   pose proof (pos_univ _ _ _ _ H).
   apply (@weak_regularity (Low (X + Y) (f ⨁ g)) I). apply H0.
 Qed.
 
-Lemma ext_pos: forall X f Y g, (forall z, IN z (Low X f) <-> IN z (Low Y g)) -> EQ (Low X f) (Low Y g).
+Lemma ext_pos: forall X f Y g,
+  (forall z, IN z (Low X f) <-> IN z (Low Y g))
+  -> EQ (Low X f) (Low Y g).
 Proof.
   intros. simpl; split; intro.
   - destruct (H (f x)). simpl IN in H0.
@@ -62,30 +65,27 @@ Proof.
   cut (exists x : Y, EQ (g x) (g y)). intro. destruct (H1 H2). exists x. assumption. exists y. apply EQ_refl.
 Qed.
 
-Lemma ext_neg: forall X f Y g, (forall z, IN z (High X f) <-> IN z (High Y g)) -> EQ (Low X f) (Low Y g).
+Lemma not_ex_all_not_iff: forall {U} (P: U -> Prop),
+  ~ (exists n : U, P n) <-> forall n:U, ~ P n.
 Proof.
-  intros. simpl; split; intro.
-  - destruct (H (f x)). simpl IN in H1.
-    apply NNPP. intro.
-    cut (forall x0 : Y, EQ (g x0) (f x) -> False). intro.
-    pose proof (H1 H3). apply (H4 x). apply EQ_refl. intros.
-    pose proof (EQ_sym H3). revert H4. clear H3. revert x0.
-    apply not_ex_all_not. assumption.
-  - destruct (H (g y)). simpl IN in H0.
-  apply NNPP. intro.
-  cut (forall x : X, EQ (f x) (g y) -> False). intro.
-  pose proof (H0 H3). apply (H4 y). apply EQ_refl.
-  apply not_ex_all_not. assumption.
+  split. apply not_ex_all_not. firstorder.
+Qed.
+
+Lemma ext_neg: forall X f Y g,
+  (forall z, IN z (High X f) <-> IN z (High Y g))
+  -> EQ (High X f) (High Y g).
+Proof.
+  simpl. intros. apply (ext_pos X f Y g). simpl. intro z. specialize H with z.
+  setoid_rewrite<- not_ex_all_not_iff in H. tauto.
 Qed.
 
 Theorem ext: forall x y, x ≡ y <-> forall z, z ∈ x <-> z ∈ y.
 Proof.
-  intros. split. intros. split; apply in_sound_right; auto. apply EQ_sym. assumption.
-  destruct x; destruct y.
-  - apply ext_pos.
-  - intros. destruct (pos_neg_ext_neq _ _ _ _ H).
-  - intros. cut (forall z : SET, IN z (Low X0 s0) <-> IN z (High X s)).
-    intro. destruct (pos_neg_ext_neq _ _ _ _ H0).
-    intro z. apply iff_sym. apply (H z). 
-  - apply ext_neg.
+  intros. split.
+  - intros. split; apply in_sound_right; auto. symmetry. assumption.
+  - destruct x; destruct y.
+  -- apply ext_pos.
+  -- intros. destruct (pos_neg_ext_neq _ _ _ _ H).
+  -- intros. symmetry. apply (pos_neg_ext_neq X0 s0 X s). firstorder.
+  -- apply ext_neg.
 Qed.

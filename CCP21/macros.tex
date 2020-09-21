@@ -14,7 +14,7 @@
 
 % \renewcommand*{\proofname}{Proof sketch}
 \makeatletter
-\renewenvironment{proof}[1][Proof sketch]{\par
+\renewenvironment{proof}[1][\coqdockw{Proof} \coqdockw{idea}]{\par
   % \vspace{-.1\topsep}% remove the space after the theorem
   \pushQED{\qed}%
   \normalfont
@@ -38,7 +38,16 @@
 \newcommand\AIN{\ensuremath{\in_A}}
 \newcommand\BIN{\ensuremath{\in_B}}
 \newcommand\IN{\ensuremath{\in}}
+\newcommand\EQ{\ensuremath{\equiv}}
 
+\newcommand\INX{ERROR}
+\newcommand\EQX{ERROR}
+\newcommand\XORS{\coqref{NFO.Sets.QXor}{\coqdocdefinition{XOR}}~}
+
+\newcommand\var\coqdocvar
+
+\newcommand\AXOR{\coqref{NFO.Sets.AXor}{\ensuremath{\triangle_A}}}
+\newcommand\SXOR{\coqref{NFO.Sets.QXor}{\ensuremath{\triangle}}}
 
 % AUX
 \newcommand\TODO[1]{\textcolor{red}{{\bf TODO} #1}}
@@ -54,6 +63,8 @@
 \DeclareUnicodeCharacter{2A00}{\ensuremath{\odot}}
 \DeclareUnicodeCharacter{2208}{\ensuremath{\in}}
 \DeclareUnicodeCharacter{22BB}{\ensuremath{\veebar}}
+
+\newcommand\XOR{\coqref{NFO.Xor.xor}{⊻}~}
 
 % LOGIC
 \newcommand\grameq{::=}

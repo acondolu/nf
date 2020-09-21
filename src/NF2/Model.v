@@ -97,8 +97,8 @@ Qed.
 Add Morphism IN with signature EQ ==> EQ ==> iff as IN_mor.
 Proof.
   intros. split; intro.
-  - apply (in_sound_left H). apply (in_sound_right H0). auto.
-  - apply (in_sound_left (EQ_sym H)). apply (in_sound_right (EQ_sym H0)). auto.
+  - apply (in_sound_left H). apply (in_sound_right H0). assumption.
+  - apply (in_sound_left (EQ_sym H)). apply (in_sound_right (EQ_sym H0)). assumption.
 Qed.
 
 Definition low x := match x with

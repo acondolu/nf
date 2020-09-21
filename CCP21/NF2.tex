@@ -1,5 +1,8 @@
 %!TEX root = main.tex
 
+\renewcommand\INX{\coqref{NF2.Model.IN}{{\IN}}~}
+\renewcommand\EQX{\coqref{NF2.Model.EQ}{{\EQ}}~}
+
 \TODO{DISCORSO SU:
 \begin{itemize}
   \item fare esempi di combinazioni di operatori
@@ -7,7 +10,7 @@
   \item allora bisogna ragionare sulle forme normali, e definire quanto puo' vicino a forme normali cosi' da rendere extensional equality as intensional as possible.
 \end{itemize}}
 
-\subsection{Sets}
+\subsection{The Type \texorpdfstring{\coqdocinductive{SET}}{SET}}
 
 \begin{coqdoccode}
   \coqdocnoindent
@@ -37,15 +40,15 @@
   \end{coqdoccode}
 \end{example}
 
-\begin{example}[Set union]
+\TODO{We'll see more sets in upcoming section}
 
-\end{example}
+\subsection{Set Equality}
 
 a
 
 \begin{coqdoccode}
   \coqdocnoindent
-\coqdockw{Fixpoint} \coqdefRef{NF2.Model.EQ}{EQ}{\coqdocdefinition{EQ}} \coqdocvar{a} \coqdocvar{b} := \coqdockw{match} \coqdocvariable{a},\coqdocvariable{b} \coqdockw{with}\coqdoceol
+\coqdockw{Fixpoint} \coqdefRef{NF2.Model.EQ}{EQ}{\coqdocdefinition{EQ}} \coqdocvar{s} \coqdocvar{t} := \coqdockw{match} \coqdocvariable{s},\coqdocvariable{t} \coqdockw{with}\coqdoceol
 \coqdocindent{1.00em}
 \ensuremath{|} \coqref{NF2.Model.Low}{\coqdocconstructor{Low}} \coqdocvar{\_} \coqdocvar{\_}, \coqref{NF2.Model.High}{\coqdocconstructor{High}} \coqdocvar{\_} \coqdocvar{\_} \ensuremath{\Rightarrow} \coqexternalref{False}{http://coq.inria.fr/distrib/V8.11.0/stdlib//Coq.Init.Logic}{\coqdocinductive{False}}\coqdoceol
 \coqdocindent{1.00em}
@@ -61,15 +64,81 @@ a
 
 \TODO{Dire che la notazione $\AEQ$ nasconde la dipendenza, ma che espandendo e' tutto ancora safe}
 
-\subsection{Membership}
+\subsection{Set Membership}
 
 \begin{coqdoccode}
   \coqdocnoindent
-\coqdockw{Definition} \coqdef{NF2.Model.IN}{IN}{\coqdocdefinition{IN}} \coqdocvar{a} \coqdocvar{b} := \coqdockw{match} \coqdocvariable{b} \coqdockw{with}\coqdoceol
+\coqdockw{Definition} \coqdefRef{NF2.Model.IN}{IN}{\coqdocdefinition{IN}} \coqdocvar{s} \coqdocvar{t} := \coqdockw{match} \coqdocvariable{t} \coqdockw{with}\coqdoceol
 \coqdocindent{1.00em}
-\ensuremath{|} \coqref{NF2.Model.Low}{\coqdocconstructor{Low}} \coqdocvar{\_} \coqdocvar{f} \ensuremath{\Rightarrow} \coqdocvariable{a} \coqref{Internal.Common.in aczel}{\AIN} \coqdocvariable{f} \coqdoceol
+\ensuremath{|} \coqref{NF2.Model.Low}{\coqdocconstructor{Low}} \coqdocvar{\_} \coqdocvar{f} \ensuremath{\Rightarrow} \coqdocvariable{s} \coqref{Internal.Common.in aczel}{\AIN} \coqdocvariable{f} \coqdoceol
 \coqdocindent{1.00em}
-\ensuremath{|} \coqref{NF2.Model.High}{\coqdocconstructor{High}} \coqdocvar{\_} \coqdocvar{f} \ensuremath{\Rightarrow} \coqdocvariable{a} \coqref{Internal.Common.in aczel}{$\not\AIN$} \coqdocvariable{f} \coqdoceol
+\ensuremath{|} \coqref{NF2.Model.High}{\coqdocconstructor{High}} \coqdocvar{\_} \coqdocvar{f} \ensuremath{\Rightarrow} \coqdocvariable{s} \coqref{Internal.Common.in aczel}{$\not\AIN$} \coqdocvariable{f} \coqdoceol
 \coqdocnoindent
 \coqdockw{end}.\coqdoceol
 \end{coqdoccode}
+
+\TODO{capire morfismo}
+
+\subsection{Set Operators}
+
+\TODO{complement, union, singleton}
+
+\subsection{Extensionality}
+
+\begin{itemize}
+  \item One direction is is easy (?) (follows from in\_sound\_right)
+  \item The other, we proceed by cases over $a, b$. When their constructor matches, the proof proceeds in like for ZF (the case high - high is completely specular). The cases high vs low are impossible, and we need to show that it is never the case that a low set and a high set cannot have the same extension.
+\end{itemize}
+aaa
+
+Informally, if $L_1 = \Complement{L_2}$ for some low sets $L_1$ and $L_2$, then $L_1 \cup L_2 = \Universe$.
+
+\begin{coqdoccode}
+  \coqdocnoindent
+  \coqdockw{Lemma} \coqdefRef{NF2.Ext.pos univ}{pos\_univ}{\coqdoclemma{pos\_univ}}: \coqdockw{\ensuremath{\forall}} \coqdocvar{X} \coqdocvar{f} \coqdocvar{Y} \coqdocvar{g},\coqdoceol
+\coqdocindent{1.00em}
+\coqexternalref{::type scope:x '->' x}{http://coq.inria.fr/distrib/V8.11.0/stdlib//Coq.Init.Logic}{\coqdocnotation{(}}\coqdockw{\ensuremath{\forall}} \coqdocvar{s}, \coqdocvariable{s} \INX \coqref{NF2.Model.Low}{\coqdocconstructor{Low}} \coqdocvariable{X} \coqdocvariable{f} \coqexternalref{::type scope:x '<->' x}{http://coq.inria.fr/distrib/V8.11.0/stdlib//Coq.Init.Logic}{\coqdocnotation{\ensuremath{\leftrightarrow}}} \coqdocvariable{s} \INX \coqref{NF2.Model.High}{\coqdocconstructor{High}} \coqdocvariable{Y} \coqdocvariable{g}\coqexternalref{::type scope:x '->' x}{http://coq.inria.fr/distrib/V8.11.0/stdlib//Coq.Init.Logic}{\coqdocnotation{)}}\coqdoceol
+\coqdocindent{1.00em}
+\coqexternalref{::type scope:x '->' x}{http://coq.inria.fr/distrib/V8.11.0/stdlib//Coq.Init.Logic}{\coqdocnotation{\ensuremath{\rightarrow}}} \coqdockw{\ensuremath{\forall}} \coqdocvar{s}, \coqdocvariable{s} \INX \coqref{NF2.Model.Low}{\coqdocconstructor{Low}} (\coqdocvariable{X} \coqexternalref{::type scope:x '+' x}{http://coq.inria.fr/distrib/V8.11.0/stdlib//Coq.Init.Datatypes}{\coqdocnotation{+}} \coqdocvariable{Y}) (\coqdocvariable{f} \coqref{Internal.Misc.:::x 'xE2xA8x81' x}{\coqdocnotation{⨁}} \coqdocvariable{g}).\coqdoceol
+\end{coqdoccode}
+\begin{proof}
+  Warning! Classical logic is required to prove this lemma.
+  Assume $\coqdocvariable{s} \colon \coqdocinductive{SET}$. To show that \coqdocvariable{s} \INX \coqref{NF2.Model.Low}{\coqdocconstructor{Low}} (\coqdocvariable{X} \coqexternalref{::type scope:x '+' x}{http://coq.inria.fr/distrib/V8.11.0/stdlib//Coq.Init.Datatypes}{\coqdocnotation{+}} \coqdocvariable{Y}) (\coqdocvariable{f} \coqref{Internal.Misc.:::x 'xE2xA8x81' x}{\coqdocnotation{⨁}} \coqdocvariable{g}), we need to supply an element of type \coqdocvariable{X} \coqexternalref{::type scope:x '+' x}{http://coq.inria.fr/distrib/V8.11.0/stdlib//Coq.Init.Datatypes}{\coqdocnotation{+}} \coqdocvariable{Y}. Choosing the left or right injection into \coqdocvariable{X} \coqexternalref{::type scope:x '+' x}{http://coq.inria.fr/distrib/V8.11.0/stdlib//Coq.Init.Datatypes}{\coqdocnotation{+}} \coqdocvariable{Y} is equivalent to deciding whether \coqdocvariable{s} \INX \coqref{NF2.Model.Low}{\coqdocconstructor{Low}} \coqdocvariable{X} \coqdocvariable{f} holds.
+\end{proof}
+
+\TODO{The axiom of regularity is a \dots of ZF that rules out \dots Regularity does not hold in \NFTWO{}, since set membership is not well-founded (for instance, $\Universe \in \Universe \in \ldots$)}. 
+
+\begin{coqdoccode}
+  \coqdocnoindent
+\coqdockw{Theorem} \coqdefRef{NF2.Ext.weak regularity}{weak\_regularity}{\coqdoclemma{weak\_regularity}}: \coqdockw{\ensuremath{\forall}} \coqdocvar{s}, \coqref{NF2.Model.low}{\coqdocdefinition{low}} \coqdocvariable{s} \coqexternalref{::type scope:x '->' x}{http://coq.inria.fr/distrib/V8.11.0/stdlib//Coq.Init.Logic}{\coqdocnotation{\ensuremath{\rightarrow}}} \coqdocvariable{s} \INX \coqdocvariable{s} \coqexternalref{::type scope:x '->' x}{http://coq.inria.fr/distrib/V8.11.0/stdlib//Coq.Init.Logic}{\coqdocnotation{\ensuremath{\rightarrow}}} \coqexternalref{False}{http://coq.inria.fr/distrib/V8.11.0/stdlib//Coq.Init.Logic}{\coqdocinductive{False}}.\coqdoceol
+\end{coqdoccode}
+\begin{proof}
+  By structural induction on \coqdocvariable{s}. Let \coqdocvariable{s} = \coqref{NF2.Model.Low}{\coqdocconstructor{Low}} \coqdocvariable{X} \coqdocvariable{f}. From \coqdocvariable{s} \INX \coqdocvariable{s} it follows that there exists \coqdocvariable{x} such that \coqdocvariable{s} \EQX \coqdocvariable{f}~\coqdocvariable{x}. Note that \coqdocvariable{f}~\coqdocvariable{x} must be a low set by the definition of \coqdocdefinition{EQ}. Since \coqdocdefinition{IN} is a \coqdocdefinition{EQ}-morphism, it follows that \coqdocvariable{f}~\coqdocvariable{x} \INX \coqdocvariable{f}~\coqdocvariable{x}. We conclude by the inductive hypothesis.
+\end{proof}
+
+As an easy corollary, we prove that a low set and a high set cannot have the same extension:
+
+\begin{coqdoccode}
+  \coqdocnoindent
+\coqdockw{Lemma} \coqdefRef{NF2.Ext.pos neg ext neq}{pos\_neg\_ext\_neq}{\coqdoclemma{pos\_neg\_ext\_neq}}: \coqdockw{\ensuremath{\forall}} \coqdocvar{X} \coqdocvar{f} \coqdocvar{Y} \coqdocvar{g},\coqdoceol
+\coqdocindent{1.00em}
+\coqexternalref{::type scope:x '->' x}{http://coq.inria.fr/distrib/V8.11.0/stdlib//Coq.Init.Logic}{\coqdocnotation{(}}\coqdockw{\ensuremath{\forall}} \coqdocvar{s}, \coqdocvariable{s} \INX \coqref{NF2.Model.Low}{\coqdocconstructor{Low}} \coqdocvariable{X} \coqdocvariable{f} \coqexternalref{::type scope:x '<->' x}{http://coq.inria.fr/distrib/V8.11.0/stdlib//Coq.Init.Logic}{\coqdocnotation{\ensuremath{\leftrightarrow}}} \coqdocvariable{s} \INX \coqref{NF2.Model.High}{\coqdocconstructor{High}} \coqdocvariable{Y} \coqdocvariable{g} \coqexternalref{::type scope:x '->' x}{http://coq.inria.fr/distrib/V8.11.0/stdlib//Coq.Init.Logic}{\coqdocnotation{)}} \coqexternalref{::type scope:x '->' x}{http://coq.inria.fr/distrib/V8.11.0/stdlib//Coq.Init.Logic}{\coqdocnotation{\ensuremath{\rightarrow}}} \coqexternalref{False}{http://coq.inria.fr/distrib/V8.11.0/stdlib//Coq.Init.Logic}{\coqdocinductive{False}}.\coqdoceol
+\end{coqdoccode}
+\begin{proof}
+  By \coqref{NF2.Ext.pos univ}{\coqdoclemma{pos\_univ}} and \coqref{NF2.Ext.weak regularity}{\coqdoclemma{weak\_regularity}}.
+\end{proof}
+
+We are now ready to prove extensionality for \NFTWO:
+
+\begin{coqdoccode}
+  \coqdocnoindent
+\coqdockw{Theorem} \coqdefRef{NF2.Ext.ext}{ext}{\coqdoclemma{ext}}: \coqdockw{\ensuremath{\forall}} \coqdocvar{s} \coqdocvar{s'}, \coqdocvariable{s} \EQX \coqdocvariable{s'} \coqexternalref{::type scope:x '<->' x}{http://coq.inria.fr/distrib/V8.11.0/stdlib//Coq.Init.Logic}{\coqdocnotation{\ensuremath{\leftrightarrow}}} \coqdockw{\ensuremath{\forall}} \coqdocvar{t}, \coqdocvariable{t} \INX \coqdocvariable{s} \coqexternalref{::type scope:x '<->' x}{http://coq.inria.fr/distrib/V8.11.0/stdlib//Coq.Init.Logic}{\coqdocnotation{\ensuremath{\leftrightarrow}}} \coqdocvariable{t} \INX \coqdocvariable{s'}.\coqdoceol
+\end{coqdoccode}
+\begin{proof}
+  The direction $(\Rightarrow)$ of the double implication follows from \coqdocdefinition{IN} being an \coqdocdefinition{EQ}-morphism. As for the other direction, we proceed by cases on \coqdocvariable{s} and \coqdocvariable{s'}:
+  \begin{itemize}
+    \item If \coqdocvariable{s} and \coqdocvariable{s'} are both low sets or both high sets, then the proof carries on exactly as in \ZF.
+    \item The cases when one is a low set and the other one is a high set are ruled out by lemma \coqref{NF2.Ext.pos neg ext neq}{\coqdoclemma{pos\_neg\_ext\_neq}}.
+    \qedhere
+  \end{itemize}
+\end{proof}

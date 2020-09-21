@@ -47,7 +47,7 @@ Definition cosin x := S False unit (False_rect _) (fun _ => x) (Atom tt).
 
 Theorem cosin_ok: forall x y, IN x (cosin y) <-> IN y x.
 Proof.
-  intros. unfold cosin. rewrite IN_unfold.
+  intros. unfold cosin. rewrite IN_unfold. simpl AIN.
   setoid_rewrite ex_false. simpl BIN. apply xor_false_l.
 Qed.
 
@@ -92,8 +92,8 @@ Local Definition bexpr_xor {A} (p p': @BExpr A) :=
 
 (** TODO: Rename! *)
 (** Xor of B-sets: *)
-Definition QXor B C := 
-  match B, C with S X Y f g e, S X' Y' f' g' e' =>
+Definition QXor s s' := 
+  match s, s' with S X Y f g e, S X' Y' f' g' e' =>
     S _ _
       (AXor f f')
         (g ⨁ g') (bexpr_xor (map inl e) (map inr e'))

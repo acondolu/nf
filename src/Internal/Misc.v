@@ -8,6 +8,14 @@ Proof. tauto. Qed.
 Lemma rewr_false: forall {p: Prop}, ~p -> (p <-> False).
 Proof. tauto. Qed.
 
+Lemma rewr_not_true: ~True <-> False.
+Proof. tauto. Qed.
+Hint Rewrite rewr_not_true : log.
+
+Lemma rewr_not_false: ~False <-> True.
+Proof. tauto. Qed.
+Hint Rewrite rewr_not_false : log.
+
 Lemma ex_false {P: False -> Prop}: (exists x, P x) <-> False.
 Proof. split; intros. destruct H, x. destruct H. Qed.
 
