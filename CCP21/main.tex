@@ -2,8 +2,8 @@
 %\settopmatter{printfolios=true,printccs=false,printacmref=false}
 % ??? Commented out?
 
+% \usepackage[english]{babel}
 \input{macros.tex}
-
 %%
 %% \BibTeX command to typeset BibTeX logo in the docs
 \AtBeginDocument{%
@@ -88,7 +88,7 @@
 \begin{abstract}
 New Foundations (\NF) is a somewhat bizarre alternative to mainstream set theories like Zermelo–Fraenkel (\ZF). The distinguishing feature of \NF{} is permitting the construction of a \emph{universal set}, \ie{} a set that contains all sets (itself, too). Though counterintuitive, \NF{} is capable of expressing ordinary mathematical concepts like well-orders, ordinals, cardinals, natural numbers, and so on. Its adoption, however, is hampered by the fact that after more than 80 years since its introduction, the community has not yet agreed upon its logical consistency.
   
-In this paper, we consider two weak sub-theories of \NF{} whose consistency has already been established: \NFTWO{} and \NFO. These theories are obtained from \NF{} by restricting the axiom of comprehension to quantifier-free formulas only. We provide an encoding of \NFTWO{} and \NFO{} in the Coq proof assistant, adapting the classic encoding of \ZF{} in Coq by Benjamin Werner. To our knowledge, this is the first mechanized consistency proof concerning New Foundations.
+In this paper, we consider two weak sub-theories of \NF{} whose consistency has already been established: \NFTWO{} and \NFO. These theories are obtained from \NF{} by restricting the axiom schema of comprehension to quantifier-free formulas only. We provide an encoding of \NFTWO{} and \NFO{} in the Coq proof assistant, adapting in a non-trivial way the classic encoding of \ZF{} in Coq by Benjamin Werner. To our knowledge, this is the first mechanized consistency proof concerning New Foundations.
 \end{abstract}
 
 % %%
@@ -140,7 +140,7 @@ In this paper, we consider two weak sub-theories of \NF{} whose consistency has 
 \TODO{The history of the foundations of mathematics has been \dots}
 
 \paragraph{Set theories.}
-A \emph{set theory} is a first-order theory having the usual logical connectives ($\neg$, $\land$, $\lor$, $\to$, $\leftrightarrow$, $\exists$, $\forall$) plus two relation symbols: \emph{equality} ($=$) and \emph{membership} ($\in$). Variables (like $x,y,z,\ldots$) range over sets, and a set is meant to represent a collection of sets: $x \in y$ means that $x$ is a \emph{member} or an \emph{element} of $y$.
+A \emph{set theory} is a first-order theory having the usual logical connectives ($\top$, $\neg$, $\land$, $\lor$, $\to$, $\leftrightarrow$, $\exists$, $\forall$) plus two relation symbols: \emph{equality} ($=$) and \emph{membership} ($\in$). Variables (like $x,y,z,\ldots$) range over sets, and a set is meant to represent a collection of sets: $x \in y$ means that $x$ is a \emph{member} or an \emph{element} of $y$.
 
 %Formulas of set theory are thus described by the following grammar: 
 
@@ -151,42 +151,55 @@ A \emph{set theory} is a first-order theory having the usual logical connectives
 % % \TODO{Oh no, we need $\leftrightarrow$!!!}
 % \end{array}\]
 
-Sets do not posses any internal structure other than their \emph{extension}, \ie{} the elements they contain. The \emph{axiom of extensionality} formalizes this fact by requiring that sets having the same extension are the same set:
+Sets do not posses any internal structure other than their \emph{extension}, \ie{} the elements they contain. The \emph{axiom of extensionality} formalizes this fact by requiring that sets having the same extension are in fact the same set:
 
 \[\forall x y.\, x = y \leftrightarrow \forall z. \, z \in x \leftrightarrow z \in y \quad \tag{\SetExt} \]
 
-A natural way to form a collection of sets is by gathering all sets that satisfy a given predicate; this collection is expressed in symbols by $\Compr x \varphi$, reading ``the collection of all $x$'s such that $\varphi$ holds''. \TODO{this is called comprehension, and very powerful. for instance, ordinals, \dots} A very desirable ??? would be that collections specified by comprehension are sets themselves, as the \emph{axiom of comprehension} requires:
+A natural way to form a collection of sets is by gathering every set $x$ satisfying a given logic formula $\varphi$; this collection is expressed in symbols by $\Compr x \varphi$, reading ``the collection of all $x$'s such that $\varphi$ holds''. This procedure is called \emph{comprehension}, and is very powerful as it basically identifies sets with logic formulas. \TODO{FALSO!} A very natural property would be that collections specified by comprehension are sets themselves, as the \emph{axiom schema of comprehension} requires:
 
 \[ \exists y.\, \forall x.\, x \in y \leftrightarrow \varphi  \quad \tag{\SetCompr} \]
 
-\TODO{another point about extension is the identification between sets (citizens) and unary predicates over sets:}
+(where $y$ does not occur in $\varphi$; $\varphi$ may however have any number of free variables, and we implicitly assume axiom schemata to be universally closed.)
 
-Where $y$ does not occur in $\varphi$. \TODO{denote with $\Compr x \varphi$ the set which witnesses the existential $\exists y\ldots$, which is then unique by extensionality \dots }
-Set comprehension is actually an axiom schema: one adds an axiom for every $\varphi$. \TODO{but which $\varphi$s are allowed? NOT ALL!}
-When all $\varphi$s, unrestricted comprehension. \TODO{But Russel's paradox $\varphi \defeq x \not\in x$.\footnotemark{}}
+We can just denote with $\Compr x \varphi$ the set that witnesses the existential ``$\exists y$'', which is unique by extensionality. Set comprehension is actually an axiom \emph{schema}: the schema describes an axiom for every formula $\varphi$. Can all formulas be allowed? Unfortunately not: the infamous \emph{Russel's paradox} relies exactly on \emph{unrestricted} comprehension, and it is straightforward to obtain a contradiction by taking comprehension of a formula as simple as $\varphi \defeq x \not\in x$.\footnotemark{}
 
 \footnotetext{By $x\not\in x$ we mean $\neg {(x \in x)}$. }
 
-Problem is circularity.
+There are several ways to restrict \SetCompr{} so to avoid Russel's paradox. To a certain extent, Russel's contradiction is caused by malicious circularity in the formation of sets: the characterizing formula $\varphi$ spans across all sets, even the set that is being formed. \ZF's way to avoid circularity is to only allow comprehension of guarded formulas, of the form $x \in y \land \varphi$ for some $y\neq x$ and arbitrary $\varphi$. The resulting set is usually denoted by $\Compr {x \in y} \varphi$, and this flavor of comprehension is known as \emph{axiom schema of separation}. In this way, self-reference is not allowed because it is only possible to \emph{separate} subsets of sets that already exist; moreover, additional axioms of \ZF{} force sets to have a \emph{well-founded} structure (most notably, the \emph{axiom of regularity}).
 
-There are different ways to restrict \SetCompr{} so to avoid Russel's paradox. \ZF's way is to only allow comprehension of \emph{guarded} propositions, of the form $x \in y \land \varphi$ for some $y\neq x$ and an arbitrary $\varphi$. \TODO{$\Compr {x \in y} \varphi$} No self-reference because carve only subsets of already existing sets, and other axioms of ZF force sets to be well-founded (\dots).
+But after all, circularity is not necessarily evil. \NF's way to avoid inconsistencies is not to forbid circularity from the structure of sets themselves, but to forbid it from the \emph{description} of sets. \TODO{} to restrict the axiom of comprehension to only \emph{stratified} instances. A stratification of a formula is the assignment of a natural number to each \emph{bound} variable (we write $x^i$ to mean that the variable $x$ has been assigned the number $i$) in such a way that:
+\begin{itemize}
+  \item for every subformula $x^i = y^j$, it must hold $i=j$;
+  \item for every subformula $x^i \in y^j$, it must hold $i+1=j$.
+\end{itemize}
+(We do not put too much stress on stratification, as we will not employ it directly, see the next subsection.)
 
-NF's way is \dots to restrict the axiom of comprehension to only \emph{stratified} formulas \ldots
-The axiom of stratified comprehension does not force the collection $\Compr x {x \not\in x}$ to be a set, because the formula $x \not\in x$ is not stratified. As a consequence, Russel's paradox is avoided.
+\TODO{For instance}, the schema of stratified comprehension does not force the collection $\Compr x {x \not\in x}$ to be a set, because the corresponding instance of comprehension cannot be stratified:
+
+\[ \exists y^{i+1}.\, \forall x^i.\, x^i \in y^{i+1} \leftrightarrow x^{\stkout{\textcolor{red}i}} \not\in x^{\stkout{\textcolor{red}i}}. \]
+
+As a consequence, Russel's paradox is avoided; however, various bizarre sets are allowed to exist. For instance the \emph{universe}, the collection $\Compr x \top$ of all sets, is itself a set, because the corresponding instance of comprehension is stratified:
+
+\[ \exists y^{i+1}.\, \forall x^i.\, x^i \in y^{i+1} \leftrightarrow \top. \]
+
+Even more \TODO{bizzarly}, one can for example define the set of all ordinals, or the set of all cardinals, which are inconcievable in \ZF{} where they can only be understood as \emph{proper classes}.
+
+\TODO{dire che NF non e' ancora provata consistente. Randall Holmes?}
+
 
 \subsection{Quantifier-free Comprehension}
 
-In this paper we consider a weaker fragment of full-fledged \NF{}, obtained by restricting the axiom of stratified comprehension to only quantifier-free formulas.
+In this paper we consider weaker fragments of full-fledged \NF{}, obtained by restricting the axiom of stratified comprehension to only formulas $\varphi$ that are quantifier-free. \TODO{dire che esistono in letterature e citare articoli.}
 
-\TODO{dire che: in this sub-case, we can actually replace stratified comprehension with an equivalent axiomatization with a few set operators ($\Universe, \Complement \Placeholder, \Union \Placeholder \Placeholder, \Sing\Placeholder, \Essence\Placeholder$) and charachterizing axioms.}
+In the case of quantifier-free stratified comprehension, we can actually drop the axiom schema of comprehension in favour of an equivalent axiomatization that employs only a few set operators ($\Universe, \Complement \Placeholder, \Union \Placeholder \Placeholder, \Sing\Placeholder, \Essence\Placeholder$) and the corresponding characterizing axioms. We will describe these set operators in the rest of this subsection, but first of all let us sketch the reason why such a \TODO{}
 
-\TODO{Dire che si puo' fare per Skolemization/ some Skolem theorem?}
+Recall that by the definition of stratification, only bound variables are assigned indices. Thus, in an instance of the comprehension schema like $\exists y.\, \forall x.\, x \in y \leftrightarrow \varphi$, when $\varphi$ is quantifier-free, only $x$ and $y$ are to be assigned an index. Note that subformulas of $\varphi$ of the form $z = w$ or $z \in w$ which mention at least one free variable are trivially stratified. Moreover, since $y$ cannot occur in $\varphi$ by hypothesis, the only atomic formulas that do not mention any free variable are either $x=x$ (clearly stratified) or $x\in x$ (not stratifiable).
+% 
+Summarizing, quantifier-free stratification is equivalent to requiring that $x\in x$ does not occur as a subformula of $\varphi$.
 
-By a rapid inspection, we note that when $\varphi$ is quantifier-free, $\varphi$ is stratified if and only if it does not contain ``$x \in x$'' as a subformula.
 \TODO{This means that we can drop the definition of stratified, and use a much simplier syntactic restriction on $\varphi$'s}
 
-To understand what operations on sets are necessary to , we 
-We show that $\Compr x \varphi$ for $\varphi$ stratified and quantifier-free can . We blah by cases on the structure of $\varphi$:
+To understand what operations on sets are necessary to replace the schema of comprehension, let us \TODO{??? the value} of $\Compr x \varphi$ when $\varphi$ is stratified and quantifier-free, proceeding by cases on the structure of $\varphi$:
 
 \[\begin{array}{lcll}
   \Compr x {x = x} & = & \Universe \\
@@ -207,42 +220,70 @@ We show that $\Compr x \varphi$ for $\varphi$ stratified and quantifier-free can
   \Compr x {\neg\varphi} & = & \Complement {\Compr x \varphi} \\
   \Compr x {\varphi \lor \varphi'} & = & \Union {\Compr x \varphi} {\Compr x {\varphi'}} \\
 \end{array}\]
+(where $x\neq y$ and $x \neq z$.)
 
-where $x\neq y$ and $x \neq z$ above.
-
-where
+\noindent \TODO{The required operators are thus:}
 \begin{enumerate} \renewcommand\labelitemi{--}
-  \item $\Universe$ is the universal set, \ie{} the set containing all sets:
-    \[ \forall z.\, z \in \Universe \sctag{Universe} \]
-  \item $\Complement \Placeholder$ is the set complement:
-    \[ \forall z.\, z \in \Complement x \leftrightarrow \neg (z \in x) \sctag{Complement}\]
-  \item $\Union \Placeholder \Placeholder$ is the set union:
-    \[ \forall z.\, z \in \Union x y \leftrightarrow z \in x \lor z \in y \sctag{Union} \]
-  \item $\Sing\Placeholder$ is singleton:
-    \[ \forall z.\, z \in \Sing x \leftrightarrow x = z \sctag{Singleton} \]
-  \item $\Essence\Placeholder$ is the essence:
-    \[ \forall z.\, z \in \Essence{x} \leftrightarrow x \in z \sctag{Essence} \]
+  \item $\Universe$ denotes the universal set:
+    \begin{flalign*} \hspace{50pt} %
+      \forall z.\, z \in \Universe \sctag{Universe} %
+      && \end{flalign*}
+  \item $\Complement \Placeholder$ denotes the set complement:
+  \begin{flalign*} \hspace{50pt} %
+      \forall z.\, z \in \Complement x \leftrightarrow \neg (z \in x) \sctag{Complement}
+      && \end{flalign*}
+  \item $\Union \Placeholder \Placeholder$ denotes the set union:
+  \begin{flalign*} \hspace{50pt} %
+      \forall z.\, z \in \Union x y \leftrightarrow z \in x \lor z \in y \sctag{Union}
+      && \end{flalign*}
+  \item $\Sing\Placeholder$ denotes the singleton:
+  \begin{flalign*} \hspace{50pt} %
+      \forall z.\, z \in \Sing x \leftrightarrow x = z \sctag{Singleton} 
+      && \end{flalign*}
+  \item $\Essence\Placeholder$ denotes the ``essence'' of a set:
+  \begin{flalign*} \hspace{50pt} %
+      \forall z.\, z \in \Essence{x} \leftrightarrow x \in z \sctag{Essence} 
+      && \end{flalign*}
 \end{enumerate}
 
+Singleton, union, and complement are familiar operations on sets that do not need further clarification. The universal set is unconventional, but quite intuitive. In \Cref{sect:nf2} we are going to provide a model for \NFTWO{}, which is the theory obtained by \TODO{extensionality + singleton, union, complement, and universal set.}
+
+As for the last operator, \TODO{The essence is the most unfamiliar (and the most problematic, when encoding later). It is called essence because X by Y. } \TODO{\NFO{}, which we will study in \Cref{sect:nfo}}
+
 \subsection{Sets in Coq}
-\TODO{Descrivere Coq e la formalizzazione di ZF in Coq.}
+The goal of this paper is to formalize in the Coq proof assistant models for \NFTWO{} and \NFO{} (let us temporarily abbreviate \NFTWO/\NFO{} with \NFX{}).
 
-\TODO{We use a \emph{shallow embedding} of \NF{} in the Calculus of Constructions: the logic formulas of \NF{} are interpreted in \Coq{} in such a way that quantifiers and logical connectives of \NF{} are mapped to the corresponding ones in \Coq{}}
+The basic idea is performing a \emph{shallow embedding} of \NFX{} in \Coq, where:
 
-\section{Roadmap}
-Dire:
 \begin{itemize}
-  \item Come si fara' in ogni sezione: prima definire il dominio, poi l'uguaglianza, poi membership, poi morphism, poi extensionality e set operators independently.
-  \item Contenuto delle sezioni sotto
+  \item 
+    The logic formulas of \NFX{} are interpreted in \Coq{} so that logical connectives of \NFX{} are mapped to the corresponding ones in \Coq{}. One slight inconvenience is that \NFX{} is a theory ??? in classical logic, while \Coq{} uses constructive logic. \TODO{}
+  \item 
+    The predicates of \NFX{} (equality and membership) plus the various set operators are encoded as \Coq{} terms, 
+
+    One important point is that, from now on, we will denote the equality relation on \NFX{} sets by $\equiv$ instead of $=$, so to distinguish it from \Coq{} \emph{intensional} equality $=$.
 \end{itemize}
 
+Our starting point the is the classic formalization of \ZF{} (or more precisely \ZFC{} \TODO{}) in Coq by Benjamin Werner. \TODO{based on Aczel \cite{ACZEL197855}} see \Cref{sect:zf}.
+
+\section{Roadmap}
+\Cref{sect:zf}
+\Cref{sect:nf2}
+\Cref{sect:nfo}
+
+\noindent
+\paragraph{Contributions.}
+
 \section{\ZF}
+\label{sect:zf}
 \input{ZF.tex}
 
 \section{\NFTWO}
+\label{sect:nf2}
 \input{NF2.tex}
 
 \section{\NFO}
+\label{sect:nfo}
 \input{NFO.tex}
 
 \section{Discussion}

@@ -8,8 +8,9 @@
 \usepackage{xcolor}
 \usepackage{stmaryrd}
 \usepackage{graphicx}
-\usepackage{ulem}
-\normalem
+\usepackage{cleveref}
+\usepackage[normalem]{ulem}
+% \normalem
 % \usepackage{fancyvrb}
 
 % \renewcommand*{\proofname}{Proof sketch}
@@ -67,6 +68,8 @@
 
 \newcommand\XOR{\coqref{NFO.Xor.xor}{⊻}~}
 
+\newcommand{\stkout}[1]{\text{\sout{\ensuremath{#1}}}}
+
 % LOGIC
 \newcommand\grameq{::=}
 \newcommand\defeq{:=}
@@ -75,8 +78,10 @@
 
 % NF
 \newcommand\ZF{{\sf ZF}}
+\newcommand\ZFC{{\sf ZFC}}
 \newcommand\NF{{\sf NF}}
 \newcommand\NFTWO{{\tt NF2}}
+\newcommand\NFX{{\tt NF*}}
 \newcommand\NFO{{\tt NFO}}
 \newcommand\Coq{{\tt Coq}}
 \newcommand\SetCompr{{\textsc{SetCompr}}}
@@ -84,15 +89,15 @@
 
 \newcommand\sctag[1]{\tag{\textsc{#1}}}
 
-\newcommand\Essence[1]{\Verb{Ess}\,#1}
+\newcommand\Essence[1]{\Verb{B}\,#1}
 % \newcommand\Sing[1]{\Verb{\{}#1\Verb{\}}}
-% \newcommand\Sing[1]{\Verb{Sing}\,#1}
-\newcommand\Sing[1]{\Verb{\{} #1 \Verb{\}}}
+\newcommand\Sing[1]{\Verb{S}\,#1}
+% \newcommand\Sing[1]{\Verb{\{} #1 \Verb{\}}}
 \newcommand\Complement[1]{\overline{#1}}
 % \newcommand\Complement[1]{\Verb{Compl}\,#1}
 \newcommand\Char[1]{\Verb{Char}_{#1}} % \mathbb{1}
 \newcommand\Compr[2]{\Verb{\{} #1 ~\Verb{|}~ #2 \Verb{\}}}
-\newcommand\Universe{U}
+\newcommand\Universe{\Verb{U}}
 \newcommand\Verb[1]{\text{\texttt{#1}}}
 % \newcommand\Union[2]{#1 \mathrel{\Verb{U}} #2}
 \newcommand\Union[2]{#1 \cup #2}

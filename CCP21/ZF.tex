@@ -16,7 +16,7 @@ The steps are the following:
 \footnotetext{We use the uppercase identifiers \coqdocinductive{SET}, \coqdocdefinition{EQ}, and \coqdocdefinition{IN} in order to avoid shadowing, respectively, the kind \coqdocdefinition{Set}, the standard (intensional) equality \coqdocdefinition{eq}, and the reserved keyword \coqdockw{in}.}
 
 \subsection{The Type \texorpdfstring{\coqdocinductive{SET}}{SET}}
-The type representing sets
+The type representing \ZF{} sets is ?defined by the following \Coq{} inductive definition:
 
 \begin{coqdoccode}
 \coqdocnoindent
@@ -26,33 +26,39 @@ The type representing sets
 \coqdocemptyline
 \end{coqdoccode}
 
-\TODO{index type $X$ plus an indexing function}
+
+\TODO{index type $X$ plus an indexing function. The extension of a set is basically the same as the image of its indexing function. }
+
+\TODO{Note: types are different. The idea is use inductive to simulate the construction of the cumulative hierarchy. Index universe i, Set in universe j strictly larger than i.}
 
 \noindent\paragraph{Notation.} From now on, we will use the variables \var s and \var t to denote elements of type \coqdocinductive{SET}. We reserve the variable names \var x, \var y, \var z for elements of types \var X, \var Y, \var Z respectively.
 
-\begin{example}[Empty set]aaa
+Let us see a few examples of how to encode usual set operators \TODO{}:
+
+\begin{example}[Empty set]
+  The empty set is encoded as a \coqdocinductive{SET} having an empty index:
 
   \begin{coqdoccode}
     \coqdocnoindent
     \coqdockw{Definition} \coqdocdefinition{Ø} := \coqdocconstructor{Sup} \coqexternalref{False}{http://coq.inria.fr/distrib/V8.11.0/stdlib//Coq.Init.Logic}{\coqdocinductive{False}} (\coqdockw{fun} \coqdocvar{k} \ensuremath{\Rightarrow} \coqdockw{match} \coqdocvariable{k} \coqdockw{with} \coqdockw{end}).\coqdoceol
     \coqdocemptyline
   \end{coqdoccode}
-  \TODO{False is just a type with no inhabitants, explain empty pattern matching, dire anche \coqexternalref{False rect}{http://coq.inria.fr/distrib/V8.11.0/stdlib//Coq.Init.Logic}{\coqdocdefinition{False\_rect}} \coqdocvar{\_}}
+  (\coqdocinductive{False} is just a type with no inhabitants -- any other empty type would suffice. Since \coqdocinductive{False} is an inductive type without constructors, the pattern matching above has no branches. We will sometimes use the equivalent \coqexternalref{False rect}{http://coq.inria.fr/distrib/V8.11.0/stdlib//Coq.Init.Logic}{\coqdocdefinition{False\_rect}} \coqdocvar{\_} instead of \coqdockw{fun} \coqdocvar{k} \ensuremath{\Rightarrow} \coqdockw{match} \coqdocvariable{k} \coqdockw{with} \coqdockw{end}, for the sake of shortness.)
 \end{example}
 
 \begin{example}[Set union]
-  Index type is the disjoint union of the indexes, and the indexing is the sum of the indexings:
+  The union of two sets is defined as the \coqdocinductive{SET} having as index type the \emph{disjoint union} (+) of the input indexes, and as indexing the \emph{disjoint sum} (⨁) of the input indexings:
   \begin{coqdoccode}
     \coqdocemptyline
     \coqdocnoindent
     \coqdockw{Definition} \coqdocdefinition{union} \coqdocvar{s} \coqdocvar{s'} := \coqdockw{match} \coqdocvar{s}, \coqdocvar{s'} \coqdockw{with}\coqdoceol
     \coqdocindent{1.00em}
-    \coqdocconstructor{Sup} \coqdocvar{X} \coqdocvar{f}, \coqdocconstructor{Sup} \coqdocvar{Y} \coqdocvar{g} \ensuremath{\Rightarrow} \coqdocvar{Sup} (\coqdocvar{X} + \coqdocvar{Y}) (\coqdocvar{f} \coqref{Internal.Misc.:::x 'xE2xA8x81' x}{\coqdocnotation{⨁}} \coqdocvar{g})\coqdoceol
+    \coqdocconstructor{Sup} \coqdocvar{X} \coqdocvar{f}, \coqdocconstructor{Sup} \coqdocvar{Y} \coqdocvar{g} \ensuremath{\Rightarrow} \coqdocconstructor{Sup} (\coqdocvar{X} + \coqdocvar{Y}) (\coqdocvar{f} \coqref{Internal.Misc.:::x 'xE2xA8x81' x}{\coqdocnotation{⨁}} \coqdocvar{g})\coqdoceol
     \coqdocnoindent
     \coqdockw{end}.\coqdoceol
   \end{coqdoccode}
 
-  \TODO{+ is the disjoint sum (union) of types, and ⨁ is the sum of functions, defined as follows:}
+  where the sum functor ⨁ is defined as follows:
 
   \begin{coqdoccode}
     \coqdocnoindent
@@ -73,7 +79,7 @@ The type representing sets
 
 \subsection{Set Equality}
 
-Recursive Definition of the extentional equality on sets
+The equivalence relation between \ZF{} sets is defined by the following \Coq{} \coqdockw{Fixpoint}:
 
 \begin{coqdoccode}
   \coqdocnoindent
@@ -83,7 +89,7 @@ Recursive Definition of the extentional equality on sets
   \coqdocindent{1.00em}
   \ensuremath{|} \coqdocconstructor{Sup} \coqdocvar{X} \coqdocvar{f}, \coqdocconstructor{Sup} \coqdocvar{Y} \coqdocvar{g} \ensuremath{\Rightarrow}\coqdoceol
   \coqdocindent{2.00em}
-  (\coqdockw{\ensuremath{\forall}} \coqdocvar{x}, \coqdoctac{\ensuremath{\exists}} \coqdocvar{y}, \coqdocvar{EQ} (\coqdocvar{f} \coqdocvar{x}) (\coqdocvar{g} \coqdocvar{y})) \ensuremath{\land} (\coqdockw{\ensuremath{\forall}} \coqdocvar{y}, \coqdoctac{\ensuremath{\exists}} \coqdocvar{x}, \coqdocvar{EQ} (\coqdocvar{f} \coqdocvar{x}) (\coqdocvar{g} \coqdocvar{y}))\coqdoceol
+  (\coqdockw{\ensuremath{\forall}} \coqdocvar{x}, \coqdoctac{\ensuremath{\exists}} \coqdocvar{y}, \coqdocdefinition{EQ} (\coqdocvar{f} \coqdocvar{x}) (\coqdocvar{g} \coqdocvar{y})) \ensuremath{\land} (\coqdockw{\ensuremath{\forall}} \coqdocvar{y}, \coqdoctac{\ensuremath{\exists}} \coqdocvar{x}, \coqdocdefinition{EQ} (\coqdocvar{f} \coqdocvar{x}) (\coqdocvar{g} \coqdocvar{y}))\coqdoceol
   \coqdocindent{1.00em}
   \coqdockw{end}.\coqdoceol
   \coqdocnoindent
@@ -91,10 +97,9 @@ Recursive Definition of the extentional equality on sets
 \coqdocemptyline
 \end{coqdoccode}
 
-\TODO{parlare di Coq fixpoint}
+\paragraph{Note on fixpoints.} To ensure termination, \Coq{} accepts recursive definitions only when when a syntactic constraint is satisfied: the argument of each recursive call must be ``smaller'' than the \TODO{}. Being \coqdocinductive{SET} an inductive type, the sets in the image of \var f are considered strictly smaller than \coqdocconstructor{Sup} \coqdocvar{X} \coqdocvar{f}, and thus the calls to \coqdocdefinition{EQ} (\coqdocvar{f} \coqdocvar{x}) (\coqdocvar{g} \coqdocvar{y}) are accepted as safe because the first argument is decreasing.
 
-Aczel's equality
-
+\TODO{}Since we will re-use this notion of equivalence between indexings in upcoming sections, let us define it separately. We call it ``Aczel equality'' and denote it by \AEQ:
 
 \begin{coqdoccode}
 \coqdocnoindent
@@ -103,17 +108,17 @@ Aczel's equality
 \coqexternalref{::type scope:x '/x5C' x}{http://coq.inria.fr/distrib/V8.11.0/stdlib//Coq.Init.Logic}{\coqdocnotation{(}}\coqdockw{\ensuremath{\forall}} \coqdocvar{x}: \coqdocvariable{X}, \coqexternalref{::type scope:'exists' x '..' x ',' x}{http://coq.inria.fr/distrib/V8.11.0/stdlib//Coq.Init.Logic}{\coqdocnotation{\ensuremath{\exists}}} \coqdocvar{y}\coqexternalref{::type scope:'exists' x '..' x ',' x}{http://coq.inria.fr/distrib/V8.11.0/stdlib//Coq.Init.Logic}{\coqdocnotation{,}} \coqdocvariable{R} (\coqdocvariable{f} \coqdocvariable{x}) (\coqdocvariable{g} \coqdocvariable{y})\coqexternalref{::type scope:x '/x5C' x}{http://coq.inria.fr/distrib/V8.11.0/stdlib//Coq.Init.Logic}{\coqdocnotation{)}}\coqdoceol
 \coqdocindent{1.00em}
 \coqexternalref{::type scope:x '/x5C' x}{http://coq.inria.fr/distrib/V8.11.0/stdlib//Coq.Init.Logic}{\coqdocnotation{\ensuremath{\land}}} \coqdockw{\ensuremath{\forall}} \coqdocvar{y}: \coqdocvariable{Y}, \coqexternalref{::type scope:'exists' x '..' x ',' x}{http://coq.inria.fr/distrib/V8.11.0/stdlib//Coq.Init.Logic}{\coqdocnotation{\ensuremath{\exists}}} \coqdocvar{x}\coqexternalref{::type scope:'exists' x '..' x ',' x}{http://coq.inria.fr/distrib/V8.11.0/stdlib//Coq.Init.Logic}{\coqdocnotation{,}} \coqdocvariable{R} (\coqdocvariable{f} \coqdocvariable{x}) (\coqdocvariable{g} \coqdocvariable{y}).\coqdoceol
-\coqdocemptyline
-\end{coqdoccode}
-
-\coqdocconstructor{Sup} \coqdocvar{X} \coqdocvar{f} $\equiv$ \coqdocconstructor{Sup} \coqdocvar{Y} \coqdocvar{g} $~\Leftrightarrow$ \coqdocdefinition{eq\_aczel} \coqdocvar{EQ} \coqdocvar{f} \coqdocvar{g}
-
-\begin{coqdoccode}
   \coqdocnoindent
-  \coqdockw{Infix} ``\ensuremath{\AEQ}'' := (\coqdocdefinition{eq\_aczel} \coqdocvar{EQ}).\coqdoceol
+  \coqdockw{Infix} ``\ensuremath{\AEQ}'' := (\coqdocdefinition{eq\_aczel} \coqdocdefinition{EQ}).\coqdoceol
+  \coqdocemptyline
 \end{coqdoccode}
 
-\coqdocconstructor{Sup} \coqdocvar{X} \coqdocvar{f} $\equiv$ \coqdocconstructor{Sup} \coqdocvar{Y} \coqdocvar{g} $~\Leftrightarrow$ \coqdocvar{f} $\AEQ$ \coqdocvar{g}
+\TODO{Parametrized over a relation R, so that we can reuse later the notation \AEQ{} specialized to the relevant equivalence relation. We abuse the notation of notations \TODO{}}
+
+After:
+  \coqdocconstructor{Sup} \coqdocvar{X} \coqdocvar{f} $\equiv$ \coqdocconstructor{Sup} \coqdocvar{Y} \coqdocvar{g} $~\Leftrightarrow$ \coqdocvar{f} $\AEQ$ \coqdocvar{g}
+
+\paragraph{\ZF{} setoid.} \TODO{}
 
 \begin{coqdoccode}
   \coqdocnoindent
@@ -130,7 +135,7 @@ Aczel's equality
 \coqdockw{Definition} \coqdocdefinition{IN} \coqdocvar{s} \coqdocvar{t} : \coqdockw{Prop} :=
 \coqdockw{match} \coqdocvar{t} \coqdockw{with}\coqdoceol
 \coqdocindent{1.00em}
-\ensuremath{|} \coqdocconstructor{Sup} \coqdocvar{X} \coqdocvar{f} \ensuremath{\Rightarrow} \coqdoctac{\ensuremath{\exists}} \coqdocvar{x}, \coqdocvar{EQ} \coqdocvar{s} (\coqdocvar{f} \coqdocvar{x})\coqdoceol
+\ensuremath{|} \coqdocconstructor{Sup} \coqdocvar{X} \coqdocvar{f} \ensuremath{\Rightarrow} \coqdoctac{\ensuremath{\exists}} \coqdocvar{x}, \coqdocdefinition{EQ} \coqdocvar{s} (\coqdocvar{f} \coqdocvar{x})\coqdoceol
 \coqdocindent{0.00em}\coqdockw{end}.\coqdoceol
 \coqdocnoindent
 \coqdockw{Infix} ``∈'' := \coqdocdefinition{IN}.\coqdoceol

@@ -23,7 +23,9 @@
   \coqdocemptyline
 \end{coqdoccode}
 
-\begin{example}[Empty set and Universe]aaa
+\begin{example}[Empty set and Universe]\label{ex:EUNF2}
+  
+  aaa
 
   \begin{coqdoccode}
     \coqdocnoindent
@@ -62,8 +64,9 @@ a
 
 \end{coqdoccode}
 
-\TODO{Dire che la notazione $\AEQ$ nasconde la dipendenza, ma che espandendo e' tutto ancora safe}
+We are a bit cheating here: in fact, the notation for \AEQ{} hides a dependency on \coqdocdefinition{EQ}, which would actually make the \coqdockw{Fixpoint} definition fail as it conceals the \TODO{}. For the actual \Coq{} definition, we inlined \coqdocdefinition{eq\_aczel} so to make \Coq{} recognise the decreasing argument. However, we decided to just use the succint notation above, so that \TODO{} the intuition.
 
+Proving that \coqdocdefinition{EQ} is an equivalence relation 
 \TODO{equivalence goes smoothly, like for \ZF{}, only the cases are doubled because of the two constructors.}
 
 \begin{coqdoccode}
@@ -184,14 +187,23 @@ where selects:
 \end{coqdoccode}
 
 \subsection{Extensionality}
+Proving extensionality in \NFTWO{} is slightly more involved than in \ZF{}. Like in \ZF{}, one direction of the double implication is easy and follows directly from \coqdocdefinition{in\_sound\_right}.
 
-\begin{itemize}
-  \item One direction is is easy (?) (follows from \coqdocdefinition{in\_sound\_right})
-  \item The other, we proceed by cases over $a, b$. When their constructor matches, the proof proceeds in like for ZF (the case high - high is completely specular). The cases high vs low are impossible, and we need to show that it is never the case that a low set and a high set cannot have the same extension.
-\end{itemize}
-aaa
+As for the other direction, \ie{} \\
+\centerline{
+  (\coqdockw{\ensuremath{\forall}} \coqdocvar{t}, \coqdocvariable{t} \INX \coqdocvariable{s} \coqexternalref{::type scope:x '<->' x}{http://coq.inria.fr/distrib/V8.11.0/stdlib//Coq.Init.Logic}{\coqdocnotation{\ensuremath{\leftrightarrow}}} \coqdocvariable{t} \INX \coqdocvariable{s'}) %
+  \coqexternalref{::type scope:x '<->' x}{http://coq.inria.fr/distrib/V8.11.0/stdlib//Coq.Init.Logic}{\coqdocnotation{\ensuremath{\to}}} %
+  \coqdocvariable{s} \EQX \coqdocvariable{s'}
+}
 
-Informally, if $p \approx \Complement{q}$ for booleans $p,q$, then $p \lor q \approx \top$.
+\noindent
+we proceed by cases over \var s and \var{s'}. When their constructor matches (cases \coqdocconstructor{Low}/\coqdocconstructor{Low} and \coqdocconstructor{High}/\coqdocconstructor{High}) the proof proceeds just like in \ZF{}. The new cases \coqdocconstructor{Low} \emph{vs} \coqdocconstructor{High} require some more work. In these cases, \coqdocvariable{s} \EQX \coqdocvariable{s'} does not hold because low sets and high sets are not equivalent by definition of \coqdocdefinition{EQ}. Therefore to conclude it suffices to assume \coqdockw{\ensuremath{\forall}} \coqdocvar{t}, \coqdocvariable{t} \INX \coqdocvariable{s} \coqexternalref{::type scope:x '<->' x}{http://coq.inria.fr/distrib/V8.11.0/stdlib//Coq.Init.Logic}{\coqdocnotation{\ensuremath{\leftrightarrow}}} \coqdocvariable{t} \INX \coqdocvariable{s'} and derive a contradiction.
+
+Without loss of generality, let us say that \var s = \coqref{NF2.Model.Low}{\coqdocconstructor{Low}} \coqdocvar{X} \coqdocvar{f} and \var {s'} = \coqref{NF2.Model.High}{\coqdocconstructor{High}} \coqdocvar{Y} \coqdocvar{g} (the other case is specular). Basically, what we have to prove is that a low set and a high set cannot have the same extension (upcoming lemma \coqref{NF2.Ext.pos neg ext neq}{\coqdoclemma{pos\_neg\_ext\_neq}}), which is justified by our initial intuition that low sets are ``small'', while high sets correspond to proper classes.
+
+\medskip
+
+The crucial intuition is that when a low set has the same extension as a high set, it is actually possible to construct a universal set that is low (contrarily to the universal set defined in \Cref{ex:EUNF2}, which is correctly high). In fact, the images of \var f and \var g are complementary. (The following boolean \TODO{}: if $p \approx \Complement{q}$ for booleans $p,q$, then $p \lor q \approx \top$.)
 
 \begin{coqdoccode}
   \coqdocnoindent
@@ -202,9 +214,11 @@ Informally, if $p \approx \Complement{q}$ for booleans $p,q$, then $p \lor q \ap
 \coqexternalref{::type scope:x '->' x}{http://coq.inria.fr/distrib/V8.11.0/stdlib//Coq.Init.Logic}{\coqdocnotation{\ensuremath{\rightarrow}}} \coqdockw{\ensuremath{\forall}} \coqdocvar{s}, \coqdocvariable{s} \INX \coqref{NF2.Model.Low}{\coqdocconstructor{Low}} (\coqdocvariable{X} \coqexternalref{::type scope:x '+' x}{http://coq.inria.fr/distrib/V8.11.0/stdlib//Coq.Init.Datatypes}{\coqdocnotation{+}} \coqdocvariable{Y}) (\coqdocvariable{f} \coqref{Internal.Misc.:::x 'xE2xA8x81' x}{\coqdocnotation{⨁}} \coqdocvariable{g}).\coqdoceol
 \end{coqdoccode}
 \begin{proof}
-  Warning! Classical logic is required to prove this lemma.
+  Note: classical logic is required to prove this lemma.
   Assume $\coqdocvariable{s} \colon \coqdocinductive{SET}$. To show that \coqdocvariable{s} \INX \coqref{NF2.Model.Low}{\coqdocconstructor{Low}} (\coqdocvariable{X} \coqexternalref{::type scope:x '+' x}{http://coq.inria.fr/distrib/V8.11.0/stdlib//Coq.Init.Datatypes}{\coqdocnotation{+}} \coqdocvariable{Y}) (\coqdocvariable{f} \coqref{Internal.Misc.:::x 'xE2xA8x81' x}{\coqdocnotation{⨁}} \coqdocvariable{g}), we need to supply an element of type \coqdocvariable{X} \coqexternalref{::type scope:x '+' x}{http://coq.inria.fr/distrib/V8.11.0/stdlib//Coq.Init.Datatypes}{\coqdocnotation{+}} \coqdocvariable{Y}. Choosing the left or right injection into \coqdocvariable{X} \coqexternalref{::type scope:x '+' x}{http://coq.inria.fr/distrib/V8.11.0/stdlib//Coq.Init.Datatypes}{\coqdocnotation{+}} \coqdocvariable{Y} is equivalent to deciding whether \coqdocvariable{s} \INX \coqref{NF2.Model.Low}{\coqdocconstructor{Low}} \coqdocvariable{X} \coqdocvariable{f} holds.
 \end{proof}
+
+To conclude, we just need to show that the universal set cannot be low. 
 
 \TODO{The axiom of regularity is a \dots of ZF that rules out \dots Regularity does not hold in \NFTWO{}, since set membership is not well-founded (for instance, $\Universe \in \Universe \in \ldots$)}. 
 
@@ -213,10 +227,10 @@ Informally, if $p \approx \Complement{q}$ for booleans $p,q$, then $p \lor q \ap
 \coqdockw{Theorem} \coqdefRef{NF2.Ext.weak regularity}{weak\_regularity}{\coqdoclemma{weak\_regularity}}: \coqdockw{\ensuremath{\forall}} \coqdocvar{s}, \coqref{NF2.Model.low}{\coqdocdefinition{low}} \coqdocvariable{s} \coqexternalref{::type scope:x '->' x}{http://coq.inria.fr/distrib/V8.11.0/stdlib//Coq.Init.Logic}{\coqdocnotation{\ensuremath{\rightarrow}}} \coqdocvariable{s} \INX \coqdocvariable{s} \coqexternalref{::type scope:x '->' x}{http://coq.inria.fr/distrib/V8.11.0/stdlib//Coq.Init.Logic}{\coqdocnotation{\ensuremath{\rightarrow}}} \coqexternalref{False}{http://coq.inria.fr/distrib/V8.11.0/stdlib//Coq.Init.Logic}{\coqdocinductive{False}}.\coqdoceol
 \end{coqdoccode}
 \begin{proof}
-  By structural induction on \coqdocvariable{s}. Let \coqdocvariable{s} = \coqref{NF2.Model.Low}{\coqdocconstructor{Low}} \coqdocvariable{X} \coqdocvariable{f}. From \coqdocvariable{s} \INX \coqdocvariable{s} it follows that there exists \coqdocvariable{x} such that \coqdocvariable{s} \EQX \coqdocvariable{f}~\coqdocvariable{x}. Note that \coqdocvariable{f}~\coqdocvariable{x} must be a low set by the definition of \coqdocdefinition{EQ}. Since \coqdocdefinition{IN} is a \coqdocdefinition{EQ}-morphism, it follows that \coqdocvariable{f}~\coqdocvariable{x} \INX \coqdocvariable{f}~\coqdocvariable{x}. We conclude by the inductive hypothesis.
+  By structural induction on \coqdocvariable{s}, low by hypothesis. Let \coqdocvariable{s} = \coqref{NF2.Model.Low}{\coqdocconstructor{Low}} \coqdocvariable{X} \coqdocvariable{f}. From \coqdocvariable{s} \INX \coqdocvariable{s} it follows that there exists \coqdocvariable{x} such that \coqdocvariable{s} \EQX \coqdocvariable{f}~\coqdocvariable{x}. Note that \coqdocvariable{f}~\coqdocvariable{x} must be a low set by the definition of \coqdocdefinition{EQ}. Since \coqdocdefinition{IN} is a \coqdocdefinition{EQ}-morphism, it follows that \coqdocvariable{f}~\coqdocvariable{x} \INX \coqdocvariable{f}~\coqdocvariable{x}. We conclude by the inductive hypothesis.
 \end{proof}
 
-As an easy corollary, we prove that a low set and a high set cannot have the same extension:
+It directly follows:
 
 \begin{coqdoccode}
   \coqdocnoindent
