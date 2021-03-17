@@ -177,10 +177,10 @@ Qed.
 Lemma no_urelements: forall x, ext_empty x -> x == emptyset.
 Proof.
   destruct x. intro. pose proof (not_IN_not_AIN H).
-  unfold emptyset, enum. setoid_rewrite EQ_unfold.
   unfold ext_empty in H. setoid_rewrite IN_unfold in H.
   setoid_rewrite xor_neg in H. pose H0 as H0'.
-  setoid_rewrite H in H0'. split.
+  setoid_rewrite H in H0'.
+  unfold emptyset, enum. setoid_rewrite EQ_unfold. split.
   - rewrite Aext. firstorder.
   - rewrite Bext. firstorder.
 Qed.

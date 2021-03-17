@@ -1,22 +1,26 @@
 %!TEX root = main.tex
 
-Let us start by summarizing the classic encoding of \ZF{} in Coq by Benjamin Werner \cite{DBLP:conf/tacs/Werner97}\footnotemark{}, which \TODO{as already mention Aczel.}
+Let us start by summarizing the classic encoding of \ZF{} in Coq by Benjamin Werner \cite{DBLP:conf/tacs/Werner97}\footnotemark{}, so to introduce the basic notions that will be reused in all following sections.
 
 \footnotetext{The source code of the encoding of \ZF{} is included in the repository of Coq users' contributions, and can be found at the address \url{https://github.com/coq-contribs/zfc/}.}
 
-The steps are the following:
-\begin{itemize}
-  \item \emph{Type of sets:} defined \coqdocinductive{SET}\footnotemark{}
-  \item \emph{(Extensional) equality:} define \coqdocdefinition{EQ}. setoid, etc.
-  \item \emph{Set membership:} define \coqdocdefinition{IN} morphism
-  \item \emph{Axiom of extensionality}
-  \item \emph{Remaining axiom / set operators} and their properties
-\end{itemize}
+\medskip
+
+Encoding \ZF{} takes the following steps:
+\begin{enumerate}
+  \item \emph{Type of sets:} define the type \coqdocinductive{SET}\footnotemark{} of \ZF{} sets;
+  \item \emph{Set equality:} define set equality as a relation \coqdocdefinition{EQ} of type \coqdocinductive{SET} $\to$ \coqdocinductive{SET} $\to$ \coqdocinductive{Prop} and prove that (\coqdocinductive{SET}, \coqdocdefinition{EQ}) is a setoid, \ie{} that \coqdocdefinition{EQ} is an equivalence relation;
+  \item \emph{Set membership:} define membership as a relation \coqdocdefinition{IN} of type \coqdocinductive{SET} $\to$ \coqdocinductive{SET} $\to$ \coqdocinductive{Prop} and prove that \coqdocdefinition{IN} is a (\coqdocinductive{SET}, \coqdocdefinition{EQ})-morphism, \ie{} that \coqdocdefinition{IN} respects \coqdocdefinition{EQ};
+  \item Prove that \coqdocdefinition{EQ} and \coqdocdefinition{IN} satisfy \emph{extensionality};
+  \item Define the required set operators and prove the remaining axioms.
+\end{enumerate}
+
+We will proceed in this same exact order when encoding \NFTWO{} and \NFO{} in the next sections.
 
 \footnotetext{We use the uppercase identifiers \coqdocinductive{SET}, \coqdocdefinition{EQ}, and \coqdocdefinition{IN} in order to avoid shadowing, respectively, the kind \coqdocdefinition{Set}, the standard (intensional) equality \coqdocdefinition{eq}, and the reserved keyword \coqdockw{in}.}
 
 \subsection{The Type \texorpdfstring{\coqdocinductive{SET}}{SET}}
-The type representing \ZF{} sets is ?defined by the following \Coq{} inductive definition:
+We introduce the type representing \ZF{} sets through the following \Coq{} inductive definition:
 
 \begin{coqdoccode}
 \coqdocnoindent
@@ -26,17 +30,19 @@ The type representing \ZF{} sets is ?defined by the following \Coq{} inductive d
 \coqdocemptyline
 \end{coqdoccode}
 
+Sets are introduced by the \coqdocconstructor{Sup} constructor by providing an \emph{index type} \var X together with an \emph{indexing function} \var f of type \var X $\to$ \coqdocinductive{SET}: intuitively, the extension of the set \coqdocconstructor{Sup} \var X \var f coincides with the image of the indexing function \var f.
 
-\TODO{index type $X$ plus an indexing function. The extension of a set is basically the same as the image of its indexing function. }
+% \TODO{Note: types are different. The idea is use inductive to simulate the construction of the cumulative hierarchy. Index universe i, Set in universe j strictly larger than i.}
 
-\TODO{Note: types are different. The idea is use inductive to simulate the construction of the cumulative hierarchy. Index universe i, Set in universe j strictly larger than i.}
 
 \noindent\paragraph{Notation.} From now on, we will use the variables \var s and \var t to denote elements of type \coqdocinductive{SET}. We reserve the variable names \var x, \var y, \var z for elements of types \var X, \var Y, \var Z respectively.
 
-Let us see a few examples of how to encode usual set operators \TODO{}:
+\medskip
+
+Let us help clarify the type of sets by means of a few examples:
 
 \begin{example}[Empty set]
-  The empty set is encoded as a \coqdocinductive{SET} having an empty index:
+  The empty set is encoded as a \coqdocinductive{SET} having empty index:
 
   \begin{coqdoccode}
     \coqdocnoindent
@@ -79,7 +85,7 @@ Let us see a few examples of how to encode usual set operators \TODO{}:
 
 \subsection{Set Equality}
 
-The equivalence relation between \ZF{} sets is defined by the following \Coq{} \coqdockw{Fixpoint}:
+\Coq{} (intensional) equality $=$ over \coqdocinductive{SET} does not satisfy the axiom extensionality. We define a distinct equivalence relation, supposed to be extensional, by the following \coqdockw{Fixpoint}:
 
 \begin{coqdoccode}
   \coqdocnoindent
@@ -97,9 +103,11 @@ The equivalence relation between \ZF{} sets is defined by the following \Coq{} \
 \coqdocemptyline
 \end{coqdoccode}
 
-\paragraph{Note on fixpoints.} To ensure termination, \Coq{} accepts recursive definitions only when when a syntactic constraint is satisfied: the argument of each recursive call must be ``smaller'' than the \TODO{}. Being \coqdocinductive{SET} an inductive type, the sets in the image of \var f are considered strictly smaller than \coqdocconstructor{Sup} \coqdocvar{X} \coqdocvar{f}, and thus the calls to \coqdocdefinition{EQ} (\coqdocvar{f} \coqdocvar{x}) (\coqdocvar{g} \coqdocvar{y}) are accepted as safe because the first argument is decreasing.
+\paragraph{Note on fixpoints.} To ensure termination, \Coq{} accepts recursive definitions only when when a certain syntactic constraint is satisfied: the argument of each recursive call must be ``smaller'' than the original argument. Being \coqdocinductive{SET} an inductive type, the elements in the image of \var f are considered strictly smaller than \coqdocconstructor{Sup} \coqdocvar{X} \coqdocvar{f}, and thus the calls to \coqdocdefinition{EQ} (\coqdocvar{f} \coqdocvar{x}) (\coqdocvar{g} \coqdocvar{y}) are accepted as correctly decreasing, because for instance the first argument is decreasing.
 
-\TODO{}Since we will re-use this notion of equivalence between indexings in upcoming sections, let us define it separately. We call it ``Aczel equality'' and denote it by \AEQ:
+\medskip
+
+Since we will re-use this notion of equivalence between indexings in upcoming sections, let us define it separately. We call it ``Aczel equality'' and denote it by \AEQ:
 
 \begin{coqdoccode}
 \coqdocnoindent
@@ -113,22 +121,27 @@ The equivalence relation between \ZF{} sets is defined by the following \Coq{} \
   \coqdocemptyline
 \end{coqdoccode}
 
-\TODO{Parametrized over a relation R, so that we can reuse later the notation \AEQ{} specialized to the relevant equivalence relation. We abuse the notation of notations \TODO{}}
+We parametrize the definition of \coqdocdefinition{eq\_aczel} over a generic relation \var R, so to re-use the notation \AEQ{} by specializing \var R to the relevant equivalence relation. % We abuse the notation of notations \TODO{}
 
-After:
-  \coqdocconstructor{Sup} \coqdocvar{X} \coqdocvar{f} $\equiv$ \coqdocconstructor{Sup} \coqdocvar{Y} \coqdocvar{g} $~\Leftrightarrow$ \coqdocvar{f} $\AEQ$ \coqdocvar{g}
+The following equivalence thus holds:\\
+\centerline{
+  \coqdocconstructor{Sup} \coqdocvar{X} \coqdocvar{f} $\equiv$ \coqdocconstructor{Sup} \coqdocvar{Y} \coqdocvar{g} $~\Leftrightarrow$ \coqdocvar{f} $\AEQ$ \coqdocvar{g}.
+}
 
-\paragraph{\ZF{} setoid.} \TODO{}
+\paragraph{\ZF{} setoid.} To register (\coqdocinductive{SET}, \coqdocdefinition{EQ}) as a \Coq{} setoid, it suffices to prove that \coqdocdefinition{EQ} is an equivalence relation, \ie{} that it is reflexive, symmetric, and transitive:
 
 \begin{coqdoccode}
+  \coqdocemptyline
   \coqdocnoindent
   \coqdockw{Instance} \coqdocinstance{zfc\_setoid} : \coqexternalref{Equivalence}{http://coq.inria.fr/distrib/V8.11.0/stdlib//Coq.Classes.RelationClasses}{\coqdocclass{Equivalence}} \coqdocdefinition{EQ}.
 \end{coqdoccode}
 \begin{proof}
   All required statements (reflexivity, symmetry, and transitivity) are proven easily by structural induction on the first quantified variable.
-\end{proof}
+\end{proof} 
 
 \subsection{Set Membership}
+
+We define set membership in \ZF{} by the following \coqdockw{Fixpoint}:
 
 \begin{coqdoccode}
   \coqdocnoindent
@@ -142,6 +155,11 @@ After:
 \coqdocemptyline
 \end{coqdoccode}
 
+Basically, \var s \IN \var t holds if and only if there exists a set \var f~\var x in the image of \var t such that \var s is equivalent to \var f~\var x.
+
+\medskip
+
+As done in the previous subsection, we define separately the membership with respect to an indexing function. We call it ``Aczel membership'' and denote it by \AIN:
 
 \begin{coqdoccode}
   \coqdocnoindent
@@ -153,11 +171,15 @@ After:
 \coqdocemptyline
 \end{coqdoccode}
 
-So that:
-
+The following equivalence thus holds:\\
+\centerline{
 s $\in$ \coqdocconstructor{Sup} \coqdocvar{X} \coqdocvar{f} $~\Leftrightarrow$ \coqdocvar{s} $\AIN$ \coqdocvar{f}
+}
+
+\paragraph{\coqdocdefinition{IN} is a morphism.} To register \coqdocdefinition{IN} as a (\coqdocinductive{SET}, \coqdocdefinition{EQ})-morphism, it suffices to prove that \coqdocdefinition{IN} respects \coqdocdefinition{EQ}:
 
 \begin{coqdoccode}
+  \coqdocemptyline
   \coqdocnoindent
 \coqdockw{Add} \coqdockw{Morphism} \coqref{NF2.Model.IN}{\coqdocdefinition{IN}} \coqdockw{with} \coqdockw{signature} \coqref{NF2.Model.EQ}{\coqdocdefinition{EQ}} \coqexternalref{ProperNotations.::signature scope:x '==>' x}{http://coq.inria.fr/distrib/V8.11.0/stdlib//Coq.Classes.Morphisms}{\coqdocnotation{$\Rightarrow$}} \coqref{NF2.Model.EQ}{\coqdocdefinition{EQ}} \coqexternalref{ProperNotations.::signature scope:x '==>' x}{http://coq.inria.fr/distrib/V8.11.0/stdlib//Coq.Classes.Morphisms}{\coqdocnotation{$\Rightarrow$}} \coqexternalref{iff}{http://coq.inria.fr/distrib/V8.11.0/stdlib//Coq.Init.Logic}{\coqdocdefinition{iff}} \coqdockw{as} \coqdefRef{NF2.Model.IN mor}{IN\_mor}{\coqdocinstance{IN\_mor}}.\coqdoceol
 \end{coqdoccode}
@@ -177,11 +199,13 @@ s $\in$ \coqdocconstructor{Sup} \coqdocvar{X} \coqdocvar{f} $~\Leftrightarrow$ \
   \end{itemize}
 \end{proof}
 
-\subsection{Extensionality}
-\TODO{}
+By registering \coqdocdefinition{IN} as a morphism, we get to use the \emph{generalized rewriting} feature of \Coq{}, so to automatically rewrite proof goals using equalities of the form \var s $\equiv$ \var t.
 
+\subsection{Extensionality}
+We now turn to proving that the encoding of \ZF{} satisfies extensionality:
 
 \begin{coqdoccode}
+  \coqdocemptyline
   \coqdocnoindent
   \coqdockw{Theorem} \coqdoclemma{ext}: \coqdockw{\ensuremath{\forall}} \coqdocvar{s} \coqdocvar{s'}, \coqdocvariable{s} \coqdocnotation{≡} \coqdocvariable{s'} \coqexternalref{::type scope:x '<->' x}{http://coq.inria.fr/distrib/V8.11.0/stdlib//Coq.Init.Logic}{\coqdocnotation{\ensuremath{\leftrightarrow}}} \coqdockw{\ensuremath{\forall}} \coqdocvar{t}, \coqdocvariable{t} \coqdocnotation{∈} \coqdocvariable{s} \coqexternalref{::type scope:x '<->' x}{http://coq.inria.fr/distrib/V8.11.0/stdlib//Coq.Init.Logic}{\coqdocnotation{\ensuremath{\leftrightarrow}}} \coqdocvariable{t} \coqdocnotation{∈} \coqdocvariable{s'}.\coqdoceol
 \end{coqdoccode}
@@ -197,4 +221,4 @@ s $\in$ \coqdocconstructor{Sup} \coqdocvar{X} \coqdocvar{f} $~\Leftrightarrow$ \
 \end{proof}
 
 \subsection{Other \ZF{} Axioms}
-\TODO{}
+The model of \ZFC{} requires to encode various additional concepts, like pairing, powerset, separation, choice, natural numbers, ordinals, and so on. However, here we are only interested in encoding \NFX{} without investigating additional, more complex features. We just omit these for now.
