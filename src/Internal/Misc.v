@@ -89,4 +89,4 @@ Proof. unfold inv3. unfold invF. right. left. exists y. auto. Qed.
 Lemma inv3_3 {X Y Z W} (f: X -> W) (g : Y -> W) (h : Z -> W) z:
   inv3 f g h (h z).
 Proof. unfold inv3. unfold invF. right. right. exists z. auto. Qed.
-Hint Resolve inv3_1 inv3_2 inv3_3: misc.
+#[export] Hint Resolve inv3_1 inv3_2 inv3_3: misc.

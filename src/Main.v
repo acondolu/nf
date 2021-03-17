@@ -4,7 +4,7 @@
 *)
 
 (* begin hide *)
-Add LoadPath "src".
+Add LoadPath "src/NF2" as NF2.
 (* end hide *)
 
 Require Import Setoid Morphisms.

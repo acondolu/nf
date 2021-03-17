@@ -12,7 +12,8 @@ Require Import Relation_Operators.
 Require Export Relation_Definitions.
 Require Export Setoid.
 
-Add LoadPath "src".
+Add LoadPath "src/Internal" as Internal.
+Add LoadPath "src/NFO" as NFO.
 From Internal Require Import Misc FunExt.
 From NFO Require Import BoolExpr Model Wf Eq In Xor.
 (* end hide *)

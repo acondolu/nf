@@ -4,8 +4,9 @@
 *)
 
 (* begin hide *)
-Add LoadPath "src".
+Add LoadPath "src/Internal" as Internal.
 From Internal Require Import Misc FunExt.
+Add LoadPath "src/NFO" as NFO.
 From NFO Require Import BoolExpr Model Wf Eq In Sets Xor Morphism.
 (* end hide *)
 
@@ -181,7 +182,7 @@ Proof.
   setoid_rewrite xor_neg in H. pose H0 as H0'.
   setoid_rewrite H in H0'.
   unfold emptyset, enum. setoid_rewrite EQ_unfold. split.
-  - rewrite Aext. firstorder.
+  - rewrite Aext. firstorder. destruct x0.
   - rewrite Bext. firstorder.
 Qed.
 

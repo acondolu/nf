@@ -1,5 +1,5 @@
 (* begin hide *)
-Add LoadPath "src".
+Add LoadPath "src/NFO" as NFO.
 (* end hide *)
 From NFO Require Import BoolExpr.
 

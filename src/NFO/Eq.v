@@ -6,7 +6,8 @@
 From Coq.Program Require Import Basics Combinators.
 Require Import Setoid Morphisms.
 (* begin hide *)
-Add LoadPath "src".
+Add LoadPath "src/Internal" as Internal.
+Add LoadPath "src/NFO" as NFO.
 (* end hide *)
 From Internal Require Import Misc FunExt Common.
 From NFO Require Import BoolExpr Model Wf.
@@ -71,7 +72,7 @@ Proof.
   induction x. rewrite EQ_def. unfold AEQ. split.
   split; intro; eauto. apply eq_bexpr_refl. auto.
 Qed.
-Hint Immediate EQ_refl : Eeq.
+#[export] Hint Immediate EQ_refl : Eeq.
 
 Lemma EQ_sym: forall x y, EQ x y -> EQ y x.
 Proof.
@@ -83,7 +84,7 @@ Proof.
   - intro x. destruct (H0 x). eauto with Wff.
   - revert H1. apply eq_bexpr_sym.
 Qed.
-Hint Resolve EQ_sym : Eeq.
+#[export] Hint Resolve EQ_sym : Eeq.
 
 Lemma EQ_trans : forall x y z, EQ x y -> EQ y z -> EQ x z.
 Proof.
@@ -99,7 +100,7 @@ Proof.
   - apply (fun X => eq_bexpr_trans EQ_sym X H2 H4).
     intros. repeat destruct H6; destruct H7; repeat destruct H6; destruct H8; repeat destruct H6; apply (fun X => H _ _ _ X H9 H10); eauto with Wff.
 Qed.
-Hint Resolve EQ_trans : Eeq.
+#[export] Hint Resolve EQ_trans : Eeq.
 
 (** Register (SET, EQ) as a setoid: *)
 Instance nfo_setoid : Equivalence EQ.

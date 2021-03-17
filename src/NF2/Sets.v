@@ -1,6 +1,7 @@
 From Coq.Logic Require Import Classical_Prop Classical_Pred_Type.
 
-Add LoadPath "src".
+Add LoadPath "src/Internal" as Internal.
+Add LoadPath "src/NF2" as NF2.
 Require Import NF2.Model.
 From Internal Require Import Misc.
 

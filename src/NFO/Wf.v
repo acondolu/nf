@@ -3,9 +3,10 @@
     that are required by the [NFO] module. 
 *)
 
-Add LoadPath "src".
 From Coq.Program Require Import Tactics Equality.
+Add LoadPath "src/Internal" as Internal.
 From Internal Require Export WfTuples.
+Add LoadPath "src/NFO" as NFO.
 From NFO Require Import Model.
 
 Section Unfold.
@@ -70,7 +71,7 @@ Proof.
 Defined.
 
 End One.
-Hint Constructors lt : Wff.
+#[export] Hint Constructors lt : Wff.
 
 Section Two.
 Infix "<" := lt.
@@ -90,7 +91,7 @@ Proof. auto2. Qed.
 
 End Two.
 
-Hint Resolve AA AB BA BB: Wff.
+#[export] Hint Resolve AA AB BA BB: Wff.
 
 Section Three.
 Infix "<" := lt.
@@ -156,6 +157,6 @@ Proof. auto3. Qed.
 
 End Three.
 
-Hint Resolve AAA AAB AAC ABA ABB ABC ACA ACB ACC BAA BAB BAC BBA BBB BBC BCA BCB BCC CAA CAB CAC CBA CBB CBC CCA CCB CCC : Wff.
+#[export] Hint Resolve AAA AAB AAC ABA ABB ABC ACA ACB ACC BAA BAB BAC BBA BBB BBC BCA BCB BCC CAA CAB CAC CBA CBB CBC CCA CCB CCC : Wff.
 
 Global Opaque le22 le33.

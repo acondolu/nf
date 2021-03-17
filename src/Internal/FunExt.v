@@ -1,7 +1,7 @@
 (* begin hide *)
 From Coq.Program Require Import Basics Combinators.
 Require Import Setoid.
-Add LoadPath "src".
+Add LoadPath "src/Internal" as Internal.
 From Internal Require Import Misc.
 (* end hide *)
 

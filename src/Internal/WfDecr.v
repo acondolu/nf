@@ -1,11 +1,12 @@
 
+Require Import Coq.Arith.PeanoNat.
 Require Import Coq.Lists.List.
 Require Import Relation_Definitions.
 Require Import Relation_Operators.
-Require Import Coq.omega.Omega.
+Require Import Lia.
 Require Import Coq.Sorting.Permutation.
 From Coq.Wellfounded Require Import Inclusion Inverse_Image Transitive_Closure.
-Add LoadPath "src".
+Add LoadPath "src/Internal" as Internal.
 From Internal Require Import Misc List WfMult.
 
 Section WfDecr.
@@ -106,7 +107,7 @@ Proof.
     --- apply t_step. exists (gather l (a1 :: l') a a0). split. reflexivity.
     cut (0 < length (a :: nil)). intro. pose proof (C A lt O (a::nil) (gather l (a1 :: l') a a0) H0). simpl in H1.
     rewrite app_nil_r in H1. apply H1.
-    pose proof (gather_ok a0). apply (allT_all _ _ X). simpl length. omega.
+    pose proof (gather_ok a0). apply (allT_all _ _ X). simpl length. lia.
     --- simpl. apply IHl'. split. intro X. pose proof (@nil_cons _ a1 l'). auto.
       apply (drop_ok a0).
 Qed.

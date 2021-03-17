@@ -4,7 +4,7 @@ Require Import Coq.Lists.List.
 Require Import Relation_Definitions.
 Require Import Relation_Operators.
 From Coq.Wellfounded Require Import Inclusion Inverse_Image Transitive_Closure.
-Add LoadPath "src".
+Add LoadPath "src/Internal" as Internal.
 From Internal Require Import WfDecr.
 (* end hide *)
 

@@ -8,13 +8,14 @@
 *)
 Require Import Coq.Lists.List.
 Require Import Coq.Arith.PeanoNat.
+Require Import Coq.Arith.Lt.
 Require Import Coq.Program.Equality.
-Require Import Coq.omega.Omega.
+Require Import Lia.
 Require Import Coq.Sorting.Permutation.
 Require Import Relation_Definitions.
 Require Import Relation_Operators.
 From Coq.Wellfounded Require Import Inclusion Inverse_Image Transitive_Closure.
-Add LoadPath "src".
+Add LoadPath "src/Internal" as Internal.
 From Internal Require Import List.
 
 Section WfMult.
@@ -32,9 +33,9 @@ Definition replace : forall {i: nat} {l: list A},
   i < length l -> list A -> list A.
 Proof.
   induction i; destruct l.
-  - simpl. omega.
+  - simpl. lia.
   - intros. exact (X ++ l).
-  - simpl. omega.
+  - simpl. lia.
   - intros. refine (a :: IHi l (lt_S_n _ _ H) X).
 Defined.
 
@@ -42,20 +43,20 @@ Lemma replace_cons: forall {i x l l'} (p: S i < length (x::l)) (p': i < length l
   replace p l' = x :: replace p' l'.
 Proof.
   induction i; intros; destruct l; simpl length in *.
-  - omega.
+  - lia.
   - reflexivity.
-  - omega.
+  - lia.
   - simpl. setoid_rewrite (IHi a l l'). apply eq_refl.
-  Grab Existential Variables. apply (lt_S_n _ _ p').
+  Unshelve. apply (lt_S_n _ _ p').
 Qed.
 
 (** Get an element of the list by its index: *)
 Definition get : forall {i: nat} {l: list A}, i < length l -> A.
 Proof.
   induction i; destruct l.
-  - simpl. omega.
+  - simpl. lia.
   - intros. exact a.
-  - simpl. omega.
+  - simpl. lia.
   - intros. refine (IHi l (lt_S_n _ _ H)).
 Defined.
 
@@ -63,9 +64,9 @@ Lemma get_cons: forall {i x l} (p: S i < length (x::l)) (p': i < length l),
   get p = get p'.
 Proof.
   induction i; intros; destruct l; simpl length in *.
-  - omega.
+  - lia.
   - reflexivity.
-  - omega.
+  - lia.
   - simpl. setoid_rewrite (IHi a l p' (lt_S_n _ _ p')).
   setoid_rewrite (IHi a l (lt_S_n _ _ p) (lt_S_n _ _ p')). apply eq_refl.
 Qed.
@@ -109,13 +110,13 @@ Lemma ltl_concat_right: forall b a a',
 Proof.
   intros. revert b.
   dependent destruction H. revert i p H.
-  induction l; simpl; intros. omega.
+  induction l; simpl; intros. lia.
   destruct i.
   - pose proof (C O (a :: l ++ b) l').
   cut (0 < length (a :: l ++ b)). intro.
   specialize H0 with H1. simpl.
   rewrite<- app_assoc. apply H0. assumption.
-  simpl. omega.
+  simpl. lia.
   - simpl replace. fold (@length A). apply ltl_cons. apply IHl. 
   rewrite<- (@get_cons i a l p (lt_S_n _ _ p)). assumption.
 Qed.
@@ -182,7 +183,7 @@ Theorem wf_ltl: well_founded ltl.
 Proof.
   unfold well_founded. intro l. induction l.
   - apply Acc_intro. intros. dependent destruction H.
-    simpl length in p. omega.
+    simpl length in p. lia.
   - apply (l2p3 l IHl).
 Qed.
 
@@ -199,7 +200,7 @@ Definition ltlp l l' := exists l'', Permutation l l'' /\ l'' <<< l'.
 Lemma perm_lt_dx: forall {a b b'}, Permutation b b' -> a <<< b' -> ltlp a b.
 Proof.
   intros. revert a H0. dependent induction H; intros; unfold ltlp.
-  - dependent destruction H0. simpl length in p. omega.
+  - dependent destruction H0. simpl length in p. lia.
   - destruct (ltl_cases H0); destruct H1, H1.
   -- rewrite H2 in *. clear a H2.
     destruct (IHPermutation _ H1), H2.
@@ -209,7 +210,7 @@ Proof.
       refine (C (S i) (x::l) l'0 _ _). rewrite (get_cons _ p). auto.
   -- rewrite H1 in *. clear a H1. exists (x0 ++ l). split.
      apply Permutation_app_head. apply Permutation_sym. auto.
-     refine (C O (x::l) x0 _ H2). simpl length. omega.
+     refine (C O (x::l) x0 _ H2). simpl length. lia.
   - destruct (ltl_cases H0); destruct H, H.
   -- rewrite H1 in *. clear a H1. destruct (ltl_cases H); destruct H1, H1.
   --- rewrite H2 in *. clear x0 H2. exists (y :: x :: x1).
@@ -229,7 +230,7 @@ Proof.
      refine (C 1 (y :: x :: l) x0 _ _). apply H1.
   - destruct (IHPermutation2 _ H1), H2. destruct (IHPermutation1 _ H3), H4.
     exists x0. split. transitivity x; auto. auto.
-    Grab Existential Variables. simpl length. omega. simpl length. omega.
+    Unshelve. simpl length. lia. simpl length. lia.
 Qed.
 
 Lemma perm_Acc : forall l l', Permutation l l' -> Acc ltlp l -> Acc ltlp l'.

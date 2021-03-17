@@ -3,7 +3,7 @@ Require Import Coq.Logic.Classical_Prop.
 Require Import Setoid Morphisms.
 
 (* begin hide *)
-Add LoadPath "src".
+Add LoadPath "src/Internal" as Internal.
 (* end hide *)
 From Internal Require Import Misc FunExt.
 

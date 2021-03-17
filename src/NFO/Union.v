@@ -2,8 +2,9 @@
 
 (* begin hide *)
 From Coq.Program Require Import Basics Combinators.
-Add LoadPath "src".
+Add LoadPath "src/Internal" as Internal.
 From Internal Require Import Misc FunExt.
+Add LoadPath "src/NFO" as NFO.
 From NFO Require Import Xor BoolExpr Model Eq In Morphism Sets.
 (* end hide *)
 
