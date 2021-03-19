@@ -36,7 +36,7 @@ Fixpoint allT P (l: list A): Type := match l with
 | cons b bs => prod (P b) (allT P bs)
 end.
 
-Lemma all_PROP: forall {P l},
+Lemma all_allT: forall {P l},
   all (fun x => ☐ P x) l
   -> ☐ allT (fun x => P x) l.
 Proof.
@@ -64,6 +64,7 @@ Lemma someT_some: forall (P: A -> Prop) l, someT P l -> some P l.
 Proof.
   induction l. auto. simpl. intros. destruct X; tauto.
 Qed.
+
 Lemma some_someT: forall (P: A -> Prop) l, some P l -> ☐ (someT P l).
 Proof.
   induction l; intro. pauto.

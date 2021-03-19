@@ -22,6 +22,8 @@ Variable wf_lt: well_founded lt.
 Definition decr' l l': Type :=
   prod (l' <> nil) (allT (fun a => someT (lt a) l') l).
 
+Local Infix "<L" := decr' (at level 10).
+
 (** [gather l l' a p] gathers all the elements of [l] that
     are smaller than the first element of [l'].
 *)
@@ -34,6 +36,19 @@ Definition gather: forall l l' a',
     apply (IHl _ _ a0).
 Defined.
 
+Fixpoint gatherYYY {xs ys} : xs <L ys -> list A :=
+  match xs, ys with
+  | nil, _ => fun _ => nil
+  | _, nil => fun _ => nil (* derive contradiction here *)
+  | x::_, y::_ => fun d =>
+    let (ne, d') := d in
+    let (xys, xsys) := d' in
+    match xys with
+    | inl _ => x :: gatherYYY (ne, xsys)
+    | inr _ => gatherYYY (ne, xsys)
+    end
+  end.
+
 (** Correctness of [gather]: *)
 Lemma gather_ok: forall {l l' a'},
   forall (p: allT (fun a => someT (lt a) (a' :: l')) l),
@@ -44,6 +59,16 @@ Proof.
   destruct p, s. simpl.
   - split. auto. apply IHl.
   - apply IHl.
+Qed.
+
+Lemma gather_okYYY: forall {xs y ys},
+  forall d: xs <L (y :: ys),
+    allT (fun x => lt x y) (gatherYYY d).
+Proof.
+  intros. induction xs.
+  simpl. auto. destruct d.
+  destruct a0, s; simpl. split. auto. apply IHxs.
+  apply IHxs.
 Qed.
 
 (** [drop l l' a p] drops all the elements from [l] that
@@ -60,6 +85,19 @@ Definition drop: forall l l' a',
     apply (IHl _ _ a0).
 Defined.
 
+Fixpoint dropYYY {xs ys} : xs <L ys -> list A :=
+  match xs, ys with
+  | nil, _ => fun _ => nil
+  | _, nil => fun _ => nil (* derive contradiction here *)
+  | x::_, y::_ => fun d =>
+    let (ne, d') := d in
+    let (xys, xsys) := d' in
+    match xys with
+    | inl _ => dropYYY (ne, xsys)
+    | inr _ => x :: dropYYY (ne, xsys)
+    end
+  end.
+
 (** Correctness sof [drop]: *)
 Lemma drop_ok: forall {l l' a'},
   forall (p: allT (fun a => someT (lt a) (a' :: l')) l),
@@ -70,6 +108,17 @@ Proof.
   destruct p, s. simpl.
   - apply IHl.
   - split. auto. apply IHl.
+Qed.
+
+Lemma drop_okYYY: forall {xs y ys},
+  forall d: xs <L (y :: ys),
+    allT (fun x => someT (lt x) ys) (dropYYY d).
+Proof.
+  intros. induction xs.
+  simpl. auto. destruct d.
+  destruct a0, s; simpl.
+  - apply IHxs.
+  - split. auto. apply IHxs.
 Qed.
 
 (** We use [gather] and [drop] to permutate a list [l],
@@ -83,6 +132,16 @@ Proof.
   specialize IHl with a0. apply perm_skip. auto.
   transitivity (a1 :: gather l l' a a0 ++ drop l l' a a0).
   apply perm_skip. auto. apply Permutation_middle.
+Qed.
+
+Lemma gather_drop_okYYY: forall {xs y ys} {d: xs <L (y :: ys)},
+ Permutation xs (gatherYYY d ++ dropYYY d).
+Proof.
+  intros. induction xs. auto. destruct d, a0, s; simpl.
+  - apply perm_skip. apply IHxs.
+  - transitivity (a :: gatherYYY (n, a0) ++ dropYYY (n, a0)).
+  -- apply perm_skip. apply IHxs.
+  -- apply Permutation_middle.
 Qed.
 
 (** An important result. We show that [decr] is contained in the
@@ -137,7 +196,7 @@ Proof.
     pose proof (fun Q K => all_mono _ Q K l H0).
     pose proof (H1 _ (fun x => some_someT (lt x) l')).
     psplit. passumption.
-    apply all_PROP. auto.
+    apply all_allT. auto.
 Qed.
 
 (** A nicer unfolding lemma for [decr], using [In]
