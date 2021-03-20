@@ -1,0 +1,15 @@
+name: Build Coq Proofs
+
+on: push
+
+jobs:
+  test_pull_request:
+    runs-on: ubuntu-latest
+    steps:
+      - run: sudo add-apt-repository ppa:jgross-h/coq-8.13-daily -y
+      - run: sudo apt-get update -y
+      - run: sudo apt-get install coq -y
+      - uses: actions/checkout@v2
+      - name: make coq
+        working-directory: ${{ github.workspace }}
+        run: make coq
