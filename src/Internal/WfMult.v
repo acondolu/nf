@@ -3,8 +3,8 @@
     of a well-founded binary relation.
     
     We represent multisets simply as lists. Then we use
-    permutations so to ignore the position of elements in 
-    a list.
+    permutations to ignore the position of elements
+    in a list.
 *)
 Require Import Coq.Lists.List.
 Require Import Coq.Arith.PeanoNat.
@@ -20,7 +20,7 @@ From Internal Require Import List.
 
 Section WfMult.
 
-(** We assume a well-founded relation [<<] over A: *)
+(** We assume a well-founded binary relation [<<] over A: *)
 Variable A : Type.
 Variable lt : A -> A -> Prop.
 Local Infix "<<" := lt (at level 80).
@@ -29,46 +29,49 @@ Variable wf_lt: well_founded lt.
 (** Replace the element of a list at a certain position by concatenating
     another list in its place:
 *)
-Definition replace : forall {i: nat} {l: list A},
-  i < length l -> list A -> list A.
+Definition replace : forall {xs: list A} {i: nat},
+  i < length xs -> list A -> list A.
 Proof.
-  induction i; destruct l.
-  - simpl. lia.
-  - intros. exact (X ++ l).
-  - simpl. lia.
-  - intros. refine (a :: IHi l (lt_S_n _ _ H) X).
+  induction xs; intros i H ys.
+  - exact ys.
+  - destruct i.
+  -- exact (ys ++ xs).
+  -- simpl in H. refine (a :: _).
+     exact (IHxs _ (lt_S_n _ _ H) ys).
 Defined.
 
-Lemma replace_cons: forall {i x l l'} (p: S i < length (x::l)) (p': i < length l),
-  replace p l' = x :: replace p' l'.
+Local Lemma eq_cons: forall {A} (a: A) xs ys, xs = ys -> a :: xs = a :: ys.
+Proof. intros. rewrite H. reflexivity. Qed.
+
+Lemma replace_irr: forall {xs i ys} (p p': i < length xs),
+  replace p ys = replace p' ys.
 Proof.
-  induction i; intros; destruct l; simpl length in *.
-  - lia.
-  - reflexivity.
-  - lia.
-  - simpl. setoid_rewrite (IHi a l l'). apply eq_refl.
-  Unshelve. apply (lt_S_n _ _ p').
+  induction xs; intros i ys p p'.
+  - simpl in *. lia.
+  - destruct i.
+  -- reflexivity.
+  -- simpl in p, p'. simpl. apply eq_cons. apply IHxs.
 Qed.
 
 (** Get an element of the list by its index: *)
-Definition get : forall {i: nat} {l: list A}, i < length l -> A.
+Definition get: forall {xs: list A} {i: nat}, i < length xs -> A.
 Proof.
-  induction i; destruct l.
-  - simpl. lia.
-  - intros. exact a.
-  - simpl. lia.
-  - intros. refine (IHi l (lt_S_n _ _ H)).
+  induction xs; intros i H.
+  - simpl in H. lia.
+  - destruct i.
+  -- exact a.
+  -- simpl in H.
+      exact (IHxs _ (lt_S_n _ _ H)).
 Defined.
 
-Lemma get_cons: forall {i x l} (p: S i < length (x::l)) (p': i < length l),
+Lemma get_irr: forall {xs i} (p p': i < length xs),
   get p = get p'.
 Proof.
-  induction i; intros; destruct l; simpl length in *.
-  - lia.
-  - reflexivity.
-  - lia.
-  - simpl. setoid_rewrite (IHi a l p' (lt_S_n _ _ p')).
-  setoid_rewrite (IHi a l (lt_S_n _ _ p) (lt_S_n _ _ p')). apply eq_refl.
+  induction xs; intros i p p'.
+  - simpl in *. lia.
+  - destruct i.
+  -- reflexivity.
+  -- simpl in p, p'. simpl. apply IHxs.
 Qed.
 
 (** The extension of [<<] to lists. [l <<< l'] holds iff there exists an element [x]
@@ -76,64 +79,59 @@ Qed.
     (possibly empty) list whose elements are all strictly smaller than [x].
 *)
 Inductive ltl : list A -> list A -> Prop :=
-  | C : forall i (l l': list A) (p: i < length l),
-         all (fun x => x << get p) l'
-          -> ltl (replace p l') l .
+  | C : forall i (xs ys: list A) (p: i < length xs),
+         all (fun x => x << get p) ys
+          -> ltl (replace p ys) xs.
 Local Infix "<<<" := ltl (at level 80).
 
 (** Comment: *)
 
-Lemma ltl_cons: forall b a a',
-  ltl a a' -> ltl (b :: a) (b :: a').
+Lemma ltl_cons: forall x xs ys,
+  xs <<< ys -> (x :: xs) <<< (x :: ys).
 Proof.
   intros. destruct H. 
-  pose proof (C (S i) (b :: l) l' (lt_n_S _ _ p)).
-  rewrite (@get_cons i b l (lt_n_S _ _ p) p) in H0.
-  rewrite (@replace_cons i b l l' (lt_n_S _ _ p) p) in H0.
+  pose proof (C (S i) (x :: xs) ys (lt_n_S _ _ p)).
+  simpl in H0.
+  rewrite (get_irr _ p) in H0.
+  rewrite (replace_irr _ p) in H0.
   tauto.
 Qed.
 
-Lemma ltl_concat_left: forall a b b',
-  ltl b b' -> ltl (a ++ b) (a ++ b').
+Lemma ltl_concat_left: forall zs xs ys,
+  xs <<< ys -> (zs ++ xs) <<< (zs ++ ys).
 Proof.
-  induction a; simpl. auto.
-  intros. pose proof (IHa _ _ H). destruct H0.
-  pose proof (C (S i) (a :: l) l' (lt_n_S _ _ p)).
-  setoid_rewrite (@replace_cons i a l l' (lt_n_S _ _ p) p) in H1.
-  apply H1.
-  rewrite (@get_cons i a l (lt_n_S _ _ p) p).
-  assumption.
+  induction zs; simpl. auto.
+  intros. apply ltl_cons. auto.
 Qed.
 
-Lemma ltl_concat_right: forall b a a',
-  ltl a a' -> ltl (a ++ b) (a' ++ b).
+Lemma ltl_concat_right: forall zs xs ys,
+  xs <<< ys -> (xs ++ zs) <<< (ys ++ zs).
 Proof.
-  intros. revert b.
+  intros. revert zs.
   dependent destruction H. revert i p H.
-  induction l; simpl; intros. lia.
+  induction xs; simpl; intros. lia.
   destruct i.
-  - pose proof (C O (a :: l ++ b) l').
-  cut (0 < length (a :: l ++ b)). intro.
+  - pose proof (C O (a :: xs ++ zs) ys).
+  cut (0 < length (a :: xs ++ zs)). intro.
   specialize H0 with H1. simpl.
   rewrite<- app_assoc. apply H0. assumption.
   simpl. lia.
-  - simpl replace. fold (@length A). apply ltl_cons. apply IHl. 
-  rewrite<- (@get_cons i a l p (lt_S_n _ _ p)). assumption.
+  - simpl replace. fold (@length A). apply ltl_cons. apply IHxs. 
+  assumption.
 Qed.
 
 (** A useful inversion lemma:  *)
-Lemma ltl_cases: forall {a l l'}, 
-  l <<< a :: l'
-    -> (exists l'', l'' <<< l' /\ l = a :: l'')
-      \/ exists l'', l = l'' ++ l' /\ all (fun x => lt x a) l''.
+Lemma ltl_cases: forall {xs y ys}, 
+  xs <<< y :: ys
+    -> (exists zs, zs <<< ys /\ xs = y :: zs)
+      \/ exists zs, xs = zs ++ ys /\ all (fun z => z << y) zs.
 Proof.
   intros. dependent destruction H.
   induction i.
-  - right. exists l'0. simpl. split; auto.
-  - left. exists (replace (lt_S_n _ _ p) l'0). split.
-    pose proof (get_cons p).
-    refine (C _ l' l'0 (lt_S_n _ _ p) H).
-    apply (replace_cons p).
+  - right. exists ys0. simpl. split; auto.
+  - left. exists (replace (lt_S_n _ _ p) ys0). split.
+    refine (C _ ys ys0 (lt_S_n _ _ p) H).
+    simpl. apply (replace_irr p).
 Qed.
 
 (** We follow the proof by Tobias Nipkov in "An inductive Proof of the 
@@ -195,33 +193,29 @@ Qed.
     (see https://coq.github.io/doc/master/stdlib/Coq.Sorting.Permutation.html).
 *)
 
-Definition ltlp l l' := exists l'', Permutation l l'' /\ l'' <<< l'.
+Definition ltlp l l' :=
+  exists l'', Permutation l l'' /\ l'' <<< l'.
+Local Infix "p<<<" := ltlp (at level 80).
 
-Lemma perm_lt_dx: forall {a b b'}, Permutation b b' -> a <<< b' -> ltlp a b.
+Lemma perm_lt_dx: forall {a b b'},
+  Permutation b b' -> a <<< b' -> a p<<< b.
 Proof.
   intros. revert a H0. dependent induction H; intros; unfold ltlp.
-  - dependent destruction H0. simpl length in p. lia.
+  - dependent destruction H0. destruct (Nat.nlt_0_r _ p).
   - destruct (ltl_cases H0); destruct H1, H1.
   -- rewrite H2 in *. clear a H2.
-    destruct (IHPermutation _ H1), H2.
-    exists (x :: x1). split.
-  --- apply perm_skip. auto.
-  --- dependent destruction H3. rewrite<- (replace_cons (lt_n_S _ _ p)).
-      refine (C (S i) (x::l) l'0 _ _). rewrite (get_cons _ p). auto.
+     destruct (IHPermutation _ H1), H2.
+     exists (x :: x1). split.
+  --- apply perm_skip. assumption.
+  --- apply ltl_cons. assumption.
   -- rewrite H1 in *. clear a H1. exists (x0 ++ l). split.
-     apply Permutation_app_head. apply Permutation_sym. auto.
-     refine (C O (x::l) x0 _ H2). simpl length. lia.
+     apply Permutation_app_head. apply Permutation_sym. assumption.
+     refine (C O (x::l) x0 _ H2). apply Nat.lt_0_succ.
   - destruct (ltl_cases H0); destruct H, H.
   -- rewrite H1 in *. clear a H1. destruct (ltl_cases H); destruct H1, H1.
   --- rewrite H2 in *. clear x0 H2. exists (y :: x :: x1).
-      split. apply perm_swap. 
-      dependent destruction H1.
-      pose proof ((lt_n_S _ _ (lt_n_S _ _ p)) : S (S i) < length (y :: x :: l)).
-      pose proof (fun X => C (S (S i)) (y :: x :: l) l' H2 X). simpl replace in H3.
-      setoid_rewrite replace_cons in H3. apply H3.
-      cut (get H2 = get p). intro. rewrite H4. assumption.
-      simpl get.
-      setoid_rewrite get_cons. apply eq_refl. auto.
+      split. apply perm_swap.
+      apply ltl_cons. apply ltl_cons. assumption.
   --- rewrite H1 in *. clear x0 H1. exists (x1 ++ x :: l). split.
       apply Permutation_cons_app. reflexivity.
       refine (C O (y :: x :: l) x1 _ _). apply H2.
@@ -230,30 +224,31 @@ Proof.
      refine (C 1 (y :: x :: l) x0 _ _). apply H1.
   - destruct (IHPermutation2 _ H1), H2. destruct (IHPermutation1 _ H3), H4.
     exists x0. split. transitivity x; auto. auto.
-    Unshelve. simpl length. lia. simpl length. lia.
+    Unshelve. apply Nat.lt_0_succ. simpl length. lia.
 Qed.
 
-Lemma perm_Acc : forall l l', Permutation l l' -> Acc ltlp l -> Acc ltlp l'.
+Lemma perm_Acc: forall xs ys,
+  Permutation xs ys -> Acc ltlp xs -> Acc ltlp ys.
 Proof.
-  intros. induction H.
-  - auto.
-  - apply Acc_intro. intros. apply H0. destruct H1, H1. unfold ltlp.
-    destruct (perm_lt_dx (perm_skip x H) H2). destruct H3. exists x1. split.
-    transitivity x0; auto. auto.
-  - apply Acc_intro. intros. apply H0. destruct H, H. unfold ltlp.
-    destruct (perm_lt_dx (perm_swap x y l) H1). destruct H2. exists x1. split.
-    transitivity x0; auto. auto.
-  - auto.
+  intros xs ys H H0. induction H; auto;
+  apply Acc_intro; intros; apply H0.
+  - destruct H1, H1.
+    destruct (perm_lt_dx (perm_skip x H) H2). destruct H3.
+    exists x1. split; auto. transitivity x0; auto.
+  - destruct H, H.
+    destruct (perm_lt_dx (perm_swap x y l) H1). destruct H2.
+    exists x1. split; auto. transitivity x0; auto.
 Qed.
 
 Theorem wf_perm : well_founded ltlp.
 Proof.
-    intro a. induction (wf_ltl a). apply Acc_intro. intros.
-    destruct H1, H1. apply (perm_Acc _ _ (Permutation_sym H1)). auto.
+    intro xs. induction (wf_ltl xs) as [xs H H1].
+    apply Acc_intro. intros ys H2.
+    destruct H2 as [zs [H2 H3]].
+    apply (perm_Acc _ _ (Permutation_sym H2)). auto.
 Qed.
 
 (* lltlp *)
-
 
 Definition lltlp := clos_trans _ ltlp.
 Definition wf_trans: well_founded lltlp.
@@ -262,41 +257,41 @@ Proof.
 Qed.
 
 (** Aux: comment *)
-Lemma lltlp_concat_left: forall a b b',
-  lltlp b b' -> lltlp (a ++ b) (a ++ b').
+Lemma lltlp_concat_left: forall zs xs ys,
+  lltlp xs ys -> lltlp (zs ++ xs) (zs ++ ys).
 Proof.
-  intros. revert a. induction H; intro a.
-  - destruct H, H. apply t_step. exists (a ++ x0).
-    split. apply (Permutation_app_head a). assumption.
-    apply (ltl_concat_left a). assumption.
-  - apply (t_trans _ _ _ (a ++ y)).
+  intros. revert zs. induction H; intro zs.
+  - destruct H, H. apply t_step. exists (zs ++ x0).
+    split. apply (Permutation_app_head zs). assumption.
+    apply (ltl_concat_left zs). assumption.
+  - apply (t_trans _ _ _ (zs ++ y)).
     apply IHclos_trans1. apply IHclos_trans2.
 Qed.
 
-Lemma lltlp_concat_right: forall b a a',
-  lltlp a a' -> lltlp (a ++ b) (a' ++ b).
+Lemma lltlp_concat_right: forall zs xs ys,
+  lltlp xs ys -> lltlp (xs ++ zs) (ys ++ zs).
 Proof.
-  intros. revert b. induction H; intro b.
-  - destruct H, H. apply t_step. exists (x0 ++ b).
-    split. apply (Permutation_app_tail b). assumption.
-    apply (ltl_concat_right b). assumption.
-  - apply (t_trans _ _ _ (y ++ b)).
+  intros. revert zs. induction H; intro zs.
+  - destruct H, H. apply t_step. exists (x0 ++ zs).
+    split. apply (Permutation_app_tail zs). assumption.
+    apply (ltl_concat_right zs). assumption.
+  - apply (t_trans _ _ _ (y ++ zs)).
     apply IHclos_trans1. apply IHclos_trans2.
 Qed.
 
-Lemma lltlp_concat: forall a a' b b',
-  lltlp a a' -> lltlp b b' -> lltlp (a ++ b) (a' ++ b').
+Lemma lltlp_concat: forall xs xs' ys ys',
+  lltlp xs xs' -> lltlp ys ys' -> lltlp (xs ++ ys) (xs' ++ ys').
 Proof.
   intros.
-  apply (t_trans _ _ _ (a ++ b')); fold lltlp.
+  apply (t_trans _ _ _ (xs ++ ys')); fold lltlp.
   apply lltlp_concat_left. assumption.
   apply lltlp_concat_right. assumption.
 Qed.
 
-Lemma l_perm_lt_sx: forall {a a' b},
-  Permutation a' a -> lltlp a b -> lltlp a' b.
+Lemma l_perm_lt_sx: forall {xs xs' ys},
+  Permutation xs' xs -> lltlp xs ys -> lltlp xs' ys.
 Proof.
-  intros. revert a' H. induction H0; intros.
+  intros. revert xs' H. induction H0; intros.
   - apply t_step. destruct H, H. exists x0. split.
     transitivity x. auto. auto. auto.
   - apply (t_trans _ _ _ y). apply (IHclos_trans1 _ H).

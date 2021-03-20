@@ -15,55 +15,36 @@ Variable A : Type.
 Variable lt : A -> A -> Prop.
 Variable wf_lt: well_founded lt.
 
-(** We define the [decr] binary relation between lists, such that
-    [decr l l'] iff every element of [l] is smaller than some
-    element of [l'].
+(** We define [decr'] as a binary relation between lists, such that
+    [decr xs ys] iff every element of [xs] is smaller than some
+    element of [ys].
 *)
-Definition decr' l l': Type :=
-  prod (l' <> nil) (allT (fun a => someT (lt a) l') l).
+Definition decr' xs ys: Type :=
+  prod (ys <> nil) (allT (fun a => someT (lt a) ys) xs).
 
 Local Infix "<L" := decr' (at level 10).
 
-(** [gather l l' a p] gathers all the elements of [l] that
-    are smaller than the first element of [l'].
+(** [gather] gathers all the elements of [xs] that
+    are smaller than the first element of [ys].
 *)
-Definition gather: forall l l' a',
-  allT (fun a => someT (lt a) (a' :: l')) l -> list A.
-  induction l; simpl; intros.
-  - exact nil.
-  - destruct X. pose proof s as s'. destruct s. refine (a :: _).
-    apply (IHl _ _ a0).
-    apply (IHl _ _ a0).
-Defined.
-
-Fixpoint gatherYYY {xs ys} : xs <L ys -> list A :=
+Fixpoint gather {xs ys} : xs <L ys -> list A :=
   match xs, ys with
   | nil, _ => fun _ => nil
-  | _, nil => fun _ => nil (* derive contradiction here *)
+  | _::_, nil => fun d => match d with (ne, _) => False_rect _ (ne eq_refl) end
   | x::_, y::_ => fun d =>
-    let (ne, d') := d in
-    let (xys, xsys) := d' in
-    match xys with
-    | inl _ => x :: gatherYYY (ne, xsys)
-    | inr _ => gatherYYY (ne, xsys)
+    match d with
+    | (ne, (xys, xsys)) =>
+      match xys with
+      | inl _ => x :: gather (ne, xsys)
+      | inr _ => gather (ne, xsys)
+      end
     end
   end.
 
 (** Correctness of [gather]: *)
-Lemma gather_ok: forall {l l' a'},
-  forall (p: allT (fun a => someT (lt a) (a' :: l')) l),
-    allT (fun a => lt a a') (gather _ _ _ p).
-Proof.
-  intros. induction l.
-  simpl. auto.
-  destruct p, s. simpl.
-  - split. auto. apply IHl.
-  - apply IHl.
-Qed.
-
-Lemma gather_okYYY: forall {xs y ys},
+Lemma gather_ok: forall {xs y ys},
   forall d: xs <L (y :: ys),
-    allT (fun x => lt x y) (gatherYYY d).
+    allT (fun x => lt x y) (gather d).
 Proof.
   intros. induction xs.
   simpl. auto. destruct d.
@@ -71,48 +52,27 @@ Proof.
   apply IHxs.
 Qed.
 
-(** [drop l l' a p] drops all the elements from [l] that
-    are smaller than the first element of [l'].
+(** [drop] drops all the elements from [xs] that
+    are smaller than the first element of [ys].
     (It is the dual of [gather]).
 *)
-Definition drop: forall l l' a',
-  allT (fun a => someT (lt a) (a' :: l')) l -> list A.
-  induction l; simpl; intros.
-  - exact nil.
-  - destruct X. pose proof s as s'. destruct s.
-    apply (IHl _ _ a0).
-    refine (a :: _).
-    apply (IHl _ _ a0).
-Defined.
-
-Fixpoint dropYYY {xs ys} : xs <L ys -> list A :=
+Fixpoint drop {xs ys} : xs <L ys -> list A :=
   match xs, ys with
   | nil, _ => fun _ => nil
-  | _, nil => fun _ => nil (* derive contradiction here *)
-  | x::_, y::_ => fun d =>
-    let (ne, d') := d in
-    let (xys, xsys) := d' in
-    match xys with
-    | inl _ => dropYYY (ne, xsys)
-    | inr _ => x :: dropYYY (ne, xsys)
-    end
-  end.
+  | _::_, nil => fun d => match d with (ne, _) => False_rect _ (ne eq_refl) end
+  | x::_, y::_ => fun d => match d with
+  | (ne, (xys, xsys)) =>
+      match xys with
+      | inl _ => drop (ne, xsys)
+      | inr _ => x :: drop (ne, xsys)
+      end
+  end
+end.
 
-(** Correctness sof [drop]: *)
-Lemma drop_ok: forall {l l' a'},
-  forall (p: allT (fun a => someT (lt a) (a' :: l')) l),
-    allT (fun a => someT (lt a) l') (drop _ _ _ p).
-Proof.
-  intros. induction l.
-  simpl. auto.
-  destruct p, s. simpl.
-  - apply IHl.
-  - split. auto. apply IHl.
-Qed.
-
-Lemma drop_okYYY: forall {xs y ys},
+(** Correctness of [drop]: *)
+Lemma drop_ok: forall {xs y ys},
   forall d: xs <L (y :: ys),
-    allT (fun x => someT (lt x) ys) (dropYYY d).
+    allT (fun x => someT (lt x) ys) (drop d).
 Proof.
   intros. induction xs.
   simpl. auto. destruct d.
@@ -121,25 +81,15 @@ Proof.
   - split. auto. apply IHxs.
 Qed.
 
-(** We use [gather] and [drop] to permutate a list [l],
+(** We use [gather] and [drop] to permutate a list [xs],
     moving all the gathered elements to the head of the list:
 *)
-Lemma gather_drop_ok: forall l l' a a0,
- Permutation l (gather l l' a a0 ++ drop l l' a a0).
-Proof.
-  intros. induction l; simpl.
-  reflexivity. destruct a0. destruct s. simpl.
-  specialize IHl with a0. apply perm_skip. auto.
-  transitivity (a1 :: gather l l' a a0 ++ drop l l' a a0).
-  apply perm_skip. auto. apply Permutation_middle.
-Qed.
-
-Lemma gather_drop_okYYY: forall {xs y ys} {d: xs <L (y :: ys)},
- Permutation xs (gatherYYY d ++ dropYYY d).
+Lemma gather_drop_ok: forall {xs y ys} (d: xs <L (y :: ys)),
+ Permutation xs (gather d ++ drop d).
 Proof.
   intros. induction xs. auto. destruct d, a0, s; simpl.
   - apply perm_skip. apply IHxs.
-  - transitivity (a :: gatherYYY (n, a0) ++ dropYYY (n, a0)).
+  - transitivity (a :: gather (n, a0) ++ drop (n, a0)).
   -- apply perm_skip. apply IHxs.
   -- apply Permutation_middle.
 Qed.
@@ -151,7 +101,7 @@ Qed.
     To prove it, we proceed by induction on [l'], using [gather_drop_ok]
     and concluding by i.h.
 *)
-Theorem decr'_ok: forall l l', decr' l l' -> lltlp lt l l'.
+Theorem decr'_ok: forall l l', l <L l' -> lltlp lt l l'.
 Proof.
   unfold decr'. intros l l'. revert l. induction l'; intros; destruct X.
   - destruct (n (eq_refl)).
@@ -161,17 +111,17 @@ Proof.
     simpl in H. simpl in a0. rewrite app_nil_r in H. apply H.
     clear n H. induction l; simpl. auto. destruct a0, s. split. assumption.
     apply IHl; auto. destruct f.
-  -- pose proof (lltlp_concat _ lt (gather _ _ _ a0) (a::nil) (drop _ _ _ a0) (a1::l')).
-    apply (fun X Y => l_perm_lt_sx _ lt (gather_drop_ok _ _ _ _) (H X Y)).
-    --- apply t_step. exists (gather l (a1 :: l') a a0). split. reflexivity.
-    cut (0 < length (a :: nil)). intro. pose proof (C A lt O (a::nil) (gather l (a1 :: l') a a0) H0). simpl in H1.
+  -- pose proof (lltlp_concat _ lt (gather (n, a0)) (a::nil) (drop (n, a0)) (a1::l')).
+    apply (fun X Y => l_perm_lt_sx _ lt (gather_drop_ok _) (H X Y)).
+    --- apply t_step. exists (gather (n, a0)). split. reflexivity.
+    cut (0 < length (a :: nil)). intro. pose proof (C A lt O (a::nil) (gather (n, a0)) H0). simpl in H1.
     rewrite app_nil_r in H1. apply H1.
-    pose proof (gather_ok a0). apply (allT_all _ _ X). simpl length. lia.
+    pose proof (gather_ok (n, a0)). apply (allT_all _ _ X). simpl length. lia.
     --- simpl. apply IHl'. split. intro X. pose proof (@nil_cons _ a1 l'). auto.
-      apply (drop_ok a0).
+      apply (drop_ok (n, a0)).
 Qed.
 
-Definition decr (a b: list A) : Prop := ☐ (decr' a b).
+Definition decr (a b: list A) : Prop := ☐ (a <L b).
 
 (** As a consequence, we easily obtain well-foundedness
     of [decr] by the inclusion theorem.
