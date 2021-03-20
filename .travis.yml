@@ -3,7 +3,7 @@ language: bash
 git:
   depth: false
 install:
-  - sudo add-apt-repository ppa:jgross-h/coq-8.11-daily -y
+  - sudo add-apt-repository ppa:jgross-h/coq-8.13-daily -y
   - sudo apt-get update -y
   - sudo apt-get install coq -y
 script:
