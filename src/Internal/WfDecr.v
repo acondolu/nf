@@ -107,14 +107,15 @@ Proof.
   - destruct (n (eq_refl)).
   - destruct l'.
   -- apply t_step. exists l. split. reflexivity.
-    pose proof (C A lt O (a :: nil) l (Nat.lt_0_succ _)).
-    simpl in H. simpl in a0. rewrite app_nil_r in H. apply H.
-    clear n H. induction l; simpl. auto. destruct a0, s. split. assumption.
-    apply IHl; auto. destruct f.
+     pose proof (@ltl_base _ lt a nil l).
+     rewrite app_nil_r in H. apply H.
+     clear n H. induction l; simpl. auto. destruct a0, s. split. assumption.
+    apply IHl; auto. destruct s.
   -- pose proof (lltlp_concat _ lt (gather (n, a0)) (a::nil) (drop (n, a0)) (a1::l')).
     apply (fun X Y => l_perm_lt_sx _ lt (gather_drop_ok _) (H X Y)).
     --- apply t_step. exists (gather (n, a0)). split. reflexivity.
-    cut (0 < length (a :: nil)). intro. pose proof (C A lt O (a::nil) (gather (n, a0)) H0). simpl in H1.
+    cut (0 < length (a :: nil)). intro. 
+    pose proof (@ltl_base _ lt a nil (gather (n, a0))).
     rewrite app_nil_r in H1. apply H1.
     pose proof (gather_ok (n, a0)). apply (allT_all _ _ X). simpl length. lia.
     --- simpl. apply IHl'. split. intro X. pose proof (@nil_cons _ a1 l'). auto.
