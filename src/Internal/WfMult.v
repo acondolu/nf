@@ -124,15 +124,15 @@ Qed.
     (see https://coq.github.io/doc/master/stdlib/Coq.Sorting.Permutation.html).
 *)
 
-Definition ltlp l l' :=
-  exists l'', Permutation l l'' /\ l'' <<< l'.
-Local Infix "p<<<" := ltlp (at level 80).
+Definition pltl xs ys :=
+  exists xs', Permutation xs xs' /\ xs' <<< ys.
+Local Infix "p<<<" := pltl (at level 80).
 
-Lemma perm_lt_dx: forall {a b b'},
-  Permutation b b' -> a <<< b -> a p<<< b'.
+Lemma perm_lt_dx: forall {xs ys ys'},
+  Permutation ys ys' -> xs <<< ys -> xs p<<< ys'.
 Proof.
-  intros. revert a H0.
-  dependent induction H; intros; unfold ltlp; dependent destruction H0.
+  intros. revert xs H0.
+  dependent induction H; intros; unfold pltl; dependent destruction H0.
   - exists (ys ++ l'). split.
   -- apply Permutation_app_head. assumption.
   -- apply ltl_base. assumption.
@@ -163,7 +163,7 @@ Proof.
 Qed.
 
 Lemma perm_Acc: forall xs ys,
-  Permutation ys xs -> Acc ltlp xs -> Acc ltlp ys.
+  Permutation ys xs -> Acc pltl xs -> Acc pltl ys.
 Proof.
   intros xs ys H H0. induction H; auto;
   apply Acc_intro; intros; apply H0.
@@ -175,7 +175,7 @@ Proof.
     exists x1. split; auto. transitivity x0; auto.
 Qed.
 
-Theorem wf_perm : well_founded ltlp.
+Theorem wf_perm : well_founded pltl.
 Proof.
     intro xs. induction (wf_ltl xs) as [xs H H1].
     apply Acc_intro. intros ys H2.
@@ -183,17 +183,17 @@ Proof.
     apply (perm_Acc _ _ H2). auto.
 Qed.
 
-(* lltlp *)
+(* pltlt *)
 
-Definition lltlp := clos_trans _ ltlp.
-Definition wf_trans: well_founded lltlp.
+Definition pltlt := clos_trans _ pltl.
+Definition wf_trans: well_founded pltlt.
 Proof.
   apply wf_clos_trans. apply wf_perm.
 Qed.
 
 (** Aux: comment *)
-Lemma lltlp_concat_left: forall zs xs ys,
-  lltlp xs ys -> lltlp (zs ++ xs) (zs ++ ys).
+Lemma pltlt_concat_left: forall zs xs ys,
+  pltlt xs ys -> pltlt (zs ++ xs) (zs ++ ys).
 Proof.
   intros. revert zs. induction H; intro zs.
   - destruct H, H. apply t_step. exists (zs ++ x0).
@@ -203,8 +203,8 @@ Proof.
     apply IHclos_trans1. apply IHclos_trans2.
 Qed.
 
-Lemma lltlp_concat_right: forall zs xs ys,
-  lltlp xs ys -> lltlp (xs ++ zs) (ys ++ zs).
+Lemma pltlt_concat_right: forall zs xs ys,
+  pltlt xs ys -> pltlt (xs ++ zs) (ys ++ zs).
 Proof.
   intros. revert zs. induction H; intro zs.
   - destruct H, H. apply t_step. exists (x0 ++ zs).
@@ -214,17 +214,17 @@ Proof.
     apply IHclos_trans1. apply IHclos_trans2.
 Qed.
 
-Lemma lltlp_concat: forall xs xs' ys ys',
-  lltlp xs xs' -> lltlp ys ys' -> lltlp (xs ++ ys) (xs' ++ ys').
+Lemma pltlt_concat: forall xs xs' ys ys',
+  pltlt xs xs' -> pltlt ys ys' -> pltlt (xs ++ ys) (xs' ++ ys').
 Proof.
   intros.
-  apply (t_trans _ _ _ (xs ++ ys')); fold lltlp.
-  apply lltlp_concat_left. assumption.
-  apply lltlp_concat_right. assumption.
+  apply (t_trans _ _ _ (xs ++ ys')); fold pltlt.
+  apply pltlt_concat_left. assumption.
+  apply pltlt_concat_right. assumption.
 Qed.
 
 Lemma l_perm_lt_sx: forall {xs xs' ys},
-  Permutation xs' xs -> lltlp xs ys -> lltlp xs' ys.
+  Permutation xs' xs -> pltlt xs ys -> pltlt xs' ys.
 Proof.
   intros. revert xs' H. induction H0; intros.
   - apply t_step. destruct H, H. exists x0. split.
@@ -235,5 +235,5 @@ Qed.
 
 End WfMult.
 
-Arguments lltlp : default implicits.
+Arguments pltlt : default implicits.
 Arguments wf_trans : default implicits.

@@ -101,7 +101,7 @@ Qed.
     To prove it, we proceed by induction on [l'], using [gather_drop_ok]
     and concluding by i.h.
 *)
-Theorem decr'_ok: forall l l', l <L l' -> lltlp lt l l'.
+Theorem decr'_ok: forall l l', l <L l' -> pltlt lt l l'.
 Proof.
   unfold decr'. intros l l'. revert l. induction l'; intros; destruct X.
   - destruct (n (eq_refl)).
@@ -111,7 +111,7 @@ Proof.
      rewrite app_nil_r in H. apply H.
      clear n H. induction l; simpl. auto. destruct a0, s. split. assumption.
     apply IHl; auto. destruct s.
-  -- pose proof (lltlp_concat _ lt (gather (n, a0)) (a::nil) (drop (n, a0)) (a1::l')).
+  -- pose proof (pltlt_concat _ lt (gather (n, a0)) (a::nil) (drop (n, a0)) (a1::l')).
     apply (fun X Y => l_perm_lt_sx _ lt (gather_drop_ok _) (H X Y)).
     --- apply t_step. exists (gather (n, a0)). split. reflexivity.
     cut (0 < length (a :: nil)). intro. 
@@ -122,30 +122,30 @@ Proof.
       apply (drop_ok (n, a0)).
 Qed.
 
-Definition decr (a b: list A) : Prop := ☐ (a <L b).
+Definition decr (xs ys: list A) : Prop := ☐ (xs <L ys).
 
 (** As a consequence, we easily obtain well-foundedness
     of [decr] by the inclusion theorem.
 *)
 Theorem wf_decr: well_founded decr.
 Proof.
-  apply (wf_incl _ _ (lltlp lt)).
+  apply (wf_incl _ _ (pltlt lt)).
   unfold inclusion. intros. destruct H. apply decr'_ok. auto.
   apply WfMult.wf_trans.
   apply wf_lt.
 Qed.
 
-Lemma decr_unfold : forall l l',
-  decr l l'
-    <-> l' <> nil /\ all (fun a => some (lt a) l') l.
+Lemma decr_unfold : forall xs ys,
+  decr xs ys
+    <-> ys <> nil /\ all (fun x => some (lt x) ys) xs.
 Proof.
   intros. unfold decr. split; intros.
   - destruct H, X. split; auto. apply allT_all. auto.
     refine (allT_mono _ _ _ _ a). intro. apply someT_some.
   - destruct H.
     unfold decr'.
-    pose proof (fun Q K => all_mono _ Q K l H0).
-    pose proof (H1 _ (fun x => some_someT (lt x) l')).
+    pose proof (fun Q K => all_mono _ Q K xs H0).
+    pose proof (H1 _ (fun x => some_someT (lt x) ys)).
     psplit. passumption.
     apply all_allT. auto.
 Qed.
@@ -153,9 +153,10 @@ Qed.
 (** A nicer unfolding lemma for [decr], using [In]
     instead of [all] and [some]. We won't use this version, thought.
 *)
-Lemma decr_unfold_2 : forall l l',
-  decr l l'
-    <-> l' <> nil /\ forall x, In x l -> exists y, In y l' /\ lt x y.
+Lemma decr_unfold_2 : forall xs ys,
+  decr xs ys
+    <-> ys <> nil
+      /\ forall x, In x xs -> exists y, In y ys /\ lt x y.
 Proof.
   intros.
   rewrite decr_unfold.
