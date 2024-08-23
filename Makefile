@@ -31,4 +31,4 @@ coq-doc: coq
 
 
 latex-clean:
-	cd CCP21 && rm -f *.cut *.aux *.fdb-latexmk *.fls *.out *.pdf *.synctex.gz
+	cd CCP22 && rm -f *.cut *.aux *.fdb-latexmk *.fls *.out *.pdf *.synctex.gz
